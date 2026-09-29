@@ -3,9 +3,11 @@
 Build machine for this version: a Linux sandbox with 4 cores and 15 GB RAM, Python 3.11 (numpy 2.4.6, pandas 3.0.6, pyarrow 25.0.1,
 scipy 1.17.1). **R is not installed there**, and neither are the estimator packages (pyfixest, diff-diff, econml, esda), Dask or Spark:
 every Python model below ran on the engine's own implementation (the fall-back v20.58 verified against the packages), in memory.
-The R code of this version was reviewed and syntax-balanced but **not executed** — `tests/run_all_tests.R` (scenarios A–H, with the new
-scenario-E checks), `tests/selftest.R`, `validate_r_parity.py`, `validate_model_parity.py` and the R halves of `validate_design_options.py`
-must be run where R is installed (RStudio: Source `tests/run_all_tests.R`; it must end with `RESULT: PASS`).
+**R was then installed in the sandbox** (R 4.3.3 from Ubuntu; 39 of the pipeline's 40 R packages — from Ubuntu where it ships them, the
+rest built from the GitHub mirrors of their CRAN sources because CRAN, Posit and r-universe are denied by this environment's network policy;
+`arrow` 25.0.1 built from source with Parquet; only `polars`, which M13 needs, could not be obtained) and every R gate ran: section 1 lists
+them. Running R found one real defect in the first delivery (section 2 of the changelog: R_P00 stopped before writing the panel when an
+outcome column had no finite value), fixed and re-run.
 
 ## 1. Gates that ran here (`RWD_Artal_v20.59/python/DIDRDP_ALLRunDID_v20`, the Python engine both bundles share)
 
@@ -20,7 +22,12 @@ must be run where R is installed (RStudio: Source `tests/run_all_tests.R`; it mu
 | `validate_known_answers.py` (ALL models, one sub-watershed and eight staggered; true effect +0.05) | CLEAN: 87 PASS, 4 NO ANSWER (M07 needs the BM ground-truth file, M08 an instrument, on both panels); every effect model finds the truth -> `docs/VALIDATION_KNOWN_ANSWERS_v20.59.csv` |
 | `validate_location_poison.py` (your Koranahalli layout with poisoned rows: other sub-watersheds, outside every polygon, overlaps, ring conflicts, cloud gaps) | CLEAN: no excluded row reaches any model, and every effect model finds the truth -> `docs/VALIDATION_LOCATION_POISON_v20.59.csv` |
 | `validate_out_of_core.py` (Dask 2026.8, Apache Spark / PySpark 4.2 on Java 21, and the built-in batches -- installed here for this run) | CLEAN: 15 checks IDENTICAL to the in-memory numbers -- `known` single / staggered on Dask, Spark, batches (29 files each, 0 differences), your `layout` on each engine (29 files, 0 differences), the poisoned data out of core (0 differences), P00 out of core on Dask / Spark / batches (the same panel, 9,786 rows x 62 columns, row for row), the `switch` at the RAM budget (run_mode chooses out of core by itself, the in-memory numbers), `streaming` (identities, near-duplicates, ring conflicts the same) -> `docs/VALIDATION_OUT_OF_CORE_v20.59.csv` |
-| `validate_requests.py` (every rule you set over the project's history, checked on this code) | 37 PASS, 2 DECIDE (your documented decisions: one model at a time; the 80 % pixel-overlap rule), 1 NOT HERE (the A40 itself), 2 FAIL that are this sandbox's, not the code's: rule 35 counts the 4 `Rscript not found` rows of `validate_design_options.py`, rule 40 needs `validate_model_parity.py` (R) -- both run where R is installed (section 3) |
+| `validate_requests.py` (every rule you set over the project's history, checked on this code), before R was installed | 37 PASS, 2 DECIDE (your documented decisions: one model at a time; the 80 % pixel-overlap rule), 1 NOT HERE (the A40 itself), 2 rows that needed R (35, 40) — see the re-run with R below |
+| `RWDR_v20.59/tests/run_all_tests.R quick` (scenarios A–H: one sub-watershed, eight pooled, the covariate rules, seasons and years, every design option, the poisoned layout, batches and exact spatial statistics, out of core on Dask / Spark / R batches) | 198 PASS, 11 DATA GAP, 1 FAIL. The data gaps are the ones the scenarios expect (M06 no dose, M07 no BM ground data, M08 no instrument, M20 one sub-watershed) plus M13 without `polars`; the one FAIL is M13 in scenario F for the same missing package. Scenario E (27 PASS): the calendar years, the bound at the start, `OUTCOME_SCREEN = "keep"`, the panel's five columns, `input_design_audit_R.csv`, `PERIOD_RULE` `treat` / `year` / `both`, DESIGN vs PANEL, the evidence file. Scenario H (11 PASS): M01, M02, M16, M34 and R_P00 out of core on Dask, Spark and the R batches equal the in-memory numbers -> `docs/R_TEST_RESULTS_v20.59.csv` |
+| `validate_r_parity.py` (the R preparation and design against the Python ones on the same exports) | CLEAN: 14 checks — the design from the data, the panel (7,800 rows identical), the estimation samples of NDVI and EVI (`treat`, `post`, `did` and the values identical), the five season modes, `OVERLAP_ROWS = keep`, M01 with four covariates Python 0.05094818 = R fixest 0.05094818 |
+| `validate_design_options.py` with R | CLEAN: 1,728 PASS, 0 FAIL — every option does exactly what it says in Python AND R, and the panel is never rebuilt -> `docs/VALIDATION_DESIGN_OPTIONS_v20.59.csv` |
+| `validate_model_parity.py` (every model in R and in Python on the same exports, headline against headline) | 35 IDENTICAL (to 1e-12), 1 CLOSE (M44, two BART implementations), 5 CLOSE-ML (M39–M43: grf / DoubleML in R against econml / scikit-learn in Python — the same estimand through different forests and folds, each held to the known answer separately), 3 both a data gap (M07, M08, M20 on one sub-watershed), M13 in R a data gap (`polars`) -> `docs/VALIDATION_MODEL_PARITY_v20.59.csv` |
+| `validate_requests.py`, re-run with R | 38 PASS, 2 DECIDE, 1 NOT HERE (the A40), 1 FAIL: rule 40 reads the model-parity list and counts M13's `polars` gap |
 | the R library (`reward_design.R`, `reward_prep.R`, `reward_prep_ooc.R`, `reward_outofcore.R`, `reward_paths.R`) and `tests/run_all_tests.R` | brackets, quotes and braces balanced after the edits (a one-pass scanner that reads strings and comments; no R here); `RWD_Artal_v20.59/R/lib` and `RWDR_v20.59/lib` identical file for file |
 | the uploaded shapefile set `SWSs_Buff_1_5Km` (`SWSs20_KarnatakaAll5k` and the per-site files) | byte-identical to the shipped `data/sites/` copy; `buff_km` 0..5 and `distance` 0..5000 on every polygon: 0 = the treatment area, 1–5 = the control rings, as the panel's `treat` / `control` read them |
 
@@ -73,14 +80,28 @@ fixed effects, cluster-robust inference -- and the three implementations (Python
 machine precision. `python validate_did_spec.py` (in `RWD_Artal_v20.59/python/DIDRDP_ALLRunDID_v20/`) repeats this on any machine; without
 R it checks the Python half and says so.
 
+## 6. Giving this environment R (what was done here, and how to make it permanent)
+
+R is not part of the cloud container by default. In this session it was installed from inside the session and used for every gate above.
+Two things make that permanent for your future sessions (both in the environment's settings: the cloud environment menu in the
+session's title bar, then Edit):
+
+1. **The setup script** runs when each session starts. Add:
+   ```
+   apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq r-base r-base-dev libcurl4-openssl-dev libssl-dev libxml2-dev libglpk-dev libgdal-dev libgeos-dev libproj-dev libudunits2-dev
+   Rscript RWDR_v20.59/00_SETUP.R
+   ```
+2. **Network access**: the package installer (`00_SETUP.R` / `lib/reward_packages.R`: pre-built binaries first, then source) needs
+   `cloud.r-project.org`, `packagemanager.posit.co` (Linux binaries: minutes instead of an hour of compiling), `*.r-universe.dev` and
+   `github.com`. This environment's policy denied the first three, so here the packages came from Ubuntu's `r-cran-*` binaries and from the
+   GitHub mirrors of their CRAN sources (a dependency-resolving script, ~1 h of compiling, `arrow` built from its bundled C++ source).
+   With those hosts allowed, `00_SETUP.R` does it in a few minutes.
+
 ## 3. Still to be run on your machine (R, packages, your data)
 
-1. `RWDR_v20.59/tests/run_all_tests.R` (scenario E now checks the calendar years, the bound at the start, `OUTCOME_SCREEN = "keep"`,
-   the panel's five columns, the two P00 reports, `input_design_audit_R.csv` and `period_rule` in `panel_build_settings_R.csv`,
-   `PERIOD_RULE` `treat` / `year` / `both` on a small frame, DESIGN vs PANEL and the evidence file).
-2. `python validate_design_options.py` with R on the PATH (R == Python row for row on the new variants), `validate_r_parity.py`,
-   `validate_model_parity.py` -- these clear the two R-dependent rows of `validate_requests.py` (rules 35 and 40). `validate_out_of_core.py`
-   ran here on all three engines; on your machine it also exercises the GPU path (`torch` with CUDA on the A40).
+1. `RWDR_v20.59/tests/run_all_tests.R` WITHOUT `quick` (the 96 notebook renders in RStudio's way and through the Jupyter R kernel; the
+   quick run above covered every model and scenario), and M13 with `polars` installed from r-universe.
+2. The GPU path: `torch` with CUDA on the A40 (`validate_requests.py` rule 22, `06_Validation/V00d_GPU_PATH_CHECK.py`).
 3. Your data: R_P00 / P00, then `R_M01` / M01 — the runs that stopped in v20.58 (the same refusal in both engines). Read the
    `input files CONFIRMED` line and `input_design_audit(_R).csv` first (every file's `Treat` 1 / 0 and `buff_km` 0 / 1–5, and where the
    flag and the Year rule disagree), then `panel_variation_by_block.csv` and, if the screen still flags year-seasons,
