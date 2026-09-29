@@ -86,6 +86,15 @@ anything. Three things in it, and what each was:
      default`. The count is in every result row (`post_rows_differ_from_panel`). A panel built before v20.59 (no `post` column) is said
      once; the models run on their own design as before.
 
+## Found by running R here (v20.59, after the first delivery)
+
+- **R_P00 stopped before writing the panel** when an outcome column had no finite value at all (`panel_variation_R`: the empty part
+  lacked the `variable` column, so `rbindlist` refused it and `run_prep` ended before `panel_write`). Fixed: every part carries the
+  same columns; `rbindlist(fill = TRUE)`. In memory and out of core (`reward_prep_ooc.R` calls the same function).
+- `tests/run_all_tests.R`: the scenario-E audit check accepts exports without a `Treat` column (the Year rule, said); a batch model
+  without its package fails its own row, not scenario G.
+- An independent DiD-specification audit (`docs/VALIDATION_v20.59.md`, section 5) ran on both engines with R installed.
+
 ## Where each change lives
 
 | what | Python | R |

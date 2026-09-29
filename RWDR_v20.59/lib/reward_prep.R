@@ -464,7 +464,7 @@ panel_variation_R <- function(dt, vars = OUTCOME_VARS) {
   vs <- intersect(vars, names(dt)); if (!length(vs)) return(NULL)
   rbindlist(lapply(vs, function(v) {
     x <- dt[is.finite(get(v)), { z <- as.numeric(get(v)); mu <- mean(z); .(finite = .N, mean = mu, m2 = sum((z - mu)^2), min = min(z), max = max(z)) }, by = .(Year, Season)]
-    if (nrow(x)) x[, variable := v]; x }), use.names = TRUE)
+    x[, variable := rep(v, nrow(x))]; x }), use.names = TRUE, fill = TRUE)      # an outcome with no finite value: an empty part with the same columns
 }
 panel_variation_report_R <- function(parts, write = TRUE) {
   vt <- rbindlist(Filter(Negate(is.null), if (is.data.frame(parts)) list(parts) else parts), use.names = TRUE)

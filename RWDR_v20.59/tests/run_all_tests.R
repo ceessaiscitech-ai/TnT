@@ -364,8 +364,8 @@ if (!inherits(tE, "error")) {
   # v20.59 -- YOUR RULE confirmed on the input files: input_design_audit_R.csv (Treat 1 = post / 0 = pre, buff_km 0 = treatment / 1-5 = control), PERIOD_RULE recorded
   ia <- tryCatch(fread(file.path(OUTPUT_DIR, "input_design_audit_R.csv")), error = function(e) NULL)
   bsr <- tryCatch(fread(file.path(OUTPUT_DIR, "panel_build_settings_R.csv")), error = function(e) NULL)
-  chkE("panel", "R_P00 confirmed every input file (input_design_audit_R.csv): Treat 1 / 0 on every row, buff_km 0 / 1-5 on every row, PERIOD_RULE 'treat' recorded in panel_build_settings_R.csv",
-       !is.null(ia) && nrow(ia) > 0 && all(ia$treat_column_in_file) && all(ia$treat_unusable_rows == 0L) && all(ia$buff_outside_0to5_rows == 0L) && sum(ia$treat_post_rows) > 0 && sum(ia$treat_pre_rows) > 0
+  chkE("panel", "R_P00 confirmed every input file (input_design_audit_R.csv): Treat 1 / 0 on every row (these test exports carry no Treat column: the Year rule, said), buff_km 0 / 1-5 on every row, PERIOD_RULE 'treat' recorded in panel_build_settings_R.csv",
+       !is.null(ia) && nrow(ia) > 0 && all(ia$treat_post_rows + ia$treat_pre_rows + ia$treat_unusable_rows == ia$rows) && all(ia$treat_unusable_rows == 0L) && all(ia$buff_outside_0to5_rows == 0L) && sum(ia$treat_post_rows) > 0 && sum(ia$treat_pre_rows) > 0
        && sum(ia$buff0_treatment_rows) > 0 && sum(ia$buff1to5_control_rows) > 0 && all(ia$period_rule == "treat") && identical(period_rule_R(), "treat")
        && !is.null(bsr) && identical(bsr[setting == "period_rule", value], "treat") && identical(bsr[setting == "period_rows_dropped", value], "0"),
        if (is.null(ia)) "audit not readable" else sprintf("%d files, post %d, pre %d, buff0 %d, buff1-5 %d", nrow(ia), sum(ia$treat_post_rows), sum(ia$treat_pre_rows), sum(ia$buff0_treatment_rows), sum(ia$buff1to5_control_rows)))
@@ -522,7 +522,7 @@ if (RUN("F")) tryCatch({
   for (m in cb$model) { r <- cb[model == m]; exact <- m %in% c("M17", "M18")
     ok <- if (exact) abs(r$est_b - r$est_p) <= 1e-12 else abs(r$est_b - 0.05) <= 0.02 || (m == "M19" && abs(r$est_b - r$est_p) < 0.02)
     add("G", sprintf("%s in BATCHES (beyond 98 %% of the RAM; forced here): every unit used, %s", m, if (exact) "the same answer to 1e-12" else "the answer within tolerance"),
-        if (ok) "PASS" else "FAIL", sprintf("batches %.5f vs all at once %.5f", r$est_b, r$est_p)) }
+        if (isTRUE(ok)) "PASS" else "FAIL", sprintf("batches %.5f vs all at once %.5f", r$est_b, r$est_p)) }   # v20.59: a model without its package (NA) fails its own row, not the scenario
   } else info("G: none of this project's models has a batch fall-back -- M01, M02, M16 and M34 go OUT OF CORE beyond 98 % (scenario H)")
   if (all(c("M17", "M18") %in% names(MODEL_FUN))) {                                  # v20.58: the spatial models' checks (spdep) where they are part of the project
   set.seed(7); n <- 1600; g <- CJ(i = 1:40, j = 1:40)[, `:=`(lat = 15 + i * 9e-5 + rnorm(.N, 0, 1e-6), lon = 76 + j * 9e-5 + rnorm(.N, 0, 1e-6))]

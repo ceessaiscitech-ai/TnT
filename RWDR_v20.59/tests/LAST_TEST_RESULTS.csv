@@ -17,7 +17,7 @@ A,M04,PASS,0.0503 (truth 0.05 +- 0.02)
 A,M09,PASS,0.0488 (truth 0.05 +- 0.01)
 A,M10,PASS,triple difference 0.0012 (truth 0: no heterogeneity by land use simulated)
 A,M12,PASS,0.0492 (truth 0.05 +- 0.01)
-A,M13,PASS,0.0488 (truth 0.05 +- 0.02)
+A,M13,DATA GAP,"package missing: install 'polars' (r-universe: install.packages('polars', repos = 'https://rpolars.r-universe.dev')) -- 00_SETUP.R"
 A,M14,PASS,0.0501 (truth 0.05 +- 0.01)
 A,M15,PASS,placebo 0.0014 (truth 0)
 A,M17,PASS,Moran's I 0.773
@@ -60,84 +60,7 @@ D,annual rows: weather the composite lacks filled with the same pixel-year's sea
 D,"OVERLAP_ROWS: a pixel whose ring differs between rows leaves whole by default, stays with 'keep' (tag _keepOverlap); the pixel outside every polygon never enters",PASS,"ring-conflict pixel(s) 1: rows under drop 0, keep 7 | outside pixel(s) 1: rows 0"
 D,POOLED_FE = site_period: period FE = sub-watershed x year x season in the pooled panel,PASS,1_2016_0 7_2016_0 1_2016_1
 D,"M01 on annual + seasonal rows (pixel x season, site x year x season FE) recovers +0.05",PASS,"did 0.0490 (SE 0.0008, fixest::feols)"
-D,"packages confirmed at run time (confirm_packages: every R package, its version and route)",PASS,40 of 40 installed
-E,"preparation (fragments coded per export file, nothing of the design baked in)",PASS,"7,560 rows; fragment codes 0:7320 1:240"
-E,base           only the major sub-watershed (Artal) -- Beguru's core fragment and the stray file dropped,PASS,1
-E,"base           fund timing: Rabi rows from 2024, every other series from 2025 (back-cast start 2024-07)",PASS,
-E,base           dose: Rabi 2024 = 30 / 4632.3 per ha (released by Sep 2024 on the back-cast line); 0 on the rings,PASS,
-E,frag_keep      fragments kept with FRAGMENT_RULE = 'keep',PASS,"1,2,4"
-E,registry       registry timing: cohort 2022 (sites.csv),PASS,
-E,fixed_2023     fixed timing: cohort = TREATMENT_YEAR 2023,PASS,
-E,share          share rule: 10 % of the target reached Nov 2024 -> first treated Zaid 2025 (every series 2025),PASS,
-E,rings_1_3      CONTROL_RINGS <- 1:3 used although DESIGN_MODE = 'recommended',PASS,"0,1,2,3"
-E,pre4_post2     PRE_YEARS 4 / POST_YEARS 2 from the first treated year (2024): 2020-2025,PASS,2020-2025
-E,rabi           SEASONS = 'Rabi': Rabi rows only,PASS,
-E,"manual         DESIGN_MODE = 'manual': 'data' = rings 1-5, every year",PASS,
-E,transition     EXCLUDE_TRANSITION_YEAR: no first treated year of a treated series,PASS,
-E,gapfilled_kept EXCLUDE_GAPFILLED = FALSE keeps the history-filled rows (more rows than base),PASS,7200 vs 7156
-E,dose_amount    DOSE_VARIABLE = 'dose_amount_sws': Kharif 2025 = 110 (released by May 2025),PASS,
-E,all            the panel file is unchanged by every option (md5),PASS,
-E,covariates_all COVARIATES <- 'all' = the four weather covariates in every model (covs_in),PASS,"Rain,Tmax,Tmean,Tmin"
-F,"POISON: every model's estimate, SE and p identical with the excluded rows at +5 (no other location, overlap, repeat, ring, year or season leaks)",PASS,45 model results identical
-F,POISON (every number): every cell of every file written identical in the clean and the poisoned run,PASS,8656 numbers in 239 files identical
-F,M01,PASS,effect 0.0496 | SE 0.000516 | p 2.31e-09 | clean == poison: TRUE
-F,M02,PASS,effect 0.0509 | SE 0.000984 | p 1.59e-05 | clean == poison: TRUE
-F,M03,PASS,effect 0.0496 | SE 0.000882 | p 3.35e-08 | clean == poison: TRUE
-F,M04,PASS,effect 0.0498 | SE 0.000931 | p 4.33e-08 | clean == poison: TRUE
-F,M05,PASS,effect 0.0501 | SE 0.00103 | p 6.87e-08 | clean == poison: TRUE
-F,M06,PASS,effect 2.7877 | SE 0.196 | p 3.06e-05 | clean == poison: TRUE
-F,M07,DATA GAP,expected on one sub-watershed: BM means (ground data of >= 6 sub-watershed x seasons)
-F,M08,DATA GAP,expected on one sub-watershed: instrument
-F,M09,PASS,effect 0.0508 | SE 0.000984 | p 1.6e-05 | clean == poison: TRUE
-F,M10,PASS,effect 0.0024 | SE 0.00186 | p 0.248 | clean == poison: TRUE
-F,M11,PASS,effect 0.0494 | SE 0.000832 | p 2.57e-08 | clean == poison: TRUE
-F,M12,PASS,effect 0.0511 | SE 0.000142 | p 3.55e-10 | clean == poison: TRUE
-F,M13,PASS,effect 0.0507 | SE 0.00097 | p 4.84e-08 | clean == poison: TRUE
-F,M14,PASS,effect 0.0497 | SE 0.00121 | p 1.59e-07 | clean == poison: TRUE
-F,M15,PASS,effect -0.0009 | SE 0.000714 | p 0.269 | clean == poison: TRUE
-F,M16,PASS,test 0.0018 | SE NA | p 0.969 | clean == poison: TRUE
-F,M17,PASS,statistic 0.5298 | SE 0.0368 | p 4.65e-48 | clean == poison: TRUE
-F,M18,PASS,statistic 0.5298 | SE 0.0368 | p 4.65e-48 | clean == poison: TRUE
-F,M19,PASS,diagnostic 0.0461 | SE NA | p NA | clean == poison: TRUE
-F,M20,DATA GAP,expected on one sub-watershed: >= 2 sub-watersheds
-F,M21,PASS,effect 0.0497 | SE 0.000972 | p 5.41e-08 | clean == poison: TRUE
-F,M22,PASS,effect 0.0484 | SE 0.000351 | p 3.78e-10 | clean == poison: TRUE
-F,M23,PASS,effect 0.0496 | SE 0.00047 | p 2e-04 | clean == poison: TRUE
-F,M24,PASS,effect 0.0014 | SE 0.000807 | p 0.139 | clean == poison: TRUE
-F,M25,PASS,effect 0.0496 | SE 0.00251 | p 0.001 | clean == poison: TRUE
-F,M26,PASS,effect 0.0495 | SE 0.000534 | p 2.78e-09 | clean == poison: TRUE
-F,M27,PASS,effect 0.0494 | SE 0.000828 | p 2.51e-08 | clean == poison: TRUE
-F,M28,PASS,effect 0.0495 | SE 0.000984 | p 1.73e-05 | clean == poison: TRUE
-F,M29,PASS,effect 0.0495 | SE 0.000476 | p 1.56e-09 | clean == poison: TRUE
-F,M30,PASS,effect 0.0503 | SE 0.00113 | p 1.1e-07 | clean == poison: TRUE
-F,M31,PASS,effect 0.0498 | SE 0.000376 | p 4.68e-10 | clean == poison: TRUE
-F,M32,PASS,effect 0.0485 | SE 0.000321 | p 2.42e-10 | clean == poison: TRUE
-F,M33,PASS,effect 0.0495 | SE 0.000512 | p 2.24e-09 | clean == poison: TRUE
-F,M34,PASS,effect 0.0509 | SE 0.000984 | p 1.59e-05 | clean == poison: TRUE
-F,M35,PASS,effect 0.0488 | SE 0.000898 | p 1.37e-05 | clean == poison: TRUE
-F,M36,PASS,effect 0.0483 | SE 0.000399 | p 7.31e-10 | clean == poison: TRUE
-F,M37,PASS,effect 0.0483 | SE 0.000399 | p 7.31e-10 | clean == poison: TRUE
-F,M38,PASS,effect 0.0483 | SE 0.00123 | p 2.01e-07 | clean == poison: TRUE
-F,M39,PASS,effect 0.0496 | SE 0.000922 | p 0 | clean == poison: TRUE
-F,M40,PASS,effect 0.0494 | SE 0.000987 | p 0 | clean == poison: TRUE
-F,M41,PASS,effect 0.0497 | SE 0.000898 | p 1.3e-05 | clean == poison: TRUE
-F,M42,PASS,effect 0.0496 | SE 0.000924 | p 0 | clean == poison: TRUE
-F,M43,PASS,effect 0.0496 | SE 0.000922 | p 0 | clean == poison: TRUE
-F,M44,PASS,effect 0.0491 | SE 0.0014 | p 3.04e-269 | clean == poison: TRUE
-F,M45,PASS,effect 0.0485 | SE 0.000898 | p 1.4e-05 | clean == poison: TRUE
-F,the location rule reported (LOCATION_RULE_<outcome>.csv beside every result),PASS,42 file(s)
-G,"M04 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.05020 vs all at once 0.04977
-G,"M17 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the same answer to 1e-12",PASS,batches 0.52981 vs all at once 0.52981
-G,"M18 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the same answer to 1e-12",PASS,batches 0.52981 vs all at once 0.52981
-G,"M19 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04239 vs all at once 0.04610
-G,"M35 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04920 vs all at once 0.04878
-G,"M40 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04943 vs all at once 0.04941
-G,"M42 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04983 vs all at once 0.04965
-G,"M43 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04976 vs all at once 0.04961
-G,"M44 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04715 vs all at once 0.04909
-G,Moran's I / LISA formulas on the k-NN index == spdep (the path used beyond 98 % of the RAM),PASS,largest difference 1.8e-15
-G,k-NN from the kd-tree == spdep's exhaustive search,PASS,
-G,M35 cluster-robust quantile SE: one row per cluster == quantreg's own kernel SE,PASS,0.0007946646 vs 0.0007946646
+D,"packages confirmed at run time (confirm_packages: every R package, its version and route)",DATA GAP,"38 of 40 installed -- missing: arrow, polars"
 B,preparation,PASS,ctrl1-5_treatFund_all_feSitePeriod_covAll4_yr2016-2025
 B,80 % name rule (files without SWSiD_All),PASS,rows of Artal / Chatrakodihalli / Hunsehadagli confirmed by their folder or file name: 100.0 %
 B,two cohorts from sites.csv (TREATMENT_TIMING = 'registry'),PASS,"2020, 2022"
@@ -159,7 +82,7 @@ B,M04,PASS,0.0499 (truth 0.05 +- 0.02)
 B,M09,PASS,0.0505 (truth 0.05 +- 0.01)
 B,M10,PASS,triple difference 0.0010 (truth 0: no heterogeneity by land use simulated)
 B,M12,PASS,0.0509 (truth 0.05 +- 0.01)
-B,M13,PASS,0.0506 (truth 0.05 +- 0.02)
+B,M13,DATA GAP,"package missing: install 'polars' (r-universe: install.packages('polars', repos = 'https://rpolars.r-universe.dev')) -- 00_SETUP.R"
 B,M14,PASS,0.0495 (truth 0.05 +- 0.01)
 B,M15,PASS,placebo 0.0002 (truth 0)
 B,M17,PASS,Moran's I 0.650
@@ -188,112 +111,6 @@ B,M42,PASS,0.0498 (truth 0.05 +- 0.02)
 B,M43,PASS,0.0500 (truth 0.05 +- 0.02)
 B,M44,PASS,0.0498 (truth 0.05 +- 0.02)
 B,M45,PASS,0.0497 (truth 0.05 +- 0.02)
-B,RStudio Knit R_P00_Prepare_Panel.Rmd,PASS,rendered
-B,RStudio Knit R_D01_Effect_Diagnostics.Rmd,PASS,rendered
-B,RStudio Knit R_M01.Rmd,PASS,rendered
-B,RStudio Knit R_M02.Rmd,PASS,rendered
-B,RStudio Knit R_M03.Rmd,PASS,rendered
-B,RStudio Knit R_M04.Rmd,PASS,rendered
-B,RStudio Knit R_M05.Rmd,PASS,rendered
-B,RStudio Knit R_M06.Rmd,PASS,rendered
-B,RStudio Knit R_M07.Rmd,PASS,rendered
-B,RStudio Knit R_M08.Rmd,PASS,rendered
-B,RStudio Knit R_M09.Rmd,PASS,rendered
-B,RStudio Knit R_M10.Rmd,PASS,rendered
-B,RStudio Knit R_M11.Rmd,PASS,rendered
-B,RStudio Knit R_M12.Rmd,PASS,rendered
-B,RStudio Knit R_M13.Rmd,PASS,rendered
-B,RStudio Knit R_M14.Rmd,PASS,rendered
-B,RStudio Knit R_M15.Rmd,PASS,rendered
-B,RStudio Knit R_M16.Rmd,PASS,rendered
-B,RStudio Knit R_M17.Rmd,PASS,rendered
-B,RStudio Knit R_M18.Rmd,PASS,rendered
-B,RStudio Knit R_M19.Rmd,PASS,rendered
-B,RStudio Knit R_M20.Rmd,PASS,rendered
-B,RStudio Knit R_M21.Rmd,PASS,rendered
-B,RStudio Knit R_M22.Rmd,PASS,rendered
-B,RStudio Knit R_M23.Rmd,PASS,rendered
-B,RStudio Knit R_M24.Rmd,PASS,rendered
-B,RStudio Knit R_M25.Rmd,PASS,rendered
-B,RStudio Knit R_M26.Rmd,PASS,rendered
-B,RStudio Knit R_M27.Rmd,PASS,rendered
-B,RStudio Knit R_M28.Rmd,PASS,rendered
-B,RStudio Knit R_M29.Rmd,PASS,rendered
-B,RStudio Knit R_M30.Rmd,PASS,rendered
-B,RStudio Knit R_M31.Rmd,PASS,rendered
-B,RStudio Knit R_M32.Rmd,PASS,rendered
-B,RStudio Knit R_M33.Rmd,PASS,rendered
-B,RStudio Knit R_M34.Rmd,PASS,rendered
-B,RStudio Knit R_M35.Rmd,PASS,rendered
-B,RStudio Knit R_M36.Rmd,PASS,rendered
-B,RStudio Knit R_M37.Rmd,PASS,rendered
-B,RStudio Knit R_M38.Rmd,PASS,rendered
-B,RStudio Knit R_M39.Rmd,PASS,rendered
-B,RStudio Knit R_M40.Rmd,PASS,rendered
-B,RStudio Knit R_M41.Rmd,PASS,rendered
-B,RStudio Knit R_M42.Rmd,PASS,rendered
-B,RStudio Knit R_M43.Rmd,PASS,rendered
-B,RStudio Knit R_M44.Rmd,PASS,rendered
-B,RStudio Knit R_M45.Rmd,PASS,rendered
-B,RStudio Knit R_RUN_ALL_MODELS.Rmd,PASS,rendered
-B,RStudio Knit R_V01_Results_Audit.Rmd,PASS,rendered
-B,Jupyter (IRkernel) R_P00_Prepare_Panel.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_D01_Effect_Diagnostics.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M01.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M02.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M03.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M04.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M05.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M06.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M07.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M08.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M09.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M10.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M11.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M12.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M13.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M14.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M15.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M16.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M17.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M18.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M19.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M20.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M21.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M22.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M23.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M24.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M25.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M26.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M27.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M28.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M29.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M30.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M31.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M32.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M33.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M34.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M35.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M36.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M37.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M38.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M39.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M40.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M41.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M42.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M43.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M44.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_M45.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_RUN_ALL_MODELS.ipynb,PASS,executed
-B,Jupyter (IRkernel) R_V01_Results_Audit.ipynb,PASS,executed
-H,M01 M02 M16 M34 out of core on Dask (5 pixel partitions) == in memory,PASS,487 numbers in 17 files; largest difference 2.7e-11 (relative 1.4e-08: fixest converges to 1e-8)
-H,M01 M02 M16 M34 out of core on Apache Spark (5 pixel partitions) == in memory,PASS,487 numbers in 17 files; largest difference 2.7e-11 (relative 1.4e-08: fixest converges to 1e-8)
-H,M01 M02 M16 M34 out of core on R batches (5 pixel partitions) == in memory,PASS,487 numbers in 17 files; largest difference 2.7e-11 (relative 1.4e-08: fixest converges to 1e-8)
-H,Apache Spark == Dask: every number identical (the same R code on every engine),PASS,487 numbers
-H,R batches == Dask: every number identical (the same R code on every engine),PASS,487 numbers
-H,"the switch at 98 %: a RAM budget below the need -> out of core BY ITSELF, the in-memory numbers",PASS,"run_mode_R: out_of_core (the sample needs ~0.01 GB in RAM and 0.00 GB are free below 98 %); 487 numbers, largest difference 2.7e-1"
-H,the design from the data out of core (pixel partitions) == in memory: the same cells and the same choice,PASS,"pre 2016,2017,2018,2019,2020,2021,2022,2023, post 2024,2025, rings 1,2,3,4,5, seasons all"
-H,the outcome identities row group by row group == all rows at once,PASS,4 identities: NDMI = -0.1 +0.6 x NDVI; LSWI = -0.1 +0.6 x NDVI; LSWI = 0 +1 x NDMI; WSSI = 1 -1 x ESI
-H,"R_P00 block by block on R batches, every block in 3 pixel groups == in memory: the panel row for row (schema too) and every report",PASS,"9,812 rows x 41 columns"
-H,R_P00 block by block on Dask == in memory: the panel row for row (schema too) and every report,PASS,"9,812 rows x 41 columns"
-H,R_P00 block by block on Apache Spark == in memory: the panel row for row (schema too) and every report,PASS,"9,812 rows x 41 columns"
+E,"preparation (fragments coded per export file, nothing of the design baked in)",FAIL,Cannot call parquet___WriterProperties___Builder__create(). See https://arrow.apache.org/docs/r/articles/install.html for help ins
+F,scenario F,FAIL,Cannot call parquet___WriterProperties___Builder__create(). See https://arrow.apache.org/docs/r/articles/install.html for help ins
+H,scenario H,FAIL,Cannot call parquet___WriterProperties___Builder__create(). See https://arrow.apache.org/docs/r/articles/install.html for help ins

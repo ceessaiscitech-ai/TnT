@@ -45,6 +45,34 @@ running `RWDR_v20.59/tests/run_all_tests.R` writes the R result file again, with
 | **Every design option set and applied in the model; the panel built once** | `_common.set_scenario` / `resolve_design`; R `model_design` / `load_panel_R`; v20.59: `PERIOD_RULE`, the input audit, `DESIGN vs PANEL` | `validate_design_options.py` 1,068 PASS; `validate_requests.py` rule 35 |
 | **Only the sub-watershed's own rows in any model; repeated rows and pixels dropped and confirmed** | `_location.row_codes`, `FRAGMENT_RULE`, `OVERLAP_ROWS`; R `location_codes_R`; P00 / R_P00 dedup with confirmation | `validate_location_poison.py` CLEAN; `validate_requests.py` rules 37, 38 |
 
+## 5. The DiD specification, checked independently of the engine's own tests (`validate_did_spec.py`)
+
+Synthetic exports with a KNOWN data-generating process (120 pixels inside the real Haligeri polygons, core + rings 1-5, 2016-2025, four
+seasons; pixel effects that differ by ring, year x season shocks, the true effect +0.05 on the treatment area from 2022, `Treat` = 1 from
+2022 in every file) went through P00 and the model stage, and every claim below was checked on the numbers, not on the code:
+
+| Claim | Result |
+|---|---|
+| every input row is in the DID-ready panel exactly once, `NDVI` and `buff_km` unchanged | 4,800 of 4,800 rows, PASS |
+| `treat` = 1 exactly where `buff_km` = 0; `control` = 1 exactly where `buff_km` in 1-5 | PASS |
+| `post` = the input file's `Treat` (1 = post, 0 = pre); `pre` = 1 - post; `did` = treat x post; the aliases `treatment` / `did_term` equal | PASS |
+| no NaN and no placeholder in any design column or in the estimate | PASS |
+| `input_design_audit.csv`: 40 files, every one with `Treat`, 0 unusable, 0 flag-vs-year disagreements, every `buff_km` in 0-5 | PASS |
+| the model stage's design (fixed 2022) equals the panel's `post` on every row (DESIGN vs PANEL 0 differ) | PASS |
+| M01 (two-way fixed effects) = an explicit-dummy OLS in numpy (unit + period dummies) | equal to 1e-10 (0.0504275956 both) |
+| M01 = the 2x2 difference of means (balanced panel, one treatment date) | equal to 1e-10 |
+| M01 within 2 SE of the true effect | 0.05043, SE 0.00069, PASS |
+| the cluster-robust SE = closed-form CR1 | within 0.25 % of the conventional CR1 (every FE counted); the exact small-sample factor is fixest's, matched to 1e-9 below |
+| R_P00 on the same exports: the same panel row for row, the same five columns from `Treat` and `buff_km` | PASS |
+| R `fixest::feols` on `load_panel_R`'s sample = Python's M01 | beta equal to 1e-9, SE equal to 1e-9 (0.000685255720 both) |
+| R's built-in fixed-effects engine (the fall-back without fixest) = fixest | beta and SE equal to 1e-9 |
+| R DESIGN vs PANEL: 0 rows differ | PASS |
+
+Verdict: **CLEAN**. The DiD is the textbook specification -- treatment area x post-period interaction with pixel (x season) and year x season
+fixed effects, cluster-robust inference -- and the three implementations (Python engine, R fixest, R built-in) are the same estimator to
+machine precision. `python validate_did_spec.py` (in `RWD_Artal_v20.59/python/DIDRDP_ALLRunDID_v20/`) repeats this on any machine; without
+R it checks the Python half and says so.
+
 ## 3. Still to be run on your machine (R, packages, your data)
 
 1. `RWDR_v20.59/tests/run_all_tests.R` (scenario E now checks the calendar years, the bound at the start, `OUTCOME_SCREEN = "keep"`,
