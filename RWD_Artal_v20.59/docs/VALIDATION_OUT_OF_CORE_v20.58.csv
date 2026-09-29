@@ -1,0 +1,19 @@
+check,engine,files,differences,verdict,detail
+engine available,dask,0,0,AVAILABLE,dask 2026.8.0 / distributed 2026.8.0
+engine available,spark,0,0,AVAILABLE,pyspark 4.2.0 (Java: /usr/lib/jvm/java-21-openjdk-amd64/bin/java)
+engine available,batches,0,0,AVAILABLE,"built-in (one partition after another, in this process)"
+known answers: single,dask,29,0,IDENTICAL,"14 s, 5 pixel partitions"
+known answers: single,spark,29,0,IDENTICAL,"23 s, 5 pixel partitions"
+known answers: single,batches,29,0,IDENTICAL,"7 s, 5 pixel partitions"
+known answers: staggered,dask,29,0,IDENTICAL,"15 s, 5 pixel partitions"
+known answers: staggered,spark,29,0,IDENTICAL,"27 s, 5 pixel partitions"
+known answers: staggered,batches,29,0,IDENTICAL,"10 s, 5 pixel partitions"
+"your layout: fund timing, location rule, fragments, overlaps",dask,29,0,IDENTICAL,6 pixel partitions
+"your layout: fund timing, location rule, fragments, overlaps",spark,29,0,IDENTICAL,6 pixel partitions
+"your layout: fund timing, location rule, fragments, overlaps",batches,29,0,IDENTICAL,6 pixel partitions
+"your layout POISONED, out of core (every excluded row +5): the clean numbers",dask,29,0,IDENTICAL,no excluded row reaches any model
+"P00 PASS A + PASS B, every block out of core (pixel-range pieces)",dask,4,0,IDENTICAL,"the same panel: 9,786 rows x 60 columns, row for row"
+"P00 PASS A + PASS B, every block out of core (pixel-range pieces)",spark,4,0,IDENTICAL,"the same panel: 9,786 rows x 60 columns, row for row"
+"P00 PASS A + PASS B, every block out of core (pixel-range pieces)",batches,4,0,IDENTICAL,"the same panel: 9,786 rows x 60 columns, row for row"
+the switch at 98 %: a budget below the need -> out of core by itself (M01),first available,12,0,IDENTICAL,run_mode -> out_of_core; the in-memory numbers
+streaming (row group by row group): the location table and the outcome identities,batches,2,0,IDENTICAL,"4 identities, 0 near-duplicate pairs, 3 ring conflicts -- the same"

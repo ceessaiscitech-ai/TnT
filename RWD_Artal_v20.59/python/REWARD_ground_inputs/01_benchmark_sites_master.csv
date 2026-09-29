@@ -1,0 +1,769 @@
+site_key,institution,sws_name,mws_name,variable,site_no,lat_median,lon_median,n_obs_with_coords,n_dates,share_visits_within_300m,max_visit_dist_from_median_m,sws_role,pixel_id_site_median
+UAHS|Beguru|Dabbanabairanahalli|ssm|37.0,UAHS,Beguru,Dabbanabairanahalli,ssm,37.0,14.2778,75.408387,17,17,0.9411764705882353,4479.120219843208,unlabelled,010427780025540839
+UAHS|Beguru|Dabbanabairanahalli|ssm|38.0,UAHS,Beguru,Dabbanabairanahalli,ssm,38.0,14.2839,75.411483,17,17,0.7647058823529411,5124.991756102555,unlabelled,010428390025541148
+UAHS|Beguru|Dabbanabairanahalli|ssm|39.0,UAHS,Beguru,Dabbanabairanahalli,ssm,39.0,14.291157,75.4122,17,17,0.8823529411764706,5681.9532956273415,unlabelled,010429116025541220
+UAHS|Beguru|Dabbanabairanahalli|ssm|40.0,UAHS,Beguru,Dabbanabairanahalli,ssm,40.0,14.292225,75.417065,17,17,0.9411764705882353,6159.649018094735,unlabelled,010429222025541706
+UAHS|Beguru|Gogga|ssm|43.0,UAHS,Beguru,Gogga,ssm,43.0,14.257845,75.467767,17,17,0.8235294117647058,10264.840815125506,unlabelled,010425784025546777
+UAHS|Beguru|Gogga|ssm|44.0,UAHS,Beguru,Gogga,ssm,44.0,14.263812,75.472055,17,17,0.9411764705882353,10751.072447943407,unlabelled,010426381025547206
+UAHS|Beguru|Gogga|ssm|45.0,UAHS,Beguru,Gogga,ssm,45.0,14.274888,75.486665,17,17,0.8823529411764706,12454.737800280565,unlabelled,010427489025548666
+UAHS|Beguru|Hulaganakatte1|ssm|42.0,UAHS,Beguru,Hulaganakatte1,ssm,42.0,14.263222,75.463857,17,17,0.8823529411764706,9864.90293308259,unlabelled,010426322025546386
+UAHS|Beguru|Kenchagondanakoppa|ssm|41.0,UAHS,Beguru,Kenchagondanakoppa,ssm,41.0,14.26068,75.423167,17,17,0.8823529411764706,7027.385454736645,unlabelled,010426068025542317
+UAHS|Haralahalli|Donduru|ssm|23.0,UAHS,Haralahalli,Donduru,ssm,23.0,13.8662785,76.0266565,16,16,0.6875,82715.78646592313,unlabelled,010386628025602666
+UAHS|Haralahalli|Gijikatte|ssm|22.0,UAHS,Haralahalli,Gijikatte,ssm,22.0,13.829155,76.023283,16,16,0.6875,84631.89904474746,unlabelled,010382916025602328
+UAHS|Haralahalli|Karehalli|ssm|24.0,UAHS,Haralahalli,Karehalli,ssm,24.0,13.8503045,76.0655685,16,16,0.75,87217.96222168091,unlabelled,010385030025606557
+UAHS|Jammapura|Jammapur2|ssm|7.0,UAHS,Jammapura,Jammapur2,ssm,7.0,13.91465,75.9932735,16,15,0.875,76898.58731733376,unlabelled,010391465025599327
+UAHS|Jammapura|Kallikere|ssm|8.0,UAHS,Jammapura,Kallikere,ssm,8.0,13.901052,75.9847365,16,15,0.9375,76858.73452757855,unlabelled,010390105025598474
+UAHS|Jammapura|Kallikere|ssm|9.0,UAHS,Jammapura,Kallikere,ssm,9.0,13.893431,75.97875,16,15,0.875,76743.70449360744,unlabelled,010389343025597875
+UAHS|Jammapura|Maravanji2|ssm|5.0,UAHS,Jammapura,Maravanji2,ssm,5.0,13.942465,75.97639749999999,16,15,0.875,73821.51793614356,unlabelled,010394246025597640
+UAHS|Jammapura|Meagondanahalli2|ssm|6.0,UAHS,Jammapura,Meagondanahalli2,ssm,6.0,13.93081,75.97340650000001,16,15,0.8125,74156.11367726904,unlabelled,010393081025597341
+UAHS|Jammapura|Pandavamatti1|ssm|1.0,UAHS,Jammapura,Pandavamatti1,ssm,1.0,13.967576000000001,75.971994,16,15,0.9375,72127.82020058752,unlabelled,010396758025597199
+UAHS|Jammapura|Pandavamatti1|ssm|2.0,UAHS,Jammapura,Pandavamatti1,ssm,2.0,13.964945,75.98462,16,15,0.875,73477.35858309687,unlabelled,010396494025598462
+UAHS|Jammapura|Pandavamatti1|ssm|3.0,UAHS,Jammapura,Pandavamatti1,ssm,3.0,13.958988999999999,75.9770695,16,15,0.875,73042.30516144371,unlabelled,010395899025597707
+UAHS|Jammapura|Pandavamatti1|ssm|4.0,UAHS,Jammapura,Pandavamatti1,ssm,4.0,13.96185,75.9629305,16,15,0.875,71540.61724076673,unlabelled,010396185025596293
+UAHS|Koranahalli|Chatnahalli-2|ssm|16.0,UAHS,Koranahalli,Chatnahalli-2,ssm,16.0,13.6846715,75.909951,16,16,0.5625,85822.70631852844,unlabelled,010368467025590995
+UAHS|Koranahalli|Chatnahalli-2|ssm|19.0,UAHS,Koranahalli,Chatnahalli-2,ssm,19.0,13.690333,75.898059,16,16,0.75,84497.045952819,unlabelled,010369033025589806
+UAHS|Koranahalli|Gollarahalli|ssm|15.0,UAHS,Koranahalli,Gollarahalli,ssm,15.0,13.674632500000001,75.933787,16,16,0.75,88383.74066693775,unlabelled,010367463025593379
+UAHS|Koranahalli|Jodi Bokikere|ssm|17.0,UAHS,Koranahalli,Jodi Bokikere,ssm,17.0,13.692287499999999,75.9111595,16,16,0.6875,85291.93903789307,unlabelled,010369229025591116
+UAHS|Koranahalli|Koranahalli|ssm|14.0,UAHS,Koranahalli,Koranahalli,ssm,14.0,13.68505,75.937633,16,16,0.875,87834.65729199692,unlabelled,010368505025593763
+UAHS|Koranahalli|Koranahalli|ssm|18.0,UAHS,Koranahalli,Koranahalli,ssm,18.0,13.69135,75.903662,16,16,0.8125,84820.21031067608,unlabelled,010369135025590366
+UAHS|Koranahalli|Makanahalli|ssm|13.0,UAHS,Koranahalli,Makanahalli,ssm,13.0,13.70652,75.922819,16,16,0.8125,85018.22780551903,unlabelled,010370652025592282
+UAHS|Koranahalli|Makanahalli|ssm|21.0,UAHS,Koranahalli,Makanahalli,ssm,21.0,13.6953725,75.9454765,16,16,0.625,87610.04649594742,unlabelled,010369537025594548
+UAHS|Koranahalli|Rajanahalli-2|ssm|20.0,UAHS,Koranahalli,Rajanahalli-2,ssm,20.0,13.6831025,75.8968825,16,16,0.6875,85007.53023859073,unlabelled,010368310025589688
+UAHS|Kytagondanahalli|Kasturitimmanahalli1|ssm|32.0,UAHS,Kytagondanahalli,Kasturitimmanahalli1,ssm,32.0,14.297212,76.730812,15,15,0.8,13069.770273605433,unlabelled,010429721025673081
+UAHS|Kytagondanahalli|Kasturitimmanahalli1|ssm|33.0,UAHS,Kytagondanahalli,Kasturitimmanahalli1,ssm,33.0,14.25944,76.731962,15,15,0.8666666666666667,16260.848479141097,unlabelled,010425944025673196
+UAHS|Kytagondanahalli|Kasturitimmanahalli2|ssm|29.0,UAHS,Kytagondanahalli,Kasturitimmanahalli2,ssm,29.0,14.30688,76.753031,15,15,0.8,10867.294609319486,unlabelled,010430688025675303
+UAHS|Kytagondanahalli|Kyatagondanahalli2|ssm|26.0,UAHS,Kytagondanahalli,Kyatagondanahalli2,ssm,26.0,14.387589,76.808695,15,15,0.9333333333333333,13058.164157480041,unlabelled,010438759025680870
+UAHS|Kytagondanahalli|Kyatagondanahalli3|ssm|28.0,UAHS,Kytagondanahalli,Kyatagondanahalli3,ssm,28.0,14.314702,76.773671,15,15,0.7333333333333333,3458.4879338807186,unlabelled,010431470025677367
+UAHS|Kytagondanahalli|Kyatagondanahalli3|ssm|31.0,UAHS,Kytagondanahalli,Kyatagondanahalli3,ssm,31.0,14.2919,76.740942,15,15,0.8666666666666667,12833.802539815755,unlabelled,010429190025674094
+UAHS|Kytagondanahalli|Vidappanakunte1|ssm|27.0,UAHS,Kytagondanahalli,Vidappanakunte1,ssm,27.0,14.37953,76.819081,15,15,0.9333333333333333,1028.213603282457,unlabelled,010437953025681908
+UAHS|Kytagondanahalli|Vidappanakunte2|ssm|25.0,UAHS,Kytagondanahalli,Vidappanakunte2,ssm,25.0,14.390872,76.803899,15,15,0.9333333333333333,16467.14346231567,unlabelled,010439087025680390
+UAHS|Kytagondanahalli|Vidappanakunte2|ssm|30.0,UAHS,Kytagondanahalli,Vidappanakunte2,ssm,30.0,14.286052,76.761281,15,15,0.8,2464.9722635147987,unlabelled,010428605025676128
+UAHS|Laxmisagara 4U|Lakshimisagar1|ssm|10.0,UAHS,Laxmisagara 4U,Lakshimisagar1,ssm,10.0,14.01081,75.93455349999999,16,15,0.875,66434.90386921426,unlabelled,010401081025593455
+UAHS|Laxmisagara 4U|Mallegere3|ssm|11.0,UAHS,Laxmisagara 4U,Mallegere3,ssm,11.0,13.9914665,75.917744,16,15,0.8125,65715.01710738757,unlabelled,010399147025591774
+UAHS|Laxmisagara 4U|Mallegere3|ssm|12.0,UAHS,Laxmisagara 4U,Mallegere3,ssm,12.0,13.97208,75.92354,16,15,0.875,67252.65693798232,unlabelled,010397208025592354
+UAHS|Mattikote|Dhoopadahalli|ssm|46.0,UAHS,Mattikote,Dhoopadahalli,ssm,46.0,14.23744,75.391771,17,17,0.8823529411764706,3680.48892719376,unlabelled,010423744025539177
+UAHS|Mattikote|Gabburu|ssm|47.0,UAHS,Mattikote,Gabburu,ssm,47.0,14.29094,75.355498,17,17,0.8823529411764706,4149.259078952475,unlabelled,010429094025535550
+UAHS|Mattikote|Haliyur|ssm|48.0,UAHS,Mattikote,Haliyur,ssm,48.0,14.257282,75.372552,17,17,0.8823529411764706,1129.9442783160353,unlabelled,010425728025537255
+UAHS|Nagagondanahalli|Devaranahalli|ssm|36.0,UAHS,Nagagondanahalli,Devaranahalli,ssm,36.0,14.268152,76.766509,15,15,0.8666666666666667,6674.793590172858,unlabelled,010426815025676651
+UAHS|Nagagondanahalli|Halagondanahalli2|ssm|35.0,UAHS,Nagagondanahalli,Halagondanahalli2,ssm,35.0,14.319177,76.805306,15,15,1.0,155.72433685495488,unlabelled,010431918025680531
+UAHS|Nagagondanahalli|Nagagondanahalli1|ssm|34.0,UAHS,Nagagondanahalli,Nagagondanahalli1,ssm,34.0,14.37274,76.831483,15,15,0.8666666666666667,2201.7799742521192,unlabelled,010437274025683148
+UASB|Chatrakodihalli|Chaluvanahalli|ssm|13.0,UASB,Chatrakodihalli,Chaluvanahalli,ssm,13.0,13.11539,78.06761,40,40,1.0,0.0,unlabelled,010311539025806761
+UASB|Chatrakodihalli|Chaluvanahalli|ssm|14.0,UASB,Chatrakodihalli,Chaluvanahalli,ssm,14.0,13.11804,78.07721,40,39,1.0,0.0,unlabelled,010311804025807721
+UASB|Chatrakodihalli|Chaluvanahalli|ssm|15.0,UASB,Chatrakodihalli,Chaluvanahalli,ssm,15.0,13.11503,78.05843,40,40,1.0,0.0,unlabelled,010311503025805843
+UASB|Chatrakodihalli|Kondarajanahalli|ssm|16.0,UASB,Chatrakodihalli,Kondarajanahalli,ssm,16.0,13.11956,78.10804,40,40,1.0,0.0,unlabelled,010311956025810804
+UASB|Chatrakodihalli|Kondarajanahalli|ssm|17.0,UASB,Chatrakodihalli,Kondarajanahalli,ssm,17.0,13.11804,78.10021,40,40,1.0,0.0,unlabelled,010311804025810021
+UASB|Chatrakodihalli|Kondarajanahalli|ssm|18.0,UASB,Chatrakodihalli,Kondarajanahalli,ssm,18.0,13.11751,78.11468,40,40,1.0,0.0,unlabelled,010311751025811468
+UASB|Chatrakodihalli|Shettikotthnuru|ssm|19.0,UASB,Chatrakodihalli,Shettikotthnuru,ssm,19.0,13.07746,78.06476,40,40,1.0,0.0,unlabelled,010307746025806476
+UASB|Chatrakodihalli|Shettikotthnuru|ssm|20.0,UASB,Chatrakodihalli,Shettikotthnuru,ssm,20.0,13.07301,78.05715,40,40,1.0,0.0,unlabelled,010307301025805715
+UASB|Chatrakodihalli|Shettikotthnuru|ssm|21.0,UASB,Chatrakodihalli,Shettikotthnuru,ssm,21.0,13.07007,78.04135,40,40,1.0,0.0,unlabelled,010307007025804135
+UASB|Doddenahalli|Bilenahalli|ssm|28.0,UASB,Doddenahalli,Bilenahalli,ssm,28.0,13.208467,76.183692,39,39,1.0,0.0,unlabelled,010320847025618369
+UASB|Doddenahalli|Bilenahalli|ssm|29.0,UASB,Doddenahalli,Bilenahalli,ssm,29.0,13.215072,76.188855,39,39,1.0,0.0,unlabelled,010321507025618886
+UASB|Doddenahalli|Bilenahalli|ssm|30.0,UASB,Doddenahalli,Bilenahalli,ssm,30.0,13.181957,76.181518,39,39,1.0,0.0,unlabelled,010318196025618152
+UASB|Doddenahalli|Doddenahalli|ssm|25.0,UASB,Doddenahalli,Doddenahalli,ssm,25.0,13.217212,76.217207,39,39,1.0,0.0,unlabelled,010321721025621721
+UASB|Doddenahalli|Doddenahalli|ssm|26.0,UASB,Doddenahalli,Doddenahalli,ssm,26.0,13.222107,76.210308,39,39,1.0,0.0,unlabelled,010322211025621031
+UASB|Doddenahalli|Doddenahalli|ssm|27.0,UASB,Doddenahalli,Doddenahalli,ssm,27.0,13.199203,76.219427,39,39,1.0,0.0,unlabelled,010319920025621943
+UASB|Doddenahalli|Mootikere|ssm|31.0,UASB,Doddenahalli,Mootikere,ssm,31.0,13.168848,76.163555,39,39,1.0,0.0,unlabelled,010316885025616355
+UASB|Doddenahalli|Mootikere|ssm|32.0,UASB,Doddenahalli,Mootikere,ssm,32.0,13.16346,76.15182,39,39,1.0,0.0,unlabelled,010316346025615182
+UASB|Doddenahalli|Mootikere|ssm|33.0,UASB,Doddenahalli,Mootikere,ssm,33.0,13.176163,76.168628,39,39,1.0,0.0,unlabelled,010317616025616863
+UASB|Gummalapalli|Agutimadike|ssm|41.0,UASB,Gummalapalli,Agutimadike,ssm,41.0,13.787918,77.946202,39,39,1.0,0.3088595275674684,unlabelled,010378792025794620
+UASB|Gummalapalli|Agutimadike|ssm|42.0,UASB,Gummalapalli,Agutimadike,ssm,42.0,13.795073,77.944958,39,39,1.0,0.39563525506371877,unlabelled,010379507025794496
+UASB|Gummalapalli|Agutimadike|ssm|43.0,UASB,Gummalapalli,Agutimadike,ssm,43.0,13.806175,77.935747,39,39,1.0,0.6405175404439684,unlabelled,010380618025793575
+UASB|Gummalapalli|Peddareddipalli|ssm|38.0,UASB,Gummalapalli,Peddareddipalli,ssm,38.0,13.785807,77.959447,39,39,1.0,0.4632892918346348,unlabelled,010378581025795945
+UASB|Gummalapalli|Peddareddipalli|ssm|39.0,UASB,Gummalapalli,Peddareddipalli,ssm,39.0,13.795422,77.969948,39,39,1.0,0.308859528701043,unlabelled,010379542025796995
+UASB|Gummalapalli|Peddareddipalli|ssm|40.0,UASB,Gummalapalli,Peddareddipalli,ssm,40.0,13.793505,77.976622,39,39,1.0,0.5934248124961226,unlabelled,010379350025797662
+UASB|Gummalapalli|Tollapalli|ssm|37.0,UASB,Gummalapalli,Tollapalli,ssm,37.0,13.771343,77.922455,39,39,1.0,0.6329202553437007,unlabelled,010377134025792246
+UASB|Gummalapalli|Tollapalli|ssm|44.0,UASB,Gummalapalli,Tollapalli,ssm,44.0,13.794348,77.922572,39,39,1.0,0.308859528701043,unlabelled,010379435025792257
+UASB|Gummalapalli|Tollapalli|ssm|45.0,UASB,Gummalapalli,Tollapalli,ssm,45.0,13.788663,77.939217,38,38,1.0,0.46328929330162977,unlabelled,010378866025793922
+UASB|Holali (Kembodi)|Chikkahosala|ssm|22.0,UASB,Holali (Kembodi),Chikkahosala,ssm,22.0,13.08221,78.12818,39,39,1.0,0.0,unlabelled,010308221025812818
+UASB|Holali (Kembodi)|Kalipura1|ssm|23.0,UASB,Holali (Kembodi),Kalipura1,ssm,23.0,13.11159,78.16204,39,39,1.0,0.0,unlabelled,010311159025816204
+UASB|Holali (Kembodi)|Karahalli|ssm|24.0,UASB,Holali (Kembodi),Karahalli,ssm,24.0,13.14565,78.2165,39,39,1.0,0.0,unlabelled,010314565025821650
+UASB|Maidalakere|Hodekallu|ssm|1.0,UASB,Maidalakere,Hodekallu,ssm,1.0,13.299252,77.211883,41,41,1.0,0.0,unlabelled,010329925025721188
+UASB|Maidalakere|Hodekallu|ssm|2.0,UASB,Maidalakere,Hodekallu,ssm,2.0,13.311427,77.213852,41,41,1.0,0.0,unlabelled,010331143025721385
+UASB|Maidalakere|Hodekallu|ssm|3.0,UASB,Maidalakere,Hodekallu,ssm,3.0,13.31516,77.207668,41,41,1.0,0.0,unlabelled,010331516025720767
+UASB|Maidalakere|Kadugujjanahalli|ssm|7.0,UASB,Maidalakere,Kadugujjanahalli,ssm,7.0,13.333163,77.27004,41,41,1.0,0.0,unlabelled,010333316025727004
+UASB|Maidalakere|Kadugujjanahalli|ssm|8.0,UASB,Maidalakere,Kadugujjanahalli,ssm,8.0,13.326948,77.259928,41,41,1.0,0.0,unlabelled,010332695025725993
+UASB|Maidalakere|Kadugujjanahalli|ssm|9.0,UASB,Maidalakere,Kadugujjanahalli,ssm,9.0,13.32445,77.253913,41,41,1.0,0.0,unlabelled,010332445025725391
+UASB|Maidalakere|Siddalingayyanapalya|ssm|4.0,UASB,Maidalakere,Siddalingayyanapalya,ssm,4.0,13.321687,77.219032,41,41,1.0,0.0,unlabelled,010332169025721903
+UASB|Maidalakere|Siddalingayyanapalya|ssm|5.0,UASB,Maidalakere,Siddalingayyanapalya,ssm,5.0,13.319803,77.226265,41,41,1.0,0.0,unlabelled,010331980025722626
+UASB|Maidalakere|Siddalingayyanapalya|ssm|6.0,UASB,Maidalakere,Siddalingayyanapalya,ssm,6.0,13.315633,77.23567,41,41,1.0,0.0,unlabelled,010331563025723567
+UASB|Narayanghatta (Annapura)|Adhihalli|ssm|34.0,UASB,Narayanghatta (Annapura),Adhihalli,ssm,34.0,13.176163,76.168628,6,6,0.8333333333333334,8950.402446155693,unlabelled,010317616025616863
+UASB|Narayanghatta (Annapura)|Mududi|ssm|36.0,UASB,Narayanghatta (Annapura),Mududi,ssm,36.0,13.176163,76.168628,7,7,0.7142857142857143,15186.128693090799,unlabelled,010317616025616863
+UASB|Narayanghatta (Annapura)|Talalur|ssm|35.0,UASB,Narayanghatta (Annapura),Talalur,ssm,35.0,13.176163,76.168628,6,6,0.8333333333333334,13882.19908175733,unlabelled,010317616025616863
+UASB|Virupasandra|Kemarepalya|ssm|12.0,UASB,Virupasandra,Kemarepalya,ssm,12.0,13.223505,77.085438,41,41,1.0,0.0,unlabelled,010322350025708544
+UASB|Virupasandra|Mullenahalli|ssm|11.0,UASB,Virupasandra,Mullenahalli,ssm,11.0,13.240405,77.113902,41,41,1.0,0.0,unlabelled,010324040025711390
+UASB|Virupasandra|Neralapura|ssm|10.0,UASB,Virupasandra,Neralapura,ssm,10.0,13.234088,77.158945,41,41,1.0,0.0,unlabelled,010323409025715894
+UASD|Artal Sub-Watershed|Artal 1|ssm|3.0,UASD,Artal Sub-Watershed,Artal 1,ssm,3.0,16.44,75.1724,12,12,1.0,0.0,saturation,010644000025517240
+UASD|Artal Sub-Watershed|Artal 3|ssm|1.0,UASD,Artal Sub-Watershed,Artal 3,ssm,1.0,16.7881,75.3506,12,12,1.0,0.0,saturation,010678810025535060
+UASD|Artal Sub-Watershed|Artal-1|ssm|9.0,UASD,Artal Sub-Watershed,Artal-1,ssm,9.0,16.4349,75.1752,12,12,1.0,0.0,saturation,010643490025517520
+UASD|Artal Sub-Watershed|Artal-2|ssm|2.0,UASD,Artal Sub-Watershed,Artal-2,ssm,2.0,16.4511,75.1816,12,12,1.0,0.0,saturation,010645110025518160
+UASD|Artal Sub-Watershed|Artal-2|ssm|6.0,UASD,Artal Sub-Watershed,Artal-2,ssm,6.0,16.4432,75.1718,12,12,1.0,0.0,saturation,010644320025517180
+UASD|Artal Sub-Watershed|Artal-2|ssm|8.0,UASD,Artal Sub-Watershed,Artal-2,ssm,8.0,16.4448,75.1747,12,12,1.0,0.0,saturation,010644480025517470
+UASD|Artal Sub-Watershed|Artal-3|ssm|7.0,UASD,Artal Sub-Watershed,Artal-3,ssm,7.0,16.4612,75.2037,12,12,1.0,0.0,saturation,010646120025520370
+UASD|Artal Sub-Watershed|Halahalli-1|ssm|4.0,UASD,Artal Sub-Watershed,Halahalli-1,ssm,4.0,16.4519,75.2122,12,12,1.0,0.0,saturation,010645190025521220
+UASD|Artal Sub-Watershed|Halahalli-2|ssm|5.0,UASD,Artal Sub-Watershed,Halahalli-2,ssm,5.0,16.4521,75.2009,12,12,1.0,0.0,saturation,010645210025520090
+UASD|Gadag sub-watershed|Chikkoppa|ssm|1.0,UASD,Gadag sub-watershed,Chikkoppa,ssm,1.0,15.48029,75.66051,16,16,1.0,0.0,control,010548029025566051
+UASD|Gadag sub-watershed|Hirekoppa|ssm|2.0,UASD,Gadag sub-watershed,Hirekoppa,ssm,2.0,15.49948,75.65871,16,16,1.0,0.0,control,010549948025565871
+UASD|Gadag sub-watershed|Kiratageri-2|ssm|3.0,UASD,Gadag sub-watershed,Kiratageri-2,ssm,3.0,15.52089,75.67462,16,16,1.0,0.0,control,010552089025567462
+UASD|Hanchinal sub-watershed|Hanchinal-1|ssm|1.0,UASD,Hanchinal sub-watershed,Hanchinal-1,ssm,1.0,15.165278,75.1586111,9,9,1.0,0.0,control,010516528025515861
+UASD|Hanchinal sub-watershed|Vittalapura-1|ssm|2.0,UASD,Hanchinal sub-watershed,Vittalapura-1,ssm,2.0,15.170278,75.1769444,9,9,1.0,0.0,control,010517028025517694
+UASD|Hanchinal sub-watershed|Vittalapura-2|ssm|3.0,UASD,Hanchinal sub-watershed,Vittalapura-2,ssm,3.0,15.226944,75.2288889,9,9,1.0,0.0,control,010522694025522889
+UASD|Hosahalli sub-watershed|Abalur|ssm|1.0,UASD,Hosahalli sub-watershed,Abalur,ssm,1.0,14.554722,75.4313889,15,15,1.0,0.0,control,010455472025543139
+UASD|Hosahalli sub-watershed|Hirekerur|ssm|3.0,UASD,Hosahalli sub-watershed,Hirekerur,ssm,3.0,14.4975,75.3986111,15,15,1.0,0.0,control,010449750025539861
+UASD|Hosahalli sub-watershed|Nulageri|ssm|2.0,UASD,Hosahalli sub-watershed,Nulageri,ssm,2.0,14.488611,75.4086111,15,15,1.0,0.0,control,010448861025540861
+UASD|Kodihalli Sub-Watershed|Aladgeri|ssm|2.0,UASD,Kodihalli Sub-Watershed,Aladgeri,ssm,2.0,14.555591,75.471144,16,15,1.0,0.0,saturation,010455559025547114
+UASD|Kodihalli Sub-Watershed|Kunchur|ssm|5.0,UASD,Kodihalli Sub-Watershed,Kunchur,ssm,5.0,14.524592,75.511122,16,15,1.0,0.0,saturation,010452459025551112
+UASD|Kodihalli Sub-Watershed|Kunchur|ssm|6.0,UASD,Kodihalli Sub-Watershed,Kunchur,ssm,6.0,14.515297,75.520683,16,15,1.0,0.0,saturation,010451530025552068
+UASD|Kodihalli Sub-Watershed|Lingadevarakoppa|ssm|1.0,UASD,Kodihalli Sub-Watershed,Lingadevarakoppa,ssm,1.0,14.550707,75.508085,16,15,1.0,0.0,saturation,010455071025550808
+UASD|Kodihalli Sub-Watershed|Lingadevarakoppa|ssm|4.0,UASD,Kodihalli Sub-Watershed,Lingadevarakoppa,ssm,4.0,14.535103,75.512413,16,15,1.0,0.0,saturation,010453510025551241
+UASD|Kodihalli Sub-Watershed|Mavintopa|ssm|7.0,UASD,Kodihalli Sub-Watershed,Mavintopa,ssm,7.0,14.502813,75.503232,16,15,1.0,0.0,saturation,010450281025550323
+UASD|Kodihalli Sub-Watershed|Mavintopa|ssm|8.0,UASD,Kodihalli Sub-Watershed,Mavintopa,ssm,8.0,14.507089,75.513718,16,15,1.0,0.0,saturation,010450709025551372
+UASD|Kodihalli Sub-Watershed|Mavintopa|ssm|9.0,UASD,Kodihalli Sub-Watershed,Mavintopa,ssm,9.0,14.486705,75.517697,16,15,1.0,0.0,saturation,010448670025551770
+UASD|Kodihalli Sub-Watershed|Yelavadhalli|ssm|3.0,UASD,Kodihalli Sub-Watershed,Yelavadhalli,ssm,3.0,14.550516,75.451109,16,15,1.0,0.0,saturation,010455052025545111
+UASD|Kohalli sub-watershed|Khilaraddi-1|ssm|2.0,UASD,Kohalli sub-watershed,Khilaraddi-1,ssm,2.0,16.824444,75.2555556,9,9,1.0,0.0,control,010682444025525556
+UASD|Kohalli sub-watershed|Khilaraddi-2|ssm|3.0,UASD,Kohalli sub-watershed,Khilaraddi-2,ssm,3.0,16.824722,75.2772222,9,9,1.0,0.0,control,010682472025527722
+UASD|Kohalli sub-watershed|Khilaraddi-3|ssm|1.0,UASD,Kohalli sub-watershed,Khilaraddi-3,ssm,1.0,16.8525,75.3038889,10,9,1.0,0.0,control,010685250025530389
+UASD|Nilagunda Sub-watershed|Kanvi-1|ssm|6.0,UASD,Nilagunda Sub-watershed,Kanvi-1,ssm,6.0,15.29336,75.55522,17,17,1.0,0.0,saturation,010529336025555522
+UASD|Nilagunda Sub-watershed|Mulgund East-3|ssm|1.0,UASD,Nilagunda Sub-watershed,Mulgund East-3,ssm,1.0,15.29689,75.56802,17,17,1.0,0.0,saturation,010529689025556802
+UASD|Nilagunda Sub-watershed|Mulgund-1|ssm|3.0,UASD,Nilagunda Sub-watershed,Mulgund-1,ssm,3.0,15.31464,75.52067,17,17,1.0,0.0,saturation,010531464025552067
+UASD|Nilagunda Sub-watershed|Mulgund-2|ssm|4.0,UASD,Nilagunda Sub-watershed,Mulgund-2,ssm,4.0,15.29158,75.52045,17,17,1.0,0.0,saturation,010529158025552045
+UASD|Nilagunda Sub-watershed|Mulgund-2|ssm|5.0,UASD,Nilagunda Sub-watershed,Mulgund-2,ssm,5.0,15.29615,75.54059,17,17,1.0,0.0,saturation,010529615025554059
+UASD|Nilagunda Sub-watershed|Nilgund-2|ssm|2.0,UASD,Nilagunda Sub-watershed,Nilgund-2,ssm,2.0,15.31486,75.5179,17,17,1.0,0.0,saturation,010531486025551790
+UASD|Nilagunda Sub-watershed|Nilgund-3|ssm|7.0,UASD,Nilagunda Sub-watershed,Nilgund-3,ssm,7.0,15.30442,75.48469,17,17,1.0,0.0,saturation,010530442025548469
+UASD|Nilagunda Sub-watershed|Nilgund-3|ssm|8.0,UASD,Nilagunda Sub-watershed,Nilgund-3,ssm,8.0,15.29886,75.48786,17,17,1.0,0.0,saturation,010529886025548786
+UASD|Nilagunda Sub-watershed|Nilgund-3|ssm|9.0,UASD,Nilagunda Sub-watershed,Nilgund-3,ssm,9.0,15.30131,75.49959,17,17,1.0,0.0,saturation,010530131025549959
+UASD|Shirur Sub-Watershed|Bilebala|ssm|5.0,UASD,Shirur Sub-Watershed,Bilebala,ssm,5.0,15.2186,75.26,5,5,1.0,0.0,saturation,010521860025526000
+UASD|Shirur Sub-Watershed|Devanurnorth|ssm|2.0,UASD,Shirur Sub-Watershed,Devanurnorth,ssm,2.0,15.2122,75.23972,5,5,1.0,0.0,saturation,010521220025523972
+UASD|Shirur Sub-Watershed|Devanurnorth|ssm|4.0,UASD,Shirur Sub-Watershed,Devanurnorth,ssm,4.0,15.2414,75.25917,5,5,1.0,0.0,saturation,010524140025525917
+UASD|Shirur Sub-Watershed|Devanur|ssm|7.0,UASD,Shirur Sub-Watershed,Devanur,ssm,7.0,15.2433,75.28306,5,5,1.0,0.0,saturation,010524330025528306
+UASD|Shirur Sub-Watershed|Kamadoli-1|ssm|8.0,UASD,Shirur Sub-Watershed,Kamadoli-1,ssm,8.0,15.2358,75.28833,5,5,1.0,0.0,saturation,010523580025528833
+UASD|Shirur Sub-Watershed|Kamadoli-2|ssm|1.0,UASD,Shirur Sub-Watershed,Kamadoli-2,ssm,1.0,15.1772,75.23972,5,5,1.0,0.0,saturation,010517720025523972
+UASD|Shirur Sub-Watershed|Shirur-1|ssm|3.0,UASD,Shirur Sub-Watershed,Shirur-1,ssm,3.0,15.2444,75.23806,5,5,1.0,0.0,saturation,010524440025523806
+UASD|Shirur Sub-Watershed|Shirur-1|ssm|6.0,UASD,Shirur Sub-Watershed,Shirur-1,ssm,6.0,15.2389,75.26917,5,5,1.0,0.0,saturation,010523890025526917
+UASD|Shirur Sub-Watershed|Shirur-1|ssm|9.0,UASD,Shirur Sub-Watershed,Shirur-1,ssm,9.0,15.2636,75.27278,5,5,1.0,0.0,saturation,010526360025527278
+UHSB|Chittaragi|Chittaragi-1|ssm|1.0,UHSB,Chittaragi,Chittaragi-1,ssm,1.0,16.120555555555555,75.97444444444444,1,1,1.0,0.0,saturation,010612056025597444
+UHSB|Chittaragi|Chittaragi-1|ssm|2.0,UHSB,Chittaragi,Chittaragi-1,ssm,2.0,16.11916666666667,75.98194444444445,1,1,1.0,0.0,saturation,010611917025598194
+UHSB|Chittaragi|Chittaragi-1|ssm|3.0,UHSB,Chittaragi,Chittaragi-1,ssm,3.0,16.11861111111111,75.96777777777778,1,1,1.0,0.0,saturation,010611861025596778
+UHSB|Chittaragi|Sulibhavi-1|ssm|4.0,UHSB,Chittaragi,Sulibhavi-1,ssm,4.0,16.012777777777778,75.95361111111112,1,1,1.0,0.0,saturation,010601278025595361
+UHSB|Chittaragi|Sulibhavi-1|ssm|5.0,UHSB,Chittaragi,Sulibhavi-1,ssm,5.0,16.053611111111113,75.95027777777779,1,1,1.0,0.0,saturation,010605361025595028
+UHSB|Chittaragi|Sulibhavi-1|ssm|6.0,UHSB,Chittaragi,Sulibhavi-1,ssm,6.0,16.024444444444445,75.94805555555556,1,1,1.0,0.0,saturation,010602444025594806
+UHSB|Honnutagi|Koulgi-1|ssm|1.0,UHSB,Honnutagi,Koulgi-1,ssm,1.0,16.826,75.837,14,14,1.0,0.0,saturation,010682600025583700
+UHSB|Honnutagi|Koulgi-1|ssm|2.0,UHSB,Honnutagi,Koulgi-1,ssm,2.0,16.827,75.839,13,13,1.0,0.0,saturation,010682700025583900
+UHSB|Honnutagi|Koulgi-1|ssm|3.0,UHSB,Honnutagi,Koulgi-1,ssm,3.0,16.83,75.849,12,12,1.0,0.0,saturation,010683000025584900
+UHSB|Kandgul|Masjawadi|ssm|10.0,UHSB,Kandgul,Masjawadi,ssm,10.0,18.091666,77.526627,32,32,1.0,0.0,unlabelled,010809167025752663
+UHSB|Kandgul|Masjawadi|ssm|11.0,UHSB,Kandgul,Masjawadi,ssm,11.0,18.098571,77.546512,31,31,1.0,0.0,unlabelled,010809857025754651
+UHSB|Kandgul|Masjawadi|ssm|12.0,UHSB,Kandgul,Masjawadi,ssm,12.0,18.09009,77.536949,30,30,1.0,0.0,unlabelled,010809009025753695
+UHSB|Pashapur|Ladha 1|ssm|2.0,UHSB,Pashapur,Ladha 1,ssm,2.0,18.111395,77.430901,36,36,1.0,0.0,unlabelled,010811140025743090
+UHSB|Pashapur|Ladha 1|ssm|7.0,UHSB,Pashapur,Ladha 1,ssm,7.0,18.124582,77.4393,35,35,1.0,0.0,unlabelled,010812458025743930
+UHSB|Pashapur|Ladha 1|ssm|8.0,UHSB,Pashapur,Ladha 1,ssm,8.0,18.119301,77.436416,34,34,1.0,0.0,unlabelled,010811930025743642
+UHSB|Pashapur|Ladha 2|ssm|1.0,UHSB,Pashapur,Ladha 2,ssm,1.0,18.084342,77.442383,36,36,1.0,0.0,unlabelled,010808434025744238
+UHSB|Pashapur|Ladha 2|ssm|3.0,UHSB,Pashapur,Ladha 2,ssm,3.0,18.090017,77.450232,36,36,1.0,0.0,unlabelled,010809002025745023
+UHSB|Pashapur|Ladha 2|ssm|6.0,UHSB,Pashapur,Ladha 2,ssm,6.0,18.085776,77.456589,36,36,1.0,0.0,unlabelled,010808578025745659
+UHSB|Pashapur|Mustapur|ssm|4.0,UHSB,Pashapur,Mustapur,ssm,4.0,18.102643,77.46111,36,36,1.0,0.0,unlabelled,010810264025746111
+UHSB|Pashapur|Mustapur|ssm|5.0,UHSB,Pashapur,Mustapur,ssm,5.0,18.112833,77.459653,36,36,1.0,0.0,unlabelled,010811283025745965
+UHSB|Pashapur|Mustapur|ssm|9.0,UHSB,Pashapur,Mustapur,ssm,9.0,18.108699,77.453272,33,33,1.0,0.0,unlabelled,010810870025745327
+UAHS|Beguru|Dabbanabairanahalli|lai|,UAHS,Beguru,Dabbanabairanahalli,lai,,14.291134,75.412213,39,10,0.2564102564102564,1529.2820737264954,unlabelled,010429113025541221
+UAHS|Beguru|Gogga|lai|,UAHS,Beguru,Gogga,lai,,14.263854,75.472121,30,10,0.3333333333333333,1976.5604280920106,unlabelled,010426385025547212
+UAHS|Beguru|Hulaganakatte1|lai|,UAHS,Beguru,Hulaganakatte1,lai,,14.263318,75.463906,10,10,1.0,5.528949451476491,unlabelled,010426332025546391
+UAHS|Beguru|Kenchagondanakoppa|lai|,UAHS,Beguru,Kenchagondanakoppa,lai,,14.26068,75.423193,9,9,1.0,12.42097660534079,unlabelled,010426068025542319
+UAHS|Haralahalli|Donduru|lai|,UAHS,Haralahalli,Donduru,lai,,13.866274,76.026893,9,9,1.0,31.792871811111574,unlabelled,010386627025602689
+UAHS|Haralahalli|Gijikatte|lai|,UAHS,Haralahalli,Gijikatte,lai,,13.82923,75.023298,9,9,0.8888888888888888,107253.53342776495,unlabelled,010382923025502330
+UAHS|Haralahalli|Karehalli|lai|,UAHS,Haralahalli,Karehalli,lai,,13.849931,76.06558,9,9,1.0,12.430409817394496,unlabelled,010384993025606558
+UAHS|Jammapura|Jammapur2|lai|,UAHS,Jammapura,Jammapur2,lai,,13.91454,75.993658,9,9,1.0,52.22812646952606,unlabelled,010391454025599366
+UAHS|Jammapura|Kallikere|lai|,UAHS,Jammapura,Kallikere,lai,,13.897323,75.98144400000001,18,9,0.0,527.323254565353,unlabelled,010389732025598144
+UAHS|Jammapura|Maravanji2|lai|,UAHS,Jammapura,Maravanji2,lai,,13.942465,75.976404,9,9,1.0,42.156118490227335,unlabelled,010394246025597640
+UAHS|Jammapura|Pandavamatti1|lai|,UAHS,Jammapura,Pandavamatti1,lai,,13.9632795,75.972009,36,9,0.0,2937.5061018733845,unlabelled,010396328025597201
+UAHS|Koranahalli|Chatnahalli-2|lai|,UAHS,Koranahalli,Chatnahalli-2,lai,,13.680874500000002,75.9035385,18,9,0.0,1216.7203368634248,unlabelled,010368087025590354
+UAHS|Koranahalli|Gollarahalli|lai|,UAHS,Koranahalli,Gollarahalli,lai,,13.673428,75.97357,9,9,1.0,0.5361995613202453,unlabelled,010367343025597357
+UAHS|Koranahalli|Jodi Bokikere|lai|,UAHS,Koranahalli,Jodi Bokikere,lai,,13.692221,75.911212,9,9,1.0,10.517695140032709,unlabelled,010369222025591121
+UAHS|Koranahalli|Koranahalli|lai|,UAHS,Koranahalli,Koranahalli,lai,,13.688118,75.920687,18,9,0.0,1858.1832762984577,unlabelled,010368812025592069
+UAHS|Koranahalli|Makanahalli|lai|,UAHS,Koranahalli,Makanahalli,lai,,13.701053,75.934223,18,9,0.0,1381.4787657935724,unlabelled,010370105025593422
+UAHS|Koranahalli|Rajanahalli-2|lai|,UAHS,Koranahalli,Rajanahalli-2,lai,,13.684247,75.896918,9,9,1.0,8.712443848037973,unlabelled,010368425025589692
+UAHS|Kytagondanahalli|Kasturitimmanahalli1|lai|,UAHS,Kytagondanahalli,Kasturitimmanahalli1,lai,,14.2782895,76.7313645,18,9,0.0,2100.980833286945,unlabelled,010427829025673136
+UAHS|Kytagondanahalli|Kasturitimmanahalli2|lai|,UAHS,Kytagondanahalli,Kasturitimmanahalli2,lai,,14.306506,76.753113,9,9,1.0,0.0,unlabelled,010430651025675311
+UAHS|Kytagondanahalli|Kyatagondanahalli2|lai|,UAHS,Kytagondanahalli,Kyatagondanahalli2,lai,,14.387161,76.808913,9,9,1.0,0.0,unlabelled,010438716025680891
+UAHS|Kytagondanahalli|Kyatagondanahalli3|lai|,UAHS,Kytagondanahalli,Kyatagondanahalli3,lai,,14.3033265,76.757424,18,9,0.0,2175.302948803308,unlabelled,010430333025675742
+UAHS|Kytagondanahalli|Vidappanakunte1|lai|,UAHS,Kytagondanahalli,Vidappanakunte1,lai,,14.37952,76.819172,9,9,1.0,0.0,unlabelled,010437952025681917
+UAHS|Kytagondanahalli|Vidappanakunte2|lai|,UAHS,Kytagondanahalli,Vidappanakunte2,lai,,14.3387205,76.78273,18,9,0.0,8368.557518952095,unlabelled,010433872025678273
+UAHS|Laxmisagara 4U|Lakshimisagar1|lai|,UAHS,Laxmisagara 4U,Lakshimisagar1,lai,,13.967582,75.971893,9,9,0.8888888888888888,6220.670498729071,unlabelled,010396758025597189
+UAHS|Laxmisagara 4U|Mallegere3|lai|,UAHS,Laxmisagara 4U,Mallegere3,lai,,13.98158,75.9204975,18,9,0.0,1123.8028585524714,unlabelled,010398158025592050
+UAHS|Mattikote|Dhoopadahalli|lai|,UAHS,Mattikote,Dhoopadahalli,lai,,14.2374015,75.39179050000001,10,10,1.0,12.776811298285557,unlabelled,010423740025539179
+UAHS|Mattikote|Gabburu|lai|,UAHS,Mattikote,Gabburu,lai,,14.290953,75.355686,10,10,1.0,5.497705513239685,unlabelled,010429095025535569
+UAHS|Mattikote|Haliyur|lai|,UAHS,Mattikote,Haliyur,lai,,14.257301,75.372609,10,10,1.0,2.8012302023084827,unlabelled,010425730025537261
+UAHS|Nagagondanahalli|Devaranahalli|lai|,UAHS,Nagagondanahalli,Devaranahalli,lai,,14.268015,76.766286,9,9,1.0,0.0,unlabelled,010426802025676629
+UAHS|Nagagondanahalli|Halagondanahalli2|lai|,UAHS,Nagagondanahalli,Halagondanahalli2,lai,,14.319202,76.805294,9,9,1.0,0.0,unlabelled,010431920025680529
+UAHS|Nagagondanahalli|Nagagondanahalli1|lai|,UAHS,Nagagondanahalli,Nagagondanahalli1,lai,,14.372646,76.830349,9,9,1.0,0.0,unlabelled,010437265025683035
+UASB|||lai|,UASB,,,lai,,13.78876,77.94534,31,12,0.3225806451612903,900.0723600001074,unlabelled,010378876025794534
+UASD|Artal Sub-Watershed|Artal 1|lai|,UASD,Artal Sub-Watershed,Artal 1,lai,,16.44,75.1724,8,8,1.0,0.0,saturation,010644000025517240
+UASD|Artal Sub-Watershed|Artal 3|lai|,UASD,Artal Sub-Watershed,Artal 3,lai,,16.7881,75.3506,8,8,1.0,0.0,saturation,010678810025535060
+UASD|Artal Sub-Watershed|Artal-1|lai|,UASD,Artal Sub-Watershed,Artal-1,lai,,16.4349,75.1752,8,8,1.0,0.0,saturation,010643490025517520
+UASD|Artal Sub-Watershed|Artal-2|lai|,UASD,Artal Sub-Watershed,Artal-2,lai,,16.4448,75.1747,24,8,0.3333333333333333,1016.271674514583,saturation,010644480025517470
+UASD|Artal Sub-Watershed|Artal-3|lai|,UASD,Artal Sub-Watershed,Artal-3,lai,,16.4612,75.2037,8,8,1.0,0.0,saturation,010646120025520370
+UASD|Artal Sub-Watershed|Halahalli-1|lai|,UASD,Artal Sub-Watershed,Halahalli-1,lai,,16.4519,75.2122,8,8,1.0,0.0,saturation,010645190025521220
+UASD|Artal Sub-Watershed|Halahalli-2|lai|,UASD,Artal Sub-Watershed,Halahalli-2,lai,,16.4521,75.2009,8,8,1.0,0.0,saturation,010645210025520090
+UASD|Gadag sub-watershed|Chikkoppa|lai|UP,UASD,Gadag sub-watershed,Chikkoppa,lai,UP,15.48029,75.66051,3,3,1.0,0.0,control,010548029025566051
+UASD|Gadag sub-watershed|Hirekoppa|lai|MD,UASD,Gadag sub-watershed,Hirekoppa,lai,MD,15.49948,75.65871,2,2,1.0,0.0,control,010549948025565871
+UASD|Gadag sub-watershed|Kiratgeri|lai|LW,UASD,Gadag sub-watershed,Kiratgeri,lai,LW,15.52089,75.67462,2,2,1.0,0.0,control,010552089025567462
+UASD|Hanchinal sub-watershed|Hanchinal-1|lai|UP,UASD,Hanchinal sub-watershed,Hanchinal-1,lai,UP,15.165278,75.1586111,14,14,1.0,0.0,control,010516528025515861
+UASD|Hanchinal sub-watershed|Vittalapura-1|lai|MD,UASD,Hanchinal sub-watershed,Vittalapura-1,lai,MD,15.170278,75.1769444,14,14,1.0,0.0,control,010517028025517694
+UASD|Hanchinal sub-watershed|Vittalapura-2|lai|LW,UASD,Hanchinal sub-watershed,Vittalapura-2,lai,LW,15.226944,75.2288889,14,14,1.0,0.0,control,010522694025522889
+UASD|Hosahalli sub-watershed|Abalur|lai|UP,UASD,Hosahalli sub-watershed,Abalur,lai,UP,14.554722,75.4313889,3,3,1.0,0.0,control,010455472025543139
+UASD|Hosahalli sub-watershed|Hirekerur|lai|LW,UASD,Hosahalli sub-watershed,Hirekerur,lai,LW,14.4975,75.3986111,3,3,1.0,0.0,control,010449750025539861
+UASD|Hosahalli sub-watershed|Nulageri|lai|MD,UASD,Hosahalli sub-watershed,Nulageri,lai,MD,14.488611,75.4086111,3,3,1.0,0.0,control,010448861025540861
+UASD|Kodihalli Sub-Watershed|Aladgeri|lai|,UASD,Kodihalli Sub-Watershed,Aladgeri,lai,,14.555591,75.471144,3,3,1.0,0.0,saturation,010455559025547114
+UASD|Kodihalli Sub-Watershed|Kunchur|lai|,UASD,Kodihalli Sub-Watershed,Kunchur,lai,,14.519944500000001,75.51590250000001,6,3,0.0,725.8831569893064,saturation,010451994025551590
+UASD|Kodihalli Sub-Watershed|Lingadevarakoppa|lai|,UASD,Kodihalli Sub-Watershed,Lingadevarakoppa,lai,,14.542905,75.51024899999999,6,3,0.0,893.3664484000265,saturation,010454290025551025
+UASD|Kodihalli Sub-Watershed|Mavintopa|lai|,UASD,Kodihalli Sub-Watershed,Mavintopa,lai,,14.502813,75.513718,9,3,0.0,1831.5264630008837,saturation,010450281025551372
+UASD|Kodihalli Sub-Watershed|Yelavadhalli|lai|,UASD,Kodihalli Sub-Watershed,Yelavadhalli,lai,,14.550516,75.451109,3,3,1.0,0.0,saturation,010455052025545111
+UASD|Kohalli sub-watershed|Khilaraddi-1|lai|MD,UASD,Kohalli sub-watershed,Khilaraddi-1,lai,MD,16.829852,75.257618,7,7,1.0,0.0,control,010682985025525762
+UASD|Kohalli sub-watershed|Khilaraddi-2|lai|LW,UASD,Kohalli sub-watershed,Khilaraddi-2,lai,LW,16.806273,75.25765,7,7,1.0,0.0,control,010680627025525765
+UASD|Kohalli sub-watershed|Khilaraddi-3|lai|UP,UASD,Kohalli sub-watershed,Khilaraddi-3,lai,UP,16.816854,75.253313,7,7,1.0,0.0,control,010681685025525331
+UASD|Nilagunda Sub-watershed|Kanvi-1|lai|MD3,UASD,Nilagunda Sub-watershed,Kanvi-1,lai,MD3,15.29336,75.55522,7,7,1.0,0.0,saturation,010529336025555522
+UASD|Nilagunda Sub-watershed|Mulgund East-3|lai|UP1,UASD,Nilagunda Sub-watershed,Mulgund East-3,lai,UP1,15.29689,75.56802,4,4,1.0,0.0,saturation,010529689025556802
+UASD|Nilagunda Sub-watershed|Mulgund-1|lai|UP3,UASD,Nilagunda Sub-watershed,Mulgund-1,lai,UP3,15.31464,75.52067,4,4,1.0,0.0,saturation,010531464025552067
+UASD|Nilagunda Sub-watershed|Mulgund-2|lai|MD1,UASD,Nilagunda Sub-watershed,Mulgund-2,lai,MD1,15.29158,75.52045,4,4,1.0,0.0,saturation,010529158025552045
+UASD|Nilagunda Sub-watershed|Mulgund-2|lai|MD2,UASD,Nilagunda Sub-watershed,Mulgund-2,lai,MD2,15.29615,75.54059,4,4,1.0,0.0,saturation,010529615025554059
+UASD|Nilagunda Sub-watershed|Nilgund-2|lai|UP2,UASD,Nilagunda Sub-watershed,Nilgund-2,lai,UP2,15.31486,75.5179,4,4,1.0,0.0,saturation,010531486025551790
+UASD|Nilagunda Sub-watershed|Nilgund-3|lai|LW1,UASD,Nilagunda Sub-watershed,Nilgund-3,lai,LW1,15.30442,75.48469,4,4,1.0,0.0,saturation,010530442025548469
+UASD|Nilagunda Sub-watershed|Nilgund-3|lai|LW2,UASD,Nilagunda Sub-watershed,Nilgund-3,lai,LW2,15.29886,75.48786,4,4,1.0,0.0,saturation,010529886025548786
+UASD|Nilagunda Sub-watershed|Nilgund-3|lai|LW3,UASD,Nilagunda Sub-watershed,Nilgund-3,lai,LW3,15.30131,75.49959,4,4,1.0,0.0,saturation,010530131025549959
+UASD|Shirur Sub-Watershed|Bilebala|lai|,UASD,Shirur Sub-Watershed,Bilebala,lai,,15.2186,75.26,11,11,1.0,0.0,saturation,010521860025526000
+UASD|Shirur Sub-Watershed|Devanurnorth|lai|,UASD,Shirur Sub-Watershed,Devanurnorth,lai,,15.2268,75.24944500000001,22,11,0.0,1921.9473143326627,saturation,010522680025524944
+UASD|Shirur Sub-Watershed|Devanur|lai|,UASD,Shirur Sub-Watershed,Devanur,lai,,15.2433,75.28306,11,11,1.0,0.0,saturation,010524330025528306
+UASD|Shirur Sub-Watershed|Kamadoli-1|lai|,UASD,Shirur Sub-Watershed,Kamadoli-1,lai,,15.2358,75.28833,11,11,1.0,0.0,saturation,010523580025528833
+UASD|Shirur Sub-Watershed|Kamadoli-2|lai|,UASD,Shirur Sub-Watershed,Kamadoli-2,lai,,15.1772,75.23972,11,11,1.0,0.0,saturation,010517720025523972
+UASD|Shirur Sub-Watershed|Shirur-1|lai|,UASD,Shirur Sub-Watershed,Shirur-1,lai,,15.2444,75.26917,33,11,0.0,3336.2336714100093,saturation,010524440025526917
+UHSB|Kandgul|Masjawadi|lai|10.0,UHSB,Kandgul,Masjawadi,lai,10.0,18.091666,77.526627,23,23,1.0,0.0,unlabelled,010809167025752663
+UHSB|Kandgul|Masjawadi|lai|11.0,UHSB,Kandgul,Masjawadi,lai,11.0,18.098571,77.546512,23,23,1.0,0.0,unlabelled,010809857025754651
+UHSB|Kandgul|Masjawadi|lai|12.0,UHSB,Kandgul,Masjawadi,lai,12.0,18.09009,77.536949,23,23,1.0,0.0,unlabelled,010809009025753695
+UHSB|Pashapur|Ladha 1|lai|2.0,UHSB,Pashapur,Ladha 1,lai,2.0,18.111395,77.430901,23,23,1.0,0.0,unlabelled,010811140025743090
+UHSB|Pashapur|Ladha 1|lai|7.0,UHSB,Pashapur,Ladha 1,lai,7.0,18.124582,77.4393,23,23,1.0,0.0,unlabelled,010812458025743930
+UHSB|Pashapur|Ladha 1|lai|8.0,UHSB,Pashapur,Ladha 1,lai,8.0,18.119301,77.436416,23,23,1.0,0.0,unlabelled,010811930025743642
+UHSB|Pashapur|Ladha 2|lai|1.0,UHSB,Pashapur,Ladha 2,lai,1.0,18.084342,77.442383,23,23,1.0,0.0,unlabelled,010808434025744238
+UHSB|Pashapur|Ladha 2|lai|3.0,UHSB,Pashapur,Ladha 2,lai,3.0,18.090017,77.450232,23,23,1.0,0.0,unlabelled,010809002025745023
+UHSB|Pashapur|Ladha 2|lai|6.0,UHSB,Pashapur,Ladha 2,lai,6.0,18.085776,77.456589,23,23,1.0,0.0,unlabelled,010808578025745659
+UHSB|Pashapur|Mustapur|lai|4.0,UHSB,Pashapur,Mustapur,lai,4.0,18.102643,77.46111,23,23,1.0,0.0,unlabelled,010810264025746111
+UHSB|Pashapur|Mustapur|lai|5.0,UHSB,Pashapur,Mustapur,lai,5.0,18.112833,77.459653,23,23,1.0,0.0,unlabelled,010811283025745965
+UHSB|Pashapur|Mustapur|lai|9.0,UHSB,Pashapur,Mustapur,lai,9.0,18.108699,77.453272,23,23,1.0,0.0,unlabelled,010810870025745327
+UAHS|Beguru|Dabbanabairanahalli|gw|1.0,UAHS,Beguru,Dabbanabairanahalli,gw,1.0,14.27828,75.409032,9,9,1.0,0.0,unlabelled,010427828025540903
+UAHS|Beguru|Dabbanabairanahalli|gw|2.0,UAHS,Beguru,Dabbanabairanahalli,gw,2.0,14.28543,75.411232,9,9,1.0,0.0,unlabelled,010428543025541123
+UAHS|Beguru|Dabbanabairanahalli|gw|3.0,UAHS,Beguru,Dabbanabairanahalli,gw,3.0,14.289835,75.411367,9,9,1.0,0.0,unlabelled,010428984025541137
+UAHS|Beguru|Dabbanabairanahalli|gw|4.0,UAHS,Beguru,Dabbanabairanahalli,gw,4.0,14.292106,75.418045,9,9,1.0,0.0,unlabelled,010429211025541804
+UAHS|Beguru|Gogga|gw|7.0,UAHS,Beguru,Gogga,gw,7.0,14.258038,75.467385,9,9,1.0,0.0,unlabelled,010425804025546738
+UAHS|Beguru|Gogga|gw|8.0,UAHS,Beguru,Gogga,gw,8.0,14.263995,75.741418,9,9,1.0,0.0,unlabelled,010426400025574142
+UAHS|Beguru|Gogga|gw|9.0,UAHS,Beguru,Gogga,gw,9.0,14.274452,75.485833,9,9,1.0,0.0,unlabelled,010427445025548583
+UAHS|Beguru|Hulaganakatte1|gw|6.0,UAHS,Beguru,Hulaganakatte1,gw,6.0,14.262668,75.464844,9,9,1.0,0.0,unlabelled,010426267025546484
+UAHS|Beguru|Kenchagondanakoppa|gw|5.0,UAHS,Beguru,Kenchagondanakoppa,gw,5.0,14.259995,75.424608,9,9,1.0,0.0,unlabelled,010426000025542461
+UAHS|Haralahalli|Donduru|gw|23.0,UAHS,Haralahalli,Donduru,gw,23.0,13.849987,76.067017,8,8,1.0,0.0,unlabelled,010384999025606702
+UAHS|Haralahalli|Gijikatte|gw|22.0,UAHS,Haralahalli,Gijikatte,gw,22.0,13.865893,76.027062,8,8,1.0,0.0,unlabelled,010386589025602706
+UAHS|Haralahalli|Karehalli|gw|24.0,UAHS,Haralahalli,Karehalli,gw,24.0,13.833628,76.023677,8,8,1.0,0.0,unlabelled,010383363025602368
+UAHS|Jammapura|Kallikere|gw|8.0,UAHS,Jammapura,Kallikere,gw,8.0,13.900111,75.9856,9,9,1.0,0.0,unlabelled,010390011025598560
+UAHS|Jammapura|Kallikere|gw|9.0,UAHS,Jammapura,Kallikere,gw,9.0,13.893088,75.978145,9,9,1.0,0.0,unlabelled,010389309025597814
+UAHS|Jammapura|Maravanji2|gw|5.0,UAHS,Jammapura,Maravanji2,gw,5.0,13.940788,75.976565,9,9,1.0,0.0,unlabelled,010394079025597656
+UAHS|Jammapura|Meagondanahalli2|gw|6.0,UAHS,Jammapura,Meagondanahalli2,gw,6.0,13.929846,75.971519,9,9,1.0,0.0,unlabelled,010392985025597152
+UAHS|Jammapura|Pandavamatti1|gw|1.0,UAHS,Jammapura,Pandavamatti1,gw,1.0,13.967596,75.972083,9,9,1.0,0.0,unlabelled,010396760025597208
+UAHS|Jammapura|Pandavamatti1|gw|2.0,UAHS,Jammapura,Pandavamatti1,gw,2.0,13.964166,75.984418,9,9,1.0,0.0,unlabelled,010396417025598442
+UAHS|Jammapura|Pandavamatti1|gw|3.0,UAHS,Jammapura,Pandavamatti1,gw,3.0,13.95905,75.977187,9,9,1.0,0.0,unlabelled,010395905025597719
+UAHS|Jammapura|Pandavamatti1|gw|4.0,UAHS,Jammapura,Pandavamatti1,gw,4.0,13.961868,75.962928,9,9,1.0,0.0,unlabelled,010396187025596293
+UAHS|Koranahalli|Chatnahalli-2|gw|16.0,UAHS,Koranahalli,Chatnahalli-2,gw,16.0,13.69039,75.898468,8,8,1.0,0.0,unlabelled,010369039025589847
+UAHS|Koranahalli|Chatnahalli-2|gw|19.0,UAHS,Koranahalli,Chatnahalli-2,gw,19.0,13.674107,75.933946,8,8,1.0,0.0,unlabelled,010367411025593395
+UAHS|Koranahalli|Gollarahalli|gw|15.0,UAHS,Koranahalli,Gollarahalli,gw,15.0,13.707913,75.922638,8,8,1.0,0.0,unlabelled,010370791025592264
+UAHS|Koranahalli|Jodi Bokikere|gw|17.0,UAHS,Koranahalli,Jodi Bokikere,gw,17.0,13.670428,75.908526,8,8,1.0,0.0,unlabelled,010367043025590853
+UAHS|Koranahalli|Koranahalli|gw|14.0,UAHS,Koranahalli,Koranahalli,gw,14.0,13.690796,75.903492,8,8,1.0,0.0,unlabelled,010369080025590349
+UAHS|Koranahalli|Koranahalli|gw|18.0,UAHS,Koranahalli,Koranahalli,gw,18.0,13.692468,75.938769,8,8,1.0,0.0,unlabelled,010369247025593877
+UAHS|Koranahalli|Makanahalli|gw|13.0,UAHS,Koranahalli,Makanahalli,gw,13.0,13.693495,75.911021,8,8,1.0,0.0,unlabelled,010369350025591102
+UAHS|Koranahalli|Makanahalli|gw|21.0,UAHS,Koranahalli,Makanahalli,gw,21.0,13.685239,75.937679,8,8,1.0,0.0,unlabelled,010368524025593768
+UAHS|Koranahalli|Rajanahalli-2|gw|20.0,UAHS,Koranahalli,Rajanahalli-2,gw,20.0,13.682378,75.895894,8,8,1.0,0.0,unlabelled,010368238025589589
+UAHS|Kytagondanahalli|Kasturitimmanahalli1|gw|7.0,UAHS,Kytagondanahalli,Kasturitimmanahalli1,gw,7.0,14.299492,76.734126,8,8,1.0,0.0,unlabelled,010429949025673413
+UAHS|Kytagondanahalli|Kasturitimmanahalli1|gw|9.0,UAHS,Kytagondanahalli,Kasturitimmanahalli1,gw,9.0,14.260647,76.733238,8,8,1.0,0.0,unlabelled,010426065025673324
+UAHS|Kytagondanahalli|Kasturitimmanahalli2|gw|6.0,UAHS,Kytagondanahalli,Kasturitimmanahalli2,gw,6.0,14.306106,76.752021,8,8,1.0,0.0,unlabelled,010430611025675202
+UAHS|Kytagondanahalli|Kyatagondanahalli2|gw|2.0,UAHS,Kytagondanahalli,Kyatagondanahalli2,gw,2.0,14.387904,76.80875,8,8,1.0,0.0,unlabelled,010438790025680875
+UAHS|Kytagondanahalli|Kyatagondanahalli3|gw|4.0,UAHS,Kytagondanahalli,Kyatagondanahalli3,gw,4.0,14.313308,76.773103,8,8,1.0,0.0,unlabelled,010431331025677310
+UAHS|Kytagondanahalli|Kyatagondanahalli3|gw|8.0,UAHS,Kytagondanahalli,Kyatagondanahalli3,gw,8.0,14.292494,76.741971,8,8,1.0,0.0,unlabelled,010429249025674197
+UAHS|Kytagondanahalli|Vidappanakunte1|gw|3.0,UAHS,Kytagondanahalli,Vidappanakunte1,gw,3.0,14.380159,76.818494,8,8,1.0,0.0,unlabelled,010438016025681849
+UAHS|Kytagondanahalli|Vidappanakunte2|gw|1.0,UAHS,Kytagondanahalli,Vidappanakunte2,gw,1.0,14.391436,76.803447,8,8,1.0,0.0,unlabelled,010439144025680345
+UAHS|Kytagondanahalli|Vidappanakunte2|gw|5.0,UAHS,Kytagondanahalli,Vidappanakunte2,gw,5.0,14.286991,76.758507,8,8,1.0,0.0,unlabelled,010428699025675851
+UAHS|Laxmisagara 4U|Lakshimisagar1|gw|11.0,UAHS,Laxmisagara 4U,Lakshimisagar1,gw,11.0,14.011207,75.934855,9,9,1.0,0.0,unlabelled,010401121025593486
+UAHS|Laxmisagara 4U|Mallegere3|gw|10.0,UAHS,Laxmisagara 4U,Mallegere3,gw,10.0,13.991198,75.917885,9,9,1.0,0.0,unlabelled,010399120025591788
+UAHS|Laxmisagara 4U|Mallegere3|gw|12.0,UAHS,Laxmisagara 4U,Mallegere3,gw,12.0,13.972108,75.923512,9,9,1.0,0.0,unlabelled,010397211025592351
+UAHS|Mattikote|Dhoopadahalli|gw|10.0,UAHS,Mattikote,Dhoopadahalli,gw,10.0,14.237096,75.391404,9,9,1.0,0.0,unlabelled,010423710025539140
+UAHS|Mattikote|Gabburu|gw|11.0,UAHS,Mattikote,Gabburu,gw,11.0,14.290543,75.35584,9,9,1.0,0.0,unlabelled,010429054025535584
+UAHS|Mattikote|Haliyur|gw|12.0,UAHS,Mattikote,Haliyur,gw,12.0,14.255205,75.372627,9,9,1.0,0.0,unlabelled,010425520025537263
+UAHS|Nagagondanahalli|Devaranahalli|gw|10.0,UAHS,Nagagondanahalli,Devaranahalli,gw,10.0,14.270219,76.7676,8,8,1.0,0.0,unlabelled,010427022025676760
+UAHS|Nagagondanahalli|Halagondanahalli2|gw|11.0,UAHS,Nagagondanahalli,Halagondanahalli2,gw,11.0,14.321584,76.805952,8,8,1.0,0.0,unlabelled,010432158025680595
+UAHS|Nagagondanahalli|Nagagondanahalli1|gw|12.0,UAHS,Nagagondanahalli,Nagagondanahalli1,gw,12.0,14.377841,76.83218,8,8,1.0,0.0,unlabelled,010437784025683218
+UASB|Chatrakodihalli|Chaluvanahalli|gw|1.0,UASB,Chatrakodihalli,Chaluvanahalli,gw,1.0,13.11808,78.05863,11,11,1.0,0.0,unlabelled,010311808025805863
+UASB|Chatrakodihalli|Chaluvanahalli|gw|2.0,UASB,Chatrakodihalli,Chaluvanahalli,gw,2.0,13.116937,78.067283,11,11,1.0,0.0,unlabelled,010311694025806728
+UASB|Chatrakodihalli|Chaluvanahalli|gw|3.0,UASB,Chatrakodihalli,Chaluvanahalli,gw,3.0,13.117729,78.07738,11,11,1.0,0.0,unlabelled,010311773025807738
+UASB|Chatrakodihalli|Kondarajanahalli|gw|4.0,UASB,Chatrakodihalli,Kondarajanahalli,gw,4.0,13.118717,78.100837,11,11,1.0,0.0,unlabelled,010311872025810084
+UASB|Chatrakodihalli|Kondarajanahalli|gw|5.0,UASB,Chatrakodihalli,Kondarajanahalli,gw,5.0,13.119943,78.108308,11,11,1.0,0.0,unlabelled,010311994025810831
+UASB|Chatrakodihalli|Kondarajanahalli|gw|6.0,UASB,Chatrakodihalli,Kondarajanahalli,gw,6.0,13.117226,78.113897,11,11,1.0,0.0,unlabelled,010311723025811390
+UASB|Chatrakodihalli|Shettikotthnuru|gw|7.0,UASB,Chatrakodihalli,Shettikotthnuru,gw,7.0,13.076265,78.065024,11,11,1.0,0.0,unlabelled,010307626025806502
+UASB|Chatrakodihalli|Shettikotthnuru|gw|8.0,UASB,Chatrakodihalli,Shettikotthnuru,gw,8.0,13.07306,78.056808,11,11,1.0,0.0,unlabelled,010307306025805681
+UASB|Chatrakodihalli|Shettikotthnuru|gw|9.0,UASB,Chatrakodihalli,Shettikotthnuru,gw,9.0,13.07007,78.04135,8,8,1.0,0.0,unlabelled,010307007025804135
+UASB|Doddenahalli|Bilenahalli|gw|4.0,UASB,Doddenahalli,Bilenahalli,gw,4.0,13.20963,76.18444,11,11,1.0,0.0,unlabelled,010320963025618444
+UASB|Doddenahalli|Bilenahalli|gw|5.0,UASB,Doddenahalli,Bilenahalli,gw,5.0,13.21436,76.18927,11,11,1.0,0.0,unlabelled,010321436025618927
+UASB|Doddenahalli|Bilenahalli|gw|6.0,UASB,Doddenahalli,Bilenahalli,gw,6.0,13.18291,76.18134,11,11,1.0,0.0,unlabelled,010318291025618134
+UASB|Doddenahalli|Doddenahalli|gw|1.0,UASB,Doddenahalli,Doddenahalli,gw,1.0,13.21715,76.21712,11,11,1.0,0.0,unlabelled,010321715025621712
+UASB|Doddenahalli|Doddenahalli|gw|2.0,UASB,Doddenahalli,Doddenahalli,gw,2.0,13.22209,76.21029,11,11,1.0,0.0,unlabelled,010322209025621029
+UASB|Doddenahalli|Doddenahalli|gw|3.0,UASB,Doddenahalli,Doddenahalli,gw,3.0,13.19863,76.21825,11,11,1.0,0.0,unlabelled,010319863025621825
+UASB|Doddenahalli|Mootikere|gw|7.0,UASB,Doddenahalli,Mootikere,gw,7.0,13.16939,76.16226,11,11,1.0,0.0,unlabelled,010316939025616226
+UASB|Doddenahalli|Mootikere|gw|8.0,UASB,Doddenahalli,Mootikere,gw,8.0,13.161024,76.153356,9,9,1.0,0.0,unlabelled,010316102025615336
+UASB|Doddenahalli|Mootikere|gw|9.0,UASB,Doddenahalli,Mootikere,gw,9.0,13.17626,76.16859,11,11,1.0,0.0,unlabelled,010317626025616859
+UASB|Gummalapalli|Agutimadike|gw|5.0,UASB,Gummalapalli,Agutimadike,gw,5.0,13.788287,77.94741,11,11,1.0,0.0,unlabelled,010378829025794741
+UASB|Gummalapalli|Agutimadike|gw|6.0,UASB,Gummalapalli,Agutimadike,gw,6.0,13.796859,77.945144,11,11,1.0,0.0,unlabelled,010379686025794514
+UASB|Gummalapalli|Agutimadike|gw|7.0,UASB,Gummalapalli,Agutimadike,gw,7.0,13.806246,77.935694,11,11,1.0,0.0,unlabelled,010380625025793569
+UASB|Gummalapalli|Peddareddipalli|gw|2.0,UASB,Gummalapalli,Peddareddipalli,gw,2.0,13.785574,77.959061,11,11,1.0,0.0,unlabelled,010378557025795906
+UASB|Gummalapalli|Peddareddipalli|gw|3.0,UASB,Gummalapalli,Peddareddipalli,gw,3.0,13.795445,77.970009,11,11,1.0,0.0,unlabelled,010379544025797001
+UASB|Gummalapalli|Peddareddipalli|gw|4.0,UASB,Gummalapalli,Peddareddipalli,gw,4.0,13.793544,77.976664,11,11,1.0,0.0,unlabelled,010379354025797666
+UASB|Gummalapalli|Tollapalli|gw|1.0,UASB,Gummalapalli,Tollapalli,gw,1.0,13.771348,77.92246,11,11,1.0,0.0,unlabelled,010377135025792246
+UASB|Gummalapalli|Tollapalli|gw|8.0,UASB,Gummalapalli,Tollapalli,gw,8.0,13.794364,77.922576,11,11,1.0,0.0,unlabelled,010379436025792258
+UASB|Gummalapalli|Tollapalli|gw|9.0,UASB,Gummalapalli,Tollapalli,gw,9.0,13.788746,77.939275,11,11,1.0,0.0,unlabelled,010378875025793928
+UASB|Holali (Kembodi)|Chikkahosala|gw|11.0,UASB,Holali (Kembodi),Chikkahosala,gw,11.0,13.081037,78.128577,10,10,1.0,0.0,unlabelled,010308104025812858
+UASB|Holali (Kembodi)|Kalipura1|gw|12.0,UASB,Holali (Kembodi),Kalipura1,gw,12.0,13.111608,78.161897,10,10,1.0,0.0,unlabelled,010311161025816190
+UASB|Holali (Kembodi)|Karahalli|gw|13.0,UASB,Holali (Kembodi),Karahalli,gw,13.0,13.145655,78.216626,10,10,1.0,0.0,unlabelled,010314566025821663
+UASB|Mydalakere|Hodekallu|gw|1.0,UASB,Mydalakere,Hodekallu,gw,1.0,13.29922,77.21173,12,12,1.0,0.0,unlabelled,010329922025721173
+UASB|Mydalakere|Hodekallu|gw|2.0,UASB,Mydalakere,Hodekallu,gw,2.0,13.3108,77.21452,12,12,1.0,0.0,unlabelled,010331080025721452
+UASB|Mydalakere|Hodekallu|gw|3.0,UASB,Mydalakere,Hodekallu,gw,3.0,13.31708,77.21108,12,12,1.0,0.0,unlabelled,010331708025721108
+UASB|Mydalakere|Kadugujjanahalli|gw|7.0,UASB,Mydalakere,Kadugujjanahalli,gw,7.0,13.31713,77.2336,12,12,1.0,0.0,unlabelled,010331713025723360
+UASB|Mydalakere|Kadugujjanahalli|gw|8.0,UASB,Mydalakere,Kadugujjanahalli,gw,8.0,13.32509,77.25637,12,12,1.0,0.0,unlabelled,010332509025725637
+UASB|Mydalakere|Kadugujjanahalli|gw|9.0,UASB,Mydalakere,Kadugujjanahalli,gw,9.0,13.32626,77.26074,12,12,1.0,0.0,unlabelled,010332626025726074
+UASB|Mydalakere|Siddalingayyanapalya|gw|4.0,UASB,Mydalakere,Siddalingayyanapalya,gw,4.0,13.32063,77.21906,12,12,1.0,0.0,unlabelled,010332063025721906
+UASB|Mydalakere|Siddalingayyanapalya|gw|5.0,UASB,Mydalakere,Siddalingayyanapalya,gw,5.0,13.32075,77.23139,12,12,1.0,0.0,unlabelled,010332075025723139
+UASB|Mydalakere|Siddalingayyanapalya|gw|6.0,UASB,Mydalakere,Siddalingayyanapalya,gw,6.0,13.33298,77.27035,12,12,1.0,0.0,unlabelled,010333298025727035
+UASB|Narayanghatta (Annapura)|Adhihalli|gw|11.0,UASB,Narayanghatta (Annapura),Adhihalli,gw,11.0,13.16521,76.25233,2,2,1.0,0.0,unlabelled,010316521025625233
+UASB|Narayanghatta (Annapura)|Mududi|gw|13.0,UASB,Narayanghatta (Annapura),Mududi,gw,13.0,13.20487,76.29447,2,2,1.0,0.0,unlabelled,010320487025629447
+UASB|Narayanghatta (Annapura)|Talalur|gw|12.0,UASB,Narayanghatta (Annapura),Talalur,gw,12.0,13.25336,76.28597,2,2,1.0,0.0,unlabelled,010325336025628597
+UASB|Virupasandra|Kemarepalya|gw|13.0,UASB,Virupasandra,Kemarepalya,gw,13.0,13.223703,77.085533,12,12,1.0,0.0,unlabelled,010322370025708553
+UASB|Virupasandra|Mullenahalli|gw|12.0,UASB,Virupasandra,Mullenahalli,gw,12.0,13.240368,77.113864,12,12,1.0,0.0,unlabelled,010324037025711386
+UASB|Virupasandra|Neralapura|gw|11.0,UASB,Virupasandra,Neralapura,gw,11.0,13.233691,77.159734,12,12,1.0,0.0,unlabelled,010323369025715973
+UASD|Artal Sub Watershed|Artal-1|gw|BW-25,UASD,Artal Sub Watershed,Artal-1,gw,BW-25,16.731217,75.300558,7,7,1.0,0.0,saturation,010673122025530056
+UASD|Artal Sub Watershed|Artal-1|gw|BW-26,UASD,Artal Sub Watershed,Artal-1,gw,BW-26,16.73125,75.300913,7,7,1.0,0.0,saturation,010673125025530091
+UASD|Artal Sub Watershed|Artal-1|gw|BW-27,UASD,Artal Sub Watershed,Artal-1,gw,BW-27,16.729199,75.305656,7,7,1.0,0.0,saturation,010672920025530566
+UASD|Artal Sub Watershed|Artal-1|gw|BW-28,UASD,Artal Sub Watershed,Artal-1,gw,BW-28,16.734456,75.31963,7,7,1.0,0.0,saturation,010673446025531963
+UASD|Artal Sub Watershed|Artal-1|gw|BW-29,UASD,Artal Sub Watershed,Artal-1,gw,BW-29,16.734665,75.320969,7,7,1.0,0.0,saturation,010673466025532097
+UASD|Artal Sub Watershed|Artal-1|gw|BW-34,UASD,Artal Sub Watershed,Artal-1,gw,BW-34,16.730558,75.29743,7,7,1.0,0.0,saturation,010673056025529743
+UASD|Artal Sub Watershed|Artal-1|gw|BW-35,UASD,Artal Sub Watershed,Artal-1,gw,BW-35,16.731406,75.295691,7,7,1.0,0.0,saturation,010673141025529569
+UASD|Artal Sub Watershed|Artal-1|gw|BW-36,UASD,Artal Sub Watershed,Artal-1,gw,BW-36,16.731269,75.295878,7,7,1.0,0.0,saturation,010673127025529588
+UASD|Artal Sub Watershed|Artal-1|gw|BW-37,UASD,Artal Sub Watershed,Artal-1,gw,BW-37,16.73118,75.2941,7,7,1.0,0.0,saturation,010673118025529410
+UASD|Artal Sub Watershed|Artal-1|gw|BW-38,UASD,Artal Sub Watershed,Artal-1,gw,BW-38,16.71063,75.294222,7,7,1.0,0.0,saturation,010671063025529422
+UASD|Artal Sub Watershed|Artal-2|gw|BW-14,UASD,Artal Sub Watershed,Artal-2,gw,BW-14,16.75222,75.306151,7,7,1.0,0.0,saturation,010675222025530615
+UASD|Artal Sub Watershed|Artal-2|gw|BW-15,UASD,Artal Sub Watershed,Artal-2,gw,BW-15,16.750897,75.306537,7,7,1.0,0.0,saturation,010675090025530654
+UASD|Artal Sub Watershed|Artal-2|gw|BW-16,UASD,Artal Sub Watershed,Artal-2,gw,BW-16,16.751244,75.306978,7,7,1.0,0.0,saturation,010675124025530698
+UASD|Artal Sub Watershed|Artal-2|gw|BW-22,UASD,Artal Sub Watershed,Artal-2,gw,BW-22,16.74586,75.297202,7,7,1.0,0.0,saturation,010674586025529720
+UASD|Artal Sub Watershed|Artal-2|gw|BW-23,UASD,Artal Sub Watershed,Artal-2,gw,BW-23,16.747843,75.299165,7,7,1.0,0.0,saturation,010674784025529916
+UASD|Artal Sub Watershed|Artal-2|gw|BW-24,UASD,Artal Sub Watershed,Artal-2,gw,BW-24,16.748359,75.299672,7,7,1.0,0.0,saturation,010674836025529967
+UASD|Artal Sub Watershed|Artal-2|gw|BW-30,UASD,Artal Sub Watershed,Artal-2,gw,BW-30,16.742029,75.290372,7,7,1.0,0.0,saturation,010674203025529037
+UASD|Artal Sub Watershed|Artal-2|gw|BW-31,UASD,Artal Sub Watershed,Artal-2,gw,BW-31,16.744285,75.288134,7,7,1.0,0.0,saturation,010674428025528813
+UASD|Artal Sub Watershed|Artal-2|gw|BW-32,UASD,Artal Sub Watershed,Artal-2,gw,BW-32,16.74759,75.284508,7,7,1.0,0.0,saturation,010674759025528451
+UASD|Artal Sub Watershed|Artal-2|gw|BW-33,UASD,Artal Sub Watershed,Artal-2,gw,BW-33,16.748134,75.281341,7,7,1.0,0.0,saturation,010674813025528134
+UASD|Artal Sub Watershed|Artal-3|gw|BW-1,UASD,Artal Sub Watershed,Artal-3,gw,BW-1,16.768353,75.336428,7,7,1.0,0.0,saturation,010676835025533643
+UASD|Artal Sub Watershed|Artal-3|gw|BW-10,UASD,Artal Sub Watershed,Artal-3,gw,BW-10,16.765498,75.339361,7,7,1.0,0.0,saturation,010676550025533936
+UASD|Artal Sub Watershed|Artal-3|gw|BW-11,UASD,Artal Sub Watershed,Artal-3,gw,BW-11,16.76627,75.336693,7,7,1.0,0.0,saturation,010676627025533669
+UASD|Artal Sub Watershed|Artal-3|gw|BW-12,UASD,Artal Sub Watershed,Artal-3,gw,BW-12,16.765663,75.340696,7,7,1.0,0.0,saturation,010676566025534070
+UASD|Artal Sub Watershed|Artal-3|gw|BW-13,UASD,Artal Sub Watershed,Artal-3,gw,BW-13,16.760603,75.34126,7,7,1.0,0.0,saturation,010676060025534126
+UASD|Artal Sub Watershed|Artal-3|gw|BW-2,UASD,Artal Sub Watershed,Artal-3,gw,BW-2,16.768744,75.335842,7,7,1.0,0.0,saturation,010676874025533584
+UASD|Artal Sub Watershed|Artal-3|gw|BW-3,UASD,Artal Sub Watershed,Artal-3,gw,BW-3,16.766452,75.334682,7,7,1.0,0.0,saturation,010676645025533468
+UASD|Artal Sub Watershed|Artal-3|gw|BW-4,UASD,Artal Sub Watershed,Artal-3,gw,BW-4,16.770922,75.337257,7,7,1.0,0.0,saturation,010677092025533726
+UASD|Artal Sub Watershed|Halahalli-1|gw|BW-5,UASD,Artal Sub Watershed,Halahalli-1,gw,BW-5,16.750451,75.357569,7,7,1.0,0.0,saturation,010675045025535757
+UASD|Artal Sub Watershed|Halahalli-1|gw|BW-6,UASD,Artal Sub Watershed,Halahalli-1,gw,BW-6,16.756148,75.354987,7,7,1.0,0.0,saturation,010675615025535499
+UASD|Artal Sub Watershed|Halahalli-1|gw|BW-7,UASD,Artal Sub Watershed,Halahalli-1,gw,BW-7,16.752865,75.352532,7,7,1.0,0.0,saturation,010675286025535253
+UASD|Artal Sub Watershed|Halahalli-1|gw|BW-8,UASD,Artal Sub Watershed,Halahalli-1,gw,BW-8,16.753969,75.350473,7,7,1.0,0.0,saturation,010675397025535047
+UASD|Artal Sub Watershed|Halahalli-1|gw|BW-9,UASD,Artal Sub Watershed,Halahalli-1,gw,BW-9,16.754321,75.35164,7,7,1.0,0.0,saturation,010675432025535164
+UASD|Artal Sub Watershed|Halahalli-2|gw|BW-17,UASD,Artal Sub Watershed,Halahalli-2,gw,BW-17,16.755899,75.335681,7,7,1.0,0.0,saturation,010675590025533568
+UASD|Artal Sub Watershed|Halahalli-2|gw|BW-18,UASD,Artal Sub Watershed,Halahalli-2,gw,BW-18,16.75446,75.334219,7,7,1.0,0.0,saturation,010675446025533422
+UASD|Artal Sub Watershed|Halahalli-2|gw|BW-19,UASD,Artal Sub Watershed,Halahalli-2,gw,BW-19,16.752469,75.33324,7,7,1.0,0.0,saturation,010675247025533324
+UASD|Artal Sub Watershed|Halahalli-2|gw|BW-20,UASD,Artal Sub Watershed,Halahalli-2,gw,BW-20,16.758242,75.341379,7,7,1.0,0.0,saturation,010675824025534138
+UASD|Artal Sub Watershed|Halahalli-2|gw|BW-21,UASD,Artal Sub Watershed,Halahalli-2,gw,BW-21,16.757957,75.342096,7,7,1.0,0.0,saturation,010675796025534210
+UASD|Gadag sub-watershed|Hirekoppa|gw|BW-1,UASD,Gadag sub-watershed,Hirekoppa,gw,BW-1,15.500786,75.658762,8,8,1.0,0.0,control,010550079025565876
+UASD|Gadag sub-watershed|Hirekoppa|gw|BW-2,UASD,Gadag sub-watershed,Hirekoppa,gw,BW-2,15.500623,75.660772,8,8,1.0,0.0,control,010550062025566077
+UASD|Gadag sub-watershed|Hirekoppa|gw|BW-3,UASD,Gadag sub-watershed,Hirekoppa,gw,BW-3,15.501736,75.659407,8,8,1.0,0.0,control,010550174025565941
+UASD|Gadag sub-watershed|Hirekoppa|gw|BW-4,UASD,Gadag sub-watershed,Hirekoppa,gw,BW-4,15.50367,75.660745,8,8,1.0,0.0,control,010550367025566075
+UASD|Gadag sub-watershed|Hirekoppa|gw|BW-5,UASD,Gadag sub-watershed,Hirekoppa,gw,BW-5,15.503662,75.659297,8,8,1.0,0.0,control,010550366025565930
+UASD|Gadag sub-watershed|Kiratgeri|gw|BW-1,UASD,Gadag sub-watershed,Kiratgeri,gw,BW-1,15.521062,75.67538,8,8,1.0,0.0,control,010552106025567538
+UASD|Gadag sub-watershed|Kiratgeri|gw|BW-2,UASD,Gadag sub-watershed,Kiratgeri,gw,BW-2,15.520726,75.672671,8,8,1.0,0.0,control,010552073025567267
+UASD|Gadag sub-watershed|Kiratgeri|gw|BW-3,UASD,Gadag sub-watershed,Kiratgeri,gw,BW-3,15.520277,75.664337,8,8,1.0,0.0,control,010552028025566434
+UASD|Gadag sub-watershed|Kiratgeri|gw|BW-4,UASD,Gadag sub-watershed,Kiratgeri,gw,BW-4,15.520281,75.665386,8,8,1.0,0.0,control,010552028025566539
+UASD|Hosahalli sub-watershed|Abalur|gw|BW-1,UASD,Hosahalli sub-watershed,Abalur,gw,BW-1,14.540138,75.430295,9,9,1.0,0.0,control,010454014025543030
+UASD|Hosahalli sub-watershed|Abalur|gw|BW-2,UASD,Hosahalli sub-watershed,Abalur,gw,BW-2,14.540231,75.429512,9,9,1.0,0.0,control,010454023025542951
+UASD|Hosahalli sub-watershed|Abalur|gw|BW-3,UASD,Hosahalli sub-watershed,Abalur,gw,BW-3,14.542475,75.429826,9,9,1.0,0.0,control,010454248025542983
+UASD|Hosahalli sub-watershed|Abalur|gw|BW-4,UASD,Hosahalli sub-watershed,Abalur,gw,BW-4,14.543002,75.429714,9,9,1.0,0.0,control,010454300025542971
+UASD|Hosahalli sub-watershed|Herekerur|gw|BW-1,UASD,Hosahalli sub-watershed,Herekerur,gw,BW-1,14.483826,75.396967,9,9,1.0,0.0,control,010448383025539697
+UASD|Hosahalli sub-watershed|Herekerur|gw|BW-2,UASD,Hosahalli sub-watershed,Herekerur,gw,BW-2,14.485192,75.398019,9,9,1.0,0.0,control,010448519025539802
+UASD|Hosahalli sub-watershed|Herekerur|gw|BW-3,UASD,Hosahalli sub-watershed,Herekerur,gw,BW-3,14.48513,75.398625,9,9,1.0,0.0,control,010448513025539862
+UASD|Hosahalli sub-watershed|Herekerur|gw|BW-4,UASD,Hosahalli sub-watershed,Herekerur,gw,BW-4,14.485859,75.397537,9,9,1.0,0.0,control,010448586025539754
+UASD|Hosahalli sub-watershed|Nulageri|gw|BW-1,UASD,Hosahalli sub-watershed,Nulageri,gw,BW-1,14.500395,75.40339,9,9,1.0,0.0,control,010450040025540339
+UASD|Hosahalli sub-watershed|Nulageri|gw|BW-2,UASD,Hosahalli sub-watershed,Nulageri,gw,BW-2,14.500566,75.402855,9,9,1.0,0.0,control,010450057025540286
+UASD|Hosahalli sub-watershed|Nulageri|gw|BW-3,UASD,Hosahalli sub-watershed,Nulageri,gw,BW-3,14.501301,75.40101,9,9,1.0,0.0,control,010450130025540101
+UASD|Hosahalli sub-watershed|Nulageri|gw|BW-4,UASD,Hosahalli sub-watershed,Nulageri,gw,BW-4,14.501526,75.4015,9,9,1.0,0.0,control,010450153025540150
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-10,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-10,14.5173,75.521448,9,9,1.0,0.0,saturation,010451730025552145
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-11,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-11,14.515274,75.521135,9,9,1.0,0.0,saturation,010451527025552114
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-12,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-12,14.515312,75.52069,9,9,1.0,0.0,saturation,010451531025552069
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-13,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-13,14.515173,75.521298,9,9,1.0,0.0,saturation,010451517025552130
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-14,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-14,14.514193,75.523076,9,9,1.0,0.0,saturation,010451419025552308
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-15,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-15,14.51422,75.523473,9,9,1.0,0.0,saturation,010451422025552347
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-6,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-6,14.523865,75.511158,9,9,1.0,0.0,saturation,010452386025551116
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-7,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-7,14.523653,75.510857,9,9,1.0,0.0,saturation,010452365025551086
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-8,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-8,14.524507,75.51059,9,9,1.0,0.0,saturation,010452451025551059
+UASD|Kodihalli sub-watershed|Kunchuru|gw|BW-9,UASD,Kodihalli sub-watershed,Kunchuru,gw,BW-9,14.524516,75.512345,9,9,1.0,0.0,saturation,010452452025551234
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-1,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-1,14.535548,75.513873,9,9,1.0,0.0,saturation,010453555025551387
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-2,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-2,14.535009,75.512333,9,9,1.0,0.0,saturation,010453501025551233
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-28,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-28,14.551247,75.505818,9,9,1.0,0.0,saturation,010455125025550582
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-29,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-29,14.550829,75.505906,9,9,1.0,0.0,saturation,010455083025550591
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-3,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-3,14.535019,75.511716,9,9,1.0,0.0,saturation,010453502025551172
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-30,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-30,14.551427,75.509834,9,9,1.0,0.0,saturation,010455143025550983
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-31,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-31,14.550241,75.510513,9,9,1.0,0.0,saturation,010455024025551051
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-32,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-32,14.555591,75.471144,9,9,1.0,0.0,saturation,010455559025547114
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-33,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-33,14.554912,75.471081,9,9,1.0,0.0,saturation,010455491025547108
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-34,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-34,14.555645,75.470031,9,9,1.0,0.0,saturation,010455564025547003
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-35,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-35,14.556205,75.46949,9,9,1.0,0.0,saturation,010455620025546949
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-36,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-36,14.556562,75.470893,9,9,1.0,0.0,saturation,010455656025547089
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-37,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-37,14.549873,75.451901,9,9,1.0,0.0,saturation,010454987025545190
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-38,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-38,14.54955,75.451466,9,9,1.0,0.0,saturation,010454955025545147
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-39,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-39,14.549902,75.450706,9,9,1.0,0.0,saturation,010454990025545071
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-4,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-4,14.534858,75.511427,9,9,1.0,0.0,saturation,010453486025551143
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-40,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-40,14.550751,75.4527,9,9,1.0,0.0,saturation,010455075025545270
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-41,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-41,14.551841,75.45204,9,9,1.0,0.0,saturation,010455184025545204
+UASD|Kodihalli sub-watershed|Lingadevarakoppa|gw|BW-5,UASD,Kodihalli sub-watershed,Lingadevarakoppa,gw,BW-5,14.534561,75.512156,9,9,1.0,0.0,saturation,010453456025551216
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-16,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-16,14.426522,75.517618,9,9,1.0,0.0,saturation,010442652025551762
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-17,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-17,14.486516,75.517472,9,9,1.0,0.0,saturation,010448652025551747
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-18,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-18,14.486942,75.517697,9,9,1.0,0.0,saturation,010448694025551770
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-19,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-19,14.502841,75.503241,9,9,1.0,0.0,saturation,010450284025550324
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-20,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-20,14.502878,75.503197,9,9,1.0,0.0,saturation,010450288025550320
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-21,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-21,14.502871,75.503667,9,9,1.0,0.0,saturation,010450287025550367
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-22,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-22,14.502885,75.503201,9,9,1.0,0.0,saturation,010450288025550320
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-23,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-23,14.503442,75.502986,9,9,1.0,0.0,saturation,010450344025550299
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-24,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-24,14.505886,75.512174,9,9,1.0,0.0,saturation,010450589025551217
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-25,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-25,14.506521,75.512143,9,9,1.0,0.0,saturation,010450652025551214
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-26,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-26,14.513023,75.506158,9,9,1.0,0.0,saturation,010451302025550616
+UASD|Kodihalli sub-watershed|Mavinthoppa|gw|BW-27,UASD,Kodihalli sub-watershed,Mavinthoppa,gw,BW-27,14.507141,75.512877,9,9,1.0,0.0,saturation,010450714025551288
+UASD|Kohalli sub-watershed|Khilaradaddi-1|gw|BW-1,UASD,Kohalli sub-watershed,Khilaradaddi-1,gw,BW-1,16.816985,75.253325,7,7,1.0,0.0,control,010681698025525332
+UASD|Kohalli sub-watershed|Khilaradaddi-1|gw|BW-3,UASD,Kohalli sub-watershed,Khilaradaddi-1,gw,BW-3,16.809165,75.248994,7,7,1.0,0.0,control,010680916025524899
+UASD|Kohalli sub-watershed|Khilaradaddi-1|gw|BW-4,UASD,Kohalli sub-watershed,Khilaradaddi-1,gw,BW-4,16.808297,75.24426,7,7,1.0,0.0,control,010680830025524426
+UASD|Kohalli sub-watershed|Khilaradaddi-1|gw|BW-5,UASD,Kohalli sub-watershed,Khilaradaddi-1,gw,BW-5,16.807817,75.242295,7,7,1.0,0.0,control,010680782025524230
+UASD|Kohalli sub-watershed|Khilaradaddi-2|gw|BW-1,UASD,Kohalli sub-watershed,Khilaradaddi-2,gw,BW-1,16.798329,75.260217,7,7,1.0,0.0,control,010679833025526022
+UASD|Kohalli sub-watershed|Khilaradaddi-2|gw|BW-2,UASD,Kohalli sub-watershed,Khilaradaddi-2,gw,BW-2,16.809198,75.260624,7,7,1.0,0.0,control,010680920025526062
+UASD|Kohalli sub-watershed|Khilaradaddi-2|gw|BW-3,UASD,Kohalli sub-watershed,Khilaradaddi-2,gw,BW-3,16.804711,75.267108,7,7,1.0,0.0,control,010680471025526711
+UASD|Kohalli sub-watershed|Khilaradaddi-2|gw|BW-4,UASD,Kohalli sub-watershed,Khilaradaddi-2,gw,BW-4,16.803623,75.265927,7,7,1.0,0.0,control,010680362025526593
+UASD|Kohalli sub-watershed|Khilaradaddi-3|gw|BW-1,UASD,Kohalli sub-watershed,Khilaradaddi-3,gw,BW-1,16.847951,75.286282,7,7,1.0,0.0,control,010684795025528628
+UASD|Kohalli sub-watershed|Khilaradaddi-3|gw|BW-2,UASD,Kohalli sub-watershed,Khilaradaddi-3,gw,BW-2,16.84214,75.28133,7,7,1.0,0.0,control,010684214025528133
+UASD|Kohalli sub-watershed|Khilaradaddi-3|gw|BW-3,UASD,Kohalli sub-watershed,Khilaradaddi-3,gw,BW-3,16.841879,75.281137,7,7,1.0,0.0,control,010684188025528114
+UASD|Kohalli sub-watershed|Khilaradaddi-3|gw|BW-4,UASD,Kohalli sub-watershed,Khilaradaddi-3,gw,BW-4,16.8915,75.276364,7,7,1.0,0.0,control,010689150025527636
+UASD|Kohalli sub-watershed|Khilaradaddi-3|gw|BW-5,UASD,Kohalli sub-watershed,Khilaradaddi-3,gw,BW-5,16.828425,75.275101,7,7,1.0,0.0,control,010682842025527510
+UASD|Nilgunda sub-watershed|Kanvi-1|gw|BW-15,UASD,Nilgunda sub-watershed,Kanvi-1,gw,BW-15,15.293646,75.555267,10,10,1.0,0.0,saturation,010529365025555527
+UASD|Nilgunda sub-watershed|Kanvi-1|gw|BW-16,UASD,Nilgunda sub-watershed,Kanvi-1,gw,BW-16,15.292367,75.55353,10,10,1.0,0.0,saturation,010529237025555353
+UASD|Nilgunda sub-watershed|Kanvi-1|gw|BW-17,UASD,Nilgunda sub-watershed,Kanvi-1,gw,BW-17,15.293663,75.558494,10,10,1.0,0.0,saturation,010529366025555849
+UASD|Nilgunda sub-watershed|Kanvi-1|gw|BW-18,UASD,Nilgunda sub-watershed,Kanvi-1,gw,BW-18,15.293962,75.56166,10,10,1.0,0.0,saturation,010529396025556166
+UASD|Nilgunda sub-watershed|Kanvi-1|gw|BW-19,UASD,Nilgunda sub-watershed,Kanvi-1,gw,BW-19,15.295179,75.566042,10,10,1.0,0.0,saturation,010529518025556604
+UASD|Nilgunda sub-watershed|Mulgund-2|gw|BW-14,UASD,Nilgunda sub-watershed,Mulgund-2,gw,BW-14,15.290342,75.510663,10,10,1.0,0.0,saturation,010529034025551066
+UASD|Nilgunda sub-watershed|Mulgunda east-3|gw|BW-1,UASD,Nilgunda sub-watershed,Mulgunda east-3,gw,BW-1,15.263517,75.55983,10,10,1.0,0.0,saturation,010526352025555983
+UASD|Nilgunda sub-watershed|Mulgunda east-3|gw|BW-2,UASD,Nilgunda sub-watershed,Mulgunda east-3,gw,BW-2,15.282628,75.55984,10,10,1.0,0.0,saturation,010528263025555984
+UASD|Nilgunda sub-watershed|Mulgunda east-3|gw|BW-3,UASD,Nilgunda sub-watershed,Mulgunda east-3,gw,BW-3,15.280544,75.5461,10,10,1.0,0.0,saturation,010528054025554610
+UASD|Nilgunda sub-watershed|Mulgunda east-3|gw|BW-4,UASD,Nilgunda sub-watershed,Mulgunda east-3,gw,BW-4,15.27949,75.534,10,10,1.0,0.0,saturation,010527949025553400
+UASD|Nilgunda sub-watershed|Mulgunda east-3|gw|BW-5,UASD,Nilgunda sub-watershed,Mulgunda east-3,gw,BW-5,15.280066,75.54616,10,10,1.0,0.0,saturation,010528007025554616
+UASD|Nilgunda sub-watershed|Mulgunda-1|gw|BW-6,UASD,Nilgunda sub-watershed,Mulgunda-1,gw,BW-6,15.297573,75.52109,10,10,1.0,0.0,saturation,010529757025552109
+UASD|Nilgunda sub-watershed|Mulgunda-1|gw|BW-7,UASD,Nilgunda sub-watershed,Mulgunda-1,gw,BW-7,15.297468,75.521171,10,10,1.0,0.0,saturation,010529747025552117
+UASD|Nilgunda sub-watershed|Mulgunda-1|gw|BW-8,UASD,Nilgunda sub-watershed,Mulgunda-1,gw,BW-8,15.292492,75.520723,10,10,1.0,0.0,saturation,010529249025552072
+UASD|Nilgunda sub-watershed|Mulgunda-1|gw|BW-9,UASD,Nilgunda sub-watershed,Mulgunda-1,gw,BW-9,15.31555,75.52104,10,10,1.0,0.0,saturation,010531555025552104
+UASD|Nilgunda sub-watershed|Nilgund-3|gw|BW-10,UASD,Nilgunda sub-watershed,Nilgund-3,gw,BW-10,15.302102,75.52007,10,10,1.0,0.0,saturation,010530210025552007
+UASD|Nilgunda sub-watershed|Nilgund-3|gw|BW-11,UASD,Nilgunda sub-watershed,Nilgund-3,gw,BW-11,15.300489,75.52034,10,10,1.0,0.0,saturation,010530049025552034
+UASD|Nilgunda sub-watershed|Nilgund-3|gw|BW-12,UASD,Nilgunda sub-watershed,Nilgund-3,gw,BW-12,15.398265,75.520666,10,10,1.0,0.0,saturation,010539826025552067
+UASD|Nilgunda sub-watershed|Nilgund-3|gw|BW-13,UASD,Nilgunda sub-watershed,Nilgund-3,gw,BW-13,15.298473,75.52009,10,10,1.0,0.0,saturation,010529847025552009
+UASD|Nilgunda sub-watershed|Nilgund-3|gw|BW-20,UASD,Nilgunda sub-watershed,Nilgund-3,gw,BW-20,15.297309,75.487891,10,10,1.0,0.0,saturation,010529731025548789
+UASD|Nilgunda sub-watershed|Nilgund-3|gw|BW-21,UASD,Nilgunda sub-watershed,Nilgund-3,gw,BW-21,15.296665,75.488032,10,10,1.0,0.0,saturation,010529666025548803
+UASD|Nilgunda sub-watershed|Nilgund-3|gw|BW-22,UASD,Nilgunda sub-watershed,Nilgund-3,gw,BW-22,15.305418,75.48436,10,10,1.0,0.0,saturation,010530542025548436
+UASD|Shirur sub-watershed|Devanur north|gw|BW-11,UASD,Shirur sub-watershed,Devanur north,gw,BW-11,15.223865,75.241822,9,9,1.0,0.0,saturation,010522386025524182
+UASD|Shirur sub-watershed|Devanur north|gw|BW-12,UASD,Shirur sub-watershed,Devanur north,gw,BW-12,15.224727,75.240949,9,9,1.0,0.0,saturation,010522473025524095
+UASD|Shirur sub-watershed|Devanur north|gw|BW-13,UASD,Shirur sub-watershed,Devanur north,gw,BW-13,15.227431,75.240424,9,9,1.0,0.0,saturation,010522743025524042
+UASD|Shirur sub-watershed|Devanur|gw|BW-10,UASD,Shirur sub-watershed,Devanur,gw,BW-10,15.211612,75.22215,9,9,1.0,0.0,saturation,010521161025522215
+UASD|Shirur sub-watershed|Devanur|gw|BW-6,UASD,Shirur sub-watershed,Devanur,gw,BW-6,15.209813,75.2262255,9,9,1.0,0.0,saturation,010520981025522623
+UASD|Shirur sub-watershed|Devanur|gw|BW-7,UASD,Shirur sub-watershed,Devanur,gw,BW-7,15.20781,75.224447,9,9,1.0,0.0,saturation,010520781025522445
+UASD|Shirur sub-watershed|Devanur|gw|BW-8,UASD,Shirur sub-watershed,Devanur,gw,BW-8,15.206866,75.225083,9,9,1.0,0.0,saturation,010520687025522508
+UASD|Shirur sub-watershed|Devanur|gw|BW-9,UASD,Shirur sub-watershed,Devanur,gw,BW-9,15.210978,75.224902,9,9,1.0,0.0,saturation,010521098025522490
+UASD|Shirur sub-watershed|Kamdolli-1|gw|BW-14,UASD,Shirur sub-watershed,Kamdolli-1,gw,BW-14,15.21377,75.253042,9,9,1.0,0.0,saturation,010521377025525304
+UASD|Shirur sub-watershed|Kamdolli-1|gw|BW-15,UASD,Shirur sub-watershed,Kamdolli-1,gw,BW-15,15.21055,75.254481,9,9,1.0,0.0,saturation,010521055025525448
+UASD|Shirur sub-watershed|Kamdolli-1|gw|BW-16,UASD,Shirur sub-watershed,Kamdolli-1,gw,BW-16,15.213234,75.255838,9,9,1.0,0.0,saturation,010521323025525584
+UASD|Shirur sub-watershed|Kamdolli-1|gw|BW-17,UASD,Shirur sub-watershed,Kamdolli-1,gw,BW-17,15.210927,75.253905,9,9,1.0,0.0,saturation,010521093025525390
+UASD|Shirur sub-watershed|Kamdolli-2|gw|BW-1,UASD,Shirur sub-watershed,Kamdolli-2,gw,BW-1,15.197852,75.255278,9,9,1.0,0.0,saturation,010519785025525528
+UASD|Shirur sub-watershed|Kamdolli-2|gw|BW-2,UASD,Shirur sub-watershed,Kamdolli-2,gw,BW-2,15.120478,75.256333,9,9,1.0,0.0,saturation,010512048025525633
+UASD|Shirur sub-watershed|Kamdolli-2|gw|BW-3,UASD,Shirur sub-watershed,Kamdolli-2,gw,BW-3,15.18926,75.258192,9,9,1.0,0.0,saturation,010518926025525819
+UASD|Shirur sub-watershed|Kamdolli-2|gw|BW-4,UASD,Shirur sub-watershed,Kamdolli-2,gw,BW-4,15.199327,75.253405,9,9,1.0,0.0,saturation,010519933025525340
+UASD|Shirur sub-watershed|Kamdolli-2|gw|BW-5,UASD,Shirur sub-watershed,Kamdolli-2,gw,BW-5,15.1963,75.253288,9,9,1.0,0.0,saturation,010519630025525329
+UASD|Shirur sub-watershed|Vittalapura-1|gw|,UASD,Shirur sub-watershed,Vittalapura-1,gw,,15.18641,75.196945,24,8,0.3333333333333333,2644.566123347729,saturation,010518641025519694
+UASD|Shirur sub-watershed|Vittalapura-1|gw|BW-1,UASD,Shirur sub-watershed,Vittalapura-1,gw,BW-1,15.160794,75.167153,8,8,1.0,0.0,saturation,010516079025516715
+UASD|Shirur sub-watershed|Vittalapura-1|gw|BW-2,UASD,Shirur sub-watershed,Vittalapura-1,gw,BW-2,15.160176,75.169621,8,8,1.0,0.0,saturation,010516018025516962
+UASD|Shirur sub-watershed|Vittalapura-1|gw|BW-3,UASD,Shirur sub-watershed,Vittalapura-1,gw,BW-3,15.160007,75.172613,8,8,1.0,0.0,saturation,010516001025517261
+UASD|Shirur sub-watershed|Vittalapura-1|gw|BW-4,UASD,Shirur sub-watershed,Vittalapura-1,gw,BW-4,15.166829,75.178789,8,8,1.0,0.0,saturation,010516683025517879
+UASD|Shirur sub-watershed|Vittalapura-1|gw|BW-5,UASD,Shirur sub-watershed,Vittalapura-1,gw,BW-5,15.169041,75.184047,8,8,1.0,0.0,saturation,010516904025518405
+UASD|Shirur sub-watershed|Vittalapura-2|gw|BW-1,UASD,Shirur sub-watershed,Vittalapura-2,gw,BW-1,15.152445,75.152362,8,8,1.0,0.0,saturation,010515244025515236
+UASD|Shirur sub-watershed|Vittalapura-2|gw|BW-2,UASD,Shirur sub-watershed,Vittalapura-2,gw,BW-2,15.154928,75.150457,8,8,1.0,0.0,saturation,010515493025515046
+UASD|Shirur sub-watershed|Vittalapura-2|gw|BW-3,UASD,Shirur sub-watershed,Vittalapura-2,gw,BW-3,15.153755,75.153843,8,8,1.0,0.0,saturation,010515376025515384
+UASD|Shirur sub-watershed|Vittalapura-2|gw|BW-4,UASD,Shirur sub-watershed,Vittalapura-2,gw,BW-4,15.156828,75.156664,8,8,1.0,0.0,saturation,010515683025515666
+UASD|Shirur sub-watershed|Vittalapura-2|gw|BW-5,UASD,Shirur sub-watershed,Vittalapura-2,gw,BW-5,15.15537,75.157777,8,8,1.0,0.0,saturation,010515537025515778
+UASR|Halligera|Halligera 1|gw|2.0,UASR,Halligera,Halligera 1,gw,2.0,16.731923,77.234602,1,1,1.0,0.0,unlabelled,010673192025723460
+UASR|Halligera|Maskanahalli2|gw|22.0,UASR,Halligera,Maskanahalli2,gw,22.0,16.807,77.2203,1,1,1.0,0.0,unlabelled,010680700025722030
+UASR|Halligera|Maskanahalli2|gw|24.0,UASR,Halligera,Maskanahalli2,gw,24.0,16.807456,77.231735,1,1,1.0,0.0,unlabelled,010680746025723174
+UASR|Halligera|Maskanahalli2|gw|29.0,UASR,Halligera,Maskanahalli2,gw,29.0,16.8086,77.2257,1,1,1.0,0.0,unlabelled,010680860025722570
+UASR|Halligera|Mylapur|gw|14.0,UASR,Halligera,Mylapur,gw,14.0,16.741122,77.24403,1,1,1.0,0.0,unlabelled,010674112025724403
+UASR|Halligera|Mylapur|gw|15.0,UASR,Halligera,Mylapur,gw,15.0,16.737651,77.239112,1,1,1.0,0.0,unlabelled,010673765025723911
+UASR|Halligera|Mylapur|gw|17.0,UASR,Halligera,Mylapur,gw,17.0,16.736668,77.239178,1,1,1.0,0.0,unlabelled,010673667025723918
+UASR|Halligera|Poglapur|gw|34.0,UASR,Halligera,Poglapur,gw,34.0,16.710562,77.186262,1,1,1.0,0.0,unlabelled,010671056025718626
+UASR|Halligera|Raisabad Hosalli1|gw|32.0,UASR,Halligera,Raisabad Hosalli1,gw,32.0,16.723657,77.237732,1,1,1.0,0.0,unlabelled,010672366025723773
+UASR|Halligera|Raisabad Hosalli2|gw|19.0,UASR,Halligera,Raisabad Hosalli2,gw,19.0,16.734321,77.270345,1,1,1.0,0.0,unlabelled,010673432025727035
+UASR|Halligera|Raisabad Hosalli2|gw|21.0,UASR,Halligera,Raisabad Hosalli2,gw,21.0,16.736399,77.268993,1,1,1.0,0.0,unlabelled,010673640025726899
+UASR|Halligera|Raisabad Hosalli3|gw|31.0,UASR,Halligera,Raisabad Hosalli3,gw,31.0,16.745268,77.136336,1,1,1.0,0.0,unlabelled,010674527025713634
+UASR|Halligera|Varkanhalli|gw|11.0,UASR,Halligera,Varkanhalli,gw,11.0,16.755351,77.177813,1,1,1.0,0.0,unlabelled,010675535025717781
+UASR|Halligera|Varkanhalli|gw|8.0,UASR,Halligera,Varkanhalli,gw,8.0,16.74254,77.181376,1,1,1.0,0.0,unlabelled,010674254025718138
+UASR|Halligera|koyalur|gw|3.0,UASR,Halligera,koyalur,gw,3.0,16.717661,77.170786,1,1,1.0,0.0,unlabelled,010671766025717079
+UASR|Halligera|koyalur|gw|5.0,UASR,Halligera,koyalur,gw,5.0,16.724364,77.179471,1,1,1.0,0.0,unlabelled,010672436025717947
+UASR|Halligera|koyalur|gw|6.0,UASR,Halligera,koyalur,gw,6.0,16.737736,77.191538,1,1,1.0,0.0,unlabelled,010673774025719154
+UASR|Halligera|koyalur|gw|7.0,UASR,Halligera,koyalur,gw,7.0,16.74092,77.191037,1,1,1.0,0.0,unlabelled,010674092025719104
+UASR|Hunsehadagli|Hadagil Harut 1|gw|65.0,UASR,Hunsehadagli,Hadagil Harut 1,gw,65.0,17.293653,76.735047,1,1,1.0,0.0,unlabelled,010729365025673505
+UASR|Hunsehadagli|Hadagil Harut 1|gw|66.0,UASR,Hunsehadagli,Hadagil Harut 1,gw,66.0,17.2824645,76.741348,1,1,1.0,0.0,unlabelled,010728246025674135
+UASR|Hunsehadagli|Hadagil Harut 1|gw|67.0,UASR,Hunsehadagli,Hadagil Harut 1,gw,67.0,17.3064253,76.733896,1,1,1.0,0.0,unlabelled,010730643025673390
+UASR|Hunsehadagli|Hadagil Harut 1|gw|68.0,UASR,Hunsehadagli,Hadagil Harut 1,gw,68.0,17.3072061,76.7311691,1,1,1.0,0.0,unlabelled,010730721025673117
+UASR|Hunsehadagli|Hadagil Harut 1|gw|69.0,UASR,Hunsehadagli,Hadagil Harut 1,gw,69.0,17.295279,76.729563,1,1,1.0,0.0,unlabelled,010729528025672956
+UASR|Hunsehadagli|Hadagil Harut 1|gw|70.0,UASR,Hunsehadagli,Hadagil Harut 1,gw,70.0,17.3127034,76.7311852,1,1,1.0,0.0,unlabelled,010731270025673119
+UASR|Hunsehadagli|Hadagil Harut 1|gw|71.0,UASR,Hunsehadagli,Hadagil Harut 1,gw,71.0,17.313206,76.7240051,1,1,1.0,0.0,unlabelled,010731321025672401
+UASR|Hunsehadagli|Hadagil Harut 1|gw|72.0,UASR,Hunsehadagli,Hadagil Harut 1,gw,72.0,17.302067,76.7286853,1,1,1.0,0.0,unlabelled,010730207025672869
+UASR|Hunsehadagli|Hadagil Harut 1|gw|73.0,UASR,Hunsehadagli,Hadagil Harut 1,gw,73.0,17.3073199,76.7319928,1,1,1.0,0.0,unlabelled,010730732025673199
+UASR|Hunsehadagli|Hadagil Harut 2|gw|61.0,UASR,Hunsehadagli,Hadagil Harut 2,gw,61.0,17.30225,76.748014,1,1,1.0,0.0,unlabelled,010730225025674801
+UASR|Hunsehadagli|Hadagil Harut 2|gw|62.0,UASR,Hunsehadagli,Hadagil Harut 2,gw,62.0,17.305116,76.750223,1,1,1.0,0.0,unlabelled,010730512025675022
+UASR|Hunsehadagli|Hadagil Harut 2|gw|63.0,UASR,Hunsehadagli,Hadagil Harut 2,gw,63.0,17.308309,76.749744,1,1,1.0,0.0,unlabelled,010730831025674974
+UASR|Hunsehadagli|Hadagil Harut 2|gw|64.0,UASR,Hunsehadagli,Hadagil Harut 2,gw,64.0,17.308411,76.749324,1,1,1.0,0.0,unlabelled,010730841025674932
+UASR|Hunsehadagli|Hunsehadagi 1|gw|58.0,UASR,Hunsehadagli,Hunsehadagi 1,gw,58.0,17.302107,76.746726,1,1,1.0,0.0,unlabelled,010730211025674673
+UASR|Hunsehadagli|Hunsehadagi 1|gw|59.0,UASR,Hunsehadagli,Hunsehadagi 1,gw,59.0,17.302197,76.744856,1,1,1.0,0.0,unlabelled,010730220025674486
+UASR|Hunsehadagli|Hunsehadagi 1|gw|60.0,UASR,Hunsehadagli,Hunsehadagi 1,gw,60.0,17.302322,76.747449,1,1,1.0,0.0,unlabelled,010730232025674745
+UASR|Hunsehadagli|Hunsehadagi 2|gw|57.0,UASR,Hunsehadagli,Hunsehadagi 2,gw,57.0,17.300582,76.735811,1,1,1.0,0.0,unlabelled,010730058025673581
+UASR|Hunsehadagli|Kollur 2|gw|42.0,UASR,Hunsehadagli,Kollur 2,gw,42.0,17.284277,76.719498,1,1,1.0,0.0,unlabelled,010728428025671950
+UASR|Hunsehadagli|Kollur 2|gw|43.0,UASR,Hunsehadagli,Kollur 2,gw,43.0,17.2801911,76.71811,1,1,1.0,0.0,unlabelled,010728019025671811
+UASR|Hunsehadagli|Kollur 2|gw|44.0,UASR,Hunsehadagli,Kollur 2,gw,44.0,17.284505,76.719102,1,1,1.0,0.0,unlabelled,010728450025671910
+UASR|Hunsehadagli|Kollur 2|gw|46.0,UASR,Hunsehadagli,Kollur 2,gw,46.0,17.2932054,76.7169164,1,1,1.0,0.0,unlabelled,010729321025671692
+UASR|Hunsehadagli|Kollur 2|gw|47.0,UASR,Hunsehadagli,Kollur 2,gw,47.0,17.284974,76.0,1,1,1.0,0.0,unlabelled,010728497025600000
+UASR|Hunsehadagli|Kollur 2|gw|48.0,UASR,Hunsehadagli,Kollur 2,gw,48.0,17.2899667,76.708265,1,1,1.0,0.0,unlabelled,010728997025670826
+UASR|Hunsehadagli|Kollur 2|gw|49.0,UASR,Hunsehadagli,Kollur 2,gw,49.0,17.2900042,76.7088525,1,1,1.0,0.0,unlabelled,010729000025670885
+UASR|Hunsehadagli|Kollur 2|gw|50.0,UASR,Hunsehadagli,Kollur 2,gw,50.0,17.2945288,76.715578,1,1,1.0,0.0,unlabelled,010729453025671558
+UASR|Hunsehadagli|Kollur 2|gw|51.0,UASR,Hunsehadagli,Kollur 2,gw,51.0,17.295429,76.709171,1,1,1.0,0.0,unlabelled,010729543025670917
+UASR|Hunsehadagli|Kollur 2|gw|52.0,UASR,Hunsehadagli,Kollur 2,gw,52.0,17.295145,76.70722,1,1,1.0,0.0,unlabelled,010729514025670722
+UASR|Hunsehadagli|Kollur 2|gw|53.0,UASR,Hunsehadagli,Kollur 2,gw,53.0,17.2876929,76.728959,1,1,1.0,0.0,unlabelled,010728769025672896
+UASR|Hunsehadagli|Kollur 2|gw|54.0,UASR,Hunsehadagli,Kollur 2,gw,54.0,17.30785,76.719854,1,1,1.0,0.0,unlabelled,010730785025671985
+UASR|Hunsehadagli|Kollur 2|gw|55.0,UASR,Hunsehadagli,Kollur 2,gw,55.0,17.306871,76.715847,1,1,1.0,0.0,unlabelled,010730687025671585
+UASR|Hunsehadagli|Kollur 2|gw|56.0,UASR,Hunsehadagli,Kollur 2,gw,56.0,17.306055,76.717131,1,1,1.0,0.0,unlabelled,010730606025671713
+UASR|Hunsehadagli|Malli 1|gw|10.0,UASR,Hunsehadagli,Malli 1,gw,10.0,17.307437,76.693532,1,1,1.0,0.0,unlabelled,010730744025669353
+UASR|Hunsehadagli|Malli 1|gw|11.0,UASR,Hunsehadagli,Malli 1,gw,11.0,17.311748,76.686138,1,1,1.0,0.0,unlabelled,010731175025668614
+UASR|Hunsehadagli|Malli 1|gw|12.0,UASR,Hunsehadagli,Malli 1,gw,12.0,17.314553,76.687323,1,1,1.0,0.0,unlabelled,010731455025668732
+UASR|Hunsehadagli|Malli 1|gw|13.0,UASR,Hunsehadagli,Malli 1,gw,13.0,17.31457,76.686437,1,1,1.0,0.0,unlabelled,010731457025668644
+UASR|Hunsehadagli|Malli 1|gw|5.0,UASR,Hunsehadagli,Malli 1,gw,5.0,17.308881,76.680874,1,1,1.0,0.0,unlabelled,010730888025668087
+UASR|Hunsehadagli|Malli 1|gw|6.0,UASR,Hunsehadagli,Malli 1,gw,6.0,17.308056,76.680251,1,1,1.0,0.0,unlabelled,010730806025668025
+UASR|Hunsehadagli|Malli 1|gw|7.0,UASR,Hunsehadagli,Malli 1,gw,7.0,17.299977,76.690888,1,1,1.0,0.0,unlabelled,010729998025669089
+UASR|Hunsehadagli|Malli 1|gw|8.0,UASR,Hunsehadagli,Malli 1,gw,8.0,17.302049,76.700527,1,1,1.0,0.0,unlabelled,010730205025670053
+UASR|Hunsehadagli|Malli 1|gw|9.0,UASR,Hunsehadagli,Malli 1,gw,9.0,17.304225,76.700467,1,1,1.0,0.0,unlabelled,010730422025670047
+UASR|Hunsehadagli|Melkunda Buzurg 1|gw|14.0,UASR,Hunsehadagli,Melkunda Buzurg 1,gw,14.0,17.324001,76.658695,1,1,1.0,0.0,unlabelled,010732400025665869
+UASR|Hunsehadagli|Melkunda Buzurg 1|gw|15.0,UASR,Hunsehadagli,Melkunda Buzurg 1,gw,15.0,17.323607,76.66142,1,1,1.0,0.0,unlabelled,010732361025666142
+UASR|Hunsehadagli|Melkunda Buzurg 1|gw|39.0,UASR,Hunsehadagli,Melkunda Buzurg 1,gw,39.0,17.313953,76.667012,1,1,1.0,0.0,unlabelled,010731395025666701
+UASR|Hunsehadagli|Melkunda Buzurg 1|gw|40.0,UASR,Hunsehadagli,Melkunda Buzurg 1,gw,40.0,17.309621,76.671469,1,1,1.0,0.0,unlabelled,010730962025667147
+UASR|Hunsehadagli|Melkunda Buzurg 1|gw|41.0,UASR,Hunsehadagli,Melkunda Buzurg 1,gw,41.0,17.311654,76.6751899,1,1,1.0,0.0,unlabelled,010731165025667519
+UASR|Hunsehadagli|Melkunda Buzurg 2|gw|1.0,UASR,Hunsehadagli,Melkunda Buzurg 2,gw,1.0,17.322559,76.676102,1,1,1.0,0.0,unlabelled,010732256025667610
+UASR|Hunsehadagli|Melkunda Buzurg 2|gw|2.0,UASR,Hunsehadagli,Melkunda Buzurg 2,gw,2.0,17.322851,76.68942,1,1,1.0,0.0,unlabelled,010732285025668942
+UASR|Hunsehadagli|Melkunda Buzurg 2|gw|3.0,UASR,Hunsehadagli,Melkunda Buzurg 2,gw,3.0,17.324459,76.689278,1,1,1.0,0.0,unlabelled,010732446025668928
+UASR|Hunsehadagli|Melkunda Buzurg 2|gw|37.0,UASR,Hunsehadagli,Melkunda Buzurg 2,gw,37.0,17.311407,76.6731517,1,1,1.0,0.0,unlabelled,010731141025667315
+UASR|Hunsehadagli|Melkunda Buzurg 2|gw|38.0,UASR,Hunsehadagli,Melkunda Buzurg 2,gw,38.0,17.311407,76.673151,1,1,1.0,0.0,unlabelled,010731141025667315
+UASR|Hunsehadagli|Melkunda Buzurg 2|gw|4.0,UASR,Hunsehadagli,Melkunda Buzurg 2,gw,4.0,17.325056,76.707857,1,1,1.0,0.0,unlabelled,010732506025670786
+UASR|Hunsehadagli|Melkunda Buzurg 3|gw|28.0,UASR,Hunsehadagli,Melkunda Buzurg 3,gw,28.0,17.3360947,76.66201,1,1,1.0,0.0,unlabelled,010733609025666201
+UASR|Hunsehadagli|Melkunda Buzurg 3|gw|29.0,UASR,Hunsehadagli,Melkunda Buzurg 3,gw,29.0,17.336281,76.663068,1,1,1.0,0.0,unlabelled,010733628025666307
+UASR|Hunsehadagli|Melkunda Buzurg 3|gw|30.0,UASR,Hunsehadagli,Melkunda Buzurg 3,gw,30.0,17.336251,76.669331,1,1,1.0,0.0,unlabelled,010733625025666933
+UASR|Hunsehadagli|Melkunda Buzurg 3|gw|31.0,UASR,Hunsehadagli,Melkunda Buzurg 3,gw,31.0,17.331025,76.67547,1,1,1.0,0.0,unlabelled,010733102025667547
+UASR|Hunsehadagli|Melkunda Buzurg 3|gw|32.0,UASR,Hunsehadagli,Melkunda Buzurg 3,gw,32.0,17.331172,76.680843,1,1,1.0,0.0,unlabelled,010733117025668084
+UASR|Hunsehadagli|Melkunda Buzurg 3|gw|33.0,UASR,Hunsehadagli,Melkunda Buzurg 3,gw,33.0,17.333967,76.686222,1,1,1.0,0.0,unlabelled,010733397025668622
+UASR|Hunsehadagli|Melkunda Buzurg 3|gw|34.0,UASR,Hunsehadagli,Melkunda Buzurg 3,gw,34.0,17.3348949,76.6595,1,1,1.0,0.0,unlabelled,010733489025665950
+UASR|Hunsehadagli|Melkunda Buzurg 3|gw|35.0,UASR,Hunsehadagli,Melkunda Buzurg 3,gw,35.0,17.331171,76.680845,1,1,1.0,0.0,unlabelled,010733117025668084
+UASR|Hunsehadagli|Melkunda Buzurg 3|gw|36.0,UASR,Hunsehadagli,Melkunda Buzurg 3,gw,36.0,17.33223,76.6817479,1,1,1.0,0.0,unlabelled,010733223025668175
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|16.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,16.0,17.317506,76.657685,1,1,1.0,0.0,unlabelled,010731751025665768
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|17.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,17.0,17.314423,76.668162,1,1,1.0,0.0,unlabelled,010731442025666816
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|18.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,18.0,17.313465,76.671457,1,1,1.0,0.0,unlabelled,010731346025667146
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|19.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,19.0,17.317518,76.664622,1,1,1.0,0.0,unlabelled,010731752025666462
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|20.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,20.0,17.319402,76.65851,1,1,1.0,0.0,unlabelled,010731940025665851
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|21.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,21.0,17.319305,76.661283,1,1,1.0,0.0,unlabelled,010731930025666128
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|22.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,22.0,17.31901,76.662303,1,1,1.0,0.0,unlabelled,010731901025666230
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|23.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,23.0,17.311257,76.668497,1,1,1.0,0.0,unlabelled,010731126025666850
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|24.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,24.0,17.302998,76.66091,1,1,1.0,0.0,unlabelled,010730300025666091
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|25.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,25.0,17.302968,76.660765,1,1,1.0,0.0,unlabelled,010730297025666076
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|26.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,26.0,17.305553,76.669033,1,1,1.0,0.0,unlabelled,010730555025666903
+UASR|Hunsehadagli|Melkunda buzurg 1|gw|27.0,UASR,Hunsehadagli,Melkunda buzurg 1,gw,27.0,17.303403,76.666594,1,1,1.0,0.0,unlabelled,010730340025666659
+UASR|Hunsehadagli||gw|1.0,UASR,Hunsehadagli,,gw,1.0,17.281282,76.708218,1,1,1.0,0.0,unlabelled,010728128025670822
+UASR|Hunsehadagli||gw|11.0,UASR,Hunsehadagli,,gw,11.0,17.314338,76.68055,1,1,1.0,0.0,unlabelled,010731434025668055
+UASR|Hunsehadagli||gw|13.0,UASR,Hunsehadagli,,gw,13.0,17.286857,76.715795,1,1,1.0,0.0,unlabelled,010728686025671580
+UASR|Hunsehadagli||gw|14.0,UASR,Hunsehadagli,,gw,14.0,17.289901,76.709504,1,1,1.0,0.0,unlabelled,010728990025670950
+UASR|Hunsehadagli||gw|15.0,UASR,Hunsehadagli,,gw,15.0,17.289297,76.709502,1,1,1.0,0.0,unlabelled,010728930025670950
+UASR|Hunsehadagli||gw|16.0,UASR,Hunsehadagli,,gw,16.0,17.290762,76.708927,1,1,1.0,0.0,unlabelled,010729076025670893
+UASR|Hunsehadagli||gw|17.0,UASR,Hunsehadagli,,gw,17.0,17.296168,76.734282,1,1,1.0,0.0,unlabelled,010729617025673428
+UASR|Hunsehadagli||gw|18.0,UASR,Hunsehadagli,,gw,18.0,17.296172,76.734274,1,1,1.0,0.0,unlabelled,010729617025673427
+UASR|Hunsehadagli||gw|19.0,UASR,Hunsehadagli,,gw,19.0,17.299979,76.736109,1,1,1.0,0.0,unlabelled,010729998025673611
+UASR|Hunsehadagli||gw|21.0,UASR,Hunsehadagli,,gw,21.0,17.298954,76.736401,1,1,1.0,0.0,unlabelled,010729895025673640
+UASR|Hunsehadagli||gw|22.0,UASR,Hunsehadagli,,gw,22.0,17.299224,76.736284,1,1,1.0,0.0,unlabelled,010729922025673628
+UASR|Hunsehadagli||gw|24.0,UASR,Hunsehadagli,,gw,24.0,17.301987,76.748321,1,1,1.0,0.0,unlabelled,010730199025674832
+UASR|Hunsehadagli||gw|26.0,UASR,Hunsehadagli,,gw,26.0,17.312098,76.704659,1,1,1.0,0.0,unlabelled,010731210025670466
+UASR|Hunsehadagli||gw|28.0,UASR,Hunsehadagli,,gw,28.0,17.306413,76.654753,1,1,1.0,0.0,unlabelled,010730641025665475
+UASR|Hunsehadagli||gw|3.0,UASR,Hunsehadagli,,gw,3.0,17.312636,76.667286,1,1,1.0,0.0,unlabelled,010731264025666729
+UASR|Hunsehadagli||gw|30.0,UASR,Hunsehadagli,,gw,30.0,17.305963,76.653405,1,1,1.0,0.0,unlabelled,010730596025665341
+UASR|Hunsehadagli||gw|5.0,UASR,Hunsehadagli,,gw,5.0,17.313806,76.679532,1,1,1.0,0.0,unlabelled,010731381025667953
+UASR|Hunsehadagli||gw|7.0,UASR,Hunsehadagli,,gw,7.0,17.314726,76.680325,1,1,1.0,0.0,unlabelled,010731473025668032
+UASR|Hunsehadagli||gw|9.0,UASR,Hunsehadagli,,gw,9.0,17.287844,76.866511,1,1,1.0,0.0,unlabelled,010728784025686651
+UASR|Jantapur|Jantapur1|gw|10.0,UASR,Jantapur,Jantapur1,gw,10.0,15.98767,76.41257,2,2,1.0,0.0,unlabelled,010598767025641257
+UASR|Jantapur|Jantapur1|gw|12.0,UASR,Jantapur,Jantapur1,gw,12.0,15.97778,76.41837,2,2,1.0,0.0,unlabelled,010597778025641837
+UASR|Jantapur|Jantapur1|gw|13.0,UASR,Jantapur,Jantapur1,gw,13.0,15.986981,76.425553,2,2,1.0,0.0,unlabelled,010598698025642555
+UASR|Jantapur|Jantapur1|gw|14.0,UASR,Jantapur,Jantapur1,gw,14.0,15.987041,76.416413,2,2,1.0,0.0,unlabelled,010598704025641641
+UASR|Jantapur|Jantapur1|gw|19.0,UASR,Jantapur,Jantapur1,gw,19.0,15.986815,76.415005,2,2,1.0,0.0,unlabelled,010598682025641500
+UASR|Jantapur|Jantapur4|gw|17.0,UASR,Jantapur,Jantapur4,gw,17.0,15.984136,76.402715,2,2,1.0,0.0,unlabelled,010598414025640272
+UASR|Jantapur|Jantapur4|gw|7.0,UASR,Jantapur,Jantapur4,gw,7.0,15.984145,76.402704,2,2,1.0,0.0,unlabelled,010598414025640270
+UASR|Jantapur|Piklihal3|gw|4.0,UASR,Jantapur,Piklihal3,gw,4.0,15.970771,76.438987,2,2,1.0,0.0,unlabelled,010597077025643899
+UASR|Jantapur|Piklihal4|gw|1.0,UASR,Jantapur,Piklihal4,gw,1.0,15.954914,76.447273,2,2,1.0,0.0,unlabelled,010595491025644727
+UASR|Jantapur|Piklihal4|gw|2.0,UASR,Jantapur,Piklihal4,gw,2.0,15.955415,76.447135,2,2,1.0,0.0,unlabelled,010595542025644714
+UASR|Jantapur|Piklihal4|gw|20.0,UASR,Jantapur,Piklihal4,gw,20.0,15.970278,76.441583,2,2,1.0,0.0,unlabelled,010597028025644158
+UASR|Jantapur|Piklihal4|gw|3.0,UASR,Jantapur,Piklihal4,gw,3.0,15.962899,76.441112,2,2,1.0,0.0,unlabelled,010596290025644111
+UASR|Koppal (4D4A2)|Hatti|gw|10.0,UASR,Koppal (4D4A2),Hatti,gw,10.0,15.222079,75.946771,2,2,1.0,0.0,unlabelled,010522208025594677
+UASR|Koppal (4D4A2)|Hatti|gw|11.0,UASR,Koppal (4D4A2),Hatti,gw,11.0,15.224028,75.948507,2,2,1.0,0.0,unlabelled,010522403025594851
+UASR|Koppal (4D4A2)|Hatti|gw|12.0,UASR,Koppal (4D4A2),Hatti,gw,12.0,15.221236,75.951256,2,2,1.0,0.0,unlabelled,010522124025595126
+UASR|Koppal (4D4A2)|Hatti|gw|16.0,UASR,Koppal (4D4A2),Hatti,gw,16.0,15.218301,75.9381,2,2,1.0,0.0,unlabelled,010521830025593810
+UASR|Koppal (4D4A2)|Hatti|gw|17.0,UASR,Koppal (4D4A2),Hatti,gw,17.0,15.21688,75.937867,2,2,1.0,0.0,unlabelled,010521688025593787
+UASR|Koppal (4D4A2)|Raghunathanahalli 1|gw|14.0,UASR,Koppal (4D4A2),Raghunathanahalli 1,gw,14.0,15.21658,75.938274,2,2,1.0,0.0,unlabelled,010521658025593827
+UASR|Koppal (4D4A2)|Raghunathanahalli 1|gw|7.0,UASR,Koppal (4D4A2),Raghunathanahalli 1,gw,7.0,15.219932,75.92295,2,2,1.0,0.0,unlabelled,010521993025592295
+UASR|Koppal (4D4A2)|Raghunathanahalli 1|gw|8.0,UASR,Koppal (4D4A2),Raghunathanahalli 1,gw,8.0,15.221334,75.941939,2,2,1.0,0.0,unlabelled,010522133025594194
+UASR|Koppal (4D4A2)|Raghunathanahalli 1|gw|9.0,UASR,Koppal (4D4A2),Raghunathanahalli 1,gw,9.0,15.226336,75.946304,2,2,1.0,0.0,unlabelled,010522634025594630
+UASR|Koppal (4D4A2)|Raghunathanahalli 2|gw|1.0,UASR,Koppal (4D4A2),Raghunathanahalli 2,gw,1.0,15.235002,75.921979,2,2,1.0,0.0,unlabelled,010523500025592198
+UASR|Koppal (4D4A2)|Raghunathanahalli 2|gw|2.0,UASR,Koppal (4D4A2),Raghunathanahalli 2,gw,2.0,15.233214,75.922713,2,2,1.0,0.0,unlabelled,010523321025592271
+UASR|Koppal (4D4A2)|Raghunathanahalli 2|gw|3.0,UASR,Koppal (4D4A2),Raghunathanahalli 2,gw,3.0,15.233365,75.923408,2,2,1.0,0.0,unlabelled,010523336025592341
+UASR|Koppal (4D4A2)|Raghunathanahalli 2|gw|4.0,UASR,Koppal (4D4A2),Raghunathanahalli 2,gw,4.0,15.22921,75.922839,2,2,1.0,0.0,unlabelled,010522921025592284
+UASR|Koppal (4D4A2)|Raghunathanahalli 2|gw|5.0,UASR,Koppal (4D4A2),Raghunathanahalli 2,gw,5.0,15.220105,75.924187,2,2,1.0,0.0,unlabelled,010522010025592419
+UASR|Koppal (4D4A2)|Raghunathanahalli west 1|gw|13.0,UASR,Koppal (4D4A2),Raghunathanahalli west 1,gw,13.0,15.227665,75.952993,2,2,1.0,0.0,unlabelled,010522766025595299
+UASR|Koppal (4D4A2)|Raghunathanahalli west 2|gw|18.0,UASR,Koppal (4D4A2),Raghunathanahalli west 2,gw,18.0,15.216003,75.963589,2,2,1.0,0.0,unlabelled,010521600025596359
+UASR|Koppal (4D4A2)|Raghunathanahalli west 2|gw|19.0,UASR,Koppal (4D4A2),Raghunathanahalli west 2,gw,19.0,15.212193,75.971108,2,2,1.0,0.0,unlabelled,010521219025597111
+UASR|Koppal (4D4A2)|Raghunathanahalli west 2|gw|20.0,UASR,Koppal (4D4A2),Raghunathanahalli west 2,gw,20.0,15.213013,75.973468,2,2,1.0,0.0,unlabelled,010521301025597347
+UASR|Koppal (4D4A2)|Raghunathanahalli west 2|gw|21.0,UASR,Koppal (4D4A2),Raghunathanahalli west 2,gw,21.0,15.215036,75.973663,2,2,1.0,0.0,unlabelled,010521504025597366
+UASR|Koppal (4D4A2)|Raghunathanahalli west 2|gw|22.0,UASR,Koppal (4D4A2),Raghunathanahalli west 2,gw,22.0,15.207717,75.977095,2,2,1.0,0.0,unlabelled,010520772025597710
+UASR|Koppal (4D4A2)|Raghunathanahalli west 2|gw|24.0,UASR,Koppal (4D4A2),Raghunathanahalli west 2,gw,24.0,15.207436,75.98176,2,2,1.0,0.0,unlabelled,010520744025598176
+UASR|Koppal (4D4A2)|kallahalli|gw|23.0,UASR,Koppal (4D4A2),kallahalli,gw,23.0,15.19733,75.984748,2,2,1.0,0.0,unlabelled,010519733025598475
+UHSB|Kandgula|Masjawadi|gw|1.0,UHSB,Kandgula,Masjawadi,gw,1.0,18.086338,77.541849,11,11,1.0,0.0,unlabelled,010808634025754185
+UHSB|Kandgula|Masjawadi|gw|10.0,UHSB,Kandgula,Masjawadi,gw,10.0,18.106911,77.547701,11,11,1.0,0.0,unlabelled,010810691025754770
+UHSB|Kandgula|Masjawadi|gw|11.0,UHSB,Kandgula,Masjawadi,gw,11.0,18.106451,77.547673,11,11,1.0,0.0,unlabelled,010810645025754767
+UHSB|Kandgula|Masjawadi|gw|12.0,UHSB,Kandgula,Masjawadi,gw,12.0,18.106774,77.545077,11,11,1.0,0.0,unlabelled,010810677025754508
+UHSB|Kandgula|Masjawadi|gw|13.0,UHSB,Kandgula,Masjawadi,gw,13.0,18.102674,77.543102,11,11,1.0,0.0,unlabelled,010810267025754310
+UHSB|Kandgula|Masjawadi|gw|14.0,UHSB,Kandgula,Masjawadi,gw,14.0,18.100911,77.543254,11,11,1.0,0.0,unlabelled,010810091025754325
+UHSB|Kandgula|Masjawadi|gw|15.0,UHSB,Kandgula,Masjawadi,gw,15.0,18.100618,77.542168,11,11,1.0,0.0,unlabelled,010810062025754217
+UHSB|Kandgula|Masjawadi|gw|16.0,UHSB,Kandgula,Masjawadi,gw,16.0,18.100233,77.542729,11,11,1.0,0.0,unlabelled,010810023025754273
+UHSB|Kandgula|Masjawadi|gw|2.0,UHSB,Kandgula,Masjawadi,gw,2.0,18.085436,77.542369,11,11,1.0,0.0,unlabelled,010808544025754237
+UHSB|Kandgula|Masjawadi|gw|3.0,UHSB,Kandgula,Masjawadi,gw,3.0,18.093178,77.549872,11,11,1.0,0.0,unlabelled,010809318025754987
+UHSB|Kandgula|Masjawadi|gw|4.0,UHSB,Kandgula,Masjawadi,gw,4.0,18.106966,77.559501,11,11,1.0,0.0,unlabelled,010810697025755950
+UHSB|Kandgula|Masjawadi|gw|5.0,UHSB,Kandgula,Masjawadi,gw,5.0,18.111711,77.548843,11,11,1.0,0.0,unlabelled,010811171025754884
+UHSB|Kandgula|Masjawadi|gw|6.0,UHSB,Kandgula,Masjawadi,gw,6.0,18.112816,77.549063,11,11,1.0,0.0,unlabelled,010811282025754906
+UHSB|Kandgula|Masjawadi|gw|7.0,UHSB,Kandgula,Masjawadi,gw,7.0,18.114568,77.548875,11,11,1.0,0.0,unlabelled,010811457025754888
+UHSB|Kandgula|Masjawadi|gw|8.0,UHSB,Kandgula,Masjawadi,gw,8.0,18.10856,77.54664,11,11,1.0,0.0,unlabelled,010810856025754664
+UHSB|Kandgula|Masjawadi|gw|9.0,UHSB,Kandgula,Masjawadi,gw,9.0,18.107214,77.547068,11,11,1.0,0.0,unlabelled,010810721025754707
+UHSB|Pashapur|Ladha 1|gw|1.0,UHSB,Pashapur,Ladha 1,gw,1.0,18.113324,77.434539,11,11,1.0,0.0,unlabelled,010811332025743454
+UHSB|Pashapur|Ladha 1|gw|10.0,UHSB,Pashapur,Ladha 1,gw,10.0,18.095331,77.435847,11,11,1.0,0.0,unlabelled,010809533025743585
+UHSB|Pashapur|Ladha 1|gw|2.0,UHSB,Pashapur,Ladha 1,gw,2.0,18.108036,77.433473,11,11,1.0,0.0,unlabelled,010810804025743347
+UHSB|Pashapur|Ladha 1|gw|3.0,UHSB,Pashapur,Ladha 1,gw,3.0,18.108941,77.433838,11,11,1.0,0.0,unlabelled,010810894025743384
+UHSB|Pashapur|Ladha 1|gw|4.0,UHSB,Pashapur,Ladha 1,gw,4.0,18.108564,77.434075,11,11,1.0,0.0,unlabelled,010810856025743408
+UHSB|Pashapur|Ladha 1|gw|5.0,UHSB,Pashapur,Ladha 1,gw,5.0,18.107931,77.441354,11,11,1.0,0.0,unlabelled,010810793025744135
+UHSB|Pashapur|Ladha 1|gw|6.0,UHSB,Pashapur,Ladha 1,gw,6.0,18.104115,77.438598,11,11,1.0,0.0,unlabelled,010810412025743860
+UHSB|Pashapur|Ladha 1|gw|7.0,UHSB,Pashapur,Ladha 1,gw,7.0,18.094452,77.431907,11,11,1.0,0.0,unlabelled,010809445025743191
+UHSB|Pashapur|Ladha 1|gw|8.0,UHSB,Pashapur,Ladha 1,gw,8.0,18.09508,77.429371,11,11,1.0,0.0,unlabelled,010809508025742937
+UHSB|Pashapur|Ladha 1|gw|9.0,UHSB,Pashapur,Ladha 1,gw,9.0,18.093046,77.428762,11,11,1.0,0.0,unlabelled,010809305025742876
+UHSB|Pashapur|Ladha 2|gw|1.0,UHSB,Pashapur,Ladha 2,gw,1.0,18.099674,77.444174,11,11,1.0,0.0,unlabelled,010809967025744417
+UHSB|Pashapur|Ladha 2|gw|2.0,UHSB,Pashapur,Ladha 2,gw,2.0,18.097619,77.440904,11,11,1.0,0.0,unlabelled,010809762025744090
+UHSB|Pashapur|Ladha 2|gw|3.0,UHSB,Pashapur,Ladha 2,gw,3.0,18.093927,77.440403,11,11,1.0,0.0,unlabelled,010809393025744040
+UHSB|Pashapur|Ladha 2|gw|4.0,UHSB,Pashapur,Ladha 2,gw,4.0,18.094467,77.440462,11,11,1.0,0.0,unlabelled,010809447025744046
+UHSB|Pashapur|Ladha 2|gw|5.0,UHSB,Pashapur,Ladha 2,gw,5.0,18.093035,77.439838,11,11,1.0,0.0,unlabelled,010809304025743984
+UHSB|Pashapur|Ladha 2|gw|6.0,UHSB,Pashapur,Ladha 2,gw,6.0,18.092692,77.439153,11,11,1.0,0.0,unlabelled,010809269025743915
+UHSB|Pashapur|Ladha 2|gw|7.0,UHSB,Pashapur,Ladha 2,gw,7.0,18.092692,77.439153,11,11,1.0,0.0,unlabelled,010809269025743915
+UHSB|Pashapur|Ladha 2|gw|8.0,UHSB,Pashapur,Ladha 2,gw,8.0,18.088087,77.439609,11,11,1.0,0.0,unlabelled,010808809025743961
+UHSB|Pashapur|Ladha 2|gw|9.0,UHSB,Pashapur,Ladha 2,gw,9.0,18.089022,77.438932,11,11,1.0,0.0,unlabelled,010808902025743893
+UHSB|Pashapur|Mustapur|gw|1.0,UHSB,Pashapur,Mustapur,gw,1.0,18.106667,77.451944,11,11,1.0,0.0,unlabelled,010810667025745194
+UHSB|Pashapur|Mustapur|gw|10.0,UHSB,Pashapur,Mustapur,gw,10.0,18.104722,77.451389,11,11,1.0,0.0,unlabelled,010810472025745139
+UHSB|Pashapur|Mustapur|gw|11.0,UHSB,Pashapur,Mustapur,gw,11.0,18.104167,77.451944,11,11,1.0,0.0,unlabelled,010810417025745194
+UHSB|Pashapur|Mustapur|gw|13.0,UHSB,Pashapur,Mustapur,gw,13.0,18.102778,77.451667,11,11,1.0,0.0,unlabelled,010810278025745167
+UHSB|Pashapur|Mustapur|gw|14.0,UHSB,Pashapur,Mustapur,gw,14.0,18.112222,77.450833,11,11,1.0,0.0,unlabelled,010811222025745083
+UHSB|Pashapur|Mustapur|gw|15.0,UHSB,Pashapur,Mustapur,gw,15.0,18.098889,77.450833,11,11,1.0,0.0,unlabelled,010809889025745083
+UHSB|Pashapur|Mustapur|gw|16.0,UHSB,Pashapur,Mustapur,gw,16.0,18.098889,77.451389,11,11,1.0,0.0,unlabelled,010809889025745139
+UHSB|Pashapur|Mustapur|gw|17.0,UHSB,Pashapur,Mustapur,gw,17.0,18.099167,77.451111,11,11,1.0,0.0,unlabelled,010809917025745111
+UHSB|Pashapur|Mustapur|gw|19.0,UHSB,Pashapur,Mustapur,gw,19.0,18.096944,77.452222,11,11,1.0,0.0,unlabelled,010809694025745222
+UHSB|Pashapur|Mustapur|gw|2.0,UHSB,Pashapur,Mustapur,gw,2.0,18.108889,77.451667,11,11,1.0,0.0,unlabelled,010810889025745167
+UHSB|Pashapur|Mustapur|gw|20.0,UHSB,Pashapur,Mustapur,gw,20.0,18.098056,77.452222,11,11,1.0,0.0,unlabelled,010809806025745222
+UHSB|Pashapur|Mustapur|gw|21.0,UHSB,Pashapur,Mustapur,gw,21.0,18.113337,77.44756,11,11,1.0,0.0,unlabelled,010811334025744756
+UHSB|Pashapur|Mustapur|gw|22.0,UHSB,Pashapur,Mustapur,gw,22.0,18.110832,77.450797,11,11,1.0,0.0,unlabelled,010811083025745080
+UHSB|Pashapur|Mustapur|gw|23.0,UHSB,Pashapur,Mustapur,gw,23.0,18.11053,77.451208,11,11,1.0,0.0,unlabelled,010811053025745121
+UHSB|Pashapur|Mustapur|gw|24.0,UHSB,Pashapur,Mustapur,gw,24.0,18.110274,77.450237,11,11,1.0,0.0,unlabelled,010811027025745024
+UHSB|Pashapur|Mustapur|gw|25.0,UHSB,Pashapur,Mustapur,gw,25.0,18.110453,77.451451,11,11,1.0,0.0,unlabelled,010811045025745145
+UHSB|Pashapur|Mustapur|gw|26.0,UHSB,Pashapur,Mustapur,gw,26.0,18.107899,77.451837,11,11,1.0,0.0,unlabelled,010810790025745184
+UHSB|Pashapur|Mustapur|gw|27.0,UHSB,Pashapur,Mustapur,gw,27.0,18.107126,77.452101,11,11,1.0,0.0,unlabelled,010810713025745210
+UHSB|Pashapur|Mustapur|gw|28.0,UHSB,Pashapur,Mustapur,gw,28.0,18.105668,77.451824,11,11,1.0,0.0,unlabelled,010810567025745182
+UHSB|Pashapur|Mustapur|gw|29.0,UHSB,Pashapur,Mustapur,gw,29.0,18.105467,77.451708,11,11,1.0,0.0,unlabelled,010810547025745171
+UHSB|Pashapur|Mustapur|gw|3.0,UHSB,Pashapur,Mustapur,gw,3.0,18.108611,77.451389,11,11,1.0,0.0,unlabelled,010810861025745139
+UHSB|Pashapur|Mustapur|gw|30.0,UHSB,Pashapur,Mustapur,gw,30.0,18.104847,77.45168,11,11,1.0,0.0,unlabelled,010810485025745168
+UHSB|Pashapur|Mustapur|gw|31.0,UHSB,Pashapur,Mustapur,gw,31.0,18.1058,77.450495,11,11,1.0,0.0,unlabelled,010810580025745050
+UHSB|Pashapur|Mustapur|gw|32.0,UHSB,Pashapur,Mustapur,gw,32.0,18.110504,77.448025,11,11,1.0,0.0,unlabelled,010811050025744803
+UHSB|Pashapur|Mustapur|gw|33.0,UHSB,Pashapur,Mustapur,gw,33.0,18.103345,77.44917,11,11,1.0,0.0,unlabelled,010810334025744917
+UHSB|Pashapur|Mustapur|gw|34.0,UHSB,Pashapur,Mustapur,gw,34.0,18.103533,77.451829,11,11,1.0,0.0,unlabelled,010810353025745183
+UHSB|Pashapur|Mustapur|gw|35.0,UHSB,Pashapur,Mustapur,gw,35.0,18.101461,77.451772,11,11,1.0,0.0,unlabelled,010810146025745177
+UHSB|Pashapur|Mustapur|gw|36.0,UHSB,Pashapur,Mustapur,gw,36.0,18.100133,77.451853,11,11,1.0,0.0,unlabelled,010810013025745185
+UHSB|Pashapur|Mustapur|gw|4.0,UHSB,Pashapur,Mustapur,gw,4.0,18.109722,77.451111,11,11,1.0,0.0,unlabelled,010810972025745111
+UHSB|Pashapur|Mustapur|gw|5.0,UHSB,Pashapur,Mustapur,gw,5.0,18.110556,77.450556,11,11,1.0,0.0,unlabelled,010811056025745056
+UHSB|Pashapur|Mustapur|gw|6.0,UHSB,Pashapur,Mustapur,gw,6.0,18.1125,77.450278,11,11,1.0,0.0,unlabelled,010811250025745028
+UHSB|Pashapur|Mustapur|gw|7.0,UHSB,Pashapur,Mustapur,gw,7.0,18.111389,77.450833,11,11,1.0,0.0,unlabelled,010811139025745083
+UHSB|Pashapur|Mustapur|gw|8.0,UHSB,Pashapur,Mustapur,gw,8.0,18.1125,77.450278,11,11,1.0,0.0,unlabelled,010811250025745028
+UHSB|Pashapur|Mustapur|gw|9.0,UHSB,Pashapur,Mustapur,gw,9.0,18.112222,77.450833,11,11,1.0,0.0,unlabelled,010811222025745083
+UAHS|Begur SWS|LP2|tdr|820.0,UAHS,Begur SWS,LP2,tdr,820.0,14.291116,75.412237,41,5,1.0,0.0,unlabelled,010429112025541224
+UAHS|Begur SWS|LP3|tdr|118.0,UAHS,Begur SWS,LP3,tdr,118.0,14.292289,75.417048,13,5,1.0,0.0,unlabelled,010429229025541705
+UAHS|Begur SWS|MP1|tdr|48.0,UAHS,Begur SWS,MP1,tdr,48.0,14.26068,75.423193,41,5,1.0,0.0,unlabelled,010426068025542319
+UAHS|Begur SWS|MP2|tdr|141.0,UAHS,Begur SWS,MP2,tdr,141.0,14.263318,75.463906,41,5,1.0,0.0,unlabelled,010426332025546391
+UAHS|Begur SWS|MP3|tdr|850.0,UAHS,Begur SWS,MP3,tdr,850.0,14.277867,75.40842,41,5,1.0,0.0,unlabelled,010427787025540842
+UAHS|Begur SWS|UP1|tdr|76.0,UAHS,Begur SWS,UP1,tdr,76.0,14.274853,75.48665,41,5,1.0,0.0,unlabelled,010427485025548665
+UAHS|Begur SWS|UP2|tdr|76.0,UAHS,Begur SWS,UP2,tdr,76.0,14.257693,75.467711,41,5,1.0,0.0,unlabelled,010425769025546771
+UAHS|Begur SWS|UP3|tdr|189.0,UAHS,Begur SWS,UP3,tdr,189.0,14.263854,75.472121,41,5,1.0,0.0,unlabelled,010426385025547212
+UAHS|Haralahalli|Donduru|tdr|12.0,UAHS,Haralahalli,Donduru,tdr,12.0,13.832572,76.023622,81,9,1.0,0.0,unlabelled,010383257025602362
+UAHS|Haralahalli|Gijikatte|tdr|11.0,UAHS,Haralahalli,Gijikatte,tdr,11.0,13.850361,76.065353,81,9,1.0,0.0,unlabelled,010385036025606535
+UAHS|Haralahalli|Karehalli|tdr|10.0,UAHS,Haralahalli,Karehalli,tdr,10.0,13.867785,76.026836,81,8,1.0,0.0,unlabelled,010386778025602684
+UAHS|Jammapura|Jammapur2|tdr|9.0,UAHS,Jammapura,Jammapur2,tdr,9.0,13.89344,75.978869,32,13,1.0,0.10740764532238245,unlabelled,010389344025597887
+UAHS|Jammapura|Kallikere|tdr|7.0,UAHS,Jammapura,Kallikere,tdr,7.0,13.914549,75.993515,104,15,1.0,0.5483034473556819,unlabelled,010391455025599352
+UAHS|Jammapura|Kallikere|tdr|8.0,UAHS,Jammapura,Kallikere,tdr,8.0,13.900999,75.984947,41,14,1.0,0.3406673311295143,unlabelled,010390100025598495
+UAHS|Jammapura|Maravanji2|tdr|5.0,UAHS,Jammapura,Maravanji2,tdr,5.0,13.94241,75.97658,168,18,1.0,0.616610241691411,unlabelled,010394241025597658
+UAHS|Jammapura|Meagondanahalli2|tdr|4.0,UAHS,Jammapura,Meagondanahalli2,tdr,4.0,13.961851,75.962892,170,16,1.0,0.0,unlabelled,010396185025596289
+UAHS|Jammapura|Pandavamatti1|tdr|1.0,UAHS,Jammapura,Pandavamatti1,tdr,1.0,13.967543,75.97191,170,17,1.0,0.0,unlabelled,010396754025597191
+UAHS|Jammapura|Pandavamatti1|tdr|2.0,UAHS,Jammapura,Pandavamatti1,tdr,2.0,13.964954,75.984663,170,17,1.0,0.0,unlabelled,010396495025598466
+UAHS|Jammapura|Pandavamatti1|tdr|3.0,UAHS,Jammapura,Pandavamatti1,tdr,3.0,13.958904,75.976977,169,17,1.0,0.0,unlabelled,010395890025597698
+UAHS|Jammapura|Pandavamatti1|tdr|6.0,UAHS,Jammapura,Pandavamatti1,tdr,6.0,13.93077,75.97339,168,18,1.0,0.7707628026940162,unlabelled,010393077025597339
+UAHS|Koranahalli and Haralahalli|Basavanahalli|tdr|3.0,UAHS,Koranahalli and Haralahalli,Basavanahalli,tdr,3.0,13.706431,75.923428,81,9,1.0,0.0,unlabelled,010370643025592343
+UAHS|Koranahalli and Haralahalli|G. Gollarahalli|tdr|7.0,UAHS,Koranahalli and Haralahalli,G. Gollarahalli,tdr,7.0,13.674664,75.933849,81,9,1.0,0.0,unlabelled,010367466025593385
+UAHS|Koranahalli and Haralahalli|K. Chatnahalli|tdr|9.0,UAHS,Koranahalli and Haralahalli,K. Chatnahalli,tdr,9.0,13.692253,75.911195,81,8,1.0,0.0,unlabelled,010369225025591120
+UAHS|Koranahalli and Haralahalli|Rajanahalli|tdr|8.0,UAHS,Koranahalli and Haralahalli,Rajanahalli,tdr,8.0,13.682374,75.896502,81,9,1.0,0.0,unlabelled,010368237025589650
+UAHS|Koranahalli and Haralahalli|Shivapura|tdr|5.0,UAHS,Koranahalli and Haralahalli,Shivapura,tdr,5.0,13.671599,75.908182,81,9,1.0,0.0,unlabelled,010367160025590818
+UAHS|Koranahalli and Haralahalli|Shyanaboganahalli|tdr|6.0,UAHS,Koranahalli and Haralahalli,Shyanaboganahalli,tdr,6.0,13.695406,75.945505,49,9,1.0,0.0,unlabelled,010369541025594550
+UAHS|Koranahalli|Jodi Bokikere|tdr|1.0,UAHS,Koranahalli,Jodi Bokikere,tdr,1.0,13.685641,75.94282,81,9,1.0,0.0,unlabelled,010368564025594282
+UAHS|Koranahalli|Koranahalli|tdr|2.0,UAHS,Koranahalli,Koranahalli,tdr,2.0,13.691331,75.903725,81,9,1.0,0.0,unlabelled,010369133025590372
+UAHS|Koranahalli|Koranahalli|tdr|4.0,UAHS,Koranahalli,Koranahalli,tdr,4.0,13.690737,75.898062,80,9,1.0,0.0,unlabelled,010369074025589806
+UAHS|Laxmisagara 4U|Lakshimisagar1|tdr|10.0,UAHS,Laxmisagara 4U,Lakshimisagar1,tdr,10.0,14.01087,75.93452,170,17,1.0,0.21481529343873262,unlabelled,010401087025593452
+UAHS|Laxmisagara 4U|Mallegere3|tdr|11.0,UAHS,Laxmisagara 4U,Mallegere3,tdr,11.0,13.99141,75.91774,170,17,1.0,0.39520260009628166,unlabelled,010399141025591774
+UAHS|Laxmisagara 4U|Mallegere3|tdr|12.0,UAHS,Laxmisagara 4U,Mallegere3,tdr,12.0,13.97206,75.92357,150,15,1.0,0.3083051205212504,unlabelled,010397206025592357
+UASB|Maidalakere|Hodekallu|tdr|147.0,UASB,Maidalakere,Hodekallu,tdr,147.0,13.317151,77.210485,96,19,1.0,0.0,unlabelled,010331715025721048
+UASB|Maidalakere|Hodekallu|tdr|2023-12-01 00:00:00,UASB,Maidalakere,Hodekallu,tdr,2023-12-01 00:00:00,13.310066,77.214461,32,8,1.0,0.0,unlabelled,010331007025721446
+UASB|Maidalakere|Hodekallu|tdr|2024-12-01 00:00:00,UASB,Maidalakere,Hodekallu,tdr,2024-12-01 00:00:00,13.310066,77.214461,44,11,1.0,0.0,unlabelled,010331007025721446
+UASB|Maidalakere|Hodekallu|tdr|24.0,UASB,Maidalakere,Hodekallu,tdr,24.0,13.299569,77.212021,96,19,1.0,0.0,unlabelled,010329957025721202
+UHSB|Chittaragi|Chittaragi|tdr|1 (02),UHSB,Chittaragi,Chittaragi,tdr,1 (02),16.120555555555555,75.97444444444444,8,1,1.0,0.0,saturation,010612056025597444
+UHSB|Chittaragi|Chittaragi|tdr|2 (40),UHSB,Chittaragi,Chittaragi,tdr,2 (40),16.11916666666667,75.98194444444445,6,0,1.0,0.0,saturation,010611917025598194
+UHSB|Chittaragi|Chittaragi|tdr|3 (202),UHSB,Chittaragi,Chittaragi,tdr,3 (202),16.11861111111111,75.96777777777778,8,0,1.0,0.0,saturation,010611861025596778
+UHSB|Chittaragi|Sulibhavi|tdr|4 (72),UHSB,Chittaragi,Sulibhavi,tdr,4 (72),16.012777777777778,75.95361111111112,6,0,1.0,0.0,saturation,010601278025595361
+UHSB|Chittaragi|Sulibhavi|tdr|5 (151),UHSB,Chittaragi,Sulibhavi,tdr,5 (151),16.02027777777778,75.95027777777779,6,0,1.0,0.0,saturation,010602028025595028
+UHSB|Honnutagi|Koulgi-1|tdr|1 (137),UHSB,Honnutagi,Koulgi-1,tdr,1 (137),16.826,75.837,75,14,1.0,0.0,saturation,010682600025583700
+UHSB|Honnutagi|Koulgi-1|tdr|2(138),UHSB,Honnutagi,Koulgi-1,tdr,2(138),16.827,75.839,31,0,1.0,0.0,saturation,010682700025583900
+UHSB|Honnutagi|Koulgi-1|tdr|3(185),UHSB,Honnutagi,Koulgi-1,tdr,3(185),16.83,75.849,126,0,1.0,0.0,saturation,010683000025584900
+UHSB|Pashapur|Kandgula|tdr|13.0,UHSB,Pashapur,Kandgula,tdr,13.0,18.091666,77.526627,97,37,1.0,0.0,unlabelled,010809167025752663
+UHSB|Pashapur|Kandgula|tdr|14.0,UHSB,Pashapur,Kandgula,tdr,14.0,18.09009,77.536949,222,37,1.0,0.0,unlabelled,010809009025753695
+UHSB|Pashapur|Kandgula|tdr|15.0,UHSB,Pashapur,Kandgula,tdr,15.0,18.098571,77.546512,79,37,1.0,0.0,unlabelled,010809857025754651
+UHSB|Pashapur|Ladha 1|tdr|11.0,UHSB,Pashapur,Ladha 1,tdr,11.0,18.124582,77.4393,62,37,1.0,0.0,unlabelled,010812458025743930
+UHSB|Pashapur|Ladha 1|tdr|12.0,UHSB,Pashapur,Ladha 1,tdr,12.0,18.119301,77.436416,37,37,1.0,0.0,unlabelled,010811930025743642
+UHSB|Pashapur|Ladha 1|tdr|9.0,UHSB,Pashapur,Ladha 1,tdr,9.0,18.111395,77.430901,74,37,1.0,0.0,unlabelled,010811140025743090
+UHSB|Pashapur|Ladha 2|tdr|10.0,UHSB,Pashapur,Ladha 2,tdr,10.0,18.08432,77.442383,222,37,1.0,0.0,unlabelled,010808432025744238
+UHSB|Pashapur|Ladha 2|tdr|16.0,UHSB,Pashapur,Ladha 2,tdr,16.0,18.090017,77.450232,74,37,1.0,0.0,unlabelled,010809002025745023
+UHSB|Pashapur|Ladha 2|tdr|17.0,UHSB,Pashapur,Ladha 2,tdr,17.0,18.085776,77.456589,111,37,1.0,0.0,unlabelled,010808578025745659
+UHSB|Pashapur|Mustapur|tdr|2.0,UHSB,Pashapur,Mustapur,tdr,2.0,18.102643,77.46111,111,37,1.0,0.0,unlabelled,010810264025746111
+UHSB|Pashapur|Mustapur|tdr|20.0,UHSB,Pashapur,Mustapur,tdr,20.0,18.108699,77.453272,185,37,1.0,0.0,unlabelled,010810870025745327
+UHSB|Pashapur|Mustapur|tdr|5.0,UHSB,Pashapur,Mustapur,tdr,5.0,18.112833,77.459653,111,37,1.0,0.0,unlabelled,010811283025745965

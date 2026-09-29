@@ -1,0 +1,6 @@
+rule_id,rule,source_document,where_it_is_used
+disbursement_eligibility,MWS eligible for disbursement when >= 70% of its parcels (hissas) are treated,DPR discriptions.docx,parcels_treated_pct_measured in 12_mis_koppal_dose_by_mws.csv is the MWS-level test of this rule
+iva_sampling_mws,"IVA verifies 3 MWS per district (upper, middle, lower reach; ~30% of MWS)",DPR discriptions.docx / Hissa_parcel Counts.xlsx,15_sws_parcel_counts_from_hissa.csv columns iva_*
+iva_sampling_parcels,"10% of parcels sampled per MWS, across activity types",Hissa_parcel Counts.xlsx note b/c,-
+programme_scale,"191 MWS in 20 SWS (one per district); 125,620 parcels (122,721 private + 2,899 common)",Hissa_parcel Counts.xlsx,denominators for saturation shares
+treatment_unit,the parcel (hissa) is the unit of physical treatment; MWS is the unit of eligibility; SWS is the unit of the DiD treatment indicator (buff_km = 0),DPR discriptions.docx,"grain mismatch: dose can be MWS-level, treatment is SWS-level"

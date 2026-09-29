@@ -1,0 +1,71 @@
+district,sws_code,subwshed_id,mws_code,mws_name,completion_date,completion_date_note,intervention_type,works_count,works_unit,works_count_measured_only,proposed,area_treated_ha,beneficiary_hh_count
+Koppal,4D4A2,,4D4A2M1c,Muralapur-2,,not recorded in MIS,bunding,56482.5176,running_metres (all rows; see measured column),21256.810000000005,88208.18,354.58,218
+Koppal,4D4A2,,4D4A2M1c,Muralapur-2,,not recorded in MIS,waste_weir,71.0,number,71.0,274.0,109.41,65
+Koppal,4D4A2,,4D4A2M1c,Muralapur-2,,not recorded in MIS,farm_pond,6.0,number,6.0,2.0,18.65,6
+Koppal,4D4A2,,4D4A2M1c,Muralapur-2,,not recorded in MIS,plantation_horticulture,0.0,plants,0.0,0.0,0.0,0
+Koppal,4D4A2,,4D4A2M1c,Muralapur-2,,not recorded in MIS,plantation_forestry,0.0,plants,0.0,0.0,0.0,0
+Koppal,4D4A2,,4D4A2M1d,Muralapur-1,,not recorded in MIS,bunding,68841.92000000001,running_metres (all rows; see measured column),66894.72,105360.0,479.05,256
+Koppal,4D4A2,,4D4A2M1d,Muralapur-1,,not recorded in MIS,waste_weir,171.0,number,171.0,331.0,310.84,147
+Koppal,4D4A2,,4D4A2M1d,Muralapur-1,,not recorded in MIS,farm_pond,8.0,number,8.0,0.0,17.15,8
+Koppal,4D4A2,,4D4A2M1d,Muralapur-1,,not recorded in MIS,plantation_horticulture,0.0,plants,0.0,0.0,0.0,0
+Koppal,4D4A2,,4D4A2M1d,Muralapur-1,,not recorded in MIS,plantation_forestry,190.0,plants,190.0,600.0,8.530000000000001,2
+Koppal,4D4A2,,4D4A2M1e,Muralapur-4,,not recorded in MIS,bunding,41506.420000000006,running_metres (all rows; see measured column),17081.68,54322.0,232.67000000000002,129
+Koppal,4D4A2,,4D4A2M1e,Muralapur-4,,not recorded in MIS,waste_weir,34.0,number,34.0,176.0,51.71000000000001,29
+Koppal,4D4A2,,4D4A2M1e,Muralapur-4,,not recorded in MIS,farm_pond,2.0,number,2.0,0.0,6.880000000000001,2
+Koppal,4D4A2,,4D4A2M1e,Muralapur-4,,not recorded in MIS,plantation_horticulture,0.0,plants,0.0,2360.0,0.0,0
+Koppal,4D4A2,,4D4A2M1e,Muralapur-4,,not recorded in MIS,plantation_forestry,190.0,plants,190.0,560.0,3.33,2
+Koppal,4D4A2,,4D4A2M2a,Gatareddihal-4,,not recorded in MIS,bunding,63050.24999999999,running_metres (all rows; see measured column),58858.25,83254.0,400.81,187
+Koppal,4D4A2,,4D4A2M2a,Gatareddihal-4,,not recorded in MIS,waste_weir,116.0,number,116.0,263.0,225.69,88
+Koppal,4D4A2,,4D4A2M2a,Gatareddihal-4,,not recorded in MIS,farm_pond,16.0,number,16.0,0.0,63.13,16
+Koppal,4D4A2,,4D4A2M2a,Gatareddihal-4,,not recorded in MIS,plantation_horticulture,200.0,plants,200.0,954.0,2.6500000000000004,2
+Koppal,4D4A2,,4D4A2M2a,Gatareddihal-4,,not recorded in MIS,plantation_forestry,570.0,plants,570.0,480.0,29.35,6
+Koppal,4D4A2,,4D4A2M2b,Gatareddihal-1,,not recorded in MIS,bunding,63222.490000000005,running_metres (all rows; see measured column),43358.490000000005,98674.0,389.24,221
+Koppal,4D4A2,,4D4A2M2b,Gatareddihal-1,,not recorded in MIS,waste_weir,80.0,number,80.0,311.0,159.95999999999998,63
+Koppal,4D4A2,,4D4A2M2b,Gatareddihal-1,,not recorded in MIS,farm_pond,13.0,number,13.0,0.0,27.990000000000006,13
+Koppal,4D4A2,,4D4A2M2b,Gatareddihal-1,,not recorded in MIS,plantation_horticulture,300.0,plants,300.0,876.0,4.01,3
+Koppal,4D4A2,,4D4A2M2b,Gatareddihal-1,,not recorded in MIS,plantation_forestry,0.0,plants,0.0,520.0,0.0,0
+Koppal,4D4A2,,4D4A2M2c,Gatareddihal-3,,not recorded in MIS,bunding,49380.32,running_metres (all rows; see measured column),49380.32,72732.0,347.9,167
+Koppal,4D4A2,,4D4A2M2c,Gatareddihal-3,,not recorded in MIS,waste_weir,73.0,number,73.0,254.0,156.19,64
+Koppal,4D4A2,,4D4A2M2c,Gatareddihal-3,,not recorded in MIS,farm_pond,2.0,number,2.0,0.0,5.8100000000000005,2
+Koppal,4D4A2,,4D4A2M2c,Gatareddihal-3,,not recorded in MIS,plantation_horticulture,1470.0,plants,1470.0,2578.0,6.64,3
+Koppal,4D4A2,,4D4A2M2c,Gatareddihal-3,,not recorded in MIS,plantation_forestry,380.0,plants,380.0,320.0,27.27,4
+Koppal,4D4A2,,4D4A2M2d,Gatareddihal-2,,not recorded in MIS,bunding,76570.45000000001,running_metres (all rows; see measured column),76570.45000000001,97590.0,463.03999999999996,241
+Koppal,4D4A2,,4D4A2M2d,Gatareddihal-2,,not recorded in MIS,waste_weir,95.0,number,95.0,335.0,183.72999999999996,76
+Koppal,4D4A2,,4D4A2M2d,Gatareddihal-2,,not recorded in MIS,farm_pond,7.0,number,7.0,7.0,17.89,7
+Koppal,4D4A2,,4D4A2M2d,Gatareddihal-2,,not recorded in MIS,plantation_horticulture,5194.0,plants,5194.0,5194.0,19.220000000000002,11
+Koppal,4D4A2,,4D4A2M2d,Gatareddihal-2,,not recorded in MIS,plantation_forestry,760.0,plants,760.0,760.0,31.180000000000003,8
+Koppal,4D4A2,,4D4A2M3a,Raghunathanhalli-2,,not recorded in MIS,bunding,53737.7,running_metres (all rows; see measured column),43509.020000000004,77054.0,310.1,278
+Koppal,4D4A2,,4D4A2M3a,Raghunathanhalli-2,,not recorded in MIS,waste_weir,89.0,number,89.0,198.0,112.74,80
+Koppal,4D4A2,,4D4A2M3a,Raghunathanhalli-2,,not recorded in MIS,farm_pond,2.0,number,2.0,0.0,3.7800000000000002,2
+Koppal,4D4A2,,4D4A2M3a,Raghunathanhalli-2,,not recorded in MIS,plantation_horticulture,0.0,plants,0.0,0.0,0.0,0
+Koppal,4D4A2,,4D4A2M3a,Raghunathanhalli-2,,not recorded in MIS,plantation_forestry,3515.0,plants,3515.0,2000.0,56.27000000000001,37
+Koppal,4D4A2,,4D4A2M3b,Raghunathanhalli-1,,not recorded in MIS,bunding,59988.44,running_metres (all rows; see measured column),832.0,90008.0,366.51,380
+Koppal,4D4A2,,4D4A2M3b,Raghunathanhalli-1,,not recorded in MIS,waste_weir,0.0,number,0.0,228.0,0.0,0
+Koppal,4D4A2,,4D4A2M3b,Raghunathanhalli-1,,not recorded in MIS,farm_pond,2.0,number,2.0,0.0,2.16,2
+Koppal,4D4A2,,4D4A2M3b,Raghunathanhalli-1,,not recorded in MIS,plantation_horticulture,5435.0,plants,5435.0,11910.0,40.29999999999999,26
+Koppal,4D4A2,,4D4A2M3b,Raghunathanhalli-1,,not recorded in MIS,plantation_forestry,1045.0,plants,1045.0,1240.0,18.280000000000005,11
+Koppal,4D4A2,,4D4A2M3c,Hatti,,not recorded in MIS,bunding,55910.86,running_metres (all rows; see measured column),10861.26,84598.0,350.6,347
+Koppal,4D4A2,,4D4A2M3c,Hatti,,not recorded in MIS,waste_weir,0.0,number,0.0,222.0,0.0,0
+Koppal,4D4A2,,4D4A2M3c,Hatti,,not recorded in MIS,farm_pond,2.0,number,2.0,0.0,5.29,2
+Koppal,4D4A2,,4D4A2M3c,Hatti,,not recorded in MIS,plantation_horticulture,6476.0,plants,6476.0,14676.0,25.92,17
+Koppal,4D4A2,,4D4A2M3c,Hatti,,not recorded in MIS,plantation_forestry,760.0,plants,760.0,680.0,14.83,8
+Koppal,4D4A2,,4D4A2M3d,Kalhalli,,not recorded in MIS,bunding,77308.73999999999,running_metres (all rows; see measured column),74737.54000000001,125564.0,507.14,387
+Koppal,4D4A2,,4D4A2M3d,Kalhalli,,not recorded in MIS,waste_weir,127.0,number,127.0,252.0,186.89000000000004,111
+Koppal,4D4A2,,4D4A2M3d,Kalhalli,,not recorded in MIS,farm_pond,7.0,number,7.0,0.0,16.369999999999997,7
+Koppal,4D4A2,,4D4A2M3d,Kalhalli,,not recorded in MIS,plantation_horticulture,12269.0,plants,12269.0,15940.0,65.61,36
+Koppal,4D4A2,,4D4A2M3d,Kalhalli,,not recorded in MIS,plantation_forestry,3325.0,plants,3325.0,2440.0,68.29,35
+Koppal,4D4A2,,4D4A2M4a,Raghunathanhalli  West-3,,not recorded in MIS,bunding,63835.20999999999,running_metres (all rows; see measured column),63611.649999999994,86694.0,375.73,205
+Koppal,4D4A2,,4D4A2M4a,Raghunathanhalli  West-3,,not recorded in MIS,waste_weir,153.0,number,153.0,283.0,230.87999999999997,110
+Koppal,4D4A2,,4D4A2M4a,Raghunathanhalli  West-3,,not recorded in MIS,farm_pond,11.0,number,11.0,0.0,28.31,11
+Koppal,4D4A2,,4D4A2M4a,Raghunathanhalli  West-3,,not recorded in MIS,plantation_horticulture,0.0,plants,0.0,0.0,0.0,0
+Koppal,4D4A2,,4D4A2M4a,Raghunathanhalli  West-3,,not recorded in MIS,plantation_forestry,1425.0,plants,1425.0,1840.0,33.49,15
+Koppal,4D4A2,,4D4A2M4b,Raghunathanhalli  West-1,,not recorded in MIS,bunding,71867.78,running_metres (all rows; see measured column),71605.38,81836.0,393.96000000000004,272
+Koppal,4D4A2,,4D4A2M4b,Raghunathanhalli  West-1,,not recorded in MIS,waste_weir,36.0,number,36.0,223.0,49.709999999999994,35
+Koppal,4D4A2,,4D4A2M4b,Raghunathanhalli  West-1,,not recorded in MIS,farm_pond,3.0,number,3.0,0.0,11.620000000000001,3
+Koppal,4D4A2,,4D4A2M4b,Raghunathanhalli  West-1,,not recorded in MIS,plantation_horticulture,6240.0,plants,6240.0,15388.0,45.300000000000004,29
+Koppal,4D4A2,,4D4A2M4b,Raghunathanhalli  West-1,,not recorded in MIS,plantation_forestry,2660.0,plants,2660.0,1200.0,109.92,28
+Koppal,4D4A2,,4D4A2M4c,Raghunathanhalli  West-2,,not recorded in MIS,bunding,33095.42,running_metres (all rows; see measured column),0.0,45168.0,199.36999999999995,124
+Koppal,4D4A2,,4D4A2M4c,Raghunathanhalli  West-2,,not recorded in MIS,waste_weir,0.0,number,0.0,143.0,0.0,0
+Koppal,4D4A2,,4D4A2M4c,Raghunathanhalli  West-2,,not recorded in MIS,farm_pond,0.0,number,0.0,0.0,0.0,0
+Koppal,4D4A2,,4D4A2M4c,Raghunathanhalli  West-2,,not recorded in MIS,plantation_horticulture,7583.0,plants,7583.0,12371.0,33.67,20
+Koppal,4D4A2,,4D4A2M4c,Raghunathanhalli  West-2,,not recorded in MIS,plantation_forestry,285.0,plants,285.0,1200.0,5.11,3

@@ -1,0 +1,2180 @@
+variable,institution,sws_name,sws_role,mws_name,site_no,Year,Season,value_mean,value_median,n_obs
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,37.0,2023,1,15.37,15.37,1
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,37.0,2023,2,19.332222222222224,19.07,9
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,37.0,2024,1,34.6,34.6,1
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,37.0,2024,3,19.07166666666667,16.9,6
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,38.0,2023,1,4.33,4.33,1
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,38.0,2023,2,9.621851851777778,6.6,9
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,38.0,2024,1,27.86666667,27.86666667,1
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,38.0,2024,3,13.331666666666669,7.33,6
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,39.0,2023,1,5.77,5.77,1
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,39.0,2023,2,10.614814814777779,5.4,9
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,39.0,2024,1,26.63333333,26.63333333,1
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,39.0,2024,3,15.565,15.100000000000001,6
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,40.0,2023,1,15.5,15.5,1
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,40.0,2023,2,12.093333333333334,9.3,9
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,40.0,2024,1,37.2,37.2,1
+ssm_pct,UAHS,Beguru,unlabelled,Dabbanabairanahalli,40.0,2024,3,11.383333333333333,8.335,6
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,43.0,2023,1,14.97,14.97,1
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,43.0,2023,2,10.644814814777778,5.6,9
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,43.0,2024,1,30.93333333,30.93333333,1
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,43.0,2024,3,14.050000000000002,11.765,6
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,44.0,2023,1,5.67,5.67,1
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,44.0,2023,2,10.207037037111112,4.266666667,9
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,44.0,2024,1,29.33333333,29.33333333,1
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,44.0,2024,3,15.388333333333334,13.68,6
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,45.0,2023,1,9.53,9.53,1
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,45.0,2023,2,14.795555555222222,11.5,9
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,45.0,2024,1,40.0,40.0,1
+ssm_pct,UAHS,Beguru,unlabelled,Gogga,45.0,2024,3,16.781666666666666,14.515,6
+ssm_pct,UAHS,Beguru,unlabelled,Hulaganakatte1,42.0,2023,1,20.37,20.37,1
+ssm_pct,UAHS,Beguru,unlabelled,Hulaganakatte1,42.0,2023,2,9.305555555555555,5.53,9
+ssm_pct,UAHS,Beguru,unlabelled,Hulaganakatte1,42.0,2024,1,30.5,30.5,1
+ssm_pct,UAHS,Beguru,unlabelled,Hulaganakatte1,42.0,2024,3,9.623333333333333,7.9,6
+ssm_pct,UAHS,Beguru,unlabelled,Kenchagondanakoppa,41.0,2023,1,14.27,14.27,1
+ssm_pct,UAHS,Beguru,unlabelled,Kenchagondanakoppa,41.0,2023,2,15.728888889222223,14.43,9
+ssm_pct,UAHS,Beguru,unlabelled,Kenchagondanakoppa,41.0,2024,1,40.66666667,40.66666667,1
+ssm_pct,UAHS,Beguru,unlabelled,Kenchagondanakoppa,41.0,2024,3,23.743333333333336,26.515,6
+ssm_pct,UAHS,Haralahalli,unlabelled,Donduru,23.0,2023,1,5.27,5.27,1
+ssm_pct,UAHS,Haralahalli,unlabelled,Donduru,23.0,2023,2,7.5741666666250005,4.7,8
+ssm_pct,UAHS,Haralahalli,unlabelled,Donduru,23.0,2024,1,21.83333333,21.83333333,1
+ssm_pct,UAHS,Haralahalli,unlabelled,Donduru,23.0,2024,3,8.108333333333333,3.69,6
+ssm_pct,UAHS,Haralahalli,unlabelled,Gijikatte,22.0,2023,1,16.1,16.1,1
+ssm_pct,UAHS,Haralahalli,unlabelled,Gijikatte,22.0,2023,2,16.175833333375,15.47,8
+ssm_pct,UAHS,Haralahalli,unlabelled,Gijikatte,22.0,2024,1,25.9,25.9,1
+ssm_pct,UAHS,Haralahalli,unlabelled,Gijikatte,22.0,2024,3,13.821666666666667,5.75,6
+ssm_pct,UAHS,Haralahalli,unlabelled,Karehalli,24.0,2023,1,4.43,4.43,1
+ssm_pct,UAHS,Haralahalli,unlabelled,Karehalli,24.0,2023,2,6.2162500000000005,2.935,8
+ssm_pct,UAHS,Haralahalli,unlabelled,Karehalli,24.0,2024,1,24.23333333,24.23333333,1
+ssm_pct,UAHS,Haralahalli,unlabelled,Karehalli,24.0,2024,3,7.45,4.65,6
+ssm_pct,UAHS,Jammapura,unlabelled,Jammapur2,7.0,2023,1,16.7,16.7,1
+ssm_pct,UAHS,Jammapura,unlabelled,Jammapur2,7.0,2023,2,6.104583333375,3.05,8
+ssm_pct,UAHS,Jammapura,unlabelled,Jammapur2,7.0,2024,3,5.12,2.5,7
+ssm_pct,UAHS,Jammapura,unlabelled,Kallikere,8.0,2023,1,13.27,13.27,1
+ssm_pct,UAHS,Jammapura,unlabelled,Kallikere,8.0,2023,2,6.141666666625,3.65,8
+ssm_pct,UAHS,Jammapura,unlabelled,Kallikere,8.0,2024,3,4.923809524285714,1.63,7
+ssm_pct,UAHS,Jammapura,unlabelled,Kallikere,9.0,2023,1,12.13,12.13,1
+ssm_pct,UAHS,Jammapura,unlabelled,Kallikere,9.0,2023,2,5.9541666666249995,2.585,8
+ssm_pct,UAHS,Jammapura,unlabelled,Kallikere,9.0,2024,3,4.185714285714285,1.83,7
+ssm_pct,UAHS,Jammapura,unlabelled,Maravanji2,5.0,2023,1,31.47,31.47,1
+ssm_pct,UAHS,Jammapura,unlabelled,Maravanji2,5.0,2023,2,11.899166666625,6.23,8
+ssm_pct,UAHS,Jammapura,unlabelled,Maravanji2,5.0,2024,3,8.231904761428572,3.33,7
+ssm_pct,UAHS,Jammapura,unlabelled,Meagondanahalli2,6.0,2023,1,32.07,32.07,1
+ssm_pct,UAHS,Jammapura,unlabelled,Meagondanahalli2,6.0,2023,2,22.35458333375,21.27,8
+ssm_pct,UAHS,Jammapura,unlabelled,Meagondanahalli2,6.0,2024,3,8.58952381,3.33,7
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,1.0,2023,1,25.87,25.87,1
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,1.0,2023,2,11.22125,4.965,8
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,1.0,2024,3,8.343333332857142,3.7,7
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,2.0,2023,1,23.7,23.7,1
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,2.0,2023,2,11.600833333375,6.135,8
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,2.0,2024,3,9.427142857142856,3.57,7
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,3.0,2023,1,34.4,34.4,1
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,3.0,2023,2,14.79625,10.2,8
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,3.0,2024,3,9.608571428571427,4.63,7
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,4.0,2023,1,21.57,21.57,1
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,4.0,2023,2,10.889583333375,5.77,8
+ssm_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,4.0,2024,3,7.107619047142857,2.73,7
+ssm_pct,UAHS,Koranahalli,unlabelled,Chatnahalli-2,16.0,2023,1,9.7,9.7,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Chatnahalli-2,16.0,2023,2,7.020833333375,3.8333333335,8
+ssm_pct,UAHS,Koranahalli,unlabelled,Chatnahalli-2,16.0,2024,1,22.63333333,22.63333333,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Chatnahalli-2,16.0,2024,3,8.023333333333333,6.35,6
+ssm_pct,UAHS,Koranahalli,unlabelled,Chatnahalli-2,19.0,2023,1,17.7,17.7,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Chatnahalli-2,19.0,2023,2,12.097916666625,10.22,8
+ssm_pct,UAHS,Koranahalli,unlabelled,Chatnahalli-2,19.0,2024,1,28.16666667,28.16666667,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Chatnahalli-2,19.0,2024,3,8.973333333333334,6.199999999999999,6
+ssm_pct,UAHS,Koranahalli,unlabelled,Gollarahalli,15.0,2023,1,11.13,11.13,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Gollarahalli,15.0,2023,2,12.783333333375,12.215,8
+ssm_pct,UAHS,Koranahalli,unlabelled,Gollarahalli,15.0,2024,1,17.8,17.8,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Gollarahalli,15.0,2024,3,10.049999999999999,4.55,6
+ssm_pct,UAHS,Koranahalli,unlabelled,Jodi Bokikere,17.0,2023,1,12.37,12.37,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Jodi Bokikere,17.0,2023,2,6.807916666624999,5.035,8
+ssm_pct,UAHS,Koranahalli,unlabelled,Jodi Bokikere,17.0,2024,1,21.76666667,21.76666667,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Jodi Bokikere,17.0,2024,3,6.234999999999999,5.17,6
+ssm_pct,UAHS,Koranahalli,unlabelled,Koranahalli,14.0,2023,1,16.13,16.13,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Koranahalli,14.0,2023,2,5.187916666625,3.7166666665,8
+ssm_pct,UAHS,Koranahalli,unlabelled,Koranahalli,14.0,2024,1,22.6,22.6,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Koranahalli,14.0,2024,3,4.64,3.935,6
+ssm_pct,UAHS,Koranahalli,unlabelled,Koranahalli,18.0,2023,1,20.43,20.43,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Koranahalli,18.0,2023,2,11.889583333375,10.165,8
+ssm_pct,UAHS,Koranahalli,unlabelled,Koranahalli,18.0,2024,1,22.0,22.0,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Koranahalli,18.0,2024,3,6.111666666666667,3.57,6
+ssm_pct,UAHS,Koranahalli,unlabelled,Makanahalli,13.0,2023,1,9.73,9.73,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Makanahalli,13.0,2023,2,8.133750000000001,4.9350000000000005,8
+ssm_pct,UAHS,Koranahalli,unlabelled,Makanahalli,13.0,2024,1,9.566666667,9.566666667,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Makanahalli,13.0,2024,3,3.6233333333333335,1.935,6
+ssm_pct,UAHS,Koranahalli,unlabelled,Makanahalli,21.0,2023,1,4.23,4.23,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Makanahalli,21.0,2023,2,5.357916666625,2.435,8
+ssm_pct,UAHS,Koranahalli,unlabelled,Makanahalli,21.0,2024,1,23.5,23.5,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Makanahalli,21.0,2024,3,7.535,2.835,6
+ssm_pct,UAHS,Koranahalli,unlabelled,Rajanahalli-2,20.0,2023,1,13.3,13.3,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Rajanahalli-2,20.0,2023,2,11.757916666249999,9.835,8
+ssm_pct,UAHS,Koranahalli,unlabelled,Rajanahalli-2,20.0,2024,1,26.16666667,26.16666667,1
+ssm_pct,UAHS,Koranahalli,unlabelled,Rajanahalli-2,20.0,2024,3,9.618333333333334,6.0,6
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,32.0,2023,1,3.8,3.8,1
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,32.0,2023,2,2.6620833333375,1.55,8
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,32.0,2024,3,2.3049999999999997,0.915,6
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,33.0,2023,1,4.17,4.17,1
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,33.0,2023,2,11.595,8.665,8
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,33.0,2024,3,10.428333333333335,6.285,6
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli2,29.0,2023,1,3.93,3.93,1
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli2,29.0,2023,2,5.095416666625,2.7649999999999997,8
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli2,29.0,2024,3,2.7000000000000006,1.2000000000000002,6
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli2,26.0,2023,1,3.1,3.1,1
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli2,26.0,2023,2,5.18875,3.085,8
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli2,26.0,2024,3,3.7183333333333337,1.57,6
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,28.0,2023,1,9.37,9.37,1
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,28.0,2023,2,3.970416666625,2.6,8
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,28.0,2024,3,2.335,0.9199999999999999,6
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,31.0,2023,1,2.73,2.73,1
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,31.0,2023,2,2.6120833333749998,1.5683333335,8
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,31.0,2024,3,2.266666666666667,1.27,6
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte1,27.0,2023,1,1.57,1.57,1
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte1,27.0,2023,2,2.29625,1.665,8
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte1,27.0,2024,3,2.3866666666666667,1.03,6
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,25.0,2023,1,9.07,9.07,1
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,25.0,2023,2,4.373333333375,3.08,8
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,25.0,2024,3,3.9333333333333336,0.9850000000000001,6
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,30.0,2023,1,1.67,1.67,1
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,30.0,2023,2,4.4375,1.52,8
+ssm_pct,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,30.0,2024,3,3.5883333333333334,1.33,6
+ssm_pct,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,10.0,2023,1,30.27,30.27,1
+ssm_pct,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,10.0,2023,2,14.635833333375,12.13,8
+ssm_pct,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,10.0,2024,3,9.937619047142858,10.33,7
+ssm_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,11.0,2023,1,22.43,22.43,1
+ssm_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,11.0,2023,2,14.397083333375,11.55,8
+ssm_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,11.0,2024,3,7.171428571428572,5.93,7
+ssm_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2023,1,32.93,32.93,1
+ssm_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2023,2,14.722083333375,10.649999999999999,8
+ssm_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2024,3,5.9095238100000005,3.1,7
+ssm_pct,UAHS,Mattikote,unlabelled,Dhoopadahalli,46.0,2023,1,9.53,9.53,1
+ssm_pct,UAHS,Mattikote,unlabelled,Dhoopadahalli,46.0,2023,2,18.733703703333333,15.37,9
+ssm_pct,UAHS,Mattikote,unlabelled,Dhoopadahalli,46.0,2024,1,28.16666667,28.16666667,1
+ssm_pct,UAHS,Mattikote,unlabelled,Dhoopadahalli,46.0,2024,3,15.685,13.47,6
+ssm_pct,UAHS,Mattikote,unlabelled,Gabburu,47.0,2023,1,10.9,10.9,1
+ssm_pct,UAHS,Mattikote,unlabelled,Gabburu,47.0,2023,2,10.719259259333334,8.4,9
+ssm_pct,UAHS,Mattikote,unlabelled,Gabburu,47.0,2024,1,24.93333333,24.93333333,1
+ssm_pct,UAHS,Mattikote,unlabelled,Gabburu,47.0,2024,3,19.345,18.835,6
+ssm_pct,UAHS,Mattikote,unlabelled,Haliyur,48.0,2023,1,15.77,15.77,1
+ssm_pct,UAHS,Mattikote,unlabelled,Haliyur,48.0,2023,2,6.437037037,3.4,9
+ssm_pct,UAHS,Mattikote,unlabelled,Haliyur,48.0,2024,1,27.53333333,27.53333333,1
+ssm_pct,UAHS,Mattikote,unlabelled,Haliyur,48.0,2024,3,11.638333333333334,7.6499999999999995,6
+ssm_pct,UAHS,Nagagondanahalli,unlabelled,Devaranahalli,36.0,2023,2,2.1440740740777775,1.3,9
+ssm_pct,UAHS,Nagagondanahalli,unlabelled,Devaranahalli,36.0,2024,3,2.4616666666666664,1.2999999999999998,6
+ssm_pct,UAHS,Nagagondanahalli,unlabelled,Halagondanahalli2,35.0,2023,2,2.7292592592222222,2.63,9
+ssm_pct,UAHS,Nagagondanahalli,unlabelled,Halagondanahalli2,35.0,2024,3,2.5,1.3,6
+ssm_pct,UAHS,Nagagondanahalli,unlabelled,Nagagondanahalli1,34.0,2023,2,4.362962963,3.13,9
+ssm_pct,UAHS,Nagagondanahalli,unlabelled,Nagagondanahalli1,34.0,2024,3,3.783333333333333,1.2349999999999999,6
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,13.0,2023,1,12.3,12.3,2
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,13.0,2023,2,11.06825396952381,8.0,21
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,13.0,2024,1,15.99166675,14.333333499999998,4
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,13.0,2024,3,10.351281976923076,7.5666667,13
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,14.0,2023,1,11.4,11.4,2
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,14.0,2023,2,14.369999967499998,13.966666835,20
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,14.0,2024,1,13.739999926,12.433333,5
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,14.0,2024,3,11.199999976923078,9.8,13
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,15.0,2023,1,28.016665000000003,28.016665000000003,2
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,15.0,2023,2,13.07460319061905,10.866667,21
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,15.0,2024,1,14.8,17.6,4
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,15.0,2024,3,12.328205200000001,10.866667,13
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,16.0,2023,1,12.53333,12.53333,2
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,16.0,2023,2,12.739682523523811,10.53333333,21
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,16.0,2024,1,15.241666675000001,17.333333500000002,4
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,16.0,2024,3,12.535897407692307,10.533333,13
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,17.0,2023,1,18.0,18.0,2
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,17.0,2023,2,13.314285698714286,12.23333333,21
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,17.0,2024,1,12.266666675,13.8,4
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,17.0,2024,3,10.812820407692309,10.966667,13
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,18.0,2023,1,9.9833335,9.9833335,2
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,18.0,2023,2,10.857142877809524,9.266666667,21
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,18.0,2024,1,13.216666675,11.333333500000002,4
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,18.0,2024,3,10.638461569230769,10.533333,13
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,19.0,2023,1,8.0833315,8.0833315,2
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,19.0,2023,2,11.138095233809523,6.833333333,21
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,19.0,2024,1,15.258333325,14.533333500000001,4
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,19.0,2024,3,7.479487207692308,6.4666667,13
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,20.0,2023,1,9.816665,9.816665,2
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,20.0,2023,2,14.561904782857145,13.93333333,21
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,20.0,2024,1,13.33333335,11.39999985,4
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,20.0,2024,3,10.574359061538463,6.9333333,13
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,21.0,2023,1,7.3833335,7.3833335,2
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,21.0,2023,2,11.458333333333334,10.66666667,21
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,21.0,2024,1,15.0,16.783333499999998,4
+ssm_pct,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,21.0,2024,3,11.051281976923077,11.133333,13
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,28.0,2023,1,3.8,3.8,2
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,28.0,2023,2,7.265714285714285,6.67,21
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,28.0,2024,1,5.0525,5.735,4
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,28.0,2024,3,5.140833333333333,2.98,12
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,29.0,2023,1,8.265,8.265,2
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,29.0,2023,2,5.744761904761905,4.8,21
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,29.0,2024,1,4.515000000000001,3.2,4
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,29.0,2024,3,6.215,3.2199999999999998,12
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,30.0,2023,1,17.515,17.515,2
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,30.0,2023,2,10.587619047619048,9.13,21
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,30.0,2024,1,9.2925,6.65,4
+ssm_pct,UASB,Doddenahalli,unlabelled,Bilenahalli,30.0,2024,3,4.5566666666666675,2.885,12
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,25.0,2023,1,7.6,7.6,2
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,25.0,2023,2,7.564285714285714,6.73,21
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,25.0,2024,1,7.5925,5.55,4
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,25.0,2024,3,5.511666666666667,3.515,12
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,26.0,2023,1,20.85,20.85,2
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,26.0,2023,2,9.071428571428571,6.47,21
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,26.0,2024,1,11.3175,11.785,4
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,26.0,2024,3,6.023333333333333,4.365,12
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,27.0,2023,1,7.47,7.47,2
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,27.0,2023,2,3.0285714285714285,1.5,21
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,27.0,2024,1,4.7700000000000005,4.970000000000001,4
+ssm_pct,UASB,Doddenahalli,unlabelled,Doddenahalli,27.0,2024,3,2.9441666666666664,1.03,12
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,31.0,2023,1,14.985000000000001,14.985000000000001,2
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,31.0,2023,2,8.74,8.3,21
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,31.0,2024,1,15.45,16.799999999999997,4
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,31.0,2024,3,6.424166666666667,2.8,12
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,32.0,2023,1,6.95,6.95,2
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,32.0,2023,2,4.680952380952381,2.23,21
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,32.0,2024,1,12.36,9.72,4
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,32.0,2024,3,5.361666666666667,1.65,12
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,33.0,2023,1,5.35,5.35,2
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,33.0,2023,2,7.816190476190475,5.93,21
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,33.0,2024,1,10.1575,8.850000000000001,4
+ssm_pct,UASB,Doddenahalli,unlabelled,Mootikere,33.0,2024,3,4.861666666666667,1.55,12
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,41.0,2023,1,2.9499999999999997,2.9499999999999997,2
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,41.0,2023,2,3.2476190476190476,3.07,21
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,41.0,2024,1,25.2825,24.68,4
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,41.0,2024,3,16.211666666666666,16.9,12
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,42.0,2023,1,4.585,4.585,2
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,42.0,2023,2,3.7485714285714287,2.57,21
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,42.0,2024,1,14.0575,14.3,4
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,42.0,2024,3,10.541666666666666,10.600000000000001,12
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,43.0,2023,1,3.8,3.8,2
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,43.0,2023,2,3.2804761904761905,2.83,21
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,43.0,2024,1,17.5225,16.78,4
+ssm_pct,UASB,Gummalapalli,unlabelled,Agutimadike,43.0,2024,3,8.530833333333334,4.734999999999999,12
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,38.0,2023,1,3.35,3.35,2
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,38.0,2023,2,4.027142857142858,3.13,21
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,38.0,2024,1,9.8675,9.120000000000001,4
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,38.0,2024,3,7.035833333333334,6.869999999999999,12
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,39.0,2023,1,0.415,0.415,2
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,39.0,2023,2,0.7185714285714285,0.47,21
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,39.0,2024,1,7.6274999999999995,8.52,4
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,39.0,2024,3,2.9275,0.035,12
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,40.0,2023,1,2.9,2.9,2
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,40.0,2023,2,3.8295238095238098,3.2,21
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,40.0,2024,1,22.55,21.35,4
+ssm_pct,UASB,Gummalapalli,unlabelled,Peddareddipalli,40.0,2024,3,15.511666666666665,17.78,12
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,37.0,2023,1,1.5499999999999998,1.5499999999999998,2
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,37.0,2023,2,2.9657142857142857,2.07,21
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,37.0,2024,1,12.1075,11.75,4
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,37.0,2024,3,4.791666666666667,2.9699999999999998,12
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,44.0,2023,1,0.3,0.3,2
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,44.0,2023,2,1.6533333333333333,0.7,21
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,44.0,2024,1,20.799999999999997,23.015,4
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,44.0,2024,3,11.284999999999998,6.2,12
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,45.0,2023,1,2.565,2.565,2
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,45.0,2023,2,2.011,1.685,20
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,45.0,2024,1,23.015,28.13,4
+ssm_pct,UASB,Gummalapalli,unlabelled,Tollapalli,45.0,2024,3,9.834166666666667,7.72,12
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Chikkahosala,22.0,2023,1,2.866666667,2.866666667,1
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Chikkahosala,22.0,2023,2,7.482121212136364,5.56833335,22
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Chikkahosala,22.0,2024,1,12.9000000175,14.1666667,4
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Chikkahosala,22.0,2024,3,4.555555559166667,3.9499999999999997,12
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Kalipura1,23.0,2023,1,21.53333333,21.53333333,1
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Kalipura1,23.0,2023,2,12.650952380952381,9.3,21
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Kalipura1,23.0,2024,1,15.825000017499999,15.83333335,4
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Kalipura1,23.0,2024,3,8.412820515384615,7.16666667,13
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Karahalli,24.0,2023,1,16.8,16.8,1
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Karahalli,24.0,2023,2,10.91888888552381,8.13,21
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Karahalli,24.0,2024,1,13.7583333325,12.733333349999999,4
+ssm_pct,UASB,Holali (Kembodi),unlabelled,Karahalli,24.0,2024,3,8.923076924615385,6.93333333,13
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,1.0,2023,1,19.782443333333333,17.4,3
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,1.0,2023,2,9.450476190476191,7.73,21
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,1.0,2024,1,15.602500000000001,14.885000000000002,4
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,1.0,2024,3,12.108461538461539,4.17,13
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,2.0,2023,1,16.299331,14.23333,3
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,2.0,2023,2,13.086190476190476,14.7,21
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,2.0,2024,1,19.9925,21.015,4
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,2.0,2024,3,11.501538461538463,12.23,13
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,3.0,2023,1,20.582890000000003,18.81533,3
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,3.0,2023,2,16.81095238095238,16.37,21
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,3.0,2024,1,25.7075,28.714999999999996,4
+ssm_pct,UASB,Maidalakere,unlabelled,Hodekallu,3.0,2024,3,17.41923076923077,18.87,13
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,7.0,2023,1,9.921554333333335,7.026,3
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,7.0,2023,2,15.77142857142857,15.53,21
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,7.0,2024,1,28.0325,24.865000000000002,4
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,7.0,2024,3,20.45846153846154,25.53,13
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,8.0,2023,1,16.993333333333336,17.544,3
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,8.0,2023,2,6.226666666666667,4.37,21
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,8.0,2024,1,16.335,17.77,4
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,8.0,2024,3,6.563076923076924,1.87,13
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,9.0,2023,1,9.694442333333333,10.13733,3
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,9.0,2023,2,2.3871428571428575,1.23,21
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,9.0,2024,1,11.8325,8.899999999999999,4
+ssm_pct,UASB,Maidalakere,unlabelled,Kadugujjanahalli,9.0,2024,3,1.6353846153846152,0.7,13
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,4.0,2023,1,27.032776666666667,27.09833,3
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,4.0,2023,2,16.87095238095238,15.03,21
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,4.0,2024,1,24.85,24.75,4
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,4.0,2024,3,17.869230769230768,14.3,13
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,5.0,2023,1,13.340554333333332,10.48833,3
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,5.0,2023,2,3.753333333333333,2.13,21
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,5.0,2024,1,6.54,4.965,4
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,5.0,2024,3,4.803846153846154,0.47,13
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,6.0,2023,1,5.819333666666666,5.842667,3
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,6.0,2023,2,2.487619047619048,1.3,21
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,6.0,2024,1,5.1899999999999995,4.63,4
+ssm_pct,UASB,Maidalakere,unlabelled,Siddalingayyanapalya,6.0,2024,3,2.8515384615384614,0.53,13
+ssm_pct,UASB,Narayanghatta (Annapura),unlabelled,Adhihalli,34.0,2024,1,11.7,9.35,4
+ssm_pct,UASB,Narayanghatta (Annapura),unlabelled,Adhihalli,34.0,2024,3,23.884999999999998,23.884999999999998,2
+ssm_pct,UASB,Narayanghatta (Annapura),unlabelled,Mududi,36.0,2023,2,0.6,0.6,1
+ssm_pct,UASB,Narayanghatta (Annapura),unlabelled,Mududi,36.0,2024,1,5.765,5.779999999999999,4
+ssm_pct,UASB,Narayanghatta (Annapura),unlabelled,Mududi,36.0,2024,3,20.498333334999998,20.498333334999998,2
+ssm_pct,UASB,Narayanghatta (Annapura),unlabelled,Talalur,35.0,2024,1,11.99,11.865,4
+ssm_pct,UASB,Narayanghatta (Annapura),unlabelled,Talalur,35.0,2024,3,22.383333335,22.383333335,2
+ssm_pct,UASB,Virupasandra,unlabelled,Kemarepalya,12.0,2023,1,20.360333333333333,28.37,3
+ssm_pct,UASB,Virupasandra,unlabelled,Kemarepalya,12.0,2023,2,17.790952380952383,13.2,21
+ssm_pct,UASB,Virupasandra,unlabelled,Kemarepalya,12.0,2024,1,24.607499999999998,27.214999999999996,4
+ssm_pct,UASB,Virupasandra,unlabelled,Kemarepalya,12.0,2024,3,20.935384615384617,22.17,13
+ssm_pct,UASB,Virupasandra,unlabelled,Mullenahalli,11.0,2023,1,7.875777666666667,6.5,3
+ssm_pct,UASB,Virupasandra,unlabelled,Mullenahalli,11.0,2023,2,10.031904761904762,9.97,21
+ssm_pct,UASB,Virupasandra,unlabelled,Mullenahalli,11.0,2024,1,14.3575,12.415,4
+ssm_pct,UASB,Virupasandra,unlabelled,Mullenahalli,11.0,2024,3,11.304615384615385,13.0,13
+ssm_pct,UASB,Virupasandra,unlabelled,Neralapura,10.0,2023,1,13.565444333333332,10.53,3
+ssm_pct,UASB,Virupasandra,unlabelled,Neralapura,10.0,2023,2,5.261904761904762,2.8,21
+ssm_pct,UASB,Virupasandra,unlabelled,Neralapura,10.0,2024,1,17.767500000000002,18.385,4
+ssm_pct,UASB,Virupasandra,unlabelled,Neralapura,10.0,2024,3,8.002307692307692,2.87,13
+ssm_pct,UASD,,unlabelled,,,2023,2,17.14824074074074,15.75,108
+ssm_pct,UASD,,unlabelled,,,2024,1,40.67,40.599999999999994,24
+ssm_pct,UASD,,unlabelled,,,2024,3,13.0,7.07,106
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal 1,3.0,2023,1,11.6499999985,11.6499999985,2
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal 1,3.0,2023,2,6.024999999875,6.1666666665,8
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal 1,3.0,2023,3,5.166666667,5.166666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal 1,3.0,2024,3,5.166666667,5.166666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal 3,1.0,2023,1,18.6,18.6,2
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal 3,1.0,2023,2,8.399999999625,7.95,8
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal 3,1.0,2023,3,9.566666667,9.566666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal 3,1.0,2024,3,4.966666667,4.966666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-1,9.0,2023,1,17.633333335,17.633333335,2
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-1,9.0,2023,2,9.112499999625,8.15,8
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-1,9.0,2023,3,8.7,8.7,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-1,9.0,2024,3,6.4,6.4,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,2.0,2023,1,20.9333333315,20.9333333315,2
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,2.0,2023,2,9.462499999875,9.5666666665,8
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,2.0,2023,3,11.86666667,11.86666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,2.0,2024,3,6.033333333,6.033333333,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,6.0,2023,1,21.15,21.15,2
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,6.0,2023,2,10.016666666625,9.4666666665,8
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,6.0,2023,3,8.266666667,8.266666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,6.0,2024,3,4.766666667,4.766666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,8.0,2023,1,15.783333335,15.783333335,2
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,8.0,2023,2,9.629166667,8.9833333335,8
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,8.0,2023,3,12.1,12.1,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-2,8.0,2024,3,4.366666667,4.366666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-3,7.0,2023,1,26.9,26.9,2
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-3,7.0,2023,2,10.675,9.0,8
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-3,7.0,2023,3,8.966666667,8.966666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Artal-3,7.0,2024,3,4.966666667,4.966666667,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Halahalli-1,4.0,2023,1,32.78333333,32.78333333,2
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Halahalli-1,4.0,2023,2,11.1250000005,8.8833333335,8
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Halahalli-1,4.0,2023,3,6.733333333,6.733333333,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Halahalli-1,4.0,2024,3,8.2,8.2,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Halahalli-2,5.0,2023,1,20.9,20.9,2
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Halahalli-2,5.0,2023,2,14.341666665875,10.2333333335,8
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Halahalli-2,5.0,2023,3,12.03333333,12.03333333,1
+ssm_pct,UASD,Artal Sub-Watershed,saturation,Halahalli-2,5.0,2024,3,5.666666667,5.666666667,1
+ssm_pct,UASD,Gadag sub-watershed,control,Chikkoppa,1.0,2023,1,37.05,37.05,2
+ssm_pct,UASD,Gadag sub-watershed,control,Chikkoppa,1.0,2023,2,17.30875,15.135,8
+ssm_pct,UASD,Gadag sub-watershed,control,Chikkoppa,1.0,2024,1,40.56666667,40.56666667,1
+ssm_pct,UASD,Gadag sub-watershed,control,Chikkoppa,1.0,2024,3,7.287999999999999,7.8,5
+ssm_pct,UASD,Gadag sub-watershed,control,Hirekoppa,2.0,2023,1,39.283333335,39.283333335,2
+ssm_pct,UASD,Gadag sub-watershed,control,Hirekoppa,2.0,2023,2,18.054166666249998,14.4,8
+ssm_pct,UASD,Gadag sub-watershed,control,Hirekoppa,2.0,2024,1,48.43333333,48.43333333,1
+ssm_pct,UASD,Gadag sub-watershed,control,Hirekoppa,2.0,2024,3,7.81,8.23,5
+ssm_pct,UASD,Gadag sub-watershed,control,Kiratageri-2,3.0,2023,1,40.183333335,40.183333335,2
+ssm_pct,UASD,Gadag sub-watershed,control,Kiratageri-2,3.0,2023,2,16.59083333375,15.0,8
+ssm_pct,UASD,Gadag sub-watershed,control,Kiratageri-2,3.0,2024,1,46.1,46.1,1
+ssm_pct,UASD,Gadag sub-watershed,control,Kiratageri-2,3.0,2024,3,7.242,8.08,5
+ssm_pct,UASD,Hanchinal sub-watershed,control,,,2023,2,5.740833333333334,4.970000000000001,12
+ssm_pct,UASD,Hanchinal sub-watershed,control,,,2024,3,7.274166666666666,4.3149999999999995,24
+ssm_pct,UASD,Hanchinal sub-watershed,control,Hanchinal-1,1.0,2023,1,18.53333333,18.53333333,1
+ssm_pct,UASD,Hanchinal sub-watershed,control,Hanchinal-1,1.0,2023,2,22.61625,20.299999999999997,8
+ssm_pct,UASD,Hanchinal sub-watershed,control,Vittalapura-1,2.0,2023,1,19.83333333,19.83333333,1
+ssm_pct,UASD,Hanchinal sub-watershed,control,Vittalapura-1,2.0,2023,2,26.21416666625,23.285,8
+ssm_pct,UASD,Hanchinal sub-watershed,control,Vittalapura-2,3.0,2023,1,21.0,21.0,1
+ssm_pct,UASD,Hanchinal sub-watershed,control,Vittalapura-2,3.0,2023,2,23.028750000000002,20.301666665,8
+ssm_pct,UASD,Hosahalli sub-watershed,control,Abalur,1.0,2023,1,12.95,13.815,4
+ssm_pct,UASD,Hosahalli sub-watershed,control,Abalur,1.0,2023,2,13.3766666675,13.318333335,4
+ssm_pct,UASD,Hosahalli sub-watershed,control,Abalur,1.0,2024,1,28.95,28.95,2
+ssm_pct,UASD,Hosahalli sub-watershed,control,Abalur,1.0,2024,3,14.547999999999998,10.47,5
+ssm_pct,UASD,Hosahalli sub-watershed,control,Hirekerur,3.0,2023,1,13.99,14.048333335,4
+ssm_pct,UASD,Hosahalli sub-watershed,control,Hirekerur,3.0,2023,2,14.0825,14.4,4
+ssm_pct,UASD,Hosahalli sub-watershed,control,Hirekerur,3.0,2024,1,28.335,28.335,2
+ssm_pct,UASD,Hosahalli sub-watershed,control,Hirekerur,3.0,2024,3,16.274,13.17,5
+ssm_pct,UASD,Hosahalli sub-watershed,control,Nulageri,2.0,2023,1,16.973333335,16.998333334999998,4
+ssm_pct,UASD,Hosahalli sub-watershed,control,Nulageri,2.0,2023,2,14.2158333325,14.3,4
+ssm_pct,UASD,Hosahalli sub-watershed,control,Nulageri,2.0,2024,1,25.9,25.9,2
+ssm_pct,UASD,Hosahalli sub-watershed,control,Nulageri,2.0,2024,3,15.795999999999998,12.87,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Aladgeri,2.0,2023,1,15.899333334,14.57,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Aladgeri,2.0,2023,2,15.0083333325,15.415,4
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Aladgeri,2.0,2024,1,29.200000000000003,29.200000000000003,2
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Aladgeri,2.0,2024,3,16.654000000000003,17.07,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,5.0,2023,1,14.948000000000002,16.57,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,5.0,2023,2,17.6833333325,17.564999999999998,4
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,5.0,2024,1,28.88,28.88,2
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,5.0,2024,3,13.225999999999999,13.13,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,6.0,2023,1,18.336000000600002,18.57,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,6.0,2023,2,15.022499999999999,15.925,4
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,6.0,2024,1,28.47,28.47,2
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,6.0,2024,3,12.680000000000001,11.13,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,1.0,2023,1,12.186666665999999,12.33,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,1.0,2023,2,14.3433333325,13.785,4
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,1.0,2024,1,30.565,30.565,2
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,1.0,2024,3,12.918000000000001,12.63,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,4.0,2023,1,15.526666666,17.27,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,4.0,2023,2,13.5475,12.059999999999999,4
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,4.0,2024,1,28.365,28.365,2
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,4.0,2024,3,14.046000000000001,12.87,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,7.0,2023,1,16.278666666,16.93,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,7.0,2023,2,17.8241666675,19.299999999999997,4
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,7.0,2024,1,32.364999999999995,32.364999999999995,2
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,7.0,2024,3,15.026,13.63,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,8.0,2023,1,15.760666666,15.27,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,8.0,2023,2,12.1008333325,12.001666665,4
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,8.0,2024,1,29.735,29.735,2
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,8.0,2024,3,12.402000000000001,9.33,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,9.0,2023,1,16.4713333334,13.8,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,9.0,2023,2,17.405,17.57,4
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,9.0,2024,1,30.634999999999998,30.634999999999998,2
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,9.0,2024,3,11.572,9.43,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Yelavadhalli,3.0,2023,1,17.750666666,19.2,5
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Yelavadhalli,3.0,2023,2,14.9033333325,15.165,4
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Yelavadhalli,3.0,2024,1,28.935,28.935,2
+ssm_pct,UASD,Kodihalli Sub-Watershed,saturation,Yelavadhalli,3.0,2024,3,15.112,14.63,5
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-1,2.0,2023,1,23.066666665,23.066666665,2
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-1,2.0,2023,2,10.2066666658,8.833333333,5
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-1,2.0,2023,3,40.16666667,40.16666667,1
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-1,2.0,2024,3,5.6,5.6,1
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-2,3.0,2023,1,18.0,18.0,2
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-2,3.0,2023,2,22.413333333999997,18.06666667,5
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-2,3.0,2023,3,40.53333333,40.53333333,1
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-2,3.0,2024,3,6.133333333,6.133333333,1
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-3,1.0,2023,1,10.116666665,10.116666665,2
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-3,1.0,2023,2,7.6888888883333335,7.699999999999999,6
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-3,1.0,2023,3,15.2,15.2,1
+ssm_pct,UASD,Kohalli sub-watershed,control,Khilaraddi-3,1.0,2024,3,3.2,3.2,1
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Kanvi-1,6.0,2023,1,28.766462666000002,35.60231333,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Kanvi-1,6.0,2023,2,17.854,6.63,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Kanvi-1,6.0,2024,1,18.435000000000002,18.435000000000002,2
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Kanvi-1,6.0,2024,3,6.866,6.33,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund East-3,1.0,2023,1,27.956046762,33.87023381,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund East-3,1.0,2023,2,17.146,8.73,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund East-3,1.0,2024,1,21.78,21.78,2
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund East-3,1.0,2024,3,6.166666666599999,5.6,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-1,3.0,2023,1,31.683479142,38.31739571,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-1,3.0,2023,2,20.326,12.13,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-1,3.0,2024,1,24.07,24.07,2
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-1,3.0,2024,3,7.62,7.77,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,4.0,2023,1,30.525257427999996,35.75628714,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,4.0,2023,2,19.828,10.23,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,4.0,2024,1,19.72,19.72,2
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,4.0,2024,3,6.604666666599999,6.33,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,5.0,2023,1,30.337492762,34.88746381,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,5.0,2023,2,17.28,9.0,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,5.0,2024,1,22.73,22.73,2
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,5.0,2024,3,7.542,7.9,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-2,2.0,2023,1,31.610597714,38.11298857,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-2,2.0,2023,2,19.668,8.37,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-2,2.0,2024,1,19.985,19.985,2
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-2,2.0,2024,3,6.9133333334,7.1,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,7.0,2023,1,30.838467714,37.98233857,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,7.0,2023,2,20.1,8.7,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,7.0,2024,1,25.564999999999998,25.564999999999998,2
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,7.0,2024,3,6.9879999999999995,7.17,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,8.0,2023,1,30.805397334,36.88698667,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,8.0,2023,2,19.462,10.07,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,8.0,2024,1,21.85,21.85,2
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,8.0,2024,3,7.052,6.47,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,9.0,2023,1,32.501246666,38.57623333,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,9.0,2023,2,20.306,10.63,5
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,9.0,2024,1,18.3,18.3,2
+ssm_pct,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,9.0,2024,3,6.934,7.67,5
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Bilebala,5.0,2023,1,35.760000000000005,33.150000000000006,4
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Bilebala,5.0,2023,2,33.53,33.53,1
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Devanur,7.0,2023,1,34.6,35.0,4
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Devanur,7.0,2023,2,24.23,24.23,1
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Devanurnorth,2.0,2023,1,36.55,32.835,4
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Devanurnorth,2.0,2023,2,30.3,30.3,1
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Devanurnorth,4.0,2023,1,33.3675,31.7,4
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Devanurnorth,4.0,2023,2,29.1,29.1,1
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Kamadoli-1,8.0,2023,1,36.565,35.93,4
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Kamadoli-1,8.0,2023,2,33.83,33.83,1
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Kamadoli-2,1.0,2023,1,36.3225,33.58,4
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Kamadoli-2,1.0,2023,2,34.83,34.83,1
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Shirur-1,3.0,2023,1,37.175,36.5,4
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Shirur-1,3.0,2023,2,33.13,33.13,1
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Shirur-1,6.0,2023,1,38.235,34.87,4
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Shirur-1,6.0,2023,2,28.3,28.3,1
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Shirur-1,9.0,2023,1,35.4375,35.905,4
+ssm_pct,UASD,Shirur Sub-Watershed,saturation,Shirur-1,9.0,2023,2,35.21,35.21,1
+ssm_pct,UASR,,unlabelled,,,2023,2,2.0,2.0,1
+ssm_pct,UASR,,unlabelled,Hadagalharti,,2023,2,36.81666666666666,36.81666666666666,2
+ssm_pct,UASR,,unlabelled,Hadagalharti -1,,2023,1,36.63333333333333,36.63333333333333,1
+ssm_pct,UASR,,unlabelled,Hadagalharti-1,,2023,2,36.266666666666666,36.883333333333326,4
+ssm_pct,UASR,,unlabelled,Hadagalharti-2,,2023,2,31.583333333333336,31.583333333333336,2
+ssm_pct,UASR,,unlabelled,Hadagil haruti-2,,2023,1,42.79999999999999,42.79999999999999,1
+ssm_pct,UASR,,unlabelled,Hadagilharuti-1,,2023,1,46.08333333333334,46.08333333333334,2
+ssm_pct,UASR,,unlabelled,Malli-2,,2023,1,32.03333333333333,32.03333333333333,1
+ssm_pct,UASR,,unlabelled,Malli-2,,2023,2,22.25,22.25,2
+ssm_pct,UASR,,unlabelled,Melakunda B- 2,,2023,1,30.633333333333336,30.633333333333336,1
+ssm_pct,UASR,,unlabelled,Melakunda B-1,,2023,2,39.233333333333334,39.233333333333334,2
+ssm_pct,UASR,,unlabelled,Melakunda B-2,,2023,2,32.13333333333333,29.050000000000004,4
+ssm_pct,UASR,,unlabelled,Melkunda B.-1,,2023,1,42.199999999999996,42.199999999999996,1
+ssm_pct,UASR,,unlabelled,Melkunda B.-2,,2023,1,44.8,44.8,2
+ssm_pct,UASR,,unlabelled,Melkunds B-2,,2023,1,2.0,2.0,1
+ssm_pct,UASR,,unlabelled,Melkunds B-2,,2023,2,38.46666666666667,38.46666666666667,2
+ssm_pct,UASR,ITGI (Control Sub-watershed),control,,,2023,1,33.41111111111111,31.366666666666664,3
+ssm_pct,UASR,Jantapur,unlabelled,,,2023,1,1.5,1.5,6
+ssm_pct,UASR,Jantapur,unlabelled,,,2023,2,1.5,1.5,6
+ssm_pct,UHSB,Chittaragi,saturation,Chittaragi-1,1.0,2023,1,6.37,6.37,1
+ssm_pct,UHSB,Chittaragi,saturation,Chittaragi-1,2.0,2023,1,24.97,24.97,1
+ssm_pct,UHSB,Chittaragi,saturation,Chittaragi-1,3.0,2023,1,18.0,18.0,1
+ssm_pct,UHSB,Chittaragi,saturation,Sulibhavi-1,4.0,2023,1,34.6,34.6,1
+ssm_pct,UHSB,Chittaragi,saturation,Sulibhavi-1,5.0,2023,1,32.73,32.73,1
+ssm_pct,UHSB,Chittaragi,saturation,Sulibhavi-1,6.0,2023,1,23.6,23.6,1
+ssm_pct,UHSB,Honnutagi,saturation,Koulgi-1,1.0,2023,1,18.109285714285715,14.620000000000001,14
+ssm_pct,UHSB,Honnutagi,saturation,Koulgi-1,2.0,2023,1,24.62846153846154,28.1,13
+ssm_pct,UHSB,Honnutagi,saturation,Koulgi-1,3.0,2023,1,32.1025,33.175,12
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,10.0,2023,1,44.58,43.66667,5
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,10.0,2023,2,11.331372548960784,7.533333333333334,17
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,10.0,2023,3,21.86667,21.86667,1
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,10.0,2024,3,11.911111111444445,6.733333333,9
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,11.0,2023,1,41.558335,41.21667,4
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,11.0,2023,2,12.836078431725488,9.083333333,17
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,11.0,2023,3,21.03333,21.03333,1
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,11.0,2024,3,12.144444444444444,7.033333333,9
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,12.0,2023,1,47.46666666666667,50.73333,3
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,12.0,2023,2,12.277647058411764,9.9,17
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,12.0,2023,3,20.6,20.6,1
+ssm_pct,UHSB,Kandgul,unlabelled,Masjawadi,12.0,2024,3,12.111111111444444,7.366666667,9
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,2.0,2023,1,41.92,44.73333,5
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,2.0,2023,2,10.317459999968255,6.133333333,21
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,2.0,2023,3,18.76667,18.76667,1
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,2.0,2024,3,10.674074074333333,6.533333333,9
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,7.0,2023,1,41.546668,44.9,5
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,7.0,2023,2,10.806666500033334,6.016666666500001,20
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,7.0,2023,3,16.33333,16.33333,1
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,7.0,2024,3,12.640740740333333,6.233333333,9
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,8.0,2023,1,43.82000000000001,48.23333,5
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,8.0,2023,2,12.282456122438596,5.866666667,19
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,8.0,2023,3,23.8,23.8,1
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 1,8.0,2024,3,12.959259258888888,7.3,9
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,1.0,2023,1,48.206666,50.66667,5
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,1.0,2023,2,13.238094904761905,8.7,21
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,1.0,2023,3,23.76667,23.76667,1
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,1.0,2024,3,12.492592592333333,7.0,9
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,3.0,2023,1,41.44000200000001,44.06667,5
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,3.0,2023,2,13.693650983968253,10.83333333,21
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,3.0,2023,3,16.33333,16.33333,1
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,3.0,2024,3,10.848148148555556,8.5,9
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,6.0,2023,1,44.033334,43.0,5
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,6.0,2023,2,11.949047618857142,9.1,21
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,6.0,2023,3,19.0,19.0,1
+ssm_pct,UHSB,Pashapur,unlabelled,Ladha 2,6.0,2024,3,10.36296296288889,7.333333333,9
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,4.0,2023,1,43.573332,41.76667,5
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,4.0,2023,2,12.138094920825397,7.7,21
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,4.0,2023,3,17.3,17.3,1
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,4.0,2024,3,10.944444444555556,5.466666667,9
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,5.0,2023,1,44.519999999999996,46.56667,5
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,5.0,2023,2,12.009524126984127,6.966666666666666,21
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,5.0,2023,3,14.8,14.8,1
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,5.0,2024,3,10.499999999777778,5.266666667,9
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,9.0,2023,1,43.74667,40.36667,5
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,9.0,2023,2,13.197962963148148,8.366666666666667,18
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,9.0,2023,3,22.6,22.6,1
+ssm_pct,UHSB,Pashapur,unlabelled,Mustapur,9.0,2024,3,11.892592593,7.5,9
+lai,UAHS,Beguru,unlabelled,Dabbanabairanahalli,,2023,2,3.8336111110833335,3.455,12
+lai,UAHS,Beguru,unlabelled,Dabbanabairanahalli,,2023,3,5.425000000000001,5.465,4
+lai,UAHS,Beguru,unlabelled,Dabbanabairanahalli,,2024,3,5.023333333333333,5.12,3
+lai,UAHS,Beguru,unlabelled,Gogga,,2023,2,4.3172222221666665,4.2016666664999995,6
+lai,UAHS,Beguru,unlabelled,Gogga,,2023,3,3.9166666666666665,5.0,3
+lai,UAHS,Beguru,unlabelled,Hulaganakatte1,,2023,2,5.54,5.54,1
+lai,UAHS,Beguru,unlabelled,Hulaganakatte1,,2023,3,5.29,5.29,1
+lai,UAHS,Beguru,unlabelled,Kenchagondanakoppa,,2023,2,3.8825000000000003,4.31,4
+lai,UAHS,Beguru,unlabelled,Kenchagondanakoppa,,2023,3,3.06,3.06,1
+lai,UAHS,Beguru,unlabelled,Kenchagondanakoppa,,2024,3,4.893333333,4.893333333,1
+lai,UAHS,Haralahalli,unlabelled,Donduru,,2023,2,3.91,3.91,1
+lai,UAHS,Haralahalli,unlabelled,Donduru,,2023,3,3.74,3.74,1
+lai,UAHS,Haralahalli,unlabelled,Gijikatte,,2023,2,2.77,2.77,1
+lai,UAHS,Haralahalli,unlabelled,Gijikatte,,2023,3,3.96,3.96,1
+lai,UAHS,Haralahalli,unlabelled,Karehalli,,2023,2,2.42,2.42,1
+lai,UAHS,Haralahalli,unlabelled,Karehalli,,2023,3,0.82,0.82,1
+lai,UAHS,Jammapura,unlabelled,Jammapur2,,2023,2,3.64,3.64,1
+lai,UAHS,Jammapura,unlabelled,Jammapur2,,2023,3,2.19,2.19,1
+lai,UAHS,Jammapura,unlabelled,Kallikere,,2023,2,3.8649999999999998,3.8649999999999998,2
+lai,UAHS,Jammapura,unlabelled,Kallikere,,2023,3,2.58,2.58,2
+lai,UAHS,Jammapura,unlabelled,Maravanji2,,2023,2,2.06,2.06,1
+lai,UAHS,Jammapura,unlabelled,Maravanji2,,2023,3,2.59,2.59,1
+lai,UAHS,Jammapura,unlabelled,Pandavamatti1,,2023,2,2.7025,2.45,4
+lai,UAHS,Jammapura,unlabelled,Pandavamatti1,,2023,3,2.6075,2.5700000000000003,4
+lai,UAHS,Koranahalli,unlabelled,Chatnahalli-2,,2023,2,2.655,2.655,2
+lai,UAHS,Koranahalli,unlabelled,Chatnahalli-2,,2023,3,2.565,2.565,2
+lai,UAHS,Koranahalli,unlabelled,Gollarahalli,,2023,2,1.65,1.65,1
+lai,UAHS,Koranahalli,unlabelled,Gollarahalli,,2023,3,3.4,3.4,1
+lai,UAHS,Koranahalli,unlabelled,Jodi Bokikere,,2023,2,1.84,1.84,1
+lai,UAHS,Koranahalli,unlabelled,Jodi Bokikere,,2023,3,3.86,3.86,1
+lai,UAHS,Koranahalli,unlabelled,Koranahalli,,2023,2,2.92,2.92,2
+lai,UAHS,Koranahalli,unlabelled,Koranahalli,,2023,3,3.0700000000000003,3.0700000000000003,2
+lai,UAHS,Koranahalli,unlabelled,Makanahalli,,2023,2,1.4749999999999999,1.4749999999999999,2
+lai,UAHS,Koranahalli,unlabelled,Makanahalli,,2023,3,2.855,2.855,2
+lai,UAHS,Koranahalli,unlabelled,Rajanahalli-2,,2023,2,3.71,3.71,1
+lai,UAHS,Koranahalli,unlabelled,Rajanahalli-2,,2023,3,4.05,4.05,1
+lai,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,,2023,2,1.88375,1.9300000000000002,8
+lai,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli2,,2023,2,2.48,2.48,1
+lai,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli2,,2023,2,3.02,3.02,1
+lai,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,,2023,2,1.4783333333333335,1.5350000000000001,6
+lai,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte1,,2023,2,2.75,2.75,2
+lai,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,,2023,2,2.5075,2.3,4
+lai,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,,2023,2,1.82,1.82,1
+lai,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,,2023,3,2.94,2.94,1
+lai,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,,2023,2,2.205,2.205,2
+lai,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,,2023,3,3.2199999999999998,3.2199999999999998,2
+lai,UAHS,Mattikote,unlabelled,Dhoopadahalli,,2023,2,4.1025,4.16,4
+lai,UAHS,Mattikote,unlabelled,Dhoopadahalli,,2023,3,5.22,5.22,1
+lai,UAHS,Mattikote,unlabelled,Dhoopadahalli,,2024,3,5.0649999999999995,5.0649999999999995,2
+lai,UAHS,Mattikote,unlabelled,Gabburu,,2023,2,5.23,5.23,1
+lai,UAHS,Mattikote,unlabelled,Gabburu,,2023,3,5.34,5.34,1
+lai,UAHS,Mattikote,unlabelled,Haliyur,,2023,2,5.98,5.98,1
+lai,UAHS,Mattikote,unlabelled,Haliyur,,2023,3,5.76,5.76,1
+lai,UAHS,Nagagondanahalli,unlabelled,Devaranahalli,,2023,2,3.31,3.31,1
+lai,UAHS,Nagagondanahalli,unlabelled,Halagondanahalli2,,2023,2,3.05,3.05,2
+lai,UAHS,Nagagondanahalli,unlabelled,Nagagondanahalli1,,2023,2,2.84,2.84,1
+lai,UASB,,unlabelled,,,2023,2,2.7226665999999997,2.398333,10
+lai,UASB,,unlabelled,,,2024,3,2.5495079046666667,2.293333333,21
+lai,UASD,Artal Sub-Watershed,saturation,Artal 1,,2023,1,0.0,0.0,1
+lai,UASD,Artal Sub-Watershed,saturation,Artal 1,,2023,2,0.0,0.0,3
+lai,UASD,Artal Sub-Watershed,saturation,Artal 3,,2023,1,3.0700000000000003,3.0700000000000003,1
+lai,UASD,Artal Sub-Watershed,saturation,Artal 3,,2023,2,1.9086666666666667,2.0500000000000003,3
+lai,UASD,Artal Sub-Watershed,saturation,Artal-1,,2023,1,0.0,0.0,1
+lai,UASD,Artal Sub-Watershed,saturation,Artal-1,,2023,2,0.0,0.0,3
+lai,UASD,Artal Sub-Watershed,saturation,Artal-2,,2023,1,2.2222222222222223,2.3666666666666667,3
+lai,UASD,Artal Sub-Watershed,saturation,Artal-2,,2023,2,2.273941176470588,2.226666666666667,17
+lai,UASD,Artal Sub-Watershed,saturation,Artal-3,,2023,1,1.7933333333333337,1.7933333333333337,1
+lai,UASD,Artal Sub-Watershed,saturation,Artal-3,,2023,2,2.7744444444444447,2.5366666666666666,3
+lai,UASD,Artal Sub-Watershed,saturation,Halahalli-1,,2023,1,1.8500000000000003,1.8500000000000003,1
+lai,UASD,Artal Sub-Watershed,saturation,Halahalli-1,,2023,2,2.062,2.3066666666666666,5
+lai,UASD,Artal Sub-Watershed,saturation,Halahalli-2,,2023,1,2.5833333333333335,2.5833333333333335,1
+lai,UASD,Artal Sub-Watershed,saturation,Halahalli-2,,2023,2,3.312857142857143,3.3866666666666667,7
+lai,UASD,Gadag sub-watershed,control,Chikkoppa,UP,2023,2,3.6983333333333333,3.6983333333333333,2
+lai,UASD,Gadag sub-watershed,control,Hirekoppa,MD,2023,2,2.998333333333333,2.998333333333333,2
+lai,UASD,Gadag sub-watershed,control,Kiratgeri,LW,2023,2,3.5816666666666666,3.5816666666666666,2
+lai,UASD,Hanchinal sub-watershed,control,Hanchinal-1,UP,2023,1,2.4166666666666665,2.4166666666666665,1
+lai,UASD,Hanchinal sub-watershed,control,Hanchinal-1,UP,2023,2,1.6955555555555557,1.6483333333333332,12
+lai,UASD,Hanchinal sub-watershed,control,Hanchinal-1,UP,2024,3,0.0,0.0,1
+lai,UASD,Hanchinal sub-watershed,control,Vittalapura-1,MD,2023,1,2.0566666666666666,2.0566666666666666,1
+lai,UASD,Hanchinal sub-watershed,control,Vittalapura-1,MD,2023,2,1.791388888888889,1.755,12
+lai,UASD,Hanchinal sub-watershed,control,Vittalapura-1,MD,2024,3,1.5366666666666664,1.5366666666666664,1
+lai,UASD,Hanchinal sub-watershed,control,Vittalapura-2,LW,2023,1,2.033333333333333,2.033333333333333,1
+lai,UASD,Hanchinal sub-watershed,control,Vittalapura-2,LW,2023,2,1.9372222222222222,1.8716666666666666,12
+lai,UASD,Hanchinal sub-watershed,control,Vittalapura-2,LW,2024,3,1.7733333333333334,1.7733333333333334,1
+lai,UASD,Hosahalli sub-watershed,control,Abalur,UP,2023,1,4.506666666666667,4.506666666666667,1
+lai,UASD,Hosahalli sub-watershed,control,Abalur,UP,2023,2,4.52,4.52,2
+lai,UASD,Hosahalli sub-watershed,control,Hirekerur,LW,2023,1,4.83,4.83,1
+lai,UASD,Hosahalli sub-watershed,control,Hirekerur,LW,2023,2,2.563333333333333,2.563333333333333,2
+lai,UASD,Hosahalli sub-watershed,control,Nulageri,MD,2023,1,4.54,4.54,1
+lai,UASD,Hosahalli sub-watershed,control,Nulageri,MD,2023,2,4.176666666666667,4.176666666666667,2
+lai,UASD,Kodihalli Sub-Watershed,saturation,Aladgeri,,2023,1,4.81,4.81,1
+lai,UASD,Kodihalli Sub-Watershed,saturation,Aladgeri,,2023,2,5.513333333333333,5.513333333333333,2
+lai,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,,2023,1,5.23,5.23,2
+lai,UASD,Kodihalli Sub-Watershed,saturation,Kunchur,,2023,2,3.8125,4.968333333333333,4
+lai,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,,2023,1,5.725,5.725,2
+lai,UASD,Kodihalli Sub-Watershed,saturation,Lingadevarakoppa,,2023,2,2.91,2.866666666666667,4
+lai,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,,2023,1,3.6133333333333333,4.923333333333333,3
+lai,UASD,Kodihalli Sub-Watershed,saturation,Mavintopa,,2023,2,2.558333333333333,2.1483333333333334,6
+lai,UASD,Kodihalli Sub-Watershed,saturation,Yelavadhalli,,2023,1,5.0633333333333335,5.0633333333333335,1
+lai,UASD,Kodihalli Sub-Watershed,saturation,Yelavadhalli,,2023,2,5.05,5.05,2
+lai,UASD,Kohalli sub-watershed,control,Khilaraddi-1,MD,2023,1,0.0,0.0,1
+lai,UASD,Kohalli sub-watershed,control,Khilaraddi-1,MD,2023,2,1.1011333333333333,1.6533333333333333,5
+lai,UASD,Kohalli sub-watershed,control,Khilaraddi-1,MD,2023,3,2.2333333333333334,2.2333333333333334,1
+lai,UASD,Kohalli sub-watershed,control,Khilaraddi-2,LW,2023,1,0.0,0.0,1
+lai,UASD,Kohalli sub-watershed,control,Khilaraddi-2,LW,2023,2,2.5126666666666666,2.8533333333333335,5
+lai,UASD,Kohalli sub-watershed,control,Khilaraddi-2,LW,2023,3,2.9333333333333336,2.9333333333333336,1
+lai,UASD,Kohalli sub-watershed,control,Khilaraddi-3,UP,2023,1,3.6633333333333336,3.6633333333333336,1
+lai,UASD,Kohalli sub-watershed,control,Khilaraddi-3,UP,2023,2,1.672,2.4966666666666666,5
+lai,UASD,Kohalli sub-watershed,control,Khilaraddi-3,UP,2023,3,2.143333333333333,2.143333333333333,1
+lai,UASD,Nilagunda Sub-watershed,saturation,Kanvi-1,MD3,2023,1,2.6069999999999998,2.6069999999999998,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Kanvi-1,MD3,2023,2,3.264666666666667,3.2066666666666666,5
+lai,UASD,Nilagunda Sub-watershed,saturation,Mulgund East-3,UP1,2023,1,3.096666666666667,3.096666666666667,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Mulgund East-3,UP1,2023,2,4.300000000000001,4.300000000000001,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Mulgund-1,UP3,2023,1,0.0,0.0,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Mulgund-1,UP3,2023,2,0.0,0.0,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,MD1,2023,1,2.9383333333333335,2.9383333333333335,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,MD1,2023,2,3.6983333333333333,3.6983333333333333,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,MD2,2023,1,2.4228333333333336,2.4228333333333336,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Mulgund-2,MD2,2023,2,3.6116666666666664,3.6116666666666664,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Nilgund-2,UP2,2023,1,0.815,0.815,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Nilgund-2,UP2,2023,2,0.0,0.0,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,LW1,2023,1,0.0,0.0,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,LW1,2023,2,0.0,0.0,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,LW2,2023,1,1.6466666666666665,1.6466666666666665,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,LW2,2023,2,3.04,3.04,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,LW3,2023,1,0.0,0.0,2
+lai,UASD,Nilagunda Sub-watershed,saturation,Nilgund-3,LW3,2023,2,0.0,0.0,2
+lai,UASD,Shirur Sub-Watershed,saturation,Bilebala,,2023,1,2.64,2.64,1
+lai,UASD,Shirur Sub-Watershed,saturation,Bilebala,,2023,2,2.2518518518518515,2.1766666666666663,9
+lai,UASD,Shirur Sub-Watershed,saturation,Bilebala,,2024,3,2.5,2.5,1
+lai,UASD,Shirur Sub-Watershed,saturation,Devanur,,2023,1,1.71,1.71,1
+lai,UASD,Shirur Sub-Watershed,saturation,Devanur,,2023,2,2.0740740740740744,1.78,9
+lai,UASD,Shirur Sub-Watershed,saturation,Devanur,,2024,3,1.21,1.21,1
+lai,UASD,Shirur Sub-Watershed,saturation,Devanurnorth,,2023,1,1.9066666666666667,1.9066666666666667,2
+lai,UASD,Shirur Sub-Watershed,saturation,Devanurnorth,,2023,2,1.878537037037037,1.813333333333333,18
+lai,UASD,Shirur Sub-Watershed,saturation,Devanurnorth,,2024,3,1.4816666666666667,1.4816666666666667,2
+lai,UASD,Shirur Sub-Watershed,saturation,Kamadoli-1,,2023,1,1.8966666666666665,1.8966666666666665,1
+lai,UASD,Shirur Sub-Watershed,saturation,Kamadoli-1,,2023,2,1.8929629629629632,1.6966666666666665,9
+lai,UASD,Shirur Sub-Watershed,saturation,Kamadoli-1,,2024,3,2.5933333333333333,2.5933333333333333,1
+lai,UASD,Shirur Sub-Watershed,saturation,Kamadoli-2,,2023,1,2.4766666666666666,2.4766666666666666,1
+lai,UASD,Shirur Sub-Watershed,saturation,Kamadoli-2,,2023,2,2.207777777777778,1.9366666666666665,9
+lai,UASD,Shirur Sub-Watershed,saturation,Kamadoli-2,,2024,3,2.516666666666666,2.516666666666666,1
+lai,UASD,Shirur Sub-Watershed,saturation,Shirur-1,,2023,1,1.961111111111111,2.603333333333333,3
+lai,UASD,Shirur Sub-Watershed,saturation,Shirur-1,,2023,2,1.8045802469135803,1.5433333333333332,27
+lai,UASD,Shirur Sub-Watershed,saturation,Shirur-1,,2024,3,1.832222222222222,1.5366666666666664,3
+lai,UASR,,unlabelled,,,2023,1,1.3399999999999999,1.29,3
+lai,UASR,Hunsehadagli,unlabelled,,,2023,1,1.5724679487179487,1.47,39
+lai,UHSB,Kandgul,unlabelled,Masjawadi,10.0,2023,1,2.4374076666666666,2.463333,9
+lai,UHSB,Kandgul,unlabelled,Masjawadi,10.0,2023,2,1.561944416638889,1.4183333331666665,12
+lai,UHSB,Kandgul,unlabelled,Masjawadi,11.0,2023,1,2.481481111111111,2.53,9
+lai,UHSB,Kandgul,unlabelled,Masjawadi,11.0,2023,2,1.414166611111111,1.3566666666666665,12
+lai,UHSB,Kandgul,unlabelled,Masjawadi,12.0,2023,1,2.444074777777778,2.43,9
+lai,UHSB,Kandgul,unlabelled,Masjawadi,12.0,2023,2,1.7056410513076925,1.71,13
+lai,UHSB,Pashapur,unlabelled,Ladha 1,2.0,2023,1,2.5711115555555555,2.516667,9
+lai,UHSB,Pashapur,unlabelled,Ladha 1,2.0,2023,2,1.415454515151515,1.29,11
+lai,UHSB,Pashapur,unlabelled,Ladha 2,1.0,2023,1,2.4388896666666664,2.436667,9
+lai,UHSB,Pashapur,unlabelled,Ladha 2,1.0,2023,2,1.7120512820769231,1.6033333333333335,13
+lai,UHSB,Pashapur,unlabelled,Ladha 2,3.0,2023,1,2.4903704444444443,2.356667,9
+lai,UHSB,Pashapur,unlabelled,Ladha 2,3.0,2023,2,2.1055556666666666,2.106667,3
+lai,UHSB,Pashapur,unlabelled,Ladha 2,6.0,2023,1,2.5088896666666667,2.436667,9
+lai,UHSB,Pashapur,unlabelled,Ladha 2,6.0,2023,2,1.6550000000277778,1.5433333333333334,12
+lai,UHSB,Pashapur,unlabelled,Mustapur,4.0,2023,1,2.644445222222222,2.56,9
+lai,UHSB,Pashapur,unlabelled,Mustapur,4.0,2023,2,1.5930769486923078,1.4833333333333334,13
+lai,UHSB,Pashapur,unlabelled,Mustapur,5.0,2023,1,2.477037777777778,2.476667,9
+lai,UHSB,Pashapur,unlabelled,Mustapur,5.0,2023,2,1.531388888861111,1.4249999999999998,12
+lai,UHSB,Pashapur,unlabelled,Mustapur,9.0,2023,1,2.533703,2.426667,9
+lai,UHSB,Pashapur,unlabelled,Mustapur,9.0,2023,2,1.7551515454848485,1.5433333333333332,11
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,1.0,2023,1,20.39,20.39,1
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,1.0,2023,2,22.351999999999997,22.48,5
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,1.0,2024,3,30.676666666666666,30.29,3
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,2.0,2023,1,24.73,24.73,1
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,2.0,2023,2,22.726,23.07,5
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,2.0,2024,3,31.996666666666666,31.67,3
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,3.0,2023,1,28.56,28.56,1
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,3.0,2023,2,24.042,23.56,5
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,3.0,2024,3,32.85333333333333,32.84,3
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,4.0,2023,1,23.71,23.71,1
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,4.0,2023,2,25.407999999999998,24.84,5
+gw_depth_m,UAHS,Beguru,unlabelled,Dabbanabairanahalli,4.0,2024,3,33.17666666666667,33.74,3
+gw_depth_m,UAHS,Beguru,unlabelled,Gogga,7.0,2023,1,24.41,24.41,1
+gw_depth_m,UAHS,Beguru,unlabelled,Gogga,7.0,2023,2,22.742,21.51,5
+gw_depth_m,UAHS,Beguru,unlabelled,Gogga,7.0,2024,3,33.10333333333333,33.91,3
+gw_depth_m,UAHS,Beguru,unlabelled,Gogga,8.0,2023,1,25.54,25.54,1
+gw_depth_m,UAHS,Beguru,unlabelled,Gogga,8.0,2023,2,25.401999999999997,25.08,5
+gw_depth_m,UAHS,Beguru,unlabelled,Gogga,8.0,2024,3,34.016666666666666,34.55,3
+gw_depth_m,UAHS,Beguru,unlabelled,Gogga,9.0,2023,1,18.84,18.84,1
+gw_depth_m,UAHS,Beguru,unlabelled,Gogga,9.0,2023,2,12.918000000000001,11.28,5
+gw_depth_m,UAHS,Beguru,unlabelled,Gogga,9.0,2024,3,17.22,16.73,3
+gw_depth_m,UAHS,Beguru,unlabelled,Hulaganakatte1,6.0,2023,1,22.38,22.38,1
+gw_depth_m,UAHS,Beguru,unlabelled,Hulaganakatte1,6.0,2023,2,25.368000000000002,25.27,5
+gw_depth_m,UAHS,Beguru,unlabelled,Hulaganakatte1,6.0,2024,3,34.38333333333333,34.37,3
+gw_depth_m,UAHS,Beguru,unlabelled,Kenchagondanakoppa,5.0,2023,1,25.61,25.61,1
+gw_depth_m,UAHS,Beguru,unlabelled,Kenchagondanakoppa,5.0,2023,2,21.744,20.79,5
+gw_depth_m,UAHS,Beguru,unlabelled,Kenchagondanakoppa,5.0,2024,3,30.830000000000002,30.78,3
+gw_depth_m,UAHS,Haralahalli,unlabelled,Donduru,23.0,2023,1,18.92,18.92,1
+gw_depth_m,UAHS,Haralahalli,unlabelled,Donduru,23.0,2023,2,17.325,16.225,4
+gw_depth_m,UAHS,Haralahalli,unlabelled,Donduru,23.0,2024,3,40.35333333333333,40.67,3
+gw_depth_m,UAHS,Haralahalli,unlabelled,Gijikatte,22.0,2023,1,15.6,15.6,1
+gw_depth_m,UAHS,Haralahalli,unlabelled,Gijikatte,22.0,2023,2,18.4875,17.285,4
+gw_depth_m,UAHS,Haralahalli,unlabelled,Gijikatte,22.0,2024,3,46.096666666666664,44.23,3
+gw_depth_m,UAHS,Haralahalli,unlabelled,Karehalli,24.0,2023,1,12.36,12.36,1
+gw_depth_m,UAHS,Haralahalli,unlabelled,Karehalli,24.0,2023,2,23.3325,22.5,4
+gw_depth_m,UAHS,Haralahalli,unlabelled,Karehalli,24.0,2024,3,51.43666666666667,52.31,3
+gw_depth_m,UAHS,Jammapura,unlabelled,Kallikere,8.0,2023,1,28.12,28.12,1
+gw_depth_m,UAHS,Jammapura,unlabelled,Kallikere,8.0,2023,2,23.714000000000002,23.35,5
+gw_depth_m,UAHS,Jammapura,unlabelled,Kallikere,8.0,2024,3,34.64666666666667,32.7,3
+gw_depth_m,UAHS,Jammapura,unlabelled,Kallikere,9.0,2023,1,57.3,57.3,1
+gw_depth_m,UAHS,Jammapura,unlabelled,Kallikere,9.0,2023,2,54.64,53.9,5
+gw_depth_m,UAHS,Jammapura,unlabelled,Kallikere,9.0,2024,3,74.33333333333333,75.0,3
+gw_depth_m,UAHS,Jammapura,unlabelled,Maravanji2,5.0,2023,1,14.3,14.3,1
+gw_depth_m,UAHS,Jammapura,unlabelled,Maravanji2,5.0,2023,2,10.536,10.23,5
+gw_depth_m,UAHS,Jammapura,unlabelled,Maravanji2,5.0,2024,3,18.41,16.78,3
+gw_depth_m,UAHS,Jammapura,unlabelled,Meagondanahalli2,6.0,2023,1,2.1,2.1,1
+gw_depth_m,UAHS,Jammapura,unlabelled,Meagondanahalli2,6.0,2023,2,2.476,2.05,5
+gw_depth_m,UAHS,Jammapura,unlabelled,Meagondanahalli2,6.0,2024,3,8.459999999999999,7.31,3
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,1.0,2023,1,10.12,10.12,1
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,1.0,2023,2,9.354,8.7,5
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,1.0,2024,3,22.36,21.34,3
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,2.0,2023,1,23.15,23.15,1
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,2.0,2023,2,18.636000000000003,18.35,5
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,2.0,2024,3,29.063333333333333,29.35,3
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,3.0,2023,1,23.34,23.34,1
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,3.0,2023,2,17.792,17.2,5
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,3.0,2024,3,28.74,30.12,3
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,4.0,2023,1,16.12,16.12,1
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,4.0,2023,2,12.553999999999998,12.1,5
+gw_depth_m,UAHS,Jammapura,unlabelled,Pandavamatti1,4.0,2024,3,20.28,17.92,3
+gw_depth_m,UAHS,Koranahalli,unlabelled,Chatnahalli-2,16.0,2023,1,14.91,14.91,1
+gw_depth_m,UAHS,Koranahalli,unlabelled,Chatnahalli-2,16.0,2023,2,19.135,16.085,4
+gw_depth_m,UAHS,Koranahalli,unlabelled,Chatnahalli-2,16.0,2024,3,31.8,37.15,3
+gw_depth_m,UAHS,Koranahalli,unlabelled,Chatnahalli-2,19.0,2023,1,16.32,16.32,1
+gw_depth_m,UAHS,Koranahalli,unlabelled,Chatnahalli-2,19.0,2023,2,19.71,16.61,4
+gw_depth_m,UAHS,Koranahalli,unlabelled,Chatnahalli-2,19.0,2024,3,50.26666666666667,48.75,3
+gw_depth_m,UAHS,Koranahalli,unlabelled,Gollarahalli,15.0,2023,1,25.18,25.18,1
+gw_depth_m,UAHS,Koranahalli,unlabelled,Gollarahalli,15.0,2023,2,19.1825,16.02,4
+gw_depth_m,UAHS,Koranahalli,unlabelled,Gollarahalli,15.0,2024,3,41.00333333333333,40.38,3
+gw_depth_m,UAHS,Koranahalli,unlabelled,Jodi Bokikere,17.0,2023,1,17.54,17.54,1
+gw_depth_m,UAHS,Koranahalli,unlabelled,Jodi Bokikere,17.0,2023,2,20.2925,16.9,4
+gw_depth_m,UAHS,Koranahalli,unlabelled,Jodi Bokikere,17.0,2024,3,52.800000000000004,51.64,3
+gw_depth_m,UAHS,Koranahalli,unlabelled,Koranahalli,14.0,2023,1,11.6,11.6,1
+gw_depth_m,UAHS,Koranahalli,unlabelled,Koranahalli,14.0,2023,2,21.0425,20.09,4
+gw_depth_m,UAHS,Koranahalli,unlabelled,Koranahalli,14.0,2024,3,45.053333333333335,43.87,3
+gw_depth_m,UAHS,Koranahalli,unlabelled,Koranahalli,18.0,2023,1,18.36,18.36,1
+gw_depth_m,UAHS,Koranahalli,unlabelled,Koranahalli,18.0,2023,2,15.807500000000001,13.59,4
+gw_depth_m,UAHS,Koranahalli,unlabelled,Koranahalli,18.0,2024,3,42.26,42.97,3
+gw_depth_m,UAHS,Koranahalli,unlabelled,Makanahalli,13.0,2023,1,13.87,13.87,1
+gw_depth_m,UAHS,Koranahalli,unlabelled,Makanahalli,13.0,2023,2,20.1125,18.275,4
+gw_depth_m,UAHS,Koranahalli,unlabelled,Makanahalli,13.0,2024,3,42.870000000000005,41.19,3
+gw_depth_m,UAHS,Koranahalli,unlabelled,Makanahalli,21.0,2023,1,19.55,19.55,1
+gw_depth_m,UAHS,Koranahalli,unlabelled,Makanahalli,21.0,2023,2,22.2975,18.134999999999998,4
+gw_depth_m,UAHS,Koranahalli,unlabelled,Makanahalli,21.0,2024,3,54.053333333333335,55.24,3
+gw_depth_m,UAHS,Koranahalli,unlabelled,Rajanahalli-2,20.0,2023,1,13.74,13.74,1
+gw_depth_m,UAHS,Koranahalli,unlabelled,Rajanahalli-2,20.0,2023,2,19.4025,17.695,4
+gw_depth_m,UAHS,Koranahalli,unlabelled,Rajanahalli-2,20.0,2024,3,38.85333333333333,39.84,3
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,7.0,2023,1,6.37,6.37,1
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,7.0,2023,2,9.3125,9.344999999999999,4
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,7.0,2024,3,14.013333333333334,13.72,3
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,9.0,2023,1,19.89,19.89,1
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,9.0,2023,2,24.5775,23.845,4
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli1,9.0,2024,3,36.169999999999995,36.65,3
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli2,6.0,2023,1,10.9,10.9,1
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli2,6.0,2023,2,13.7625,13.809999999999999,4
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kasturitimmanahalli2,6.0,2024,3,21.186666666666667,21.14,3
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli2,2.0,2023,1,12.39,12.39,1
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli2,2.0,2023,2,16.060000000000002,15.89,4
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli2,2.0,2024,3,20.39,20.06,3
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,4.0,2023,1,10.16,10.16,1
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,4.0,2023,2,15.020000000000001,14.47,4
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,4.0,2024,3,22.853333333333335,22.33,3
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,8.0,2023,1,17.7,17.7,1
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,8.0,2023,2,24.1275,23.98,4
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Kyatagondanahalli3,8.0,2024,3,29.97,29.91,3
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte1,3.0,2023,1,9.3,9.3,1
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte1,3.0,2023,2,12.515,12.815000000000001,4
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte1,3.0,2024,3,19.406666666666666,18.84,3
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,1.0,2023,1,5.94,5.94,1
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,1.0,2023,2,7.9275,7.675000000000001,4
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,1.0,2024,3,9.456666666666667,9.31,3
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,5.0,2023,1,13.86,13.86,1
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,5.0,2023,2,16.6225,16.925,4
+gw_depth_m,UAHS,Kytagondanahalli,unlabelled,Vidappanakunte2,5.0,2024,3,22.94666666666667,23.65,3
+gw_depth_m,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,11.0,2023,1,8.32,8.32,1
+gw_depth_m,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,11.0,2023,2,7.669999999999999,6.38,5
+gw_depth_m,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,11.0,2024,3,22.546666666666667,21.2,3
+gw_depth_m,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,10.0,2023,1,18.35,18.35,1
+gw_depth_m,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,10.0,2023,2,16.21,15.72,5
+gw_depth_m,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,10.0,2024,3,28.220000000000002,27.34,3
+gw_depth_m,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2023,1,21.3,21.3,1
+gw_depth_m,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2023,2,19.71,18.1,5
+gw_depth_m,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2024,3,35.846666666666664,34.12,3
+gw_depth_m,UAHS,Mattikote,unlabelled,Dhoopadahalli,10.0,2023,1,25.63,25.63,1
+gw_depth_m,UAHS,Mattikote,unlabelled,Dhoopadahalli,10.0,2023,2,20.298,20.48,5
+gw_depth_m,UAHS,Mattikote,unlabelled,Dhoopadahalli,10.0,2024,3,29.876666666666665,30.17,3
+gw_depth_m,UAHS,Mattikote,unlabelled,Gabburu,11.0,2023,1,21.41,21.41,1
+gw_depth_m,UAHS,Mattikote,unlabelled,Gabburu,11.0,2023,2,23.326,22.84,5
+gw_depth_m,UAHS,Mattikote,unlabelled,Gabburu,11.0,2024,3,31.899999999999995,32.44,3
+gw_depth_m,UAHS,Mattikote,unlabelled,Haliyur,12.0,2023,1,23.56,23.56,1
+gw_depth_m,UAHS,Mattikote,unlabelled,Haliyur,12.0,2023,2,22.330000000000002,22.74,5
+gw_depth_m,UAHS,Mattikote,unlabelled,Haliyur,12.0,2024,3,32.64333333333333,32.51,3
+gw_depth_m,UAHS,Nagagondanahalli,unlabelled,Devaranahalli,10.0,2023,1,11.26,11.26,1
+gw_depth_m,UAHS,Nagagondanahalli,unlabelled,Devaranahalli,10.0,2023,2,11.254999999999999,12.29,4
+gw_depth_m,UAHS,Nagagondanahalli,unlabelled,Devaranahalli,10.0,2024,3,19.013333333333332,20.36,3
+gw_depth_m,UAHS,Nagagondanahalli,unlabelled,Halagondanahalli2,11.0,2023,1,32.46,32.46,1
+gw_depth_m,UAHS,Nagagondanahalli,unlabelled,Halagondanahalli2,11.0,2023,2,24.4425,24.25,4
+gw_depth_m,UAHS,Nagagondanahalli,unlabelled,Halagondanahalli2,11.0,2024,3,31.37,31.86,3
+gw_depth_m,UAHS,Nagagondanahalli,unlabelled,Nagagondanahalli1,12.0,2023,1,7.34,7.34,1
+gw_depth_m,UAHS,Nagagondanahalli,unlabelled,Nagagondanahalli1,12.0,2023,2,8.1275,7.925,4
+gw_depth_m,UAHS,Nagagondanahalli,unlabelled,Nagagondanahalli1,12.0,2024,3,11.88,11.32,3
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,1.0,2023,1,20.85,20.85,2
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,1.0,2023,2,26.8,27.6,5
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,1.0,2024,1,12.1,12.1,1
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,1.0,2024,3,30.066666666666663,30.4,3
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,2.0,2023,1,9.55,9.55,2
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,2.0,2023,2,9.001999999999999,9.31,5
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,2.0,2024,1,9.6,9.6,1
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,2.0,2024,3,9.733333333333333,9.2,3
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,3.0,2023,1,6.55,6.55,2
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,3.0,2023,2,6.58,6.5,5
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,3.0,2024,1,8.3,8.3,1
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Chaluvanahalli,3.0,2024,3,11.366666666666667,11.4,3
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,4.0,2023,1,2.55,2.55,2
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,4.0,2023,2,2.6399999999999997,2.5,5
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,4.0,2024,1,10.4,10.4,1
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,4.0,2024,3,7.8999999999999995,6.8,3
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,5.0,2023,1,5.4,5.4,2
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,5.0,2023,2,7.1,7.6,5
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,5.0,2024,1,14.5,14.5,1
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,5.0,2024,3,14.033333333333333,13.6,3
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,6.0,2023,1,6.15,6.15,2
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,6.0,2023,2,6.42,6.5,5
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,6.0,2024,1,10.0,10.0,1
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Kondarajanahalli,6.0,2024,3,8.299999999999999,9.5,3
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,7.0,2023,1,15.0,15.0,2
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,7.0,2023,2,8.508,10.8,5
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,7.0,2024,1,15.0,15.0,1
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,7.0,2024,3,15.666666666666666,13.8,3
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,8.0,2023,1,14.35,14.35,2
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,8.0,2023,2,9.744,8.7,5
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,8.0,2024,1,12.0,12.0,1
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,8.0,2024,3,12.799999999999999,13.7,3
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,9.0,2023,2,21.55,20.65,4
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,9.0,2024,1,25.4,25.4,1
+gw_depth_m,UASB,Chatrakodihalli,unlabelled,Shettikotthnuru,9.0,2024,3,26.333333333333332,27.0,3
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,4.0,2023,1,9.16,9.16,2
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,4.0,2023,2,19.456,18.45,5
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,4.0,2024,1,35.45,35.45,1
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,4.0,2024,3,28.98,26.79,3
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,5.0,2023,1,9.525,9.525,2
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,5.0,2023,2,21.158,19.89,5
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,5.0,2024,1,36.32,36.32,1
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,5.0,2024,3,29.423333333333332,27.56,3
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,6.0,2023,1,9.92,9.92,2
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,6.0,2023,2,9.02,8.5,5
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,6.0,2024,1,20.33,20.33,1
+gw_depth_m,UASB,Doddenahalli,unlabelled,Bilenahalli,6.0,2024,3,17.14,16.92,3
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,1.0,2023,1,12.100000000000001,12.100000000000001,2
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,1.0,2023,2,8.064,7.2,5
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,1.0,2024,1,23.01,23.01,1
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,1.0,2024,3,18.573333333333334,16.93,3
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,2.0,2023,1,3.8500000000000005,3.8500000000000005,2
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,2.0,2023,2,7.004,6.3,5
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,2.0,2024,1,25.43,25.43,1
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,2.0,2024,3,17.183333333333334,13.27,3
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,3.0,2023,1,16.21,16.21,2
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,3.0,2023,2,15.578,13.1,5
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,3.0,2024,1,29.34,29.34,1
+gw_depth_m,UASB,Doddenahalli,unlabelled,Doddenahalli,3.0,2024,3,23.929999999999996,22.1,3
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,7.0,2023,1,10.05,10.05,2
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,7.0,2023,2,15.338,14.85,5
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,7.0,2024,1,24.45,24.45,1
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,7.0,2024,3,24.14,23.43,3
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,8.0,2023,2,91.15,91.2,5
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,8.0,2024,1,100.23,100.23,1
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,8.0,2024,3,100.3,98.85,3
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,9.0,2023,1,6.17,6.17,2
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,9.0,2023,2,12.974,11.75,5
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,9.0,2024,1,22.45,22.45,1
+gw_depth_m,UASB,Doddenahalli,unlabelled,Mootikere,9.0,2024,3,19.400000000000002,19.32,3
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,5.0,2023,1,8.5,8.5,2
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,5.0,2023,2,8.3,9.3,5
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,5.0,2024,1,20.0,20.0,1
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,5.0,2024,3,23.376666666666665,22.98,3
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,6.0,2023,1,12.615,12.615,2
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,6.0,2023,2,10.228,10.56,5
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,6.0,2024,1,30.0,30.0,1
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,6.0,2024,3,28.28,30.51,3
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,7.0,2023,1,5.0,5.0,2
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,7.0,2023,2,5.7540000000000004,4.0,5
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,7.0,2024,1,11.0,11.0,1
+gw_depth_m,UASB,Gummalapalli,unlabelled,Agutimadike,7.0,2024,3,11.953333333333333,11.52,3
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,2.0,2023,1,15.6,15.6,2
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,2.0,2023,2,12.768,12.64,5
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,2.0,2024,1,17.0,17.0,1
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,2.0,2024,3,30.263333333333332,30.0,3
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,3.0,2023,1,8.5,8.5,2
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,3.0,2023,2,11.193999999999999,10.0,5
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,3.0,2024,1,22.0,22.0,1
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,3.0,2024,3,39.71,48.53,3
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,4.0,2023,1,10.0,10.0,2
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,4.0,2023,2,12.52,9.8,5
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,4.0,2024,1,16.0,16.0,1
+gw_depth_m,UASB,Gummalapalli,unlabelled,Peddareddipalli,4.0,2024,3,12.896666666666667,12.89,3
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,1.0,2023,1,19.5,19.5,2
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,1.0,2023,2,14.108,14.75,5
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,1.0,2024,1,24.0,24.0,1
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,1.0,2024,3,34.61666666666667,39.0,3
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,8.0,2023,1,18.0,18.0,2
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,8.0,2023,2,28.353999999999996,25.0,5
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,8.0,2024,1,17.0,17.0,1
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,8.0,2024,3,89.72666666666667,93.25,3
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,9.0,2023,1,6.1,6.1,2
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,9.0,2023,2,6.074,4.8,5
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,9.0,2024,1,16.3,16.3,1
+gw_depth_m,UASB,Gummalapalli,unlabelled,Tollapalli,9.0,2024,3,50.25,63.5,3
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Chikkahosala,11.0,2023,1,15.8,15.8,1
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Chikkahosala,11.0,2023,2,9.309999999999999,9.1,5
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Chikkahosala,11.0,2024,1,20.4,20.4,1
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Chikkahosala,11.0,2024,3,15.5,14.0,3
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Kalipura1,12.0,2023,1,15.0,15.0,1
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Kalipura1,12.0,2023,2,24.18,25.5,5
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Kalipura1,12.0,2024,1,29.0,29.0,1
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Kalipura1,12.0,2024,3,20.51,29.0,3
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Karahalli,13.0,2023,1,10.3,10.3,1
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Karahalli,13.0,2023,2,12.14,12.4,5
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Karahalli,13.0,2024,1,15.0,15.0,1
+gw_depth_m,UASB,Holali (Kembodi),unlabelled,Karahalli,13.0,2024,3,20.033333333333335,15.8,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,1.0,2023,1,22.2,22.7,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,1.0,2023,2,25.14,24.9,5
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,1.0,2024,1,34.2,34.2,1
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,1.0,2024,3,31.396666666666665,31.2,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,2.0,2023,1,15.466666666666667,18.0,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,2.0,2023,2,19.2,19.1,5
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,2.0,2024,1,22.1,22.1,1
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,2.0,2024,3,20.866666666666664,20.8,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,3.0,2023,1,3.606666666666667,3.52,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,3.0,2023,2,4.7,4.5,5
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,3.0,2024,1,8.0,8.0,1
+gw_depth_m,UASB,Mydalakere,unlabelled,Hodekallu,3.0,2024,3,5.7,5.8,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,7.0,2023,1,18.233333333333334,17.8,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,7.0,2023,2,17.759999999999998,17.7,5
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,7.0,2024,1,21.9,21.9,1
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,7.0,2024,3,20.833333333333332,20.8,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,8.0,2023,1,4.2,4.0,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,8.0,2023,2,4.36,4.6,5
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,8.0,2024,1,9.3,9.3,1
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,8.0,2024,3,7.1000000000000005,7.2,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,9.0,2023,1,4.433333333333334,5.6,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,9.0,2023,2,7.279999999999999,5.0,5
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,9.0,2024,1,16.7,16.7,1
+gw_depth_m,UASB,Mydalakere,unlabelled,Kadugujjanahalli,9.0,2024,3,14.166666666666666,14.3,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,4.0,2023,1,15.086666666666666,11.4,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,4.0,2023,2,8.76,8.0,5
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,4.0,2024,1,15.0,15.0,1
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,4.0,2024,3,12.533333333333333,12.2,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,5.0,2023,1,16.55,15.17,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,5.0,2023,2,8.459999999999999,8.6,5
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,5.0,2024,1,15.5,15.5,1
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,5.0,2024,3,12.333333333333334,12.1,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,6.0,2023,1,7.876666666666666,10.0,3
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,6.0,2023,2,17.2,17.8,5
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,6.0,2024,1,20.4,20.4,1
+gw_depth_m,UASB,Mydalakere,unlabelled,Siddalingayyanapalya,6.0,2024,3,18.166666666666668,18.1,3
+gw_depth_m,UASB,Narayanghatta (Annapura),unlabelled,Adhihalli,11.0,2024,1,32.34,32.34,1
+gw_depth_m,UASB,Narayanghatta (Annapura),unlabelled,Adhihalli,11.0,2024,3,43.55,43.55,1
+gw_depth_m,UASB,Narayanghatta (Annapura),unlabelled,Mududi,13.0,2024,1,24.53,24.53,1
+gw_depth_m,UASB,Narayanghatta (Annapura),unlabelled,Mududi,13.0,2024,3,20.25,20.25,1
+gw_depth_m,UASB,Narayanghatta (Annapura),unlabelled,Talalur,12.0,2024,1,30.54,30.54,1
+gw_depth_m,UASB,Narayanghatta (Annapura),unlabelled,Talalur,12.0,2024,3,35.43,35.43,1
+gw_depth_m,UASB,Virupasandra,unlabelled,Kemarepalya,13.0,2023,1,16.533333333333335,17.0,3
+gw_depth_m,UASB,Virupasandra,unlabelled,Kemarepalya,13.0,2023,2,11.040000000000001,9.8,5
+gw_depth_m,UASB,Virupasandra,unlabelled,Kemarepalya,13.0,2024,1,20.9,20.9,1
+gw_depth_m,UASB,Virupasandra,unlabelled,Kemarepalya,13.0,2024,3,18.099999999999998,18.0,3
+gw_depth_m,UASB,Virupasandra,unlabelled,Mullenahalli,12.0,2023,1,12.933333333333332,13.5,3
+gw_depth_m,UASB,Virupasandra,unlabelled,Mullenahalli,12.0,2023,2,17.52,17.6,5
+gw_depth_m,UASB,Virupasandra,unlabelled,Mullenahalli,12.0,2024,1,24.0,24.0,1
+gw_depth_m,UASB,Virupasandra,unlabelled,Mullenahalli,12.0,2024,3,21.5,21.7,3
+gw_depth_m,UASB,Virupasandra,unlabelled,Neralapura,11.0,2023,1,19.266666666666666,19.5,3
+gw_depth_m,UASB,Virupasandra,unlabelled,Neralapura,11.0,2023,2,15.580000000000002,15.8,5
+gw_depth_m,UASB,Virupasandra,unlabelled,Neralapura,11.0,2024,1,22.4,22.4,1
+gw_depth_m,UASB,Virupasandra,unlabelled,Neralapura,11.0,2024,3,19.266666666666666,19.2,3
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-25,2023,1,39.5,39.5,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-25,2023,2,46.0375,45.975,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-25,2024,3,54.0,54.0,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-26,2023,1,39.0,39.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-26,2023,2,48.36,43.45,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-26,2024,3,65.2,65.2,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-27,2023,1,46.0,46.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-27,2023,2,58.775,54.3,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-27,2024,3,75.1,75.1,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-28,2023,1,6.1,6.1,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-28,2023,2,18.137500000000003,10.35,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-28,2024,3,49.5,49.5,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-29,2023,1,12.5,12.5,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-29,2023,2,15.3,13.4,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-29,2024,3,60.2,60.2,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-34,2023,1,60.0,60.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-34,2023,2,64.6,64.35,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-34,2024,3,103.0,103.0,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-35,2023,1,18.1,18.1,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-35,2023,2,32.724999999999994,20.65,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-35,2024,3,72.4,72.4,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-36,2023,1,10.1,10.1,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-36,2023,2,26.9175,24.659999999999997,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-36,2024,3,55.0,55.0,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-37,2023,1,5.24,5.24,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-37,2023,2,12.1,8.3,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-37,2024,3,39.1,39.1,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-38,2023,1,22.3,22.3,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-38,2023,2,21.1,13.7,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-1,BW-38,2024,3,71.5,71.5,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-14,2023,1,25.4,25.4,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-14,2023,2,31.3375,24.0,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-14,2024,3,72.0,72.0,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-15,2023,1,14.3,14.3,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-15,2023,2,29.65,20.85,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-15,2024,3,65.5,65.5,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-16,2023,1,15.2,15.2,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-16,2023,2,22.525,18.0,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-16,2024,3,49.2,49.2,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-22,2023,1,37.0,37.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-22,2023,2,39.575,37.85,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-22,2024,3,49.2,49.2,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-23,2023,1,6.3,6.3,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-23,2023,2,13.95,10.2,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-23,2024,3,31.0,31.0,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-24,2023,1,10.0,10.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-24,2023,2,16.875,11.9,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-24,2024,3,37.5,37.5,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-30,2023,1,18.0,18.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-30,2023,2,23.225,21.3,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-30,2024,3,57.0,57.0,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-31,2023,1,16.3,16.3,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-31,2023,2,24.174999999999997,16.7,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-31,2024,3,51.2,51.2,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-32,2023,1,61.0,61.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-32,2023,2,65.075,64.0,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-32,2024,3,73.5,73.5,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-33,2023,1,25.2,25.2,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-33,2023,2,29.15,27.5,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-2,BW-33,2024,3,39.0,39.0,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-1,2023,1,51.0,51.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-1,2023,2,37.2025,36.305,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-1,2024,3,45.4,45.4,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-10,2023,1,28.3,28.3,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-10,2023,2,35.725,32.95,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-10,2024,3,56.1,56.1,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-11,2023,1,28.5,28.5,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-11,2023,2,29.4775,29.72,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-11,2024,3,48.4,48.4,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-12,2023,1,14.27,14.27,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-12,2023,2,27.525,26.05,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-12,2024,3,39.2,39.2,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-13,2023,1,10.5,10.5,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-13,2023,2,16.25,14.149999999999999,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-13,2024,3,44.3,44.3,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-2,2023,1,17.5,17.5,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-2,2023,2,33.3075,33.485,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-2,2024,3,43.1,43.1,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-3,2023,1,25.2,25.2,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-3,2023,2,30.55,26.15,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-3,2024,3,45.2,45.2,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-4,2023,1,18.8,18.8,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-4,2023,2,24.65,26.75,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Artal-3,BW-4,2024,3,37.0,37.0,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-5,2023,1,7.2,7.2,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-5,2023,2,14.9875,10.25,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-5,2024,3,28.5,28.5,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-6,2023,1,8.1,8.1,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-6,2023,2,12.9875,9.165,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-6,2024,3,26.8,26.8,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-7,2023,1,32.0,32.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-7,2023,2,25.725,25.6,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-7,2024,3,31.2,31.2,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-8,2023,1,10.1,10.1,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-8,2023,2,21.0625,16.075,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-8,2024,3,43.1,43.1,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-9,2023,1,13.0,13.0,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-9,2023,2,17.975,14.25,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-1,BW-9,2024,3,35.0,35.0,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-17,2023,1,11.35,11.35,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-17,2023,2,21.525,21.5,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-17,2024,3,22.5,22.5,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-18,2023,1,6.2,6.2,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-18,2023,2,12.9,13.5,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-18,2024,3,23.6,23.6,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-19,2023,1,9.2,9.2,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-19,2023,2,30.825000000000003,32.0,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-19,2024,3,42.2,42.2,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-20,2023,1,12.2,12.2,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-20,2023,2,17.2,15.75,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-20,2024,3,27.1,27.1,1
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-21,2023,1,7.45,7.45,2
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-21,2023,2,11.875,11.75,4
+gw_depth_m,UASD,Artal Sub Watershed,saturation,Halahalli-2,BW-21,2024,3,13.8,13.8,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-1,2023,2,4.598,4.6,5
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-1,2024,1,4.25,4.25,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-1,2024,3,5.8149999999999995,5.8149999999999995,2
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-2,2023,2,7.1659999999999995,7.19,5
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-2,2024,1,6.42,6.42,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-2,2024,3,8.59,8.59,2
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-3,2023,2,5.546,5.73,5
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-3,2024,1,5.58,5.58,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-3,2024,3,6.8100000000000005,6.8100000000000005,2
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-4,2023,2,6.324,6.82,5
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-4,2024,1,7.11,7.11,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-4,2024,3,7.79,7.79,2
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-5,2023,2,7.575999999999999,7.14,5
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-5,2024,1,10.72,10.72,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Hirekoppa,BW-5,2024,3,10.695,10.695,2
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-1,2023,2,13.518,14.2,5
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-1,2024,1,12.46,12.46,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-1,2024,3,15.25,15.25,2
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-2,2023,2,11.618,11.89,5
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-2,2024,1,10.25,10.25,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-2,2024,3,12.645,12.645,2
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-3,2023,2,4.151999999999999,3.89,5
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-3,2024,1,5.16,5.16,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-3,2024,3,6.2,6.2,2
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-4,2023,2,7.06,7.12,5
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-4,2024,1,6.71,6.71,1
+gw_depth_m,UASD,Gadag sub-watershed,control,Kiratgeri,BW-4,2024,3,9.094999999999999,9.094999999999999,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-1,2023,1,3.5,3.5,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-1,2023,2,15.15,15.25,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-1,2024,1,29.8,29.8,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-1,2024,3,25.65,25.65,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-2,2023,1,4.25,4.25,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-2,2023,2,14.875,14.45,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-2,2024,1,28.1,28.1,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-2,2024,3,25.299999999999997,25.299999999999997,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-3,2023,1,13.825,13.825,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-3,2023,2,16.525,16.8,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-3,2024,1,29.65,29.65,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-3,2024,3,25.35,25.35,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-4,2023,1,11.5,11.5,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-4,2023,2,0.0,0.0,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-4,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Abalur,BW-4,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-1,2023,1,7.15,7.15,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-1,2023,2,10.82,10.8,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-1,2024,1,15.8,15.8,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-1,2024,3,11.5,11.5,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-2,2023,1,12.765,12.765,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-2,2023,2,11.16,10.3,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-2,2024,1,25.7,25.7,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-2,2024,3,20.5,20.5,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-3,2023,1,12.415,12.415,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-3,2023,2,12.675,13.25,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-3,2024,1,23.5,23.5,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-3,2024,3,19.4,19.4,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-4,2023,1,12.125,12.125,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-4,2023,2,13.27,11.34,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-4,2024,1,27.5,27.5,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Herekerur,BW-4,2024,3,25.35,25.35,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-1,2023,1,13.7,13.7,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-1,2023,2,16.95,15.0,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-1,2024,1,26.6,26.6,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-1,2024,3,24.200000000000003,24.200000000000003,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-2,2023,1,10.55,10.55,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-2,2023,2,2.525,0.0,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-2,2024,1,24.8,24.8,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-2,2024,3,18.4,18.4,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-3,2023,1,10.899999999999999,10.899999999999999,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-3,2023,2,13.629999999999999,12.75,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-3,2024,1,22.8,22.8,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-3,2024,3,18.425,18.425,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-4,2023,1,11.0,11.0,2
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-4,2023,2,9.525,12.65,4
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-4,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Hosahalli sub-watershed,control,Nulageri,BW-4,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-10,2023,1,11.100000000000001,11.100000000000001,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-10,2023,2,1.8,0.0,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-10,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-10,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-11,2023,1,12.7,12.7,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-11,2023,2,12.9,13.05,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-11,2024,1,20.3,20.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-11,2024,3,25.6,25.6,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-12,2023,1,6.15,6.15,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-12,2023,2,12.7,12.0,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-12,2024,1,13.6,13.6,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-12,2024,3,23.5,23.5,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-13,2023,1,10.1,10.1,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-13,2023,2,10.649999999999999,12.1,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-13,2024,1,15.5,15.5,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-13,2024,3,21.200000000000003,21.200000000000003,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-14,2023,1,14.524999999999999,14.524999999999999,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-14,2023,2,13.05,16.700000000000003,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-14,2024,1,17.3,17.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-14,2024,3,18.65,18.65,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-15,2023,1,14.5,14.5,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-15,2023,2,3.125,0.0,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-15,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-15,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-6,2023,1,5.85,5.85,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-6,2023,2,11.100000000000001,11.350000000000001,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-6,2024,1,12.2,12.2,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-6,2024,3,15.6,15.6,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-7,2023,1,5.8,5.8,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-7,2023,2,6.625,7.35,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-7,2024,1,14.3,14.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-7,2024,3,14.75,14.75,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-8,2023,1,4.0,4.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-8,2023,2,10.475,9.3,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-8,2024,1,11.8,11.8,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-8,2024,3,15.1,15.1,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-9,2023,1,6.05,6.05,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-9,2023,2,6.7,7.8500000000000005,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-9,2024,1,9.5,9.5,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Kunchuru,BW-9,2024,3,12.7,12.7,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-1,2023,1,10.95,10.95,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-1,2023,2,4.45,0.0,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-1,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-1,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-2,2023,1,8.05,8.05,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-2,2023,2,13.35,13.899999999999999,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-2,2024,1,21.3,21.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-2,2024,3,19.549999999999997,19.549999999999997,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-28,2023,1,7.95,7.95,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-28,2023,2,10.95,11.149999999999999,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-28,2024,1,12.0,12.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-28,2024,3,19.200000000000003,19.200000000000003,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-29,2023,1,8.05,8.05,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-29,2023,2,5.550000000000001,4.9,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-29,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-29,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-3,2023,1,7.25,7.25,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-3,2023,2,12.4,12.75,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-3,2024,1,16.3,16.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-3,2024,3,16.35,16.35,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-30,2023,1,9.1,9.1,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-30,2023,2,12.525,11.45,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-30,2024,1,13.9,13.9,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-30,2024,3,21.4,21.4,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-31,2023,1,8.65,8.65,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-31,2023,2,15.125,14.05,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-31,2024,1,14.6,14.6,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-31,2024,3,23.8,23.8,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-32,2023,1,6.9,6.9,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-32,2023,2,8.85,7.8,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-32,2024,1,20.0,20.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-32,2024,3,19.85,19.85,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-33,2023,1,6.0,6.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-33,2023,2,9.6,8.850000000000001,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-33,2024,1,10.3,10.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-33,2024,3,19.25,19.25,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-34,2023,1,3.0,3.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-34,2023,2,10.275,8.75,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-34,2024,1,9.5,9.5,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-34,2024,3,18.549999999999997,18.549999999999997,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-35,2023,1,3.8,3.8,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-35,2023,2,10.175,8.75,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-35,2024,1,22.9,22.9,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-35,2024,3,21.0,21.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-36,2023,1,3.0,3.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-36,2023,2,1.4,0.0,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-36,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-36,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-37,2023,1,12.24,12.24,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-37,2023,2,9.8,12.7,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-37,2024,1,12.8,12.8,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-37,2024,3,14.7,14.7,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-38,2023,1,10.399999999999999,10.399999999999999,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-38,2023,2,9.925,12.75,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-38,2024,1,14.3,14.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-38,2024,3,15.55,15.55,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-39,2023,1,10.765,10.765,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-39,2023,2,3.2,0.0,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-39,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-39,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-4,2023,1,8.0,8.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-4,2023,2,14.2375,13.825,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-4,2024,1,19.8,19.8,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-4,2024,3,20.35,20.35,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-40,2023,1,10.65,10.65,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-40,2023,2,10.9,11.3,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-40,2024,1,14.6,14.6,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-40,2024,3,15.95,15.95,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-41,2023,1,11.1,11.1,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-41,2023,2,3.925,0.0,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-41,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-41,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-5,2023,1,8.2,8.2,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-5,2023,2,11.225,10.3,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-5,2024,1,18.5,18.5,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Lingadevarakoppa,BW-5,2024,3,20.55,20.55,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-16,2023,1,7.0,7.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-16,2023,2,13.5,13.15,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-16,2024,1,17.0,17.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-16,2024,3,21.0,21.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-17,2023,1,7.3,7.3,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-17,2023,2,12.129999999999999,9.91,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-17,2024,1,19.2,19.2,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-17,2024,3,21.200000000000003,21.200000000000003,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-18,2023,1,7.7,7.7,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-18,2023,2,11.135,11.77,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-18,2024,1,16.3,16.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-18,2024,3,14.2,14.2,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-19,2023,1,10.65,10.65,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-19,2023,2,15.875,15.95,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-19,2024,1,19.2,19.2,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-19,2024,3,22.05,22.05,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-20,2023,1,13.65,13.65,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-20,2023,2,13.9,14.05,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-20,2024,1,17.3,17.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-20,2024,3,16.6,16.6,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-21,2023,1,10.75,10.75,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-21,2023,2,5.325,2.65,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-21,2024,1,19.0,19.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-21,2024,3,18.15,18.15,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-22,2023,1,12.399999999999999,12.399999999999999,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-22,2023,2,13.15,14.25,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-22,2024,1,18.0,18.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-22,2024,3,20.15,20.15,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-23,2023,1,12.75,12.75,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-23,2023,2,8.925,10.55,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-23,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-23,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-24,2023,1,5.15,5.15,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-24,2023,2,13.975,11.850000000000001,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-24,2024,1,19.6,19.6,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-24,2024,3,21.34,21.34,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-25,2023,1,5.65,5.65,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-25,2023,2,4.95,0.0,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-25,2024,1,20.1,20.1,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-25,2024,3,19.35,19.35,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-26,2023,1,6.0,6.0,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-26,2023,2,11.875,12.100000000000001,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-26,2024,1,20.3,20.3,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-26,2024,3,17.700000000000003,17.700000000000003,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-27,2023,1,7.25,7.25,2
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-27,2023,2,8.35,10.65,4
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-27,2024,1,0.0,0.0,1
+gw_depth_m,UASD,Kodihalli sub-watershed,saturation,Mavinthoppa,BW-27,2024,3,0.0,0.0,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-1,2023,1,3.2,3.2,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-1,2023,2,11.35,9.35,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-1,2024,3,46.2,46.2,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-2,2023,1,17.51,17.51,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-2,2023,2,28.65,24.25,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-2,2024,3,52.0,52.0,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-3,2023,1,8.15,8.15,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-3,2023,2,12.325,10.35,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-3,2024,3,31.5,31.5,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-4,2023,1,5.14,5.14,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-4,2023,2,13.075,8.4,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-4,2024,3,49.5,49.5,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-5,2023,1,5.2,5.2,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-5,2023,2,18.625,15.4,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-1,BW-5,2024,3,33.0,33.0,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-1,2023,1,40.3,40.3,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-1,2023,2,52.25,45.75,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-1,2024,3,75.8,75.8,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-2,2023,1,35.3,35.3,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-2,2023,2,37.6,35.35,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-2,2024,3,51.0,51.0,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-3,2023,1,50.2,50.2,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-3,2023,2,51.6,51.25,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-3,2024,3,57.0,57.0,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-4,2023,1,42.2,42.2,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-4,2023,2,50.775,49.2,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-2,BW-4,2024,3,65.5,65.5,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-1,2023,1,26.5,26.5,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-1,2023,2,35.8,31.9,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-1,2024,3,64.0,64.0,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-2,2023,1,24.3,24.3,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-2,2023,2,39.975,36.2,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-2,2024,3,61.5,61.5,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-3,2023,1,20.5,20.5,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-3,2023,2,48.8,44.85,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-3,2024,3,103.0,103.0,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-4,2023,1,19.5,19.5,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-4,2023,2,51.35,43.849999999999994,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-4,2024,3,79.5,79.5,1
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-5,2023,1,23.5,23.5,2
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-5,2023,2,45.55,42.1,4
+gw_depth_m,UASD,Kohalli sub-watershed,control,Khilaradaddi-3,BW-5,2024,3,65.8,65.8,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-15,2023,1,4.15,4.15,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-15,2023,2,9.286,9.58,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-15,2024,1,11.24,11.24,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-15,2024,3,11.543333333333331,11.52,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-16,2023,1,3.78,3.78,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-16,2023,2,5.884,5.85,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-16,2024,1,6.15,6.15,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-16,2024,3,8.006666666666666,7.85,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-17,2023,1,12.6,12.6,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-17,2023,2,13.472,13.17,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-17,2024,1,14.8,14.8,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-17,2024,3,16.026666666666667,16.11,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-18,2023,1,14.31,14.31,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-18,2023,2,20.546,20.98,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-18,2024,1,19.25,19.25,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-18,2024,3,22.44666666666667,23.47,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-19,2023,1,13.46,13.46,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-19,2023,2,15.714000000000002,15.61,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-19,2024,1,18.37,18.37,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Kanvi-1,BW-19,2024,3,18.493333333333332,19.04,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgund-2,BW-14,2023,1,5.34,5.34,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgund-2,BW-14,2023,2,7.418000000000001,7.63,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgund-2,BW-14,2024,1,5.79,5.79,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgund-2,BW-14,2024,3,8.4,8.78,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-1,2023,1,7.56,7.56,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-1,2023,2,10.524,10.76,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-1,2024,1,11.33,11.33,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-1,2024,3,12.520000000000001,12.49,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-2,2023,1,8.39,8.39,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-2,2023,2,11.565999999999999,11.92,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-2,2024,1,12.56,12.56,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-2,2024,3,13.436666666666667,13.36,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-3,2023,1,22.64,22.64,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-3,2023,2,21.774,21.67,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-3,2024,1,16.16,16.16,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-3,2024,3,22.726666666666663,23.9,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-4,2023,1,8.32,8.32,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-4,2023,2,9.468,9.53,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-4,2024,1,10.34,10.34,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-4,2024,3,10.956666666666669,11.07,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-5,2023,1,12.96,12.96,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-5,2023,2,15.691999999999998,16.08,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-5,2024,1,16.15,16.15,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda east-3,BW-5,2024,3,18.51,18.44,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-6,2023,1,8.6,8.6,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-6,2023,2,8.644,8.63,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-6,2024,1,9.27,9.27,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-6,2024,3,9.89,9.81,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-7,2023,1,7.31,7.31,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-7,2023,2,8.879999999999999,8.95,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-7,2024,1,9.92,9.92,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-7,2024,3,10.783333333333333,10.57,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-8,2023,1,6.19,6.19,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-8,2023,2,7.822,8.19,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-8,2024,1,8.22,8.22,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-8,2024,3,9.74,9.55,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-9,2023,1,7.83,7.83,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-9,2023,2,8.684000000000001,8.72,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-9,2024,1,9.37,9.37,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Mulgunda-1,BW-9,2024,3,11.17,11.23,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-10,2023,1,7.12,7.12,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-10,2023,2,7.209999999999999,6.9,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-10,2024,1,7.06,7.06,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-10,2024,3,7.879999999999999,7.81,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-11,2023,1,8.64,8.64,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-11,2023,2,10.120000000000001,10.13,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-11,2024,1,9.95,9.95,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-11,2024,3,12.036666666666667,12.29,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-12,2023,1,8.34,8.34,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-12,2023,2,11.379999999999999,11.24,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-12,2024,1,14.19,14.19,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-12,2024,3,14.986666666666666,15.1,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-13,2023,1,7.96,7.96,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-13,2023,2,9.216,9.12,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-13,2024,1,11.52,11.52,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-13,2024,3,11.953333333333333,12.02,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-20,2023,1,5.8,5.8,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-20,2023,2,6.714,6.96,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-20,2024,1,9.88,9.88,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-20,2024,3,11.103333333333333,11.13,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-21,2023,1,6.61,6.61,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-21,2023,2,7.281999999999999,7.31,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-21,2024,1,7.41,7.41,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-21,2024,3,7.5,7.55,3
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-22,2023,1,8.51,8.51,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-22,2023,2,8.368,7.72,5
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-22,2024,1,7.8,7.8,1
+gw_depth_m,UASD,Nilgunda sub-watershed,saturation,Nilgund-3,BW-22,2024,3,8.35,8.49,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-10,2023,1,16.34,16.34,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-10,2023,2,17.334,20.68,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-10,2024,3,17.126666666666665,14.76,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-6,2023,1,8.64,8.64,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-6,2023,2,12.764,10.78,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-6,2024,3,14.816666666666668,11.45,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-7,2023,1,10.7,10.7,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-7,2023,2,12.056000000000001,15.7,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-7,2024,3,16.666666666666668,14.12,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-8,2023,1,15.12,15.12,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-8,2023,2,18.444,18.5,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-8,2024,3,16.783333333333335,14.7,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-9,2023,1,9.21,9.21,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-9,2023,2,5.414,0.0,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur,BW-9,2024,3,8.74,12.8,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur north,BW-11,2023,1,7.18,7.18,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur north,BW-11,2023,2,8.094,8.92,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur north,BW-11,2024,3,8.923333333333334,9.22,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur north,BW-12,2023,1,11.26,11.26,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur north,BW-12,2023,2,6.802000000000001,10.88,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur north,BW-12,2024,3,9.846666666666666,10.2,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur north,BW-13,2023,1,11.0,11.0,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur north,BW-13,2023,2,10.931999999999999,12.9,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Devanur north,BW-13,2024,3,13.066666666666668,12.5,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-14,2023,1,7.86,7.86,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-14,2023,2,7.886,9.78,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-14,2024,3,12.225,12.225,2
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-15,2023,1,10.83,10.83,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-15,2023,2,8.968,9.46,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-15,2024,3,11.483333333333334,8.45,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-16,2023,1,8.39,8.39,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-16,2023,2,11.5,11.48,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-16,2024,3,12.596666666666666,12.48,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-17,2023,1,8.15,8.15,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-17,2023,2,11.65,11.82,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-1,BW-17,2024,3,12.200000000000001,9.0,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-1,2023,1,41.67,41.67,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-1,2023,2,5.406000000000001,0.0,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-1,2024,3,7.006666666666667,10.12,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-2,2023,1,0.0,0.0,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-2,2023,2,9.728,12.81,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-2,2024,3,14.4,13.12,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-3,2023,1,0.0,0.0,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-3,2023,2,8.052000000000001,7.1,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-3,2024,3,11.806666666666667,12.0,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-4,2023,1,29.32,29.32,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-4,2023,2,2.224,0.0,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-4,2024,3,9.676666666666668,10.36,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-5,2023,1,34.0,34.0,1
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-5,2023,2,16.792,18.96,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Kamdolli-2,BW-5,2024,3,17.790000000000003,11.67,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,,2023,2,13.791333333333334,10.52,15
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,,2024,3,12.89,10.65,9
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-1,2023,2,2.516,3.0,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-1,2024,3,4.556666666666667,4.0,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-2,2023,2,3.882,3.17,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-2,2024,3,11.549999999999999,9.95,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-3,2023,2,4.564,4.79,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-3,2024,3,5.306666666666667,4.34,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-4,2023,2,11.790000000000001,12.89,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-4,2024,3,11.35,12.08,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-5,2023,2,2.5780000000000003,2.56,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-1,BW-5,2024,3,3.296666666666667,4.29,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-1,2023,2,6.168,5.83,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-1,2024,3,5.8,8.0,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-2,2023,2,5.848000000000001,6.28,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-2,2024,3,5.966666666666666,7.5,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-3,2023,2,6.242,5.7,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-3,2024,3,4.803333333333334,6.41,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-4,2023,2,2.638,2.75,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-4,2024,3,3.2866666666666666,3.66,3
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-5,2023,2,5.354,5.25,5
+gw_depth_m,UASD,Shirur sub-watershed,saturation,Vittalapura-2,BW-5,2024,3,6.073333333333333,5.71,3
+gw_depth_m,UASR,Halligera,unlabelled,Halligera 1,2.0,2023,1,5.02,5.02,1
+gw_depth_m,UASR,Halligera,unlabelled,Maskanahalli2,22.0,2023,1,3.18,3.18,1
+gw_depth_m,UASR,Halligera,unlabelled,Maskanahalli2,24.0,2023,1,4.28,4.28,1
+gw_depth_m,UASR,Halligera,unlabelled,Maskanahalli2,29.0,2023,1,4.73,4.73,1
+gw_depth_m,UASR,Halligera,unlabelled,Mylapur,14.0,2023,1,6.64,6.64,1
+gw_depth_m,UASR,Halligera,unlabelled,Mylapur,15.0,2023,1,4.02,4.02,1
+gw_depth_m,UASR,Halligera,unlabelled,Mylapur,17.0,2023,1,3.92,3.92,1
+gw_depth_m,UASR,Halligera,unlabelled,Poglapur,34.0,2023,1,10.57,10.57,1
+gw_depth_m,UASR,Halligera,unlabelled,Raisabad Hosalli1,32.0,2023,1,5.66,5.66,1
+gw_depth_m,UASR,Halligera,unlabelled,Raisabad Hosalli2,19.0,2023,1,5.89,5.89,1
+gw_depth_m,UASR,Halligera,unlabelled,Raisabad Hosalli2,21.0,2023,1,4.1,4.1,1
+gw_depth_m,UASR,Halligera,unlabelled,Raisabad Hosalli3,31.0,2023,1,3.0,3.0,1
+gw_depth_m,UASR,Halligera,unlabelled,Varkanhalli,11.0,2023,1,10.22,10.22,1
+gw_depth_m,UASR,Halligera,unlabelled,Varkanhalli,8.0,2023,1,8.97,8.97,1
+gw_depth_m,UASR,Halligera,unlabelled,koyalur,3.0,2023,1,4.51,4.51,1
+gw_depth_m,UASR,Halligera,unlabelled,koyalur,5.0,2023,1,7.78,7.78,1
+gw_depth_m,UASR,Halligera,unlabelled,koyalur,6.0,2023,1,3.3,3.3,1
+gw_depth_m,UASR,Halligera,unlabelled,koyalur,7.0,2023,1,4.39,4.39,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,1.0,2023,1,9.0,9.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,11.0,2023,1,2.0,2.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,13.0,2023,1,2.2,2.2,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,14.0,2023,1,2.1,2.1,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,15.0,2023,1,2.3,2.3,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,16.0,2023,1,2.5,2.5,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,17.0,2023,1,8.2,8.2,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,18.0,2023,1,7.9,7.9,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,19.0,2023,1,7.92,7.92,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,21.0,2023,1,9.2,9.2,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,22.0,2023,1,8.9,8.9,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,24.0,2023,1,8.3,8.3,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,26.0,2023,1,10.2,10.2,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,28.0,2023,1,11.0,11.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,3.0,2023,1,6.0,6.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,30.0,2023,1,15.8,15.8,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,5.0,2023,1,13.7,13.7,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,7.0,2023,1,12.0,12.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,,9.0,2023,1,3.0,3.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 1,65.0,2023,1,22.6,22.6,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 1,66.0,2023,1,9.22,9.22,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 1,67.0,2023,2,10.45,10.45,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 1,68.0,2023,2,11.7,11.7,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 1,69.0,2023,2,26.0,26.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 1,70.0,2023,1,19.22,19.22,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 1,71.0,2023,1,21.0,21.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 1,72.0,2023,2,5.69,5.69,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 1,73.0,2023,2,7.48,7.48,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 2,61.0,2023,2,9.2,9.2,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 2,62.0,2023,2,19.11,19.11,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 2,63.0,2023,2,21.0,21.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hadagil Harut 2,64.0,2023,2,10.3,10.3,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hunsehadagi 1,58.0,2023,2,9.46,9.46,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hunsehadagi 1,59.0,2023,2,3.0,3.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hunsehadagi 1,60.0,2023,2,10.2,10.2,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Hunsehadagi 2,57.0,2023,2,6.0,6.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,42.0,2023,2,16.0,16.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,43.0,2023,1,11.7,11.7,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,44.0,2023,1,12.0,12.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,46.0,2023,1,7.0,7.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,47.0,2023,2,4.16,4.16,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,48.0,2023,2,4.0,4.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,49.0,2023,2,8.0,8.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,50.0,2023,1,5.6,5.6,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,51.0,2023,1,13.0,13.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,52.0,2023,1,5.0,5.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,53.0,2023,1,9.3,9.3,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,54.0,2023,1,14.18,14.18,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,55.0,2023,2,14.0,14.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Kollur 2,56.0,2023,2,7.0,7.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Malli 1,10.0,2023,1,12.65,12.65,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Malli 1,11.0,2023,1,9.3,9.3,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Malli 1,12.0,2023,1,5.3,5.3,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Malli 1,13.0,2023,1,7.7,7.7,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Malli 1,5.0,2023,1,9.0,9.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Malli 1,6.0,2023,1,9.42,9.42,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Malli 1,7.0,2023,1,10.85,10.85,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Malli 1,8.0,2023,1,11.25,11.25,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Malli 1,9.0,2023,1,16.0,16.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 1,14.0,2023,3,28.0,28.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 1,15.0,2023,3,10.5,10.5,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 1,39.0,2023,3,6.8,6.8,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 1,40.0,2023,1,9.9,9.9,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 1,41.0,2023,1,17.0,17.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 2,1.0,2023,1,11.3,11.3,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 2,2.0,2023,1,5.9,5.9,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 2,3.0,2023,1,8.5,8.5,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 2,37.0,2023,1,16.85,16.85,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 2,38.0,2023,1,9.2,9.2,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 2,4.0,2023,1,8.9,8.9,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 3,28.0,2023,2,18.3,18.3,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 3,29.0,2023,2,6.0,6.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 3,30.0,2023,2,9.45,9.45,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 3,31.0,2023,2,33.3,33.3,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 3,32.0,2023,2,12.22,12.22,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 3,33.0,2023,2,3.86,3.86,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 3,34.0,2023,2,9.0,9.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 3,35.0,2023,2,6.39,6.39,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda Buzurg 3,36.0,2023,2,6.43,6.43,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda buzurg 1,16.0,2023,3,23.0,23.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda buzurg 1,17.0,2023,3,7.2,7.2,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda buzurg 1,19.0,2023,3,5.0,5.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda buzurg 1,20.0,2023,3,11.0,11.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda buzurg 1,21.0,2023,3,8.0,8.0,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda buzurg 1,24.0,2023,1,67.7,67.7,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda buzurg 1,26.0,2023,1,19.4,19.4,1
+gw_depth_m,UASR,Hunsehadagli,unlabelled,Melkunda buzurg 1,27.0,2023,1,20.98,20.98,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,10.0,2023,1,4.26,4.26,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,10.0,2023,2,3.73,3.73,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,12.0,2023,1,4.61,4.61,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,12.0,2023,2,4.12,4.12,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,13.0,2023,1,6.52,6.52,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,13.0,2023,2,5.92,5.92,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,14.0,2023,1,9.7,9.7,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,14.0,2023,2,10.23,10.23,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,19.0,2023,1,8.57,8.57,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur1,19.0,2023,2,8.93,8.93,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur4,17.0,2023,1,12.22,12.22,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur4,17.0,2023,2,13.1,13.1,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur4,7.0,2023,1,5.14,5.14,1
+gw_depth_m,UASR,Jantapur,unlabelled,Jantapur4,7.0,2023,2,4.72,4.72,1
+gw_depth_m,UASR,Jantapur,unlabelled,Piklihal3,4.0,2023,1,3.42,3.42,1
+gw_depth_m,UASR,Jantapur,unlabelled,Piklihal3,4.0,2023,2,3.05,3.05,1
+gw_depth_m,UASR,Jantapur,unlabelled,Piklihal4,1.0,2023,1,4.5,4.5,1
+gw_depth_m,UASR,Jantapur,unlabelled,Piklihal4,1.0,2023,2,4.3,4.3,1
+gw_depth_m,UASR,Jantapur,unlabelled,Piklihal4,2.0,2023,1,13.2,13.2,1
+gw_depth_m,UASR,Jantapur,unlabelled,Piklihal4,2.0,2023,2,12.82,12.82,1
+gw_depth_m,UASR,Jantapur,unlabelled,Piklihal4,20.0,2023,1,7.83,7.83,1
+gw_depth_m,UASR,Jantapur,unlabelled,Piklihal4,20.0,2023,2,8.13,8.13,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,10.0,2023,1,8.97,8.97,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,10.0,2023,2,8.56,8.56,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,11.0,2023,1,5.77,5.77,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,11.0,2023,2,5.36,5.36,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,12.0,2023,1,4.71,4.71,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,12.0,2023,2,4.29,4.29,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,16.0,2023,1,16.32,16.32,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,16.0,2023,2,15.73,15.73,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,17.0,2023,1,19.26,19.26,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Hatti,17.0,2023,2,18.86,18.86,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 1,14.0,2023,1,18.3,18.3,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 1,14.0,2023,2,17.85,17.85,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 1,7.0,2023,1,10.2,10.2,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 1,7.0,2023,2,9.73,9.73,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 1,8.0,2023,1,8.49,8.49,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 1,8.0,2023,2,8.22,8.22,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 1,9.0,2023,1,5.89,5.89,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 1,9.0,2023,2,5.46,5.46,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,1.0,2023,1,5.1,5.1,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,1.0,2023,2,5.4,5.4,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,2.0,2023,1,5.87,5.87,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,2.0,2023,2,5.12,5.12,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,3.0,2023,1,5.1,5.1,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,3.0,2023,2,4.89,4.89,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,4.0,2023,1,9.5,9.5,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,4.0,2023,2,8.82,8.82,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,5.0,2023,1,9.6,9.6,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli 2,5.0,2023,2,9.14,9.14,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 1,13.0,2023,1,6.89,6.89,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 1,13.0,2023,2,6.41,6.41,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,18.0,2023,1,3.29,3.29,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,18.0,2023,2,3.84,3.84,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,19.0,2023,1,3.3,3.3,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,19.0,2023,2,3.97,3.97,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,20.0,2023,1,4.48,4.48,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,20.0,2023,2,4.87,4.87,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,21.0,2023,1,5.99,5.99,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,21.0,2023,2,6.63,6.63,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,22.0,2023,1,1.81,1.81,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,22.0,2023,2,2.69,2.69,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,24.0,2023,1,2.9,2.9,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,Raghunathanahalli west 2,24.0,2023,2,3.54,3.54,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,kallahalli,23.0,2023,1,5.97,5.97,1
+gw_depth_m,UASR,Koppal (4D4A2),unlabelled,kallahalli,23.0,2023,2,6.59,6.59,1
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,1.0,2023,1,4.6825,4.675000000000001,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,1.0,2023,2,4.86,5.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,1.0,2024,3,10.75,10.75,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,10.0,2023,1,8.9,7.8,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,10.0,2023,2,14.680000000000001,14.2,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,10.0,2024,3,20.0,20.0,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,11.0,2023,1,27.275,27.55,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,11.0,2023,2,16.919999999999998,17.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,11.0,2024,3,20.0,20.0,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,12.0,2023,1,2.625,2.25,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,12.0,2023,2,1.64,1.5,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,12.0,2024,3,3.2,3.2,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,13.0,2023,1,4.202500000000001,4.155,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,13.0,2023,2,4.88,5.1,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,13.0,2024,3,6.5,6.5,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,14.0,2023,1,9.08,8.715,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,14.0,2023,2,5.76,6.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,14.0,2024,3,25.0,25.0,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,15.0,2023,1,12.2,12.3,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,15.0,2023,2,6.7,6.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,15.0,2024,3,8.95,8.95,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,16.0,2023,1,19.8,20.1,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,16.0,2023,2,11.48,10.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,16.0,2024,3,23.05,23.05,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,2.0,2023,1,8.872499999999999,9.195,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,2.0,2023,2,3.3600000000000003,3.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,2.0,2024,3,8.5,8.5,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,3.0,2023,1,7.8575,8.515,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,3.0,2023,2,10.24,10.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,3.0,2024,3,19.0,19.0,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,4.0,2023,1,6.775,6.5,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,4.0,2023,2,21.7,32.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,4.0,2024,3,34.0,34.0,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,5.0,2023,1,5.324999999999999,5.05,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,5.0,2023,2,4.554,4.97,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,5.0,2024,3,7.0,7.0,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,6.0,2023,1,12.309999999999999,13.35,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,6.0,2023,2,12.48,15.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,6.0,2024,3,19.0,19.0,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,7.0,2023,1,7.25,6.5,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,7.0,2023,2,7.32,7.7,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,7.0,2024,3,13.0,13.0,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,8.0,2023,1,17.432499999999997,17.765,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,8.0,2023,2,28.919999999999998,30.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,8.0,2024,3,40.0,40.0,2
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,9.0,2023,1,35.075,35.15,4
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,9.0,2023,2,14.7,15.0,5
+gw_depth_m,UHSB,Kandgula,unlabelled,Masjawadi,9.0,2024,3,17.0,17.0,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,1.0,2023,1,1.1,1.05,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,1.0,2023,2,1.9600000000000002,2.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,1.0,2024,3,2.75,2.75,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,10.0,2023,1,2.075,2.0,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,10.0,2023,2,3.325,3.55,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,10.0,2024,3,5.0,5.0,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,2.0,2023,1,4.285,4.2299999999999995,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,2.0,2023,2,4.95,3.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,2.0,2024,3,6.185,6.185,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,3.0,2023,1,3.4975,3.6950000000000003,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,3.0,2023,2,3.8,4.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,3.0,2024,3,4.3,4.3,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,4.0,2023,1,2.3325,2.0700000000000003,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,4.0,2023,2,4.0,4.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,4.0,2024,3,4.15,4.15,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,5.0,2023,1,14.25,6.5,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,5.0,2023,2,10.6,10.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,5.0,2024,3,29.26,29.26,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,6.0,2023,1,2.975,2.0999999999999996,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,6.0,2023,2,2.0,2.0,1
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,7.0,2023,1,1.325,1.25,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,7.0,2023,2,7.6,9.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,7.0,2024,3,8.565000000000001,8.565000000000001,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,8.0,2023,1,1.825,1.8,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,8.0,2023,2,2.5200000000000005,2.5,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,8.0,2024,3,3.325,3.325,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,9.0,2023,1,1.775,1.75,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,9.0,2023,2,3.44,4.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 1,9.0,2024,3,4.02,4.02,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,1.0,2023,1,2.7,2.75,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,1.0,2023,2,4.6000000000000005,5.0,3
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,1.0,2024,3,5.65,5.65,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,2.0,2023,1,15.125,15.45,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,2.0,2023,2,37.0,40.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,2.0,2024,3,22.9,22.9,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,3.0,2023,1,2.3125,2.25,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,3.0,2023,2,3.9,3.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,3.0,2024,3,4.85,4.85,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,4.0,2023,1,2.8025,2.35,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,4.0,2023,2,6.540000000000001,4.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,4.0,2024,3,6.95,6.95,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,5.0,2023,1,2.2224999999999997,2.55,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,5.0,2023,2,2.184,2.13,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,5.0,2024,3,3.585,3.585,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,6.0,2023,1,2.525,2.8,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,6.0,2023,2,2.92,3.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,6.0,2024,3,5.25,5.25,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,7.0,2023,1,5.225,4.699999999999999,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,7.0,2023,2,2.96,3.3,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,7.0,2024,3,4.835,4.835,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,8.0,2023,1,2.2,2.55,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,8.0,2023,2,2.7199999999999998,3.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,8.0,2024,3,3.45,3.45,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,9.0,2023,1,1.825,2.05,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,9.0,2023,2,2.6399999999999997,2.5,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Ladha 2,9.0,2024,3,4.4,4.4,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,1.0,2023,1,0.925,0.25,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,1.0,2023,2,3.2,3.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,1.0,2024,3,5.1,5.1,1
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,10.0,2023,1,0.6100000000000001,0.5,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,10.0,2023,2,1.518,1.6,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,10.0,2024,3,3.0,3.0,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,11.0,2023,1,1.82,1.8900000000000001,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,11.0,2023,2,2.96,2.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,11.0,2024,3,3.15,3.15,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,13.0,2023,1,0.775,0.45,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,13.0,2023,2,2.04,2.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,13.0,2024,3,2.7,2.7,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,14.0,2023,1,0.9,0.2,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,14.0,2023,2,2.42,2.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,14.0,2024,3,3.75,3.75,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,15.0,2023,1,6.103333333333333,5.8,3
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,15.0,2023,2,14.86,15.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,15.0,2024,3,11.5,11.5,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,16.0,2023,1,31.0,35.0,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,16.0,2023,2,52.0,60.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,16.0,2024,3,40.0,40.0,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,17.0,2023,1,6.875,6.9,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,17.0,2023,2,14.2,14.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,17.0,2024,3,8.5,8.5,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,19.0,2023,1,0.525,0.4,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,19.0,2023,2,2.06,2.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,19.0,2024,3,2.3,2.3,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,2.0,2023,1,0.625,0.25,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,2.0,2023,2,2.6879999999999997,2.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,2.0,2024,3,4.4,4.4,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,20.0,2023,1,1.0,0.4,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,20.0,2023,2,2.2199999999999998,2.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,20.0,2024,3,3.6999999999999997,3.6999999999999997,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,21.0,2023,1,4.55,4.85,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,21.0,2023,2,7.8340000000000005,8.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,21.0,2024,3,8.15,8.15,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,22.0,2023,1,0.8275,0.65,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,22.0,2023,2,2.692,2.5,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,22.0,2024,3,3.5,3.5,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,23.0,2023,1,2.395,1.8900000000000001,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,23.0,2023,2,2.66,2.8,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,23.0,2024,3,3.15,3.15,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,24.0,2023,1,-0.25,-0.25,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,24.0,2023,2,0.0,0.0,3
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,24.0,2024,3,4.05,4.05,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,25.0,2023,1,1.025,0.45,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,25.0,2023,2,2.54,2.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,25.0,2024,3,4.75,4.75,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,26.0,2023,1,0.675,0.25,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,26.0,2023,2,3.3,3.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,26.0,2024,3,5.5,5.5,1
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,27.0,2023,1,1.645,2.0,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,27.0,2023,2,3.4200000000000004,3.2,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,27.0,2024,3,4.15,4.15,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,28.0,2023,1,0.55,0.3,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,28.0,2023,2,3.3333333333333335,3.0,3
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,28.0,2024,3,4.0,4.0,1
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,29.0,2023,1,0.42500000000000004,0.30000000000000004,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,29.0,2023,2,3.2,3.5,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,29.0,2024,3,3.0,3.0,1
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,3.0,2023,1,1.0275,0.53,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,3.0,2023,2,2.8,2.3,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,3.0,2024,3,4.55,4.55,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,30.0,2023,1,0.4,0.2,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,30.0,2023,2,2.7,3.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,30.0,2024,3,3.5,3.5,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,31.0,2023,1,6.9,7.3,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,31.0,2023,2,17.630000000000003,20.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,31.0,2024,3,22.9,22.9,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,32.0,2023,1,15.25,17.5,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,32.0,2023,2,10.86,12.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,32.0,2024,3,12.8,12.8,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,33.0,2023,1,8.25,9.5,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,33.0,2023,2,22.2,21.2,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,33.0,2024,3,27.95,27.95,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,34.0,2023,1,0.4,0.25,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,34.0,2023,2,0.76,0.9,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,34.0,2024,3,3.0,3.0,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,35.0,2023,1,2.775,2.25,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,35.0,2023,2,3.0,3.5,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,35.0,2024,3,3.75,3.75,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,36.0,2023,1,0.675,0.3,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,36.0,2023,2,2.2399999999999998,3.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,36.0,2024,3,3.3,3.3,1
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,4.0,2023,1,1.1375,0.85,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,4.0,2023,2,2.8,2.6,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,4.0,2024,3,4.0,4.0,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,5.0,2023,1,0.7999999999999999,0.35,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,5.0,2023,2,1.625,1.75,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,6.0,2023,1,0.725,0.3,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,6.0,2023,2,1.9899999999999998,1.0,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,6.0,2024,3,6.1,6.1,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,7.0,2023,1,1.0,0.4,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,7.0,2023,2,1.9600000000000002,1.5,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,7.0,2024,3,3.15,3.15,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,8.0,2023,1,0.975,0.65,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,8.0,2023,2,3.412,2.5,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,8.0,2024,3,4.25,4.25,2
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,9.0,2023,1,0.775,0.25,4
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,9.0,2023,2,1.3800000000000001,1.1,5
+gw_depth_m,UHSB,Pashapur,unlabelled,Mustapur,9.0,2024,3,2.75,2.75,2
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,LP2,820.0,2023,2,10.050833333333333,7.95,4
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,LP2,820.0,2023,3,9.783333333333333,9.783333333333333,1
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,LP3,118.0,2023,3,12.706666666666669,12.706666666666669,1
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,MP1,48.0,2023,2,13.33,12.254999999999999,4
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,MP1,48.0,2023,3,4.739999999999999,4.739999999999999,1
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,MP2,141.0,2023,2,13.619583333333335,11.6575,4
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,MP2,141.0,2023,3,5.7,5.7,1
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,MP3,850.0,2023,2,14.025,12.713333333333335,4
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,MP3,850.0,2023,3,9.49,9.49,1
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,UP1,76.0,2023,2,14.56,9.469999999999999,4
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,UP1,76.0,2023,3,13.873333333333333,13.873333333333333,1
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,UP2,76.0,2023,2,10.575833333333334,8.923333333333332,4
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,UP2,76.0,2023,3,6.226666666666667,6.226666666666667,1
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,UP3,189.0,2023,2,10.603333333333333,8.565000000000001,4
+tdr_rootzone_pct,UAHS,Begur SWS,unlabelled,UP3,189.0,2023,3,5.423333333333333,5.423333333333333,1
+tdr_rootzone_pct,UAHS,Haralahalli,unlabelled,Donduru,12.0,2023,2,19.253333333333334,17.94333333333333,7
+tdr_rootzone_pct,UAHS,Haralahalli,unlabelled,Donduru,12.0,2023,3,3.1300000000000003,3.1300000000000003,1
+tdr_rootzone_pct,UAHS,Haralahalli,unlabelled,Donduru,12.0,2024,1,11.776666666666666,11.776666666666666,1
+tdr_rootzone_pct,UAHS,Haralahalli,unlabelled,Gijikatte,11.0,2023,2,8.184761904761904,6.763333333333333,7
+tdr_rootzone_pct,UAHS,Haralahalli,unlabelled,Gijikatte,11.0,2023,3,8.546666666666667,8.546666666666667,1
+tdr_rootzone_pct,UAHS,Haralahalli,unlabelled,Gijikatte,11.0,2024,1,4.69,4.69,1
+tdr_rootzone_pct,UAHS,Haralahalli,unlabelled,Karehalli,10.0,2023,2,12.02095238095238,10.02,7
+tdr_rootzone_pct,UAHS,Haralahalli,unlabelled,Karehalli,10.0,2023,3,6.3133333333333335,6.3133333333333335,1
+tdr_rootzone_pct,UAHS,Haralahalli,unlabelled,Karehalli,10.0,2024,1,7.853333333333334,7.853333333333334,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Jammapur2,9.0,2023,1,8.473333333333334,8.473333333333334,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Jammapur2,9.0,2023,2,8.473333333333334,8.473333333333334,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Kallikere,7.0,2023,1,10.886666666666665,10.886666666666665,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Kallikere,7.0,2023,2,7.8566666666666665,6.058333333333333,8
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Kallikere,7.0,2024,1,33.416666666666664,33.416666666666664,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Kallikere,8.0,2023,1,8.413333333333334,8.413333333333334,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Kallikere,8.0,2023,2,8.975000000000001,8.975000000000001,2
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Maravanji2,5.0,2023,1,6.359999999999999,6.359999999999999,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Maravanji2,5.0,2023,2,10.377666666666666,8.191666666666666,10
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Maravanji2,5.0,2024,3,6.350555555555555,5.4783333333333335,6
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Meagondanahalli2,4.0,2023,1,16.605,16.605,2
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Meagondanahalli2,4.0,2023,2,10.51875,10.895,8
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Meagondanahalli2,4.0,2024,3,8.807777777777778,8.325,6
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,1.0,2023,1,9.756666666666666,9.756666666666666,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,1.0,2023,2,10.059666666666667,7.911666666666666,10
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,1.0,2024,3,6.105555555555555,5.683333333333334,6
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,2.0,2023,1,8.090000000000002,8.090000000000002,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,2.0,2023,2,14.631666666666666,13.246666666666666,10
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,2.0,2024,3,11.069444444444443,10.973333333333333,6
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,3.0,2023,1,12.326666666666666,12.326666666666666,2
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,3.0,2023,2,10.135833333333334,9.016666666666666,8
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,3.0,2024,3,9.32111111111111,8.989999999999998,6
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,6.0,2023,1,13.223333333333334,13.223333333333334,1
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,6.0,2023,2,16.560333333333336,17.925,10
+tdr_rootzone_pct,UAHS,Jammapura,unlabelled,Pandavamatti1,6.0,2024,3,13.170000000000002,12.166666666666668,6
+tdr_rootzone_pct,UAHS,Koranahalli,unlabelled,Jodi Bokikere,1.0,2023,1,4.013333333333333,4.013333333333333,1
+tdr_rootzone_pct,UAHS,Koranahalli,unlabelled,Jodi Bokikere,1.0,2023,2,9.310952380952381,8.133333333333335,7
+tdr_rootzone_pct,UAHS,Koranahalli,unlabelled,Jodi Bokikere,1.0,2024,1,7.260000000000001,7.260000000000001,1
+tdr_rootzone_pct,UAHS,Koranahalli,unlabelled,Koranahalli,2.0,2023,2,9.516190476190475,8.573333333333332,7
+tdr_rootzone_pct,UAHS,Koranahalli,unlabelled,Koranahalli,2.0,2023,3,11.876666666666665,11.876666666666665,1
+tdr_rootzone_pct,UAHS,Koranahalli,unlabelled,Koranahalli,2.0,2024,1,6.176666666666667,6.176666666666667,1
+tdr_rootzone_pct,UAHS,Koranahalli,unlabelled,Koranahalli,4.0,2023,2,13.110952380952382,11.683333333333332,7
+tdr_rootzone_pct,UAHS,Koranahalli,unlabelled,Koranahalli,4.0,2023,3,27.043333333333333,27.043333333333333,1
+tdr_rootzone_pct,UAHS,Koranahalli,unlabelled,Koranahalli,4.0,2024,1,10.653333333333334,10.653333333333334,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Basavanahalli,3.0,2023,2,10.538095238095238,8.176666666666668,7
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Basavanahalli,3.0,2023,3,10.276666666666666,10.276666666666666,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Basavanahalli,3.0,2024,1,9.433333333333332,9.433333333333332,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,G. Gollarahalli,7.0,2023,2,17.785238095238096,15.293333333333335,7
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,G. Gollarahalli,7.0,2023,3,16.043333333333333,16.043333333333333,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,G. Gollarahalli,7.0,2024,1,17.213333333333335,17.213333333333335,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,K. Chatnahalli,9.0,2023,2,13.471428571428573,11.280000000000001,7
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,K. Chatnahalli,9.0,2023,3,6.813333333333333,6.813333333333333,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,K. Chatnahalli,9.0,2024,1,10.6,10.6,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Rajanahalli,8.0,2023,2,13.267619047619048,13.296666666666667,7
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Rajanahalli,8.0,2023,3,9.66,9.66,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Rajanahalli,8.0,2024,1,13.266666666666666,13.266666666666666,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Shivapura,5.0,2023,2,7.416190476190477,7.79,7
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Shivapura,5.0,2023,3,6.183333333333334,6.183333333333334,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Shivapura,5.0,2024,1,5.296666666666667,5.296666666666667,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Shyanaboganahalli,6.0,2023,2,7.344444444444444,5.739999999999999,3
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Shyanaboganahalli,6.0,2023,3,9.043333333333333,9.043333333333333,1
+tdr_rootzone_pct,UAHS,Koranahalli and Haralahalli,unlabelled,Shyanaboganahalli,6.0,2024,1,9.69,9.69,1
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,10.0,2023,1,9.693333333333333,9.693333333333333,1
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,10.0,2023,2,10.029,10.075,10
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Lakshimisagar1,10.0,2024,3,6.051666666666667,4.609999999999999,6
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,11.0,2023,1,5.123333333333333,5.123333333333333,1
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,11.0,2023,2,7.751666666666667,5.678333333333334,10
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,11.0,2024,3,7.68611111111111,8.549999999999999,6
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2023,1,10.533333333333333,10.533333333333333,1
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2023,2,8.665925925925926,6.793333333333333,9
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2024,1,4.636666666666667,4.636666666666667,1
+tdr_rootzone_pct,UAHS,Laxmisagara 4U,unlabelled,Mallegere3,12.0,2024,3,5.564166666666667,5.078333333333333,4
+tdr_rootzone_pct,UASB,Gummalapalli,unlabelled,Nirgantipalli,1.0,2024,1,8.69,8.69,1
+tdr_rootzone_pct,UASB,Gummalapalli,unlabelled,Nirgantipalli,1.0,2024,3,1.814,2.11,5
+tdr_rootzone_pct,UASB,Maidalakere,unlabelled,Hodekallu,147.0,2023,2,25.959615384615386,25.74,13
+tdr_rootzone_pct,UASB,Maidalakere,unlabelled,Hodekallu,147.0,2024,3,22.6125,22.485,6
+tdr_rootzone_pct,UASB,Maidalakere,unlabelled,Hodekallu,2023-12-01 00:00:00,2023,2,16.420625,17.41,8
+tdr_rootzone_pct,UASB,Maidalakere,unlabelled,Hodekallu,2024-12-01 00:00:00,2023,2,10.504999999999999,9.64,5
+tdr_rootzone_pct,UASB,Maidalakere,unlabelled,Hodekallu,2024-12-01 00:00:00,2024,3,11.616666666666667,11.217500000000001,6
+tdr_rootzone_pct,UASB,Maidalakere,unlabelled,Hodekallu,24.0,2023,2,12.673076923076923,12.34,13
+tdr_rootzone_pct,UASB,Maidalakere,unlabelled,Hodekallu,24.0,2024,3,10.511666666666667,10.7275,6
+tdr_rootzone_pct,UASR,,unlabelled,Hadagalharti -1,112 rep01,2023,1,45.14666666666666,45.14666666666666,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagalharti -1,112 rep01,2023,2,9.221666666666666,9.221666666666666,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagalharti -1,112 rep02,2023,1,38.59166666666667,38.59166666666667,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagalharti -1,112 rep02,2023,2,8.363333333333333,9.546666666666667,3
+tdr_rootzone_pct,UASR,,unlabelled,Hadagalharti -1,112 rep1,2023,2,11.253333333333332,11.253333333333332,1
+tdr_rootzone_pct,UASR,,unlabelled,Hadagil haruti-2,71 rep01,2023,1,26.72,26.72,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagil haruti-2,71 rep01,2023,2,12.628,12.943999999999999,3
+tdr_rootzone_pct,UASR,,unlabelled,Hadagil haruti-2,71 rep02,2023,1,26.673333333333336,26.673333333333336,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagil haruti-2,71 rep02,2023,2,15.282222222222224,16.878333333333334,3
+tdr_rootzone_pct,UASR,,unlabelled,Hadagilharuti-1,50 rep01,2023,1,28.963333333333335,28.963333333333335,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagilharuti-1,50 rep01,2023,2,12.676666666666666,12.676666666666666,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagilharuti-1,50 rep02,2023,1,25.156666666666666,25.156666666666666,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagilharuti-1,50 rep02,2023,2,10.035555555555556,9.588333333333333,3
+tdr_rootzone_pct,UASR,,unlabelled,Hadagilharuti-1,50 rep1,2023,2,15.326666666666668,15.326666666666668,1
+tdr_rootzone_pct,UASR,,unlabelled,Hadagilharuti-1,55 rep01,2023,1,34.32833333333333,34.32833333333333,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagilharuti-1,55 rep01,2023,2,15.578333333333333,15.578333333333333,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagilharuti-1,55 rep02,2023,1,41.5,41.5,2
+tdr_rootzone_pct,UASR,,unlabelled,Hadagilharuti-1,55 rep02,2023,2,20.123333333333335,20.123333333333335,2
+tdr_rootzone_pct,UASR,,unlabelled,Malli-2,107 rep01,2023,1,22.17666666666667,22.17666666666667,2
+tdr_rootzone_pct,UASR,,unlabelled,Malli-2,107 rep01,2023,2,4.9944444444444445,4.253333333333333,3
+tdr_rootzone_pct,UASR,,unlabelled,Malli-2,107 rep02,2023,1,30.418333333333337,30.418333333333337,2
+tdr_rootzone_pct,UASR,,unlabelled,Malli-2,107 rep02,2023,2,8.507777777777777,7.821666666666666,3
+tdr_rootzone_pct,UASR,,unlabelled,Melakunda B- 2,65 rep01,2023,1,32.68,32.68,2
+tdr_rootzone_pct,UASR,,unlabelled,Melakunda B- 2,65 rep01,2023,2,8.943333333333333,7.946666666666666,3
+tdr_rootzone_pct,UASR,,unlabelled,Melakunda B- 2,65 rep02,2023,1,29.523333333333333,29.523333333333333,2
+tdr_rootzone_pct,UASR,,unlabelled,Melakunda B- 2,65 rep02,2023,2,8.903333333333334,8.321666666666667,3
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-1,39 rep01,2023,1,33.78666666666667,33.78666666666667,2
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-1,39 rep01,2023,2,10.36888888888889,11.203333333333333,3
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-1,39 rep02,2023,1,24.938333333333333,24.938333333333333,2
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-1,39 rep02,2023,2,7.470555555555556,7.783333333333334,3
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,07 rep1,2023,1,46.166666666666664,46.166666666666664,1
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,07 rep2,2023,1,47.82,47.82,1
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,151 rep01,2023,1,24.28666666666667,24.28666666666667,2
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,151 rep01,2023,2,9.583333333333334,11.083333333333334,3
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,151 rep02,2023,1,28.75,28.75,2
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,151 rep02,2023,2,7.840555555555556,8.208333333333334,3
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,209 rep01,2023,1,34.65166666666667,34.65166666666667,2
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,209 rep01,2023,2,15.528333333333334,15.604999999999999,3
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,209 rep02,2023,1,25.511666666666663,25.511666666666663,2
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,209 rep02,2023,2,10.121111111111112,8.151666666666667,3
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,41 rep1,2023,1,45.85,45.85,1
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,41 rep2,2023,1,46.18000000000001,46.18000000000001,1
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,55 rep02,2023,2,14.83,14.83,1
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,63 rep1,2023,1,46.71666666666667,46.71666666666667,1
+tdr_rootzone_pct,UASR,,unlabelled,Melkunda B.-2,63 rep2,2023,1,44.699999999999996,44.699999999999996,1
+tdr_rootzone_pct,UHSB,Chittaragi,saturation,Chittaragi,1 (02),2023,1,10.5,10.5,1
+tdr_rootzone_pct,UHSB,Honnutagi,saturation,Koulgi-1,1 (137),2023,1,12.618333333333332,13.195,12
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Kandgula,13.0,2023,1,38.50833333333333,38.825,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Kandgula,13.0,2023,2,19.880000000000003,19.700000000000003,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Kandgula,13.0,2024,3,9.141,9.675,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Kandgula,14.0,2023,1,47.324999999999996,47.25,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Kandgula,14.0,2023,2,22.780238095238094,22.2,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Kandgula,14.0,2024,3,10.982,10.575,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Kandgula,15.0,2023,1,38.775,39.7,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Kandgula,15.0,2023,2,22.847857142857144,19.75,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Kandgula,15.0,2024,3,14.5475,14.79,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 1,11.0,2023,1,42.50833333333333,42.300000000000004,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 1,11.0,2023,2,12.836190476190476,11.25,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 1,11.0,2024,3,13.844,13.55,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 1,12.0,2023,1,28.650000000000002,28.4,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 1,12.0,2023,2,9.971428571428572,8.0,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 1,12.0,2024,3,15.269,13.92,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 1,9.0,2023,1,39.19166666666667,39.85,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 1,9.0,2023,2,16.216190476190473,14.1,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 1,9.0,2024,3,8.086,8.004999999999999,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 2,10.0,2023,1,50.225,52.725,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 2,10.0,2023,2,26.080714285714286,25.700000000000003,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 2,10.0,2024,3,14.356,14.495000000000001,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 2,16.0,2023,1,49.225,54.075,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 2,16.0,2023,2,16.613333333333333,16.25,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 2,16.0,2024,3,9.497499999999999,9.445,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 2,17.0,2023,1,28.930833333333336,29.825,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 2,17.0,2023,2,13.547142857142857,13.05,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Ladha 2,17.0,2024,3,11.9185,11.965,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Mustapur,2.0,2023,1,52.275,51.725,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Mustapur,2.0,2023,2,22.7,20.75,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Mustapur,2.0,2024,3,14.955000000000002,15.100000000000001,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Mustapur,20.0,2023,1,47.699999999999996,47.45,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Mustapur,20.0,2023,2,21.94309523809524,18.65,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Mustapur,20.0,2024,3,16.57,16.55,10
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Mustapur,5.0,2023,1,36.45,38.025000000000006,6
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Mustapur,5.0,2023,2,19.504761904761907,18.4,21
+tdr_rootzone_pct,UHSB,Pashapur,unlabelled,Mustapur,5.0,2024,3,12.1,12.05,10

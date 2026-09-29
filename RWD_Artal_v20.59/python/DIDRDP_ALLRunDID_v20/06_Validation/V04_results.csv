@@ -1,0 +1,9 @@
+method,result
+dml,PASS
+s_learner,PASS
+t_learner,PASS
+x_learner,PASS
+bart_style,PASS
+dr_learner,PASS
+causal_forest,PASS
+lasso_sc,PASS

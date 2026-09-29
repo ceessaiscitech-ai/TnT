@@ -1,0 +1,42 @@
+sws_name,resolved_to,how,sites,counted
+,Gummlapalli; Hunasehadagi,no name: micro-watershed 'Hadagalharti',51,71
+Artal Sub Watershed,Artal,known spelling,38,38
+Artal Sub-Watershed,Artal,known spelling,14,0
+Begur SWS,Beguru,known spelling,8,16
+Beguru,Beguru,known spelling,22,21
+Chatrakodihalli,Chhatrakodihalli,known spelling,18,18
+Chittaragi,Chittharagi,known spelling,7,8
+Doddenahalli,Doddenahalli,known spelling,18,18
+Gadag sub-watershed,Gadag,no name >= 80% similar,15,15
+Gummalapalli,Gummlapalli,known spelling,19,20
+Halligera,Haligeri,known spelling,18,14
+Hanchinal sub-watershed,Hanchinal,no name >= 80% similar,7,5
+Haralahalli,Haralahalli,no name >= 80% similar,12,15
+Holali (Kembodi),Holali (Kembodi),no name >= 80% similar,6,6
+Honnutagi,Honnutagi,known spelling,4,5
+Hosahalli sub-watershed,Hosahalli,no name >= 80% similar,18,18
+Hunsehadagli,Hunasehadagi,known spelling,87,84
+ITGI (Control Sub-watershed),ITGI,no name >= 80% similar,1,1
+Jammapura,Jammapur,known spelling,30,39
+Jantapur,Jantapur,known spelling,12,12
+Kandgul,Kandgula,>= 80 % similar to Kandgula and within 10 km -> Kandgula,6,6
+Kandgula,Kandgula,>= 80 % similar to Kandgul and within 10 km -> Kandgula,16,16
+Kodihalli Sub-Watershed,Kodihalli,known spelling,14,14
+Kodihalli sub-watershed,Kodihalli,known spelling,40,39
+Kohalli sub-watershed,Kohalli,no name >= 80% similar,20,20
+Koppal (4D4A2),Murlapura,its sites lie in the Murlapura core,22,22
+Koranahalli,Koranahalli,known spelling,27,29
+Koranahalli and Haralahalli,Koranahalli,its sites lie in the Koranahalli core,6,12
+Kytagondanahalli,Kyatagondanahalli,known spelling,24,24
+Laxmisagara 4U,Laxmisagara 4U,no name >= 80% similar,11,13
+Maidalakere,Maidalakere,known spelling,12,15
+Mattikote,Mattikote,no name >= 80% similar,9,9
+Mydalakere,Maidalakere,known spelling,9,9
+Nagagondanahalli,Nagagondanahalli,"82% similar to Kyatagondanahalli, but 100% of its sites lie outside that core -- kept apart",9,9
+Narayanghatta (Annapura),Narayanghatta (Annapura),no name >= 80% similar,3,3
+Nilagunda Sub-watershed,Nilgund,known spelling,15,15
+Nilgunda sub-watershed,Nilgund,known spelling,22,21
+Pashapur,Pashapur,known spelling,78,84
+Shirur Sub-Watershed,Sirur,known spelling,15,15
+Shirur sub-watershed,Sirur,known spelling,28,16
+Virupasandra,Virupasandra,no name >= 80% similar,6,6

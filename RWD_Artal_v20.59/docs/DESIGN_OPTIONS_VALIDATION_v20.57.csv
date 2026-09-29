@@ -1,0 +1,1546 @@
+panel,variant,check,status,detail
+single,base,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,base,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,base,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,base,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,base,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,base,post = Year >= the row's cohort (treated rows),PASS,
+single,base,the v20.56 milestone cohort (2026) is never used,PASS,
+single,base,dose 0 on the control rings and untreated periods,PASS,
+single,base,the v20.56 district percent (55) is never the dose,PASS,
+single,base,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,base,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,base,history-filled rows left out,PASS,0
+single,base,unit = pixel x season,PASS,max seasons per unit 1
+single,base,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,timing_registry,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,timing_registry,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,timing_registry,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,timing_registry,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,timing_registry,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,timing_registry,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,timing_registry,post = Year >= the row's cohort (treated rows),PASS,
+single,timing_registry,the v20.56 milestone cohort (2026) is never used,PASS,
+single,timing_registry,dose 0 on the control rings and untreated periods,PASS,
+single,timing_registry,the v20.56 district percent (55) is never the dose,PASS,
+single,timing_registry,history-filled rows left out,PASS,0
+single,timing_registry,unit = pixel x season,PASS,max seasons per unit 1
+single,timing_registry,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,timing_fixed_2022,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,timing_fixed_2022,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,timing_fixed_2022,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,timing_fixed_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,timing_fixed_2022,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,timing_fixed_2022,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,timing_fixed_2022,post = Year >= the row's cohort (treated rows),PASS,
+single,timing_fixed_2022,the v20.56 milestone cohort (2026) is never used,PASS,
+single,timing_fixed_2022,dose 0 on the control rings and untreated periods,PASS,
+single,timing_fixed_2022,the v20.56 district percent (55) is never the dose,PASS,
+single,timing_fixed_2022,history-filled rows left out,PASS,0
+single,timing_fixed_2022,unit = pixel x season,PASS,max seasons per unit 1
+single,timing_fixed_2022,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,timing_fixed_2023,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,timing_fixed_2023,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,timing_fixed_2023,control rings = the choice,PASS,"used [np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,timing_fixed_2023,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,timing_fixed_2023,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,timing_fixed_2023,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,timing_fixed_2023,post = Year >= the row's cohort (treated rows),PASS,
+single,timing_fixed_2023,the v20.56 milestone cohort (2026) is never used,PASS,
+single,timing_fixed_2023,dose 0 on the control rings and untreated periods,PASS,
+single,timing_fixed_2023,the v20.56 district percent (55) is never the dose,PASS,
+single,timing_fixed_2023,history-filled rows left out,PASS,0
+single,timing_fixed_2023,unit = pixel x season,PASS,max seasons per unit 1
+single,timing_fixed_2023,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,fund_rule_share,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,fund_rule_share,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,fund_rule_share,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,fund_rule_share,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,fund_rule_share,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,fund_rule_share,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,fund_rule_share,post = Year >= the row's cohort (treated rows),PASS,
+single,fund_rule_share,the v20.56 milestone cohort (2026) is never used,PASS,
+single,fund_rule_share,dose 0 on the control rings and untreated periods,PASS,
+single,fund_rule_share,the v20.56 district percent (55) is never the dose,PASS,
+single,fund_rule_share,history-filled rows left out,PASS,0
+single,fund_rule_share,unit = pixel x season,PASS,max seasons per unit 1
+single,fund_rule_share,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,fund_rule_file_start,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,fund_rule_file_start,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,fund_rule_file_start,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,fund_rule_file_start,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,fund_rule_file_start,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,fund_rule_file_start,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,fund_rule_file_start,post = Year >= the row's cohort (treated rows),PASS,
+single,fund_rule_file_start,the v20.56 milestone cohort (2026) is never used,PASS,
+single,fund_rule_file_start,dose 0 on the control rings and untreated periods,PASS,
+single,fund_rule_file_start,the v20.56 district percent (55) is never the dose,PASS,
+single,fund_rule_file_start,history-filled rows left out,PASS,0
+single,fund_rule_file_start,unit = pixel x season,PASS,max seasons per unit 1
+single,fund_rule_file_start,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,dose_amount,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,dose_amount,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,dose_amount,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,dose_amount,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,dose_amount,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,dose_amount,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,dose_amount,post = Year >= the row's cohort (treated rows),PASS,
+single,dose_amount,the v20.56 milestone cohort (2026) is never used,PASS,
+single,dose_amount,dose 0 on the control rings and untreated periods,PASS,
+single,dose_amount,dose = the AMOUNT (Kharif 2025 = 110),PASS,110
+single,dose_amount,history-filled rows left out,PASS,0
+single,dose_amount,unit = pixel x season,PASS,max seasons per unit 1
+single,dose_amount,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,dose_share,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,dose_share,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,dose_share,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,dose_share,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,dose_share,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,dose_share,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,dose_share,post = Year >= the row's cohort (treated rows),PASS,
+single,dose_share,the v20.56 milestone cohort (2026) is never used,PASS,
+single,dose_share,dose 0 on the control rings and untreated periods,PASS,
+single,dose_share,the v20.56 district percent (55) is never the dose,PASS,
+single,dose_share,history-filled rows left out,PASS,0
+single,dose_share,unit = pixel x season,PASS,max seasons per unit 1
+single,dose_share,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,dose_before_missing,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,dose_before_missing,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,dose_before_missing,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,dose_before_missing,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,dose_before_missing,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,dose_before_missing,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,dose_before_missing,post = Year >= the row's cohort (treated rows),PASS,
+single,dose_before_missing,the v20.56 milestone cohort (2026) is never used,PASS,
+single,dose_before_missing,dose 0 on the control rings and untreated periods,PASS,
+single,dose_before_missing,the v20.56 district percent (55) is never the dose,PASS,
+single,dose_before_missing,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,dose_before_missing,dose before the file = missing (Rabi 2024),PASS,
+single,dose_before_missing,history-filled rows left out,PASS,0
+single,dose_before_missing,unit = pixel x season,PASS,max seasons per unit 1
+single,dose_before_missing,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,rings_1_3,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,rings_1_3,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,rings_1_3,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting [1, 2, 3]"
+single,rings_1_3,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,rings_1_3,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,rings_1_3,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,rings_1_3,post = Year >= the row's cohort (treated rows),PASS,
+single,rings_1_3,the v20.56 milestone cohort (2026) is never used,PASS,
+single,rings_1_3,dose 0 on the control rings and untreated periods,PASS,
+single,rings_1_3,the v20.56 district percent (55) is never the dose,PASS,
+single,rings_1_3,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,rings_1_3,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,rings_1_3,history-filled rows left out,PASS,0
+single,rings_1_3,unit = pixel x season,PASS,max seasons per unit 1
+single,rings_1_3,DESIGN IN EFFECT: CONTROL_ZONES used = your setting,PASS,"[1, 2, 3]"
+single,rings_1_3,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,rings_2_4,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,rings_2_4,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,rings_2_4,control rings = the choice,PASS,"used [np.int64(2), np.int64(4)], setting [2, 4]"
+single,rings_2_4,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,rings_2_4,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,rings_2_4,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,rings_2_4,post = Year >= the row's cohort (treated rows),PASS,
+single,rings_2_4,the v20.56 milestone cohort (2026) is never used,PASS,
+single,rings_2_4,dose 0 on the control rings and untreated periods,PASS,
+single,rings_2_4,the v20.56 district percent (55) is never the dose,PASS,
+single,rings_2_4,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,rings_2_4,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,rings_2_4,history-filled rows left out,PASS,0
+single,rings_2_4,unit = pixel x season,PASS,max seasons per unit 1
+single,rings_2_4,DESIGN IN EFFECT: CONTROL_ZONES used = your setting,PASS,"[2, 4]"
+single,rings_2_4,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,pre4_post2,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,pre4_post2,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,pre4_post2,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,pre4_post2,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,pre4_post2,years = PRE_YEARS / POST_YEARS from the first treated year,PASS,2020..2025 (want 2020..2025; base 2024)
+single,pre4_post2,timing: cohort of every treated row = the choice,PASS,0 of 557 differ
+single,pre4_post2,post = Year >= the row's cohort (treated rows),PASS,
+single,pre4_post2,the v20.56 milestone cohort (2026) is never used,PASS,
+single,pre4_post2,dose 0 on the control rings and untreated periods,PASS,
+single,pre4_post2,the v20.56 district percent (55) is never the dose,PASS,
+single,pre4_post2,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,pre4_post2,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,pre4_post2,history-filled rows left out,PASS,0
+single,pre4_post2,unit = pixel x season,PASS,max seasons per unit 1
+single,pre4_post2,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,pre_all_post_all,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,pre_all_post_all,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,pre_all_post_all,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,pre_all_post_all,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,pre_all_post_all,years: every year (the fill year's annual rows out by the screen),PASS,"[np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,pre_all_post_all,timing: cohort of every treated row = the choice,PASS,"0 of 1,002 differ"
+single,pre_all_post_all,post = Year >= the row's cohort (treated rows),PASS,
+single,pre_all_post_all,the v20.56 milestone cohort (2026) is never used,PASS,
+single,pre_all_post_all,dose 0 on the control rings and untreated periods,PASS,
+single,pre_all_post_all,the v20.56 district percent (55) is never the dose,PASS,
+single,pre_all_post_all,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,pre_all_post_all,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,pre_all_post_all,history-filled rows left out,PASS,0
+single,pre_all_post_all,unit = pixel x season,PASS,max seasons per unit 1
+single,pre_all_post_all,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,manual_mode,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,manual_mode,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,manual_mode,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,manual_mode,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,manual_mode,years: every year (the fill year's annual rows out by the screen),PASS,"[np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,manual_mode,timing: cohort of every treated row = the choice,PASS,"0 of 1,002 differ"
+single,manual_mode,post = Year >= the row's cohort (treated rows),PASS,
+single,manual_mode,the v20.56 milestone cohort (2026) is never used,PASS,
+single,manual_mode,dose 0 on the control rings and untreated periods,PASS,
+single,manual_mode,the v20.56 district percent (55) is never the dose,PASS,
+single,manual_mode,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,manual_mode,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,manual_mode,history-filled rows left out,PASS,0
+single,manual_mode,unit = pixel x season,PASS,max seasons per unit 1
+single,manual_mode,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,manual_rings_1_3_pre4,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,manual_rings_1_3_pre4,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,manual_rings_1_3_pre4,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting [1, 2, 3]"
+single,manual_rings_1_3_pre4,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,manual_rings_1_3_pre4,years = PRE_YEARS / POST_YEARS from the first treated year,PASS,2020..2025 (want 2020..2025; base 2024)
+single,manual_rings_1_3_pre4,timing: cohort of every treated row = the choice,PASS,0 of 557 differ
+single,manual_rings_1_3_pre4,post = Year >= the row's cohort (treated rows),PASS,
+single,manual_rings_1_3_pre4,the v20.56 milestone cohort (2026) is never used,PASS,
+single,manual_rings_1_3_pre4,dose 0 on the control rings and untreated periods,PASS,
+single,manual_rings_1_3_pre4,the v20.56 district percent (55) is never the dose,PASS,
+single,manual_rings_1_3_pre4,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,manual_rings_1_3_pre4,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,manual_rings_1_3_pre4,history-filled rows left out,PASS,0
+single,manual_rings_1_3_pre4,unit = pixel x season,PASS,max seasons per unit 1
+single,manual_rings_1_3_pre4,DESIGN IN EFFECT: CONTROL_ZONES used = your setting,PASS,"[1, 2, 3]"
+single,manual_rings_1_3_pre4,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,seasons_seasonal,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,seasons_seasonal,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_seasonal,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,seasons_seasonal,seasons = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting seasonal"
+single,seasons_seasonal,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,seasons_seasonal,timing: cohort of every treated row = the choice,PASS,0 of 695 differ
+single,seasons_seasonal,post = Year >= the row's cohort (treated rows),PASS,
+single,seasons_seasonal,the v20.56 milestone cohort (2026) is never used,PASS,
+single,seasons_seasonal,dose 0 on the control rings and untreated periods,PASS,
+single,seasons_seasonal,the v20.56 district percent (55) is never the dose,PASS,
+single,seasons_seasonal,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,seasons_seasonal,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,seasons_seasonal,history-filled rows left out,PASS,0
+single,seasons_seasonal,unit = pixel x season,PASS,max seasons per unit 1
+single,seasons_seasonal,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,seasons_yearly,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,seasons_yearly,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_yearly,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,seasons_yearly,seasons = the choice,PASS,"used [np.int64(0)], setting yearly"
+single,seasons_yearly,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,seasons_yearly,timing: cohort of every treated row = the choice,PASS,0 of 236 differ
+single,seasons_yearly,post = Year >= the row's cohort (treated rows),PASS,
+single,seasons_yearly,the v20.56 milestone cohort (2026) is never used,PASS,
+single,seasons_yearly,dose 0 on the control rings and untreated periods,PASS,
+single,seasons_yearly,the v20.56 district percent (55) is never the dose,PASS,
+single,seasons_yearly,history-filled rows left out,PASS,0
+single,seasons_yearly,unit = pixel x season,PASS,max seasons per unit 1
+single,seasons_yearly,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,seasons_rabi,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,seasons_rabi,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_rabi,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,seasons_rabi,seasons = the choice,PASS,"used [np.int64(2)], setting Rabi"
+single,seasons_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,seasons_rabi,timing: cohort of every treated row = the choice,PASS,0 of 231 differ
+single,seasons_rabi,post = Year >= the row's cohort (treated rows),PASS,
+single,seasons_rabi,the v20.56 milestone cohort (2026) is never used,PASS,
+single,seasons_rabi,dose 0 on the control rings and untreated periods,PASS,
+single,seasons_rabi,the v20.56 district percent (55) is never the dose,PASS,
+single,seasons_rabi,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,seasons_rabi,history-filled rows left out,PASS,0
+single,seasons_rabi,unit = pixel x season,PASS,max seasons per unit 1
+single,seasons_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,seasons_kharif_rabi,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,seasons_kharif_rabi,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_kharif_rabi,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,seasons_kharif_rabi,seasons = the choice,PASS,"used [np.int64(1), np.int64(2)], setting ['Kharif', 'Rabi']"
+single,seasons_kharif_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,seasons_kharif_rabi,timing: cohort of every treated row = the choice,PASS,0 of 462 differ
+single,seasons_kharif_rabi,post = Year >= the row's cohort (treated rows),PASS,
+single,seasons_kharif_rabi,the v20.56 milestone cohort (2026) is never used,PASS,
+single,seasons_kharif_rabi,dose 0 on the control rings and untreated periods,PASS,
+single,seasons_kharif_rabi,the v20.56 district percent (55) is never the dose,PASS,
+single,seasons_kharif_rabi,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,seasons_kharif_rabi,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,seasons_kharif_rabi,history-filled rows left out,PASS,0
+single,seasons_kharif_rabi,unit = pixel x season,PASS,max seasons per unit 1
+single,seasons_kharif_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,seasons_auto,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,seasons_auto,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_auto,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,seasons_auto,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting auto"
+single,seasons_auto,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,seasons_auto,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,seasons_auto,post = Year >= the row's cohort (treated rows),PASS,
+single,seasons_auto,the v20.56 milestone cohort (2026) is never used,PASS,
+single,seasons_auto,dose 0 on the control rings and untreated periods,PASS,
+single,seasons_auto,the v20.56 district percent (55) is never the dose,PASS,
+single,seasons_auto,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,seasons_auto,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,seasons_auto,history-filled rows left out,PASS,0
+single,seasons_auto,unit = pixel x season,PASS,max seasons per unit 1
+single,seasons_auto,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,exclude_transition,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,exclude_transition,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,exclude_transition,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,exclude_transition,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,exclude_transition,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,exclude_transition,timing: cohort of every treated row = the choice,PASS,0 of 843 differ
+single,exclude_transition,no first treated year of a treated series,PASS,
+single,exclude_transition,the v20.56 milestone cohort (2026) is never used,PASS,
+single,exclude_transition,dose 0 on the control rings and untreated periods,PASS,
+single,exclude_transition,the v20.56 district percent (55) is never the dose,PASS,
+single,exclude_transition,history-filled rows left out,PASS,0
+single,exclude_transition,unit = pixel x season,PASS,max seasons per unit 1
+single,exclude_transition,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,unit_fe_pixel,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,unit_fe_pixel,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,unit_fe_pixel,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,unit_fe_pixel,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,unit_fe_pixel,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,unit_fe_pixel,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,unit_fe_pixel,post = Year >= the row's cohort (treated rows),PASS,
+single,unit_fe_pixel,the v20.56 milestone cohort (2026) is never used,PASS,
+single,unit_fe_pixel,dose 0 on the control rings and untreated periods,PASS,
+single,unit_fe_pixel,the v20.56 district percent (55) is never the dose,PASS,
+single,unit_fe_pixel,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,unit_fe_pixel,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,unit_fe_pixel,history-filled rows left out,PASS,0
+single,unit_fe_pixel,unit = pixel,PASS,max seasons per unit 4
+single,unit_fe_pixel,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,overlap_keep,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,overlap_keep,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,overlap_keep,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,overlap_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,overlap_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,overlap_keep,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,overlap_keep,post = Year >= the row's cohort (treated rows),PASS,
+single,overlap_keep,the v20.56 milestone cohort (2026) is never used,PASS,
+single,overlap_keep,dose 0 on the control rings and untreated periods,PASS,
+single,overlap_keep,the v20.56 district percent (55) is never the dose,PASS,
+single,overlap_keep,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,overlap_keep,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,overlap_keep,history-filled rows left out,PASS,0
+single,overlap_keep,unit = pixel x season,PASS,max seasons per unit 1
+single,overlap_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,fragments_keep,fragments kept (FRAGMENT_RULE keep),PASS,"sites in the sample [np.int64(1), np.int64(2), np.int64(7), np.int64(9)]"
+single,fragments_keep,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,fragments_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,fragments_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,fragments_keep,timing: cohort of every treated row = the choice,PASS,"0 of 1,167 differ"
+single,fragments_keep,post = Year >= the row's cohort (treated rows),PASS,
+single,fragments_keep,the v20.56 milestone cohort (2026) is never used,PASS,
+single,fragments_keep,dose 0 on the control rings and untreated periods,PASS,
+single,fragments_keep,the v20.56 district percent (55) is never the dose,PASS,
+single,fragments_keep,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,fragments_keep,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,fragments_keep,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+single,fragments_keep,history-filled rows left out,PASS,0
+single,fragments_keep,unit = pixel x season,PASS,max seasons per unit 1
+single,fragments_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,keep
+single,pooled_fe_period,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,pooled_fe_period,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,pooled_fe_period,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,pooled_fe_period,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,pooled_fe_period,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,pooled_fe_period,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,pooled_fe_period,post = Year >= the row's cohort (treated rows),PASS,
+single,pooled_fe_period,the v20.56 milestone cohort (2026) is never used,PASS,
+single,pooled_fe_period,dose 0 on the control rings and untreated periods,PASS,
+single,pooled_fe_period,the v20.56 district percent (55) is never the dose,PASS,
+single,pooled_fe_period,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,pooled_fe_period,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,pooled_fe_period,history-filled rows left out,PASS,0
+single,pooled_fe_period,unit = pixel x season,PASS,max seasons per unit 1
+single,pooled_fe_period,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,gapfilled_kept,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,gapfilled_kept,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,gapfilled_kept,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,gapfilled_kept,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,gapfilled_kept,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,gapfilled_kept,timing: cohort of every treated row = the choice,PASS,0 of 938 differ
+single,gapfilled_kept,post = Year >= the row's cohort (treated rows),PASS,
+single,gapfilled_kept,the v20.56 milestone cohort (2026) is never used,PASS,
+single,gapfilled_kept,dose 0 on the control rings and untreated periods,PASS,
+single,gapfilled_kept,the v20.56 district percent (55) is never the dose,PASS,
+single,gapfilled_kept,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,gapfilled_kept,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,gapfilled_kept,history-filled rows kept (EXCLUDE_GAPFILLED False),PASS,40
+single,gapfilled_kept,unit = pixel x season,PASS,max seasons per unit 1
+single,gapfilled_kept,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,covariates_none,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single,covariates_none,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,covariates_none,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,covariates_none,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,covariates_none,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,covariates_none,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,covariates_none,post = Year >= the row's cohort (treated rows),PASS,
+single,covariates_none,the v20.56 milestone cohort (2026) is never used,PASS,
+single,covariates_none,dose 0 on the control rings and untreated periods,PASS,
+single,covariates_none,the v20.56 district percent (55) is never the dose,PASS,
+single,covariates_none,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,covariates_none,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,covariates_none,history-filled rows left out,PASS,0
+single,covariates_none,unit = pixel x season,PASS,max seasons per unit 1
+single,covariates_none,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,base,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,base,R == Python: treat,PASS,0 differ
+single,base,R == Python: post,PASS,0 differ
+single,base,R == Python: did,PASS,0 differ
+single,base,R == Python: cohort,PASS,0 differ
+single,base,R == Python: event time (treated),PASS,0 differ
+single,base,R == Python: dose,PASS,max |diff| 4.51e-17
+single,base,R == Python: the unit partition,PASS,576 vs 576 groups
+single,base,R == Python: the period partition,PASS,40 vs 40 groups
+single,base,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,timing_registry,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,timing_registry,R == Python: treat,PASS,0 differ
+single,timing_registry,R == Python: post,PASS,0 differ
+single,timing_registry,R == Python: did,PASS,0 differ
+single,timing_registry,R == Python: cohort,PASS,0 differ
+single,timing_registry,R == Python: event time (treated),PASS,0 differ
+single,timing_registry,R == Python: dose,PASS,max |diff| 4.51e-17
+single,timing_registry,R == Python: the unit partition,PASS,576 vs 576 groups
+single,timing_registry,R == Python: the period partition,PASS,40 vs 40 groups
+single,timing_registry,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,timing_fixed_2022,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,timing_fixed_2022,R == Python: treat,PASS,0 differ
+single,timing_fixed_2022,R == Python: post,PASS,0 differ
+single,timing_fixed_2022,R == Python: did,PASS,0 differ
+single,timing_fixed_2022,R == Python: cohort,PASS,0 differ
+single,timing_fixed_2022,R == Python: event time (treated),PASS,0 differ
+single,timing_fixed_2022,R == Python: dose,PASS,max |diff| 4.51e-17
+single,timing_fixed_2022,R == Python: the unit partition,PASS,576 vs 576 groups
+single,timing_fixed_2022,R == Python: the period partition,PASS,40 vs 40 groups
+single,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,timing_fixed_2023,R == Python: the same rows,PASS,"Python 3,732 rows, R 3,732"
+single,timing_fixed_2023,R == Python: treat,PASS,0 differ
+single,timing_fixed_2023,R == Python: post,PASS,0 differ
+single,timing_fixed_2023,R == Python: did,PASS,0 differ
+single,timing_fixed_2023,R == Python: cohort,PASS,0 differ
+single,timing_fixed_2023,R == Python: event time (treated),PASS,0 differ
+single,timing_fixed_2023,R == Python: dose,PASS,max |diff| 4.51e-17
+single,timing_fixed_2023,R == Python: the unit partition,PASS,384 vs 384 groups
+single,timing_fixed_2023,R == Python: the period partition,PASS,40 vs 40 groups
+single,timing_fixed_2023,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,fund_rule_share,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,fund_rule_share,R == Python: treat,PASS,0 differ
+single,fund_rule_share,R == Python: post,PASS,0 differ
+single,fund_rule_share,R == Python: did,PASS,0 differ
+single,fund_rule_share,R == Python: cohort,PASS,0 differ
+single,fund_rule_share,R == Python: event time (treated),PASS,0 differ
+single,fund_rule_share,R == Python: dose,PASS,max |diff| 3.12e-17
+single,fund_rule_share,R == Python: the unit partition,PASS,576 vs 576 groups
+single,fund_rule_share,R == Python: the period partition,PASS,40 vs 40 groups
+single,fund_rule_share,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,fund_rule_file_start,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,fund_rule_file_start,R == Python: treat,PASS,0 differ
+single,fund_rule_file_start,R == Python: post,PASS,0 differ
+single,fund_rule_file_start,R == Python: did,PASS,0 differ
+single,fund_rule_file_start,R == Python: cohort,PASS,0 differ
+single,fund_rule_file_start,R == Python: event time (treated),PASS,0 differ
+single,fund_rule_file_start,R == Python: dose,PASS,max |diff| 3.12e-17
+single,fund_rule_file_start,R == Python: the unit partition,PASS,576 vs 576 groups
+single,fund_rule_file_start,R == Python: the period partition,PASS,40 vs 40 groups
+single,fund_rule_file_start,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,dose_amount,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,dose_amount,R == Python: treat,PASS,0 differ
+single,dose_amount,R == Python: post,PASS,0 differ
+single,dose_amount,R == Python: did,PASS,0 differ
+single,dose_amount,R == Python: cohort,PASS,0 differ
+single,dose_amount,R == Python: event time (treated),PASS,0 differ
+single,dose_amount,R == Python: dose,PASS,max |diff| 2.84e-14
+single,dose_amount,R == Python: the unit partition,PASS,576 vs 576 groups
+single,dose_amount,R == Python: the period partition,PASS,40 vs 40 groups
+single,dose_amount,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,dose_share,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,dose_share,R == Python: treat,PASS,0 differ
+single,dose_share,R == Python: post,PASS,0 differ
+single,dose_share,R == Python: did,PASS,0 differ
+single,dose_share,R == Python: cohort,PASS,0 differ
+single,dose_share,R == Python: event time (treated),PASS,0 differ
+single,dose_share,R == Python: dose,PASS,max |diff| 3.33e-16
+single,dose_share,R == Python: the unit partition,PASS,576 vs 576 groups
+single,dose_share,R == Python: the period partition,PASS,40 vs 40 groups
+single,dose_share,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,dose_before_missing,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,dose_before_missing,R == Python: treat,PASS,0 differ
+single,dose_before_missing,R == Python: post,PASS,0 differ
+single,dose_before_missing,R == Python: did,PASS,0 differ
+single,dose_before_missing,R == Python: cohort,PASS,0 differ
+single,dose_before_missing,R == Python: event time (treated),PASS,0 differ
+single,dose_before_missing,R == Python: dose,PASS,max |diff| 3.12e-17
+single,dose_before_missing,R == Python: the unit partition,PASS,576 vs 576 groups
+single,dose_before_missing,R == Python: the period partition,PASS,40 vs 40 groups
+single,dose_before_missing,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,rings_1_3,R == Python: the same rows,PASS,"Python 3,739 rows, R 3,739"
+single,rings_1_3,R == Python: treat,PASS,0 differ
+single,rings_1_3,R == Python: post,PASS,0 differ
+single,rings_1_3,R == Python: did,PASS,0 differ
+single,rings_1_3,R == Python: cohort,PASS,0 differ
+single,rings_1_3,R == Python: event time (treated),PASS,0 differ
+single,rings_1_3,R == Python: dose,PASS,max |diff| 4.51e-17
+single,rings_1_3,R == Python: the unit partition,PASS,384 vs 384 groups
+single,rings_1_3,R == Python: the period partition,PASS,40 vs 40 groups
+single,rings_1_3,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,rings_2_4,R == Python: the same rows,PASS,"Python 2,796 rows, R 2,796"
+single,rings_2_4,R == Python: treat,PASS,0 differ
+single,rings_2_4,R == Python: post,PASS,0 differ
+single,rings_2_4,R == Python: did,PASS,0 differ
+single,rings_2_4,R == Python: cohort,PASS,0 differ
+single,rings_2_4,R == Python: event time (treated),PASS,0 differ
+single,rings_2_4,R == Python: dose,PASS,max |diff| 4.51e-17
+single,rings_2_4,R == Python: the unit partition,PASS,288 vs 288 groups
+single,rings_2_4,R == Python: the period partition,PASS,40 vs 40 groups
+single,rings_2_4,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,pre4_post2,R == Python: the same rows,PASS,"Python 3,342 rows, R 3,342"
+single,pre4_post2,R == Python: treat,PASS,0 differ
+single,pre4_post2,R == Python: post,PASS,0 differ
+single,pre4_post2,R == Python: did,PASS,0 differ
+single,pre4_post2,R == Python: cohort,PASS,0 differ
+single,pre4_post2,R == Python: event time (treated),PASS,0 differ
+single,pre4_post2,R == Python: dose,PASS,max |diff| 4.51e-17
+single,pre4_post2,R == Python: the unit partition,PASS,576 vs 576 groups
+single,pre4_post2,R == Python: the period partition,PASS,24 vs 24 groups
+single,pre4_post2,R == Python: the cluster_id partition,PASS,6 vs 6 groups
+single,pre_all_post_all,R == Python: the same rows,PASS,"Python 6,020 rows, R 6,020"
+single,pre_all_post_all,R == Python: treat,PASS,0 differ
+single,pre_all_post_all,R == Python: post,PASS,0 differ
+single,pre_all_post_all,R == Python: did,PASS,0 differ
+single,pre_all_post_all,R == Python: cohort,PASS,0 differ
+single,pre_all_post_all,R == Python: event time (treated),PASS,0 differ
+single,pre_all_post_all,R == Python: dose,PASS,max |diff| 4.51e-17
+single,pre_all_post_all,R == Python: the unit partition,PASS,576 vs 576 groups
+single,pre_all_post_all,R == Python: the period partition,PASS,43 vs 43 groups
+single,pre_all_post_all,R == Python: the cluster_id partition,PASS,11 vs 11 groups
+single,manual_mode,R == Python: the same rows,PASS,"Python 6,020 rows, R 6,020"
+single,manual_mode,R == Python: treat,PASS,0 differ
+single,manual_mode,R == Python: post,PASS,0 differ
+single,manual_mode,R == Python: did,PASS,0 differ
+single,manual_mode,R == Python: cohort,PASS,0 differ
+single,manual_mode,R == Python: event time (treated),PASS,0 differ
+single,manual_mode,R == Python: dose,PASS,max |diff| 4.51e-17
+single,manual_mode,R == Python: the unit partition,PASS,576 vs 576 groups
+single,manual_mode,R == Python: the period partition,PASS,43 vs 43 groups
+single,manual_mode,R == Python: the cluster_id partition,PASS,11 vs 11 groups
+single,manual_rings_1_3_pre4,R == Python: the same rows,PASS,"Python 2,233 rows, R 2,233"
+single,manual_rings_1_3_pre4,R == Python: treat,PASS,0 differ
+single,manual_rings_1_3_pre4,R == Python: post,PASS,0 differ
+single,manual_rings_1_3_pre4,R == Python: did,PASS,0 differ
+single,manual_rings_1_3_pre4,R == Python: cohort,PASS,0 differ
+single,manual_rings_1_3_pre4,R == Python: event time (treated),PASS,0 differ
+single,manual_rings_1_3_pre4,R == Python: dose,PASS,max |diff| 4.51e-17
+single,manual_rings_1_3_pre4,R == Python: the unit partition,PASS,384 vs 384 groups
+single,manual_rings_1_3_pre4,R == Python: the period partition,PASS,24 vs 24 groups
+single,manual_rings_1_3_pre4,R == Python: the cluster_id partition,PASS,6 vs 6 groups
+single,seasons_seasonal,R == Python: the same rows,PASS,"Python 4,186 rows, R 4,186"
+single,seasons_seasonal,R == Python: treat,PASS,0 differ
+single,seasons_seasonal,R == Python: post,PASS,0 differ
+single,seasons_seasonal,R == Python: did,PASS,0 differ
+single,seasons_seasonal,R == Python: cohort,PASS,0 differ
+single,seasons_seasonal,R == Python: event time (treated),PASS,0 differ
+single,seasons_seasonal,R == Python: dose,PASS,max |diff| 4.51e-17
+single,seasons_seasonal,R == Python: the unit partition,PASS,432 vs 432 groups
+single,seasons_seasonal,R == Python: the period partition,PASS,30 vs 30 groups
+single,seasons_seasonal,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,seasons_yearly,R == Python: the same rows,PASS,"Python 1,414 rows, R 1,414"
+single,seasons_yearly,R == Python: treat,PASS,0 differ
+single,seasons_yearly,R == Python: post,PASS,0 differ
+single,seasons_yearly,R == Python: did,PASS,0 differ
+single,seasons_yearly,R == Python: cohort,PASS,0 differ
+single,seasons_yearly,R == Python: event time (treated),PASS,0 differ
+single,seasons_yearly,R == Python: dose,PASS,max |diff| 1.73e-17
+single,seasons_yearly,R == Python: the unit partition,PASS,144 vs 144 groups
+single,seasons_yearly,R == Python: the period partition,PASS,10 vs 10 groups
+single,seasons_yearly,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,seasons_rabi,R == Python: the same rows,PASS,"Python 1,387 rows, R 1,387"
+single,seasons_rabi,R == Python: treat,PASS,0 differ
+single,seasons_rabi,R == Python: post,PASS,0 differ
+single,seasons_rabi,R == Python: did,PASS,0 differ
+single,seasons_rabi,R == Python: cohort,PASS,0 differ
+single,seasons_rabi,R == Python: event time (treated),PASS,0 differ
+single,seasons_rabi,R == Python: dose,PASS,max |diff| 4.51e-17
+single,seasons_rabi,R == Python: the unit partition,PASS,144 vs 144 groups
+single,seasons_rabi,R == Python: the period partition,PASS,10 vs 10 groups
+single,seasons_rabi,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,seasons_kharif_rabi,R == Python: the same rows,PASS,"Python 2,771 rows, R 2,771"
+single,seasons_kharif_rabi,R == Python: treat,PASS,0 differ
+single,seasons_kharif_rabi,R == Python: post,PASS,0 differ
+single,seasons_kharif_rabi,R == Python: did,PASS,0 differ
+single,seasons_kharif_rabi,R == Python: cohort,PASS,0 differ
+single,seasons_kharif_rabi,R == Python: event time (treated),PASS,0 differ
+single,seasons_kharif_rabi,R == Python: dose,PASS,max |diff| 4.51e-17
+single,seasons_kharif_rabi,R == Python: the unit partition,PASS,288 vs 288 groups
+single,seasons_kharif_rabi,R == Python: the period partition,PASS,20 vs 20 groups
+single,seasons_kharif_rabi,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,seasons_auto,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,seasons_auto,R == Python: treat,PASS,0 differ
+single,seasons_auto,R == Python: post,PASS,0 differ
+single,seasons_auto,R == Python: did,PASS,0 differ
+single,seasons_auto,R == Python: cohort,PASS,0 differ
+single,seasons_auto,R == Python: event time (treated),PASS,0 differ
+single,seasons_auto,R == Python: dose,PASS,max |diff| 4.51e-17
+single,seasons_auto,R == Python: the unit partition,PASS,576 vs 576 groups
+single,seasons_auto,R == Python: the period partition,PASS,40 vs 40 groups
+single,seasons_auto,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,exclude_transition,R == Python: the same rows,PASS,"Python 5,071 rows, R 5,071"
+single,exclude_transition,R == Python: treat,PASS,0 differ
+single,exclude_transition,R == Python: post,PASS,0 differ
+single,exclude_transition,R == Python: did,PASS,0 differ
+single,exclude_transition,R == Python: cohort,PASS,0 differ
+single,exclude_transition,R == Python: event time (treated),PASS,0 differ
+single,exclude_transition,R == Python: dose,PASS,max |diff| 2.08e-17
+single,exclude_transition,R == Python: the unit partition,PASS,576 vs 576 groups
+single,exclude_transition,R == Python: the period partition,PASS,36 vs 36 groups
+single,exclude_transition,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,unit_fe_pixel,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,unit_fe_pixel,R == Python: treat,PASS,0 differ
+single,unit_fe_pixel,R == Python: post,PASS,0 differ
+single,unit_fe_pixel,R == Python: did,PASS,0 differ
+single,unit_fe_pixel,R == Python: cohort,PASS,0 differ
+single,unit_fe_pixel,R == Python: event time (treated),PASS,0 differ
+single,unit_fe_pixel,R == Python: dose,PASS,max |diff| 4.51e-17
+single,unit_fe_pixel,R == Python: the unit partition,PASS,144 vs 144 groups
+single,unit_fe_pixel,R == Python: the period partition,PASS,40 vs 40 groups
+single,unit_fe_pixel,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,overlap_keep,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,overlap_keep,R == Python: treat,PASS,0 differ
+single,overlap_keep,R == Python: post,PASS,0 differ
+single,overlap_keep,R == Python: did,PASS,0 differ
+single,overlap_keep,R == Python: cohort,PASS,0 differ
+single,overlap_keep,R == Python: event time (treated),PASS,0 differ
+single,overlap_keep,R == Python: dose,PASS,max |diff| 4.51e-17
+single,overlap_keep,R == Python: the unit partition,PASS,576 vs 576 groups
+single,overlap_keep,R == Python: the period partition,PASS,40 vs 40 groups
+single,overlap_keep,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,fragments_keep,R == Python: the same rows,PASS,"Python 6,066 rows, R 6,066"
+single,fragments_keep,R == Python: treat,PASS,0 differ
+single,fragments_keep,R == Python: post,PASS,0 differ
+single,fragments_keep,R == Python: did,PASS,0 differ
+single,fragments_keep,R == Python: cohort,PASS,0 differ
+single,fragments_keep,R == Python: event time (treated),PASS,0 differ
+single,fragments_keep,R == Python: dose,PASS,max |diff| 6.25e-17
+single,fragments_keep,R == Python: the unit partition,PASS,624 vs 624 groups
+single,fragments_keep,R == Python: the period partition,PASS,160 vs 160 groups
+single,fragments_keep,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,pooled_fe_period,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,pooled_fe_period,R == Python: treat,PASS,0 differ
+single,pooled_fe_period,R == Python: post,PASS,0 differ
+single,pooled_fe_period,R == Python: did,PASS,0 differ
+single,pooled_fe_period,R == Python: cohort,PASS,0 differ
+single,pooled_fe_period,R == Python: event time (treated),PASS,0 differ
+single,pooled_fe_period,R == Python: dose,PASS,max |diff| 4.51e-17
+single,pooled_fe_period,R == Python: the unit partition,PASS,576 vs 576 groups
+single,pooled_fe_period,R == Python: the period partition,PASS,40 vs 40 groups
+single,pooled_fe_period,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,gapfilled_kept,R == Python: the same rows,PASS,"Python 5,640 rows, R 5,640"
+single,gapfilled_kept,R == Python: treat,PASS,0 differ
+single,gapfilled_kept,R == Python: post,PASS,0 differ
+single,gapfilled_kept,R == Python: did,PASS,0 differ
+single,gapfilled_kept,R == Python: cohort,PASS,0 differ
+single,gapfilled_kept,R == Python: event time (treated),PASS,0 differ
+single,gapfilled_kept,R == Python: dose,PASS,max |diff| 4.51e-17
+single,gapfilled_kept,R == Python: the unit partition,PASS,576 vs 576 groups
+single,gapfilled_kept,R == Python: the period partition,PASS,40 vs 40 groups
+single,gapfilled_kept,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,covariates_none,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,covariates_none,R == Python: treat,PASS,0 differ
+single,covariates_none,R == Python: post,PASS,0 differ
+single,covariates_none,R == Python: did,PASS,0 differ
+single,covariates_none,R == Python: cohort,PASS,0 differ
+single,covariates_none,R == Python: event time (treated),PASS,0 differ
+single,covariates_none,R == Python: dose,PASS,max |diff| 4.51e-17
+single,covariates_none,R == Python: the unit partition,PASS,576 vs 576 groups
+single,covariates_none,R == Python: the period partition,PASS,40 vs 40 groups
+single,covariates_none,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_qjekywbq/single/data/output/did_panel_full.parquet
+single_v2056,base,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single_v2056,base,only the major sub-watershed(s),PASS,[np.int64(1)]
+single_v2056,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single_v2056,base,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single_v2056,base,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single_v2056,base,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single_v2056,base,post = Year >= the row's cohort (treated rows),PASS,
+single_v2056,base,the v20.56 milestone cohort (2026) is never used,PASS,
+single_v2056,base,dose 0 on the control rings and untreated periods,PASS,
+single_v2056,base,the v20.56 district percent (55) is never the dose,PASS,
+single_v2056,base,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single_v2056,base,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single_v2056,base,history-filled rows left out,PASS,0
+single_v2056,base,unit = pixel x season,PASS,max seasons per unit 1
+single_v2056,base,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single_v2056,fragments_keep,fragments kept (FRAGMENT_RULE keep),PASS,"sites in the sample [np.int64(1), np.int64(2), np.int64(7), np.int64(9)]"
+single_v2056,fragments_keep,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single_v2056,fragments_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single_v2056,fragments_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single_v2056,fragments_keep,timing: cohort of every treated row = the choice,PASS,"0 of 1,167 differ"
+single_v2056,fragments_keep,post = Year >= the row's cohort (treated rows),PASS,
+single_v2056,fragments_keep,the v20.56 milestone cohort (2026) is never used,PASS,
+single_v2056,fragments_keep,dose 0 on the control rings and untreated periods,PASS,
+single_v2056,fragments_keep,the v20.56 district percent (55) is never the dose,PASS,
+single_v2056,fragments_keep,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single_v2056,fragments_keep,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single_v2056,fragments_keep,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+single_v2056,fragments_keep,history-filled rows left out,PASS,0
+single_v2056,fragments_keep,unit = pixel x season,PASS,max seasons per unit 1
+single_v2056,fragments_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,keep
+single_v2056,timing_fixed_2022,fragments left out (FRAGMENT_RULE drop),PASS,sites in the sample [np.int64(1)]
+single_v2056,timing_fixed_2022,only the major sub-watershed(s),PASS,[np.int64(1)]
+single_v2056,timing_fixed_2022,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single_v2056,timing_fixed_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single_v2056,timing_fixed_2022,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single_v2056,timing_fixed_2022,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single_v2056,timing_fixed_2022,post = Year >= the row's cohort (treated rows),PASS,
+single_v2056,timing_fixed_2022,the v20.56 milestone cohort (2026) is never used,PASS,
+single_v2056,timing_fixed_2022,dose 0 on the control rings and untreated periods,PASS,
+single_v2056,timing_fixed_2022,the v20.56 district percent (55) is never the dose,PASS,
+single_v2056,timing_fixed_2022,history-filled rows left out,PASS,0
+single_v2056,timing_fixed_2022,unit = pixel x season,PASS,max seasons per unit 1
+single_v2056,timing_fixed_2022,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single_v2056,base,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single_v2056,base,R == Python: treat,PASS,0 differ
+single_v2056,base,R == Python: post,PASS,0 differ
+single_v2056,base,R == Python: did,PASS,0 differ
+single_v2056,base,R == Python: cohort,PASS,0 differ
+single_v2056,base,R == Python: event time (treated),PASS,0 differ
+single_v2056,base,R == Python: dose,PASS,max |diff| 4.51e-17
+single_v2056,base,R == Python: the unit partition,PASS,576 vs 576 groups
+single_v2056,base,R == Python: the period partition,PASS,40 vs 40 groups
+single_v2056,base,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single_v2056,fragments_keep,R == Python: the same rows,PASS,"Python 6,066 rows, R 6,066"
+single_v2056,fragments_keep,R == Python: treat,PASS,0 differ
+single_v2056,fragments_keep,R == Python: post,PASS,0 differ
+single_v2056,fragments_keep,R == Python: did,PASS,0 differ
+single_v2056,fragments_keep,R == Python: cohort,PASS,0 differ
+single_v2056,fragments_keep,R == Python: event time (treated),PASS,0 differ
+single_v2056,fragments_keep,R == Python: dose,PASS,max |diff| 6.25e-17
+single_v2056,fragments_keep,R == Python: the unit partition,PASS,624 vs 624 groups
+single_v2056,fragments_keep,R == Python: the period partition,PASS,160 vs 160 groups
+single_v2056,fragments_keep,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single_v2056,timing_fixed_2022,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single_v2056,timing_fixed_2022,R == Python: treat,PASS,0 differ
+single_v2056,timing_fixed_2022,R == Python: post,PASS,0 differ
+single_v2056,timing_fixed_2022,R == Python: did,PASS,0 differ
+single_v2056,timing_fixed_2022,R == Python: cohort,PASS,0 differ
+single_v2056,timing_fixed_2022,R == Python: event time (treated),PASS,0 differ
+single_v2056,timing_fixed_2022,R == Python: dose,PASS,max |diff| 4.51e-17
+single_v2056,timing_fixed_2022,R == Python: the unit partition,PASS,576 vs 576 groups
+single_v2056,timing_fixed_2022,R == Python: the period partition,PASS,40 vs 40 groups
+single_v2056,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_qjekywbq/single_v2056/data/output/did_panel_full.parquet
+single_v2056,base,a panel WITHOUT the fragment column (v20.56) gives the same sample,PASS,5600 vs 5600 rows
+pooled,base,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,base,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,base,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,base,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,base,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,base,post = Year >= the row's cohort (treated rows),PASS,
+pooled,base,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,base,dose 0 on the control rings and untreated periods,PASS,
+pooled,base,the v20.56 district percent (55) is never the dose,PASS,
+pooled,base,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,base,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,base,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,base,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,base,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,base,history-filled rows left out,PASS,0
+pooled,base,unit = pixel x season,PASS,max seasons per unit 1
+pooled,base,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,timing_registry,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,timing_registry,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,timing_registry,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,timing_registry,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,timing_registry,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,timing_registry,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,timing_registry,post = Year >= the row's cohort (treated rows),PASS,
+pooled,timing_registry,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,timing_registry,dose 0 on the control rings and untreated periods,PASS,
+pooled,timing_registry,the v20.56 district percent (55) is never the dose,PASS,
+pooled,timing_registry,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,timing_registry,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,timing_registry,history-filled rows left out,PASS,0
+pooled,timing_registry,unit = pixel x season,PASS,max seasons per unit 1
+pooled,timing_registry,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,timing_fixed_2022,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,timing_fixed_2022,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,timing_fixed_2022,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,timing_fixed_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,timing_fixed_2022,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,timing_fixed_2022,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,timing_fixed_2022,post = Year >= the row's cohort (treated rows),PASS,
+pooled,timing_fixed_2022,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,timing_fixed_2022,dose 0 on the control rings and untreated periods,PASS,
+pooled,timing_fixed_2022,the v20.56 district percent (55) is never the dose,PASS,
+pooled,timing_fixed_2022,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,timing_fixed_2022,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,timing_fixed_2022,history-filled rows left out,PASS,0
+pooled,timing_fixed_2022,unit = pixel x season,PASS,max seasons per unit 1
+pooled,timing_fixed_2022,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,timing_fixed_2023,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,timing_fixed_2023,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,timing_fixed_2023,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,timing_fixed_2023,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,timing_fixed_2023,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,timing_fixed_2023,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,timing_fixed_2023,post = Year >= the row's cohort (treated rows),PASS,
+pooled,timing_fixed_2023,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,timing_fixed_2023,dose 0 on the control rings and untreated periods,PASS,
+pooled,timing_fixed_2023,the v20.56 district percent (55) is never the dose,PASS,
+pooled,timing_fixed_2023,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,timing_fixed_2023,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,timing_fixed_2023,history-filled rows left out,PASS,0
+pooled,timing_fixed_2023,unit = pixel x season,PASS,max seasons per unit 1
+pooled,timing_fixed_2023,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,fund_rule_share,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,fund_rule_share,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,fund_rule_share,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,fund_rule_share,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,fund_rule_share,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,fund_rule_share,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,fund_rule_share,post = Year >= the row's cohort (treated rows),PASS,
+pooled,fund_rule_share,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,fund_rule_share,dose 0 on the control rings and untreated periods,PASS,
+pooled,fund_rule_share,the v20.56 district percent (55) is never the dose,PASS,
+pooled,fund_rule_share,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,fund_rule_share,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,fund_rule_share,history-filled rows left out,PASS,0
+pooled,fund_rule_share,unit = pixel x season,PASS,max seasons per unit 1
+pooled,fund_rule_share,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,fund_rule_file_start,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,fund_rule_file_start,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,fund_rule_file_start,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,fund_rule_file_start,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,fund_rule_file_start,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,fund_rule_file_start,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,fund_rule_file_start,post = Year >= the row's cohort (treated rows),PASS,
+pooled,fund_rule_file_start,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,fund_rule_file_start,dose 0 on the control rings and untreated periods,PASS,
+pooled,fund_rule_file_start,the v20.56 district percent (55) is never the dose,PASS,
+pooled,fund_rule_file_start,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,fund_rule_file_start,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,fund_rule_file_start,history-filled rows left out,PASS,0
+pooled,fund_rule_file_start,unit = pixel x season,PASS,max seasons per unit 1
+pooled,fund_rule_file_start,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,dose_amount,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,dose_amount,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,dose_amount,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,dose_amount,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,dose_amount,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,dose_amount,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,dose_amount,post = Year >= the row's cohort (treated rows),PASS,
+pooled,dose_amount,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,dose_amount,dose 0 on the control rings and untreated periods,PASS,
+pooled,dose_amount,dose = the AMOUNT (Kharif 2025 = 110),PASS,110
+pooled,dose_amount,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,dose_amount,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,dose_amount,history-filled rows left out,PASS,0
+pooled,dose_amount,unit = pixel x season,PASS,max seasons per unit 1
+pooled,dose_amount,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,dose_share,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,dose_share,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,dose_share,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,dose_share,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,dose_share,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,dose_share,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,dose_share,post = Year >= the row's cohort (treated rows),PASS,
+pooled,dose_share,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,dose_share,dose 0 on the control rings and untreated periods,PASS,
+pooled,dose_share,the v20.56 district percent (55) is never the dose,PASS,
+pooled,dose_share,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,dose_share,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,dose_share,history-filled rows left out,PASS,0
+pooled,dose_share,unit = pixel x season,PASS,max seasons per unit 1
+pooled,dose_share,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,dose_before_missing,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,dose_before_missing,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,dose_before_missing,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,dose_before_missing,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,dose_before_missing,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,dose_before_missing,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,dose_before_missing,post = Year >= the row's cohort (treated rows),PASS,
+pooled,dose_before_missing,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,dose_before_missing,dose 0 on the control rings and untreated periods,PASS,
+pooled,dose_before_missing,the v20.56 district percent (55) is never the dose,PASS,
+pooled,dose_before_missing,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,dose_before_missing,dose before the file = missing (Rabi 2024),PASS,
+pooled,dose_before_missing,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,dose_before_missing,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,dose_before_missing,history-filled rows left out,PASS,0
+pooled,dose_before_missing,unit = pixel x season,PASS,max seasons per unit 1
+pooled,dose_before_missing,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,rings_1_3,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,rings_1_3,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,rings_1_3,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting [1, 2, 3]"
+pooled,rings_1_3,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,rings_1_3,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,rings_1_3,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,rings_1_3,post = Year >= the row's cohort (treated rows),PASS,
+pooled,rings_1_3,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,rings_1_3,dose 0 on the control rings and untreated periods,PASS,
+pooled,rings_1_3,the v20.56 district percent (55) is never the dose,PASS,
+pooled,rings_1_3,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,rings_1_3,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,rings_1_3,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,rings_1_3,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,rings_1_3,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,rings_1_3,history-filled rows left out,PASS,0
+pooled,rings_1_3,unit = pixel x season,PASS,max seasons per unit 1
+pooled,rings_1_3,DESIGN IN EFFECT: CONTROL_ZONES used = your setting,PASS,"[1, 2, 3]"
+pooled,rings_1_3,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,rings_2_4,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,rings_2_4,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,rings_2_4,control rings = the choice,PASS,"used [np.int64(2), np.int64(4)], setting [2, 4]"
+pooled,rings_2_4,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,rings_2_4,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,rings_2_4,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,rings_2_4,post = Year >= the row's cohort (treated rows),PASS,
+pooled,rings_2_4,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,rings_2_4,dose 0 on the control rings and untreated periods,PASS,
+pooled,rings_2_4,the v20.56 district percent (55) is never the dose,PASS,
+pooled,rings_2_4,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,rings_2_4,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,rings_2_4,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,rings_2_4,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,rings_2_4,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,rings_2_4,history-filled rows left out,PASS,0
+pooled,rings_2_4,unit = pixel x season,PASS,max seasons per unit 1
+pooled,rings_2_4,DESIGN IN EFFECT: CONTROL_ZONES used = your setting,PASS,"[2, 4]"
+pooled,rings_2_4,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,pre4_post2,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,pre4_post2,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,pre4_post2,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,pre4_post2,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,pre4_post2,years = PRE_YEARS / POST_YEARS from the first treated year,PASS,2019..2024 (want 2019..2024; base 2023)
+pooled,pre4_post2,timing: cohort of every treated row = the choice,PASS,"0 of 1,127 differ"
+pooled,pre4_post2,post = Year >= the row's cohort (treated rows),PASS,
+pooled,pre4_post2,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,pre4_post2,dose 0 on the control rings and untreated periods,PASS,
+pooled,pre4_post2,the v20.56 district percent (55) is never the dose,PASS,
+pooled,pre4_post2,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,pre4_post2,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,pre4_post2,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,pre4_post2,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,pre4_post2,history-filled rows left out,PASS,0
+pooled,pre4_post2,unit = pixel x season,PASS,max seasons per unit 1
+pooled,pre4_post2,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,pre_all_post_all,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,pre_all_post_all,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,pre_all_post_all,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,pre_all_post_all,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,pre_all_post_all,years: every year (the fill year's annual rows out by the screen),PASS,"[np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,pre_all_post_all,timing: cohort of every treated row = the choice,PASS,"0 of 2,010 differ"
+pooled,pre_all_post_all,post = Year >= the row's cohort (treated rows),PASS,
+pooled,pre_all_post_all,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,pre_all_post_all,dose 0 on the control rings and untreated periods,PASS,
+pooled,pre_all_post_all,the v20.56 district percent (55) is never the dose,PASS,
+pooled,pre_all_post_all,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,pre_all_post_all,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,pre_all_post_all,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,pre_all_post_all,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,pre_all_post_all,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,pre_all_post_all,history-filled rows left out,PASS,0
+pooled,pre_all_post_all,unit = pixel x season,PASS,max seasons per unit 1
+pooled,pre_all_post_all,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,manual_mode,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,manual_mode,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,manual_mode,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,manual_mode,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,manual_mode,years: every year (the fill year's annual rows out by the screen),PASS,"[np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,manual_mode,timing: cohort of every treated row = the choice,PASS,"0 of 2,010 differ"
+pooled,manual_mode,post = Year >= the row's cohort (treated rows),PASS,
+pooled,manual_mode,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,manual_mode,dose 0 on the control rings and untreated periods,PASS,
+pooled,manual_mode,the v20.56 district percent (55) is never the dose,PASS,
+pooled,manual_mode,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,manual_mode,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,manual_mode,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,manual_mode,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,manual_mode,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,manual_mode,history-filled rows left out,PASS,0
+pooled,manual_mode,unit = pixel x season,PASS,max seasons per unit 1
+pooled,manual_mode,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,manual_rings_1_3_pre4,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,manual_rings_1_3_pre4,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,manual_rings_1_3_pre4,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting [1, 2, 3]"
+pooled,manual_rings_1_3_pre4,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,manual_rings_1_3_pre4,years = PRE_YEARS / POST_YEARS from the first treated year,PASS,2019..2025 (want 2019..2025; base 2023)
+pooled,manual_rings_1_3_pre4,timing: cohort of every treated row = the choice,PASS,"0 of 1,306 differ"
+pooled,manual_rings_1_3_pre4,post = Year >= the row's cohort (treated rows),PASS,
+pooled,manual_rings_1_3_pre4,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,manual_rings_1_3_pre4,dose 0 on the control rings and untreated periods,PASS,
+pooled,manual_rings_1_3_pre4,the v20.56 district percent (55) is never the dose,PASS,
+pooled,manual_rings_1_3_pre4,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,manual_rings_1_3_pre4,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,manual_rings_1_3_pre4,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,manual_rings_1_3_pre4,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,manual_rings_1_3_pre4,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,manual_rings_1_3_pre4,history-filled rows left out,PASS,0
+pooled,manual_rings_1_3_pre4,unit = pixel x season,PASS,max seasons per unit 1
+pooled,manual_rings_1_3_pre4,DESIGN IN EFFECT: CONTROL_ZONES used = your setting,PASS,"[1, 2, 3]"
+pooled,manual_rings_1_3_pre4,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,seasons_seasonal,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,seasons_seasonal,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,seasons_seasonal,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,seasons_seasonal,seasons = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting seasonal"
+pooled,seasons_seasonal,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,seasons_seasonal,timing: cohort of every treated row = the choice,PASS,"0 of 1,399 differ"
+pooled,seasons_seasonal,post = Year >= the row's cohort (treated rows),PASS,
+pooled,seasons_seasonal,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,seasons_seasonal,dose 0 on the control rings and untreated periods,PASS,
+pooled,seasons_seasonal,the v20.56 district percent (55) is never the dose,PASS,
+pooled,seasons_seasonal,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,seasons_seasonal,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,seasons_seasonal,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,seasons_seasonal,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,seasons_seasonal,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,seasons_seasonal,history-filled rows left out,PASS,0
+pooled,seasons_seasonal,unit = pixel x season,PASS,max seasons per unit 1
+pooled,seasons_seasonal,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,seasons_yearly,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,seasons_yearly,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,seasons_yearly,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,seasons_yearly,seasons = the choice,PASS,"used [np.int64(0)], setting yearly"
+pooled,seasons_yearly,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,seasons_yearly,timing: cohort of every treated row = the choice,PASS,0 of 468 differ
+pooled,seasons_yearly,post = Year >= the row's cohort (treated rows),PASS,
+pooled,seasons_yearly,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,seasons_yearly,dose 0 on the control rings and untreated periods,PASS,
+pooled,seasons_yearly,the v20.56 district percent (55) is never the dose,PASS,
+pooled,seasons_yearly,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,seasons_yearly,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,seasons_yearly,history-filled rows left out,PASS,0
+pooled,seasons_yearly,unit = pixel x season,PASS,max seasons per unit 1
+pooled,seasons_yearly,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,seasons_rabi,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,seasons_rabi,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,seasons_rabi,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,seasons_rabi,seasons = the choice,PASS,"used [np.int64(2)], setting Rabi"
+pooled,seasons_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,seasons_rabi,timing: cohort of every treated row = the choice,PASS,0 of 466 differ
+pooled,seasons_rabi,post = Year >= the row's cohort (treated rows),PASS,
+pooled,seasons_rabi,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,seasons_rabi,dose 0 on the control rings and untreated periods,PASS,
+pooled,seasons_rabi,the v20.56 district percent (55) is never the dose,PASS,
+pooled,seasons_rabi,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,seasons_rabi,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,seasons_rabi,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,seasons_rabi,history-filled rows left out,PASS,0
+pooled,seasons_rabi,unit = pixel x season,PASS,max seasons per unit 1
+pooled,seasons_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,seasons_kharif_rabi,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,seasons_kharif_rabi,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,seasons_kharif_rabi,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,seasons_kharif_rabi,seasons = the choice,PASS,"used [np.int64(1), np.int64(2)], setting ['Kharif', 'Rabi']"
+pooled,seasons_kharif_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,seasons_kharif_rabi,timing: cohort of every treated row = the choice,PASS,0 of 928 differ
+pooled,seasons_kharif_rabi,post = Year >= the row's cohort (treated rows),PASS,
+pooled,seasons_kharif_rabi,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,seasons_kharif_rabi,dose 0 on the control rings and untreated periods,PASS,
+pooled,seasons_kharif_rabi,the v20.56 district percent (55) is never the dose,PASS,
+pooled,seasons_kharif_rabi,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,seasons_kharif_rabi,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,seasons_kharif_rabi,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,seasons_kharif_rabi,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,seasons_kharif_rabi,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,seasons_kharif_rabi,history-filled rows left out,PASS,0
+pooled,seasons_kharif_rabi,unit = pixel x season,PASS,max seasons per unit 1
+pooled,seasons_kharif_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,seasons_auto,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,seasons_auto,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,seasons_auto,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,seasons_auto,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting auto"
+pooled,seasons_auto,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,seasons_auto,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,seasons_auto,post = Year >= the row's cohort (treated rows),PASS,
+pooled,seasons_auto,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,seasons_auto,dose 0 on the control rings and untreated periods,PASS,
+pooled,seasons_auto,the v20.56 district percent (55) is never the dose,PASS,
+pooled,seasons_auto,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,seasons_auto,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,seasons_auto,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,seasons_auto,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,seasons_auto,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,seasons_auto,history-filled rows left out,PASS,0
+pooled,seasons_auto,unit = pixel x season,PASS,max seasons per unit 1
+pooled,seasons_auto,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,exclude_transition,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,exclude_transition,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,exclude_transition,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,exclude_transition,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,exclude_transition,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,exclude_transition,timing: cohort of every treated row = the choice,PASS,"0 of 1,681 differ"
+pooled,exclude_transition,no first treated year of a treated series,PASS,
+pooled,exclude_transition,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,exclude_transition,dose 0 on the control rings and untreated periods,PASS,
+pooled,exclude_transition,the v20.56 district percent (55) is never the dose,PASS,
+pooled,exclude_transition,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,exclude_transition,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,exclude_transition,history-filled rows left out,PASS,0
+pooled,exclude_transition,unit = pixel x season,PASS,max seasons per unit 1
+pooled,exclude_transition,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,unit_fe_pixel,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,unit_fe_pixel,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,unit_fe_pixel,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,unit_fe_pixel,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,unit_fe_pixel,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,unit_fe_pixel,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,unit_fe_pixel,post = Year >= the row's cohort (treated rows),PASS,
+pooled,unit_fe_pixel,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,unit_fe_pixel,dose 0 on the control rings and untreated periods,PASS,
+pooled,unit_fe_pixel,the v20.56 district percent (55) is never the dose,PASS,
+pooled,unit_fe_pixel,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,unit_fe_pixel,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,unit_fe_pixel,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,unit_fe_pixel,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,unit_fe_pixel,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,unit_fe_pixel,history-filled rows left out,PASS,0
+pooled,unit_fe_pixel,unit = pixel,PASS,max seasons per unit 4
+pooled,unit_fe_pixel,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,overlap_keep,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,overlap_keep,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,overlap_keep,control rings = the choice,PASS,"used [np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,overlap_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,overlap_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,overlap_keep,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,overlap_keep,post = Year >= the row's cohort (treated rows),PASS,
+pooled,overlap_keep,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,overlap_keep,dose 0 on the control rings and untreated periods,PASS,
+pooled,overlap_keep,the v20.56 district percent (55) is never the dose,PASS,
+pooled,overlap_keep,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,overlap_keep,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,overlap_keep,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,overlap_keep,overlap rows kept (OVERLAP_ROWS keep),PASS,157 rows
+pooled,overlap_keep,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,overlap_keep,history-filled rows left out,PASS,0
+pooled,overlap_keep,unit = pixel x season,PASS,max seasons per unit 1
+pooled,overlap_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,fragments_keep,fragments kept (FRAGMENT_RULE keep),PASS,"sites in the sample [np.int64(1), np.int64(2), np.int64(7)]"
+pooled,fragments_keep,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,fragments_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,fragments_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,fragments_keep,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
+pooled,fragments_keep,post = Year >= the row's cohort (treated rows),PASS,
+pooled,fragments_keep,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,fragments_keep,dose 0 on the control rings and untreated periods,PASS,
+pooled,fragments_keep,the v20.56 district percent (55) is never the dose,PASS,
+pooled,fragments_keep,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,fragments_keep,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,fragments_keep,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,fragments_keep,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,fragments_keep,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,fragments_keep,history-filled rows left out,PASS,0
+pooled,fragments_keep,unit = pixel x season,PASS,max seasons per unit 1
+pooled,fragments_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,keep
+pooled,pooled_fe_period,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,pooled_fe_period,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,pooled_fe_period,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,pooled_fe_period,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,pooled_fe_period,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,pooled_fe_period,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,pooled_fe_period,post = Year >= the row's cohort (treated rows),PASS,
+pooled,pooled_fe_period,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,pooled_fe_period,dose 0 on the control rings and untreated periods,PASS,
+pooled,pooled_fe_period,the v20.56 district percent (55) is never the dose,PASS,
+pooled,pooled_fe_period,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,pooled_fe_period,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,pooled_fe_period,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,pooled_fe_period,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,pooled_fe_period,period effect = year x season (shared),PASS,max sites per period 2
+pooled,pooled_fe_period,history-filled rows left out,PASS,0
+pooled,pooled_fe_period,unit = pixel x season,PASS,max seasons per unit 1
+pooled,pooled_fe_period,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,gapfilled_kept,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,gapfilled_kept,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,gapfilled_kept,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,gapfilled_kept,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,gapfilled_kept,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,gapfilled_kept,timing: cohort of every treated row = the choice,PASS,"0 of 1,875 differ"
+pooled,gapfilled_kept,post = Year >= the row's cohort (treated rows),PASS,
+pooled,gapfilled_kept,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,gapfilled_kept,dose 0 on the control rings and untreated periods,PASS,
+pooled,gapfilled_kept,the v20.56 district percent (55) is never the dose,PASS,
+pooled,gapfilled_kept,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,gapfilled_kept,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,gapfilled_kept,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,gapfilled_kept,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,gapfilled_kept,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,gapfilled_kept,history-filled rows kept (EXCLUDE_GAPFILLED False),PASS,40
+pooled,gapfilled_kept,unit = pixel x season,PASS,max seasons per unit 1
+pooled,gapfilled_kept,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,covariates_none,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled,covariates_none,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,covariates_none,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,covariates_none,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,covariates_none,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,covariates_none,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled,covariates_none,post = Year >= the row's cohort (treated rows),PASS,
+pooled,covariates_none,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,covariates_none,dose 0 on the control rings and untreated periods,PASS,
+pooled,covariates_none,the v20.56 district percent (55) is never the dose,PASS,
+pooled,covariates_none,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,covariates_none,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,covariates_none,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,covariates_none,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,covariates_none,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,covariates_none,history-filled rows left out,PASS,0
+pooled,covariates_none,unit = pixel x season,PASS,max seasons per unit 1
+pooled,covariates_none,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,base,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,base,R == Python: treat,PASS,0 differ
+pooled,base,R == Python: post,PASS,0 differ
+pooled,base,R == Python: did,PASS,0 differ
+pooled,base,R == Python: cohort,PASS,0 differ
+pooled,base,R == Python: event time (treated),PASS,0 differ
+pooled,base,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,base,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,base,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,base,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,timing_registry,R == Python: the same rows,PASS,"Python 9,375 rows, R 9,375"
+pooled,timing_registry,R == Python: treat,PASS,0 differ
+pooled,timing_registry,R == Python: post,PASS,0 differ
+pooled,timing_registry,R == Python: did,PASS,0 differ
+pooled,timing_registry,R == Python: cohort,PASS,0 differ
+pooled,timing_registry,R == Python: event time (treated),PASS,0 differ
+pooled,timing_registry,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,timing_registry,R == Python: the unit partition,PASS,960 vs 960 groups
+pooled,timing_registry,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,timing_registry,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,timing_fixed_2022,R == Python: the same rows,PASS,"Python 9,375 rows, R 9,375"
+pooled,timing_fixed_2022,R == Python: treat,PASS,0 differ
+pooled,timing_fixed_2022,R == Python: post,PASS,0 differ
+pooled,timing_fixed_2022,R == Python: did,PASS,0 differ
+pooled,timing_fixed_2022,R == Python: cohort,PASS,0 differ
+pooled,timing_fixed_2022,R == Python: event time (treated),PASS,0 differ
+pooled,timing_fixed_2022,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,timing_fixed_2022,R == Python: the unit partition,PASS,960 vs 960 groups
+pooled,timing_fixed_2022,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,timing_fixed_2023,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,timing_fixed_2023,R == Python: treat,PASS,0 differ
+pooled,timing_fixed_2023,R == Python: post,PASS,0 differ
+pooled,timing_fixed_2023,R == Python: did,PASS,0 differ
+pooled,timing_fixed_2023,R == Python: cohort,PASS,0 differ
+pooled,timing_fixed_2023,R == Python: event time (treated),PASS,0 differ
+pooled,timing_fixed_2023,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,timing_fixed_2023,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,timing_fixed_2023,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,timing_fixed_2023,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,fund_rule_share,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,fund_rule_share,R == Python: treat,PASS,0 differ
+pooled,fund_rule_share,R == Python: post,PASS,0 differ
+pooled,fund_rule_share,R == Python: did,PASS,0 differ
+pooled,fund_rule_share,R == Python: cohort,PASS,0 differ
+pooled,fund_rule_share,R == Python: event time (treated),PASS,0 differ
+pooled,fund_rule_share,R == Python: dose,PASS,max |diff| 3.47e-17
+pooled,fund_rule_share,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,fund_rule_share,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,fund_rule_share,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,fund_rule_file_start,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,fund_rule_file_start,R == Python: treat,PASS,0 differ
+pooled,fund_rule_file_start,R == Python: post,PASS,0 differ
+pooled,fund_rule_file_start,R == Python: did,PASS,0 differ
+pooled,fund_rule_file_start,R == Python: cohort,PASS,0 differ
+pooled,fund_rule_file_start,R == Python: event time (treated),PASS,0 differ
+pooled,fund_rule_file_start,R == Python: dose,PASS,max |diff| 3.47e-17
+pooled,fund_rule_file_start,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,fund_rule_file_start,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,fund_rule_file_start,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,dose_amount,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,dose_amount,R == Python: treat,PASS,0 differ
+pooled,dose_amount,R == Python: post,PASS,0 differ
+pooled,dose_amount,R == Python: did,PASS,0 differ
+pooled,dose_amount,R == Python: cohort,PASS,0 differ
+pooled,dose_amount,R == Python: event time (treated),PASS,0 differ
+pooled,dose_amount,R == Python: dose,PASS,max |diff| 3.27e-13
+pooled,dose_amount,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,dose_amount,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,dose_amount,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,dose_share,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,dose_share,R == Python: treat,PASS,0 differ
+pooled,dose_share,R == Python: post,PASS,0 differ
+pooled,dose_share,R == Python: did,PASS,0 differ
+pooled,dose_share,R == Python: cohort,PASS,0 differ
+pooled,dose_share,R == Python: event time (treated),PASS,0 differ
+pooled,dose_share,R == Python: dose,PASS,max |diff| 3.33e-16
+pooled,dose_share,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,dose_share,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,dose_share,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,dose_before_missing,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,dose_before_missing,R == Python: treat,PASS,0 differ
+pooled,dose_before_missing,R == Python: post,PASS,0 differ
+pooled,dose_before_missing,R == Python: did,PASS,0 differ
+pooled,dose_before_missing,R == Python: cohort,PASS,0 differ
+pooled,dose_before_missing,R == Python: event time (treated),PASS,0 differ
+pooled,dose_before_missing,R == Python: dose,PASS,max |diff| 3.47e-17
+pooled,dose_before_missing,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,dose_before_missing,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,dose_before_missing,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,rings_1_3,R == Python: the same rows,PASS,"Python 7,486 rows, R 7,486"
+pooled,rings_1_3,R == Python: treat,PASS,0 differ
+pooled,rings_1_3,R == Python: post,PASS,0 differ
+pooled,rings_1_3,R == Python: did,PASS,0 differ
+pooled,rings_1_3,R == Python: cohort,PASS,0 differ
+pooled,rings_1_3,R == Python: event time (treated),PASS,0 differ
+pooled,rings_1_3,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,rings_1_3,R == Python: the unit partition,PASS,768 vs 768 groups
+pooled,rings_1_3,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,rings_1_3,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,rings_2_4,R == Python: the same rows,PASS,"Python 5,617 rows, R 5,617"
+pooled,rings_2_4,R == Python: treat,PASS,0 differ
+pooled,rings_2_4,R == Python: post,PASS,0 differ
+pooled,rings_2_4,R == Python: did,PASS,0 differ
+pooled,rings_2_4,R == Python: cohort,PASS,0 differ
+pooled,rings_2_4,R == Python: event time (treated),PASS,0 differ
+pooled,rings_2_4,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,rings_2_4,R == Python: the unit partition,PASS,576 vs 576 groups
+pooled,rings_2_4,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,rings_2_4,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,pre4_post2,R == Python: the same rows,PASS,"Python 6,775 rows, R 6,775"
+pooled,pre4_post2,R == Python: treat,PASS,0 differ
+pooled,pre4_post2,R == Python: post,PASS,0 differ
+pooled,pre4_post2,R == Python: did,PASS,0 differ
+pooled,pre4_post2,R == Python: cohort,PASS,0 differ
+pooled,pre4_post2,R == Python: event time (treated),PASS,0 differ
+pooled,pre4_post2,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,pre4_post2,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,pre4_post2,R == Python: the period partition,PASS,48 vs 48 groups
+pooled,pre4_post2,R == Python: the cluster_id partition,PASS,6 vs 6 groups
+pooled,pre_all_post_all,R == Python: the same rows,PASS,"Python 12,095 rows, R 12,095"
+pooled,pre_all_post_all,R == Python: treat,PASS,0 differ
+pooled,pre_all_post_all,R == Python: post,PASS,0 differ
+pooled,pre_all_post_all,R == Python: did,PASS,0 differ
+pooled,pre_all_post_all,R == Python: cohort,PASS,0 differ
+pooled,pre_all_post_all,R == Python: event time (treated),PASS,0 differ
+pooled,pre_all_post_all,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,pre_all_post_all,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,pre_all_post_all,R == Python: the period partition,PASS,86 vs 86 groups
+pooled,pre_all_post_all,R == Python: the cluster_id partition,PASS,11 vs 11 groups
+pooled,manual_mode,R == Python: the same rows,PASS,"Python 12,095 rows, R 12,095"
+pooled,manual_mode,R == Python: treat,PASS,0 differ
+pooled,manual_mode,R == Python: post,PASS,0 differ
+pooled,manual_mode,R == Python: did,PASS,0 differ
+pooled,manual_mode,R == Python: cohort,PASS,0 differ
+pooled,manual_mode,R == Python: event time (treated),PASS,0 differ
+pooled,manual_mode,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,manual_mode,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,manual_mode,R == Python: the period partition,PASS,86 vs 86 groups
+pooled,manual_mode,R == Python: the cluster_id partition,PASS,11 vs 11 groups
+pooled,manual_rings_1_3_pre4,R == Python: the same rows,PASS,"Python 5,233 rows, R 5,233"
+pooled,manual_rings_1_3_pre4,R == Python: treat,PASS,0 differ
+pooled,manual_rings_1_3_pre4,R == Python: post,PASS,0 differ
+pooled,manual_rings_1_3_pre4,R == Python: did,PASS,0 differ
+pooled,manual_rings_1_3_pre4,R == Python: cohort,PASS,0 differ
+pooled,manual_rings_1_3_pre4,R == Python: event time (treated),PASS,0 differ
+pooled,manual_rings_1_3_pre4,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,manual_rings_1_3_pre4,R == Python: the unit partition,PASS,768 vs 768 groups
+pooled,manual_rings_1_3_pre4,R == Python: the period partition,PASS,56 vs 56 groups
+pooled,manual_rings_1_3_pre4,R == Python: the cluster_id partition,PASS,7 vs 7 groups
+pooled,seasons_seasonal,R == Python: the same rows,PASS,"Python 8,424 rows, R 8,424"
+pooled,seasons_seasonal,R == Python: treat,PASS,0 differ
+pooled,seasons_seasonal,R == Python: post,PASS,0 differ
+pooled,seasons_seasonal,R == Python: did,PASS,0 differ
+pooled,seasons_seasonal,R == Python: cohort,PASS,0 differ
+pooled,seasons_seasonal,R == Python: event time (treated),PASS,0 differ
+pooled,seasons_seasonal,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,seasons_seasonal,R == Python: the unit partition,PASS,864 vs 864 groups
+pooled,seasons_seasonal,R == Python: the period partition,PASS,60 vs 60 groups
+pooled,seasons_seasonal,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,seasons_yearly,R == Python: the same rows,PASS,"Python 2,824 rows, R 2,824"
+pooled,seasons_yearly,R == Python: treat,PASS,0 differ
+pooled,seasons_yearly,R == Python: post,PASS,0 differ
+pooled,seasons_yearly,R == Python: did,PASS,0 differ
+pooled,seasons_yearly,R == Python: cohort,PASS,0 differ
+pooled,seasons_yearly,R == Python: event time (treated),PASS,0 differ
+pooled,seasons_yearly,R == Python: dose,PASS,max |diff| 2.75e-17
+pooled,seasons_yearly,R == Python: the unit partition,PASS,288 vs 288 groups
+pooled,seasons_yearly,R == Python: the period partition,PASS,20 vs 20 groups
+pooled,seasons_yearly,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,seasons_rabi,R == Python: the same rows,PASS,"Python 2,801 rows, R 2,801"
+pooled,seasons_rabi,R == Python: treat,PASS,0 differ
+pooled,seasons_rabi,R == Python: post,PASS,0 differ
+pooled,seasons_rabi,R == Python: did,PASS,0 differ
+pooled,seasons_rabi,R == Python: cohort,PASS,0 differ
+pooled,seasons_rabi,R == Python: event time (treated),PASS,0 differ
+pooled,seasons_rabi,R == Python: dose,PASS,max |diff| 4.51e-17
+pooled,seasons_rabi,R == Python: the unit partition,PASS,288 vs 288 groups
+pooled,seasons_rabi,R == Python: the period partition,PASS,20 vs 20 groups
+pooled,seasons_rabi,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,seasons_kharif_rabi,R == Python: the same rows,PASS,"Python 5,601 rows, R 5,601"
+pooled,seasons_kharif_rabi,R == Python: treat,PASS,0 differ
+pooled,seasons_kharif_rabi,R == Python: post,PASS,0 differ
+pooled,seasons_kharif_rabi,R == Python: did,PASS,0 differ
+pooled,seasons_kharif_rabi,R == Python: cohort,PASS,0 differ
+pooled,seasons_kharif_rabi,R == Python: event time (treated),PASS,0 differ
+pooled,seasons_kharif_rabi,R == Python: dose,PASS,max |diff| 4.51e-17
+pooled,seasons_kharif_rabi,R == Python: the unit partition,PASS,576 vs 576 groups
+pooled,seasons_kharif_rabi,R == Python: the period partition,PASS,40 vs 40 groups
+pooled,seasons_kharif_rabi,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,seasons_auto,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,seasons_auto,R == Python: treat,PASS,0 differ
+pooled,seasons_auto,R == Python: post,PASS,0 differ
+pooled,seasons_auto,R == Python: did,PASS,0 differ
+pooled,seasons_auto,R == Python: cohort,PASS,0 differ
+pooled,seasons_auto,R == Python: event time (treated),PASS,0 differ
+pooled,seasons_auto,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,seasons_auto,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,seasons_auto,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,seasons_auto,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,exclude_transition,R == Python: the same rows,PASS,"Python 10,131 rows, R 10,131"
+pooled,exclude_transition,R == Python: treat,PASS,0 differ
+pooled,exclude_transition,R == Python: post,PASS,0 differ
+pooled,exclude_transition,R == Python: did,PASS,0 differ
+pooled,exclude_transition,R == Python: cohort,PASS,0 differ
+pooled,exclude_transition,R == Python: event time (treated),PASS,0 differ
+pooled,exclude_transition,R == Python: dose,PASS,max |diff| 3.47e-17
+pooled,exclude_transition,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,exclude_transition,R == Python: the period partition,PASS,72 vs 72 groups
+pooled,exclude_transition,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,unit_fe_pixel,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,unit_fe_pixel,R == Python: treat,PASS,0 differ
+pooled,unit_fe_pixel,R == Python: post,PASS,0 differ
+pooled,unit_fe_pixel,R == Python: did,PASS,0 differ
+pooled,unit_fe_pixel,R == Python: cohort,PASS,0 differ
+pooled,unit_fe_pixel,R == Python: event time (treated),PASS,0 differ
+pooled,unit_fe_pixel,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,unit_fe_pixel,R == Python: the unit partition,PASS,288 vs 288 groups
+pooled,unit_fe_pixel,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,unit_fe_pixel,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,overlap_keep,R == Python: the same rows,PASS,"Python 7,658 rows, R 7,658"
+pooled,overlap_keep,R == Python: treat,PASS,0 differ
+pooled,overlap_keep,R == Python: post,PASS,0 differ
+pooled,overlap_keep,R == Python: did,PASS,0 differ
+pooled,overlap_keep,R == Python: cohort,PASS,0 differ
+pooled,overlap_keep,R == Python: event time (treated),PASS,0 differ
+pooled,overlap_keep,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,overlap_keep,R == Python: the unit partition,PASS,768 vs 768 groups
+pooled,overlap_keep,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,overlap_keep,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,fragments_keep,R == Python: the same rows,PASS,"Python 9,767 rows, R 9,767"
+pooled,fragments_keep,R == Python: treat,PASS,0 differ
+pooled,fragments_keep,R == Python: post,PASS,0 differ
+pooled,fragments_keep,R == Python: did,PASS,0 differ
+pooled,fragments_keep,R == Python: cohort,PASS,0 differ
+pooled,fragments_keep,R == Python: event time (treated),PASS,0 differ
+pooled,fragments_keep,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,fragments_keep,R == Python: the unit partition,PASS,1000 vs 1000 groups
+pooled,fragments_keep,R == Python: the period partition,PASS,120 vs 120 groups
+pooled,fragments_keep,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,pooled_fe_period,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,pooled_fe_period,R == Python: treat,PASS,0 differ
+pooled,pooled_fe_period,R == Python: post,PASS,0 differ
+pooled,pooled_fe_period,R == Python: did,PASS,0 differ
+pooled,pooled_fe_period,R == Python: cohort,PASS,0 differ
+pooled,pooled_fe_period,R == Python: event time (treated),PASS,0 differ
+pooled,pooled_fe_period,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,pooled_fe_period,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,pooled_fe_period,R == Python: the period partition,PASS,40 vs 40 groups
+pooled,pooled_fe_period,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,gapfilled_kept,R == Python: the same rows,PASS,"Python 11,288 rows, R 11,288"
+pooled,gapfilled_kept,R == Python: treat,PASS,0 differ
+pooled,gapfilled_kept,R == Python: post,PASS,0 differ
+pooled,gapfilled_kept,R == Python: did,PASS,0 differ
+pooled,gapfilled_kept,R == Python: cohort,PASS,0 differ
+pooled,gapfilled_kept,R == Python: event time (treated),PASS,0 differ
+pooled,gapfilled_kept,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,gapfilled_kept,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,gapfilled_kept,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,gapfilled_kept,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,covariates_none,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled,covariates_none,R == Python: treat,PASS,0 differ
+pooled,covariates_none,R == Python: post,PASS,0 differ
+pooled,covariates_none,R == Python: did,PASS,0 differ
+pooled,covariates_none,R == Python: cohort,PASS,0 differ
+pooled,covariates_none,R == Python: event time (treated),PASS,0 differ
+pooled,covariates_none,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,covariates_none,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled,covariates_none,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,covariates_none,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_qjekywbq/pooled/data/output/did_panel_full.parquet
+pooled_v2056,base,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled_v2056,base,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled_v2056,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled_v2056,base,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled_v2056,base,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled_v2056,base,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled_v2056,base,post = Year >= the row's cohort (treated rows),PASS,
+pooled_v2056,base,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled_v2056,base,dose 0 on the control rings and untreated periods,PASS,
+pooled_v2056,base,the v20.56 district percent (55) is never the dose,PASS,
+pooled_v2056,base,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled_v2056,base,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled_v2056,base,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled_v2056,base,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled_v2056,base,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled_v2056,base,history-filled rows left out,PASS,0
+pooled_v2056,base,unit = pixel x season,PASS,max seasons per unit 1
+pooled_v2056,base,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled_v2056,fragments_keep,fragments kept (FRAGMENT_RULE keep),PASS,"sites in the sample [np.int64(1), np.int64(2), np.int64(7)]"
+pooled_v2056,fragments_keep,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled_v2056,fragments_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled_v2056,fragments_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled_v2056,fragments_keep,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
+pooled_v2056,fragments_keep,post = Year >= the row's cohort (treated rows),PASS,
+pooled_v2056,fragments_keep,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled_v2056,fragments_keep,dose 0 on the control rings and untreated periods,PASS,
+pooled_v2056,fragments_keep,the v20.56 district percent (55) is never the dose,PASS,
+pooled_v2056,fragments_keep,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled_v2056,fragments_keep,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled_v2056,fragments_keep,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled_v2056,fragments_keep,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled_v2056,fragments_keep,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled_v2056,fragments_keep,history-filled rows left out,PASS,0
+pooled_v2056,fragments_keep,unit = pixel x season,PASS,max seasons per unit 1
+pooled_v2056,fragments_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,keep
+pooled_v2056,timing_fixed_2022,fragments left out (FRAGMENT_RULE drop),PASS,"sites in the sample [np.int64(1), np.int64(2)]"
+pooled_v2056,timing_fixed_2022,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled_v2056,timing_fixed_2022,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled_v2056,timing_fixed_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled_v2056,timing_fixed_2022,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled_v2056,timing_fixed_2022,timing: cohort of every treated row = the choice,PASS,"0 of 1,867 differ"
+pooled_v2056,timing_fixed_2022,post = Year >= the row's cohort (treated rows),PASS,
+pooled_v2056,timing_fixed_2022,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled_v2056,timing_fixed_2022,dose 0 on the control rings and untreated periods,PASS,
+pooled_v2056,timing_fixed_2022,the v20.56 district percent (55) is never the dose,PASS,
+pooled_v2056,timing_fixed_2022,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled_v2056,timing_fixed_2022,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled_v2056,timing_fixed_2022,history-filled rows left out,PASS,0
+pooled_v2056,timing_fixed_2022,unit = pixel x season,PASS,max seasons per unit 1
+pooled_v2056,timing_fixed_2022,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled_v2056,base,R == Python: the same rows,PASS,"Python 11,248 rows, R 11,248"
+pooled_v2056,base,R == Python: treat,PASS,0 differ
+pooled_v2056,base,R == Python: post,PASS,0 differ
+pooled_v2056,base,R == Python: did,PASS,0 differ
+pooled_v2056,base,R == Python: cohort,PASS,0 differ
+pooled_v2056,base,R == Python: event time (treated),PASS,0 differ
+pooled_v2056,base,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled_v2056,base,R == Python: the unit partition,PASS,1152 vs 1152 groups
+pooled_v2056,base,R == Python: the period partition,PASS,80 vs 80 groups
+pooled_v2056,base,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled_v2056,fragments_keep,R == Python: the same rows,PASS,"Python 9,767 rows, R 9,767"
+pooled_v2056,fragments_keep,R == Python: treat,PASS,0 differ
+pooled_v2056,fragments_keep,R == Python: post,PASS,0 differ
+pooled_v2056,fragments_keep,R == Python: did,PASS,0 differ
+pooled_v2056,fragments_keep,R == Python: cohort,PASS,0 differ
+pooled_v2056,fragments_keep,R == Python: event time (treated),PASS,0 differ
+pooled_v2056,fragments_keep,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled_v2056,fragments_keep,R == Python: the unit partition,PASS,1000 vs 1000 groups
+pooled_v2056,fragments_keep,R == Python: the period partition,PASS,120 vs 120 groups
+pooled_v2056,fragments_keep,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled_v2056,timing_fixed_2022,R == Python: the same rows,PASS,"Python 9,375 rows, R 9,375"
+pooled_v2056,timing_fixed_2022,R == Python: treat,PASS,0 differ
+pooled_v2056,timing_fixed_2022,R == Python: post,PASS,0 differ
+pooled_v2056,timing_fixed_2022,R == Python: did,PASS,0 differ
+pooled_v2056,timing_fixed_2022,R == Python: cohort,PASS,0 differ
+pooled_v2056,timing_fixed_2022,R == Python: event time (treated),PASS,0 differ
+pooled_v2056,timing_fixed_2022,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled_v2056,timing_fixed_2022,R == Python: the unit partition,PASS,960 vs 960 groups
+pooled_v2056,timing_fixed_2022,R == Python: the period partition,PASS,80 vs 80 groups
+pooled_v2056,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_qjekywbq/pooled_v2056/data/output/did_panel_full.parquet
+pooled_v2056,base,a panel WITHOUT the fragment column (v20.56) gives the same sample,PASS,11248 vs 11248 rows

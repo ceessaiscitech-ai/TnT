@@ -1,0 +1,10 @@
+method,result
+stacked_did,PASS
+etwfe,PASS
+entropy_balance,PASS
+honest_did,PASS
+quantile_did,PASS
+interactive_fe,PASS
+matrix_completion,PASS
+generalized_synth_control,PASS
+ml_cate,PASS

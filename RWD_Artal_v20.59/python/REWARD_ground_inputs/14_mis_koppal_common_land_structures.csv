@@ -1,0 +1,176 @@
+district,sws_code,mws_name,village,kgis_village_code,proposed_survey_no,activity_type,proposed_sub_activity,proposed_gps_raw,proposed_dimension_section,proposed_total_cost_lakh,actual_total_cost_lakh,actual_recorded
+Koppal,4D4A2,Murlapura 2,Baradhura,0805020010,147,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Baradhura,0805020010,147,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Baradhura,0805020010,149/*/2A,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Baradhura,0805020010,149/*/2B,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Baradhura,0805020010,148/*/4,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Baradhura,0805020010,148/*/6,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Baradhura,0805020010,155/*/1ಬ,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Baradhura,0805020010,156/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,91/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,90/*/5,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,95/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,85/*/3,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,86/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,87/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,83/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,84/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,82/*/3,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,88/*/5,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,98/*/4,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,71/*/5,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,72/*/4,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,74/*/1,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Murlapura 2,Muralapur,0704020014,105/*/*,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Murlapura 1,Baradhura,0805020010,165/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Baradhura,0805020010,165/*/2ಅ,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Baradhura,0805020010,171/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Baradhura,0805020010,171/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Baradhura,0805020010,172/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Baradhura,0805020010,172/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Baradhura,0805020010,172/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Baradhura,0805020010,172/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Muralapur,0704020014,56/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Muralapur,0704020014,56/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Muralapur,0704020014,56/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Alipura,0704020016,44/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Alipura,0704020016,51/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 1,Muralapur,0704020014,55/*/*,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Murlapura 1,Muralapur,0704020014,53/*/*,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Murlapura 1,Muralapur,0704020014,64/*/1,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Murlapura 4,Alipura,0704020016,22/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 4,Alipura,0704020016,22/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 4,Alipura,0704020016,23/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 4,Alipura,0704020016,23/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 4,Alipura,0704020016,23/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Murlapura 4,Alipura,0704020016,11/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 4,Alipura,0704020016,16/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Murlapura 4,Alipura,0704020016,9/*/2,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Gatareddihal 4,Kavalura,0704020002,1503/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Kavalura,0704020002,1503/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Kavalura,0704020002,1499/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Kavalura,0704020002,1499/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Kavalura,0704020002,1499/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Kavalura,0704020002,1499/*/*,DLT,Check Dam,,,4.43967,4.43967,0
+Koppal,4D4A2,Gatareddihal 4,Kavalura,0704020002,1499/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Kavalura,0704020002,1583/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Kavalura,0704020002,1583/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Muralapur,0704020014,26/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Muralapur,0704020014,27/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Muralapur,0704020014,27/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Muralapur,0704020014,28/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 4,Muralapur,0704020014,24/*/*,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,105/*/4,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,105/*/4,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1604/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1604/*/4,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1604/*/4,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1507/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1507/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1481/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1481/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1480/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1480/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1480/*/1,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1480/*/4,DLT,RRS,,9.0,1.075,,0
+Koppal,4D4A2,Gatareddihal 1,Kavalura,0704020002,1476/*/*,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Gatareddihal 3,Kavalura,0704020002,1467/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Kavalura,0704020002,1468/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Kavalura,0704020002,1468/*/4,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Kavalura,0704020002,1467/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Kavalura,0704020002,1470/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Kavalura,0704020002,1470/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Kavalura,0704020002,1470/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Muralapur,0704020014,41/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Muralapur,0704020014,41/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Muralapur,0704020014,41/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Muralapur,0704020014,42/*/3,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Muralapur,0704020014,42/*/5,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Muralapur,0704020014,42/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 3,Muralapur,0704020014,41/*/*,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1413/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1413/*/4,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1413/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1413/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1424/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1424/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1426/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1426/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1358/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1350/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1356/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1357/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1352/*/3,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020002,1355/*/3,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,0704020016,1428,DLT,Check Dam,N-15'25951  E- 75'9257,,6.0,4.93185,0
+Koppal,4D4A2,Gatareddihal 2,Allipura,,62,DLT,Check Dam,N-15'25746  E- 75'92577,,4.61432,4.61432,0
+Koppal,4D4A2,Gatareddihal 2,Kavalura,,11,DLT,Check Dam,N-15'24438  E- 75'9399,,4.99878,4.99878,0
+Koppal,4D4A2,Gatareddihal 2,Gattareddyhala,,10,DLT,Check Dam,N-15'24738  E- 75'93219,,4.93185,4.93185,0
+Koppal,4D4A2,Gatareddihal 2,Gattareddyhala,,10,DLT,Check Dam,N-15'24763  E- 75'93324,,4.86407,4.86407,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,183/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,174/*/5,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,174/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,174/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,174/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,174/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,183/*/3,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,183/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,132/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,148/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 2,Gattareddyhala,0704020013,133/*/,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Raghunathanahalli 1,Belagatti,0704020018,13/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 1,Belagatti,0704020018,15/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 1,Belagatti,0704020018,19/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 1,Belagatti,0704020018,14/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 1,Belagatti,0704020018,14/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 1,Hatti,0704020029,36/*/*,DLT,Rubble Check,,6.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli 1,Hatti,0704020029,33/*/6,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Hatti,Raghunathahalli,0704020017,117/*/4,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Hatti,Raghunathahalli,0704020017,117/*/4,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Hatti,Raghunathahalli,0704020017,84/*/7,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Hatti,Raghunathahalli,0704020017,84/*/5,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Hatti,Raghunathahalli,0704020017,83/*/3,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Hatti,Raghunathahalli,0704020017,83/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Hatti,Raghunathahalli,0704020017,72/2,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Kalhalli,Kalhalli,0704020031,51/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Kalhalli,Kalhalli,0704020031,52/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Kalhalli,Kalhalli,0704020031,51/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Kalhalli,Kalhalli,0704020031,51/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Kalhalli,Kalhalli,0704020031,52/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Kalhalli,Kalhalli,0704020031,52/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Kalhalli,Kalhalli,0704020031,89/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Kalhalli,Kalhalli,0704020031,90/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Kalhalli,Kalhalli,0704020031,2/*/*,DLT,Check Dam,,,6.0,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,31/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,29/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,32/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,51/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,30/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,50/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,41/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,24/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,51/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,34/*/4,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,36/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,116/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 3,Gattareddyhala,0704020013,109/*/5,DLT,RSS,,8.0,1.075,,0
+Koppal,4D4A2,Raghunathanahalli West 1,Gattareddyhala,0704020013,660/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 1,Gattareddyhala,0704020013,644/*/2,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 1,Gattareddyhala,0704020013,650/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 1,Raghunathanahalli-,0704020017,652/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 1,Raghunathanahalli-,0704020017,643/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 1,Raghunathanahalli-,0704020017,659/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 1,Raghunathanahalli-,0704020017,650/*/*,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 1,Raghunathanahalli-,0704020017,643/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 1,Raghunathanahalli-,0704020017,644/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Raghunathanahall,0704020017,38/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Raghunathanahall,0704020017,46/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Raghunathanahall,0704020017,33/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Raghunathanahall,0704020017,34/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Raghunathanahall,0704020017,46/*/1,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Raghunathanahall,0704020017,38/*/3,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Raghunathanahall,0704020017,40/*/11,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Raghunathanahall,0704020017,42/*/*,DLT,Boulder Check,,5.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Raghunathanahall,0704020017,46/*/1,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Alavandi,0704020001,648/*/2,DLT,Rubble Check,,8.0,0.27311,,0
+Koppal,4D4A2,Raghunathanahalli West 2,Alavandi,0704020001,690/*/*,DLT,Rubble Check,,8.0,0.27311,,0

@@ -1,0 +1,195 @@
+{
+  "duplicates": {
+    "ssm": {
+      "same_site_date_rows": 362,
+      "identical_rows_dropped": 34
+    },
+    "lai": {
+      "same_site_date_rows": 113,
+      "identical_rows_dropped": 36
+    },
+    "gw": {
+      "same_site_date_rows": 0,
+      "identical_rows_dropped": 0
+    },
+    "tdr": {
+      "same_site_date_rows": 942,
+      "identical_rows_dropped": 19
+    }
+  },
+  "benchmark": {
+    "ssm_rows": 3845,
+    "lai_rows": 1107,
+    "gw_rows": 3209,
+    "tdr_rows": 5927,
+    "tdr_rootzone_visits": 927,
+    "sites_in_master": 768,
+    "sites_by_role": {
+      "gw|unlabelled": 304,
+      "gw|saturation": 129,
+      "gw|control": 34,
+      "lai|unlabelled": 44,
+      "lai|saturation": 27,
+      "lai|control": 12,
+      "ssm|unlabelled": 105,
+      "ssm|saturation": 45,
+      "ssm|control": 12,
+      "tdr|unlabelled": 48,
+      "tdr|saturation": 8
+    },
+    "date_flags_ssm": {
+      "": 1747,
+      "ddmm_kept_by_sequence": 1195,
+      "ddmm_swapped_by_sequence": 894,
+      "year_corrected_by_sequence": 9
+    },
+    "date_flags_lai": {
+      "": 741,
+      "ddmm_swapped_by_sequence": 262,
+      "ddmm_kept_by_sequence": 73,
+      "block_header_date": 31
+    },
+    "date_flags_gw": {
+      "month_marker": 1475,
+      "ddmm_kept_by_sequence": 926,
+      "year_corrected_by_sequence": 402,
+      "": 392,
+      "ddmm_swapped_by_sequence": 14
+    },
+    "date_flags_tdr": {
+      "": 3440,
+      "ddmm_swapped_by_sequence": 1148,
+      "ddmm_kept_by_sequence": 941,
+      "unparsed": 204,
+      "year_corrected_by_sequence": 194
+    },
+    "ssm_coord_outliers": 129,
+    "ssm_no_coords": 334,
+    "lai_no_coords": 51,
+    "gw_value_flags": {
+      "": 3163,
+      "-": 10,
+      "No borewell": 9,
+      "censored_deeper_than:40+": 9,
+      "Dry": 7,
+      "No water": 6,
+      "negative_depth": 3,
+      "Water": 1,
+      "censored_deeper_than:40 above": 1
+    },
+    "tdr_moisture_flags": {
+      "": 5922,
+      "implausible_gt_100pct": 5
+    },
+    "date_range": {
+      "ssm": [
+        "2023-04-07",
+        "2024-06-23"
+      ],
+      "lai": [
+        "2023-04-10",
+        "2024-05-04"
+      ],
+      "gw": [
+        "2023-05-07",
+        "2024-06-24"
+      ],
+      "tdr": [
+        "2023-04-10",
+        "2024-06-05"
+      ]
+    },
+    "year_season_counts": {
+      "ssm": {
+        "2023-S1": 430,
+        "2023-S2": 1914,
+        "2023-S3": 24,
+        "2024-S1": 274,
+        "2024-S3": 1203
+      },
+      "lai": {
+        "2023-S1": 204,
+        "2023-S2": 773,
+        "2023-S3": 39,
+        "2024-S3": 91
+      },
+      "gw": {
+        "2023-S1": 768,
+        "2023-S2": 1559,
+        "2023-S3": 10,
+        "2024-S1": 129,
+        "2024-S3": 743
+      }
+    }
+  },
+  "field_survey": {
+    "plots": 3642,
+    "farmers": 3397,
+    "districts": {
+      "Tumkur": 1154,
+      "Raichur": 704,
+      "Chamarajanagar": 626,
+      "Bidar": 383,
+      "Gadag": 327,
+      "Koppal": 249,
+      "Chitradurga": 199
+    },
+    "qc_flags": {
+      "": 3213,
+      "centroid_gt_1km_from_gps": 310,
+      "crop_unmapped": 74,
+      "no_sowing_date": 60,
+      "gps_outside_karnataka_or_missing": 24,
+      "no_polygon": 7,
+      "polygon_degenerate_lt_50m2": 5
+    },
+    "year_season": {
+      "2024-S1": 1,
+      "2025-S1": 2645,
+      "2025-S2": 804,
+      "2025-S3": 6,
+      "2026-S3": 126
+    },
+    "crops_top": {
+      "finger_millet": 1016,
+      "pigeon_pea": 938,
+      "maize": 416,
+      "horse_gram": 403,
+      "sorghum": 207,
+      "green_gram": 142,
+      "sunflower": 87,
+      "onion": 73,
+      "cotton": 59,
+      "chickpea": 42,
+      "chilli": 40,
+      "safflower": 33,
+      "pearl_millet": 33,
+      "paddy": 26,
+      "soybean": 11
+    },
+    "usable_for_landuse_truth": 3251,
+    "next_season_cropped_share": 0.7357543548863301
+  },
+  "mis_koppal": {
+    "parcels": 4035,
+    "mws": 14,
+    "villages": 14,
+    "actual_rmt_source": {
+      "value": 2890,
+      "formula_82pct_of_proposed": 556,
+      "formula_80pct_of_proposed": 382,
+      "formula_83pct_of_proposed": 124,
+      "formula_81pct_of_proposed": 83
+    },
+    "rmt_completion_pct_all_rows_total": 70.08857569467952,
+    "rmt_completion_pct_measured_rows_total": 66.44452942704459,
+    "common_land_structures": 175,
+    "common_land_with_actuals": 0
+  },
+  "hissa": {
+    "districts": 20,
+    "total_parcels": 125620,
+    "total_mws": 191,
+    "koppal_pvt_matches_mis": true
+  }
+}
