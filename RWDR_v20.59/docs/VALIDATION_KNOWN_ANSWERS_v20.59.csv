@@ -1,0 +1,91 @@
+panel,model,verdict,detail,file,status,secs
+single,M01,PASS,0.0497 (truth 0.05 +- 0.01),canonical_twfe_NDVI.csv,ok,1.0
+single,M02,PASS,0.0503 (truth 0.05 +- 0.01),event_study_headline_NDVI.csv,ok,0.5
+single,M03,PASS,0.0497 (truth 0.05 +- 0.01),doubly_robust_NDVI.csv,ok,0.3
+single,M04,PASS,0.0558 (truth 0.05 +- 0.02),changes_in_changes_NDVI.csv,ok,1.3
+single,M05,PASS,0.0501 (truth 0.05 +- 0.01),cs_overall_NDVI.csv,ok,0.7
+single,M06,PASS,0.0497 (truth 0.05 +- 0.01),dose_response_NDVI.csv,ok,0.4
+single,M07,NO ANSWER,needs the BM ground-truth file,,failed,0.0
+single,M08,NO ANSWER,needs an instrument,,ok,0.1
+single,M09,PASS,0.0503 (truth 0.05 +- 0.01),sun_abraham_headline_NDVI.csv,ok,0.5
+single,M10,PASS,-0.0012 (truth 0: no heterogeneity simulated),ddd_NDVI.csv,ok,0.4
+single,M11,PASS,0.0500 (truth 0.05 +- 0.01),synthetic_did_NDVI.csv,ok,5.3
+single,M12,PASS,0.0514 (truth 0.05 +- 0.01),chained_did_NDVI.csv,ok,0.4
+single,M13,PASS,0.0504 (truth 0.05 +- 0.02),switcher_overall_NDVI.csv,ok,0.4
+single,M14,PASS,0.0506 (truth 0.05 +- 0.01),psm_did_NDVI.csv,ok,0.4
+single,M15,PASS,"[-0.0006, 0.0003, 0.0001, -0.0004, -0.0007] (truth 0)",placebo_timing_NDVI.csv,ok,0.3
+single,M16,PASS,p 0.6167 (no pre-trend simulated),pretrends_ftest_NDVI.csv,ok,0.4
+single,M17,PASS,"0.9394 in [-1, 1]",morans_i_NDVI.csv,ok,0.3
+single,M18,PASS,share finite 1.000,lisa_NDVI.csv,ok,0.3
+single,M19,PASS,"0.0896 in [0, 1]",variance_decomposition_NDVI.csv,ok,1.0
+single,M20,DATA GAP,expected on one sub-watershed: [WARNING] run_model blocked by a DATA GAP (not a bug): heterogeneity across sub-watersheds needs >= 2 sub-watersheds with a DiD and its desi,,ok,0.3
+single,M21,PASS,0.0487 (truth 0.05 +- 0.01),aggregation_bias_NDVI.csv,ok,0.3
+single,M22,PASS,0.0500 (truth 0.05 +- 0.01),goodman_bacon_summary_NDVI.csv,ok,0.3
+single,M23,PASS,0.0497 (truth 0.05 +- 0.01),wild_bootstrap_NDVI.csv,ok,0.3
+single,M24,PASS,"[-0.0003, -0.0009, -0.0002, -0.0006] (truth 0)",spillover_gradient_NDVI.csv,ok,0.3
+single,M25,PASS,0.0497 (truth 0.05 +- 0.01),permutation_NDVI.csv,ok,2.4
+single,M26,PASS,0.0497 (truth 0.05 +- 0.01),treatment_x_Rain_NDVI.csv,ok,0.3
+single,M27,PASS,0.0497 (truth 0.05 +- 0.01),bjs_NDVI.csv,ok,0.3
+single,M28,PASS,0.0497 (truth 0.05 +- 0.01),gardner_NDVI.csv,ok,0.4
+single,M29,PASS,0.0497 (truth 0.05 +- 0.01),exposure_headline_NDVI.csv,ok,0.5
+single,M30,PASS,0.0501 (truth 0.05 +- 0.01),cohort_group_att_NDVI.csv,ok,0.4
+single,M31,PASS,0.0496 (truth 0.05 +- 0.01),stacked_did_NDVI.csv,ok,0.6
+single,M32,PASS,0.0499 (truth 0.05 +- 0.01),etwfe_NDVI.csv,ok,0.4
+single,M33,PASS,0.0497 (truth 0.05 +- 0.01),entropy_balanced_NDVI.csv,ok,0.4
+single,M34,PASS,0.0503 (truth 0.05 +- 0.01),honest_did_NDVI.csv,ok,0.6
+single,M35,PASS,"[0.0492, 0.05, 0.0498, 0.0493, 0.0498] (truth 0.05 +- 0.02)",quantile_did_NDVI.csv,ok,8.1
+single,M36,PASS,0.0500 (truth 0.05 +- 0.02),fect_ife_NDVI.csv,ok,2.6
+single,M37,PASS,0.0500 (truth 0.05 +- 0.02),fect_mc_NDVI.csv,ok,0.6
+single,M38,PASS,0.0500 (truth 0.05 +- 0.02),gsynth_NDVI.csv,ok,0.9
+single,M39,PASS,0.0494 (truth 0.05 +- 0.02),causal_forest_cate_NDVI.csv,ok,5.9
+single,M40,PASS,0.0497 (truth 0.05 +- 0.02),dml_NDVI.csv,ok,2.9
+single,M41,PASS,"[0.0495, 0.0495, 0.0494] (truth 0.05 +- 0.02)",meta_learners_NDVI.csv,ok,4.4
+single,M42,PASS,0.0495 (truth 0.05 +- 0.02),dr_learner_NDVI.csv,ok,5.6
+single,M43,PASS,0.0494 (truth 0.05 +- 0.02),causal_forest_att_NDVI.csv,ok,5.6
+single,M44,PASS,0.0493 (truth 0.05 +- 0.02),bart_style_NDVI.csv,ok,1.0
+single,M45,PASS,0.0500 (truth 0.05 +- 0.02),lasso_sc_NDVI.csv,ok,3.4
+staggered,M01,PASS,0.0500 (truth 0.05 +- 0.01),canonical_twfe_NDVI.csv,ok,1.6
+staggered,M02,PASS,0.0503 (truth 0.05 +- 0.01),event_study_headline_NDVI.csv,ok,1.1
+staggered,M03,PASS,0.0500 (truth 0.05 +- 0.01),doubly_robust_NDVI.csv,ok,0.5
+staggered,M04,PASS,0.0515 (truth 0.05 +- 0.02),changes_in_changes_NDVI.csv,ok,8.4
+staggered,M05,PASS,0.0501 (truth 0.05 +- 0.01),cs_overall_NDVI.csv,ok,0.9
+staggered,M06,PASS,0.0500 (truth 0.05 +- 0.01),dose_response_NDVI.csv,ok,0.5
+staggered,M07,NO ANSWER,needs the BM ground-truth file,,failed,0.0
+staggered,M08,NO ANSWER,needs an instrument,,ok,0.2
+staggered,M09,PASS,0.0503 (truth 0.05 +- 0.01),sun_abraham_headline_NDVI.csv,ok,1.2
+staggered,M10,PASS,-0.0004 (truth 0: no heterogeneity simulated),ddd_NDVI.csv,ok,0.6
+staggered,M11,PASS,0.0502 (truth 0.05 +- 0.01),synthetic_did_NDVI.csv,ok,81.9
+staggered,M12,PASS,0.0494 (truth 0.05 +- 0.01),chained_did_NDVI.csv,ok,0.7
+staggered,M13,PASS,0.0501 (truth 0.05 +- 0.02),switcher_overall_NDVI.csv,ok,0.8
+staggered,M14,PASS,0.0500 (truth 0.05 +- 0.01),psm_did_NDVI.csv,ok,0.6
+staggered,M15,PASS,"[-0.0008, -0.0005, -0.0005, -0.0002, -0.0001] (truth 0)",placebo_timing_NDVI.csv,ok,1.1
+staggered,M16,PASS,p 0.03134 (no pre-trend simulated),pretrends_ftest_NDVI.csv,ok,0.7
+staggered,M17,PASS,"0.9440 in [-1, 1]",morans_i_NDVI.csv,ok,0.5
+staggered,M18,PASS,share finite 1.000,lisa_NDVI.csv,ok,0.7
+staggered,M19,PASS,"0.0000 in [0, 1]",variance_decomposition_NDVI.csv,ok,1.0
+staggered,M20,PASS,1.404 >= 0,treatment_heterogeneity_NDVI.csv,ok,1.1
+staggered,M21,PASS,0.0500 (truth 0.05 +- 0.01),aggregation_bias_NDVI.csv,ok,0.4
+staggered,M22,PASS,0.0499 (truth 0.05 +- 0.01),goodman_bacon_summary_NDVI.csv,ok,0.5
+staggered,M23,PASS,0.0500 (truth 0.05 +- 0.01),wild_bootstrap_NDVI.csv,ok,0.5
+staggered,M24,PASS,"[-0.0006, -0.0005, -0.0008, -0.0003] (truth 0)",spillover_gradient_NDVI.csv,ok,0.5
+staggered,M25,PASS,0.0500 (truth 0.05 +- 0.01),permutation_NDVI.csv,ok,23.5
+staggered,M26,PASS,0.0500 (truth 0.05 +- 0.01),treatment_x_Rain_NDVI.csv,ok,0.5
+staggered,M27,PASS,0.0500 (truth 0.05 +- 0.01),bjs_NDVI.csv,ok,0.6
+staggered,M28,PASS,0.0501 (truth 0.05 +- 0.01),gardner_NDVI.csv,ok,0.7
+staggered,M29,PASS,0.0501 (truth 0.05 +- 0.01),exposure_headline_NDVI.csv,ok,0.8
+staggered,M30,PASS,0.0501 (truth 0.05 +- 0.01),cohort_group_att_NDVI.csv,ok,0.5
+staggered,M31,PASS,0.0502 (truth 0.05 +- 0.01),stacked_did_NDVI.csv,ok,1.2
+staggered,M32,PASS,0.0499 (truth 0.05 +- 0.01),etwfe_NDVI.csv,ok,0.6
+staggered,M33,PASS,0.0500 (truth 0.05 +- 0.01),entropy_balanced_NDVI.csv,ok,0.7
+staggered,M34,PASS,0.0503 (truth 0.05 +- 0.01),honest_did_NDVI.csv,ok,1.1
+staggered,M35,PASS,"[0.0504, 0.0501, 0.05, 0.0499, 0.0497] (truth 0.05 +- 0.02)",quantile_did_NDVI.csv,ok,123.9
+staggered,M36,PASS,0.0501 (truth 0.05 +- 0.02),fect_ife_NDVI.csv,ok,5.2
+staggered,M37,PASS,0.0501 (truth 0.05 +- 0.02),fect_mc_NDVI.csv,ok,2.6
+staggered,M38,PASS,0.0501 (truth 0.05 +- 0.02),gsynth_NDVI.csv,ok,2.4
+staggered,M39,PASS,0.0500 (truth 0.05 +- 0.02),causal_forest_cate_NDVI.csv,ok,55.8
+staggered,M40,PASS,0.0501 (truth 0.05 +- 0.02),dml_NDVI.csv,ok,16.7
+staggered,M41,PASS,"[0.05, 0.05, 0.05] (truth 0.05 +- 0.02)",meta_learners_NDVI.csv,ok,34.8
+staggered,M42,PASS,0.0500 (truth 0.05 +- 0.02),dr_learner_NDVI.csv,ok,31.3
+staggered,M43,PASS,0.0500 (truth 0.05 +- 0.02),causal_forest_att_NDVI.csv,ok,39.1
+staggered,M44,PASS,0.0499 (truth 0.05 +- 0.02),bart_style_NDVI.csv,ok,4.6
+staggered,M45,PASS,0.0504 (truth 0.05 +- 0.02),lasso_sc_NDVI.csv,ok,75.0

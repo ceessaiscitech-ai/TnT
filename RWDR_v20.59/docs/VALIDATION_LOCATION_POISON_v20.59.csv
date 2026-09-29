@@ -1,0 +1,46 @@
+model,clean,poison,identical,cells_differing,kind,primary,estimate,engine_estimate,se,p,se_and_p,near_truth,se_how
+M01,ok,ok,True,0,effect,engine,0.0503885223213205,0.0503885223213205,0.0004070977146873,6.528830492622421e-10,True,True,"engine two-way FE (pixel_season and year x season effects), cluster-robust (CR1), clustere"
+M02,ok,ok,True,0,effect,engine,0.0498936242215007,0.0498936242215007,0.00033502948615,6.675967182534916e-07,True,True,design-based: years as the draws (the year-to-year spread of the 4 pre-period gap(s) x sqr
+M03,ok,ok,True,0,effect,engine,0.0505598127286948,0.0505598127286948,0.0008582893622961,2.6675049779134675e-08,True,True,"DRDID's improved doubly robust DiD (Sant'Anna & Zhao 2020, ported): the influence-function"
+M04,ok,ok,True,0,effect,engine,0.0506183631637624,0.0506183631637624,0.0008747820844731,2.916581032686e-08,True,True,"the panel bootstrap of qte::CiC (200 draws of the 461 pixel x season series, resampled wit"
+M05,ok,ok,True,0,effect,engine,0.0488143530252976,0.0488143530252976,0.0015248788614594,5.587440119968423e-07,True,True,did's analytical influence-function SE of the simple aggregation (ported; DRDID's repeated
+M06,ok,ok,True,0,effect,engine,2.820919875616123,2.820919875616123,0.1957245164091412,2.9002323078284497e-05,True,,"engine two-way FE (pixel_season and year x season effects), cluster-robust (CR1), clustere"
+M07,ok,ok,True,0,,,,,,,True,,
+M08,ok,ok,True,0,,,,,,,True,,
+M09,ok,ok,True,0,effect,engine,0.049954497824216,0.049954497824216,0.00033502948615,6.651593919534876e-07,True,True,design-based: years as the draws (the year-to-year spread of the 4 pre-period gap(s) x sqr
+M10,ok,ok,True,0,effect,engine,-0.0009426964529473,-0.0009426964529473,0.0007752321441926,0.2782502726521387,True,True,"engine two-way FE (pixel_season and year x season effects), cluster-robust (CR1), clustere"
+M11,ok,ok,True,0,effect,engine,0.0489954681000073,0.0489954681000073,0.0011465099579051,1.3239417553402848e-07,True,True,"3 cohort x season fit(s), each a core series against the same season's ring series; each f"
+M12,ok,ok,True,0,effect,engine,0.050516135319129,0.050516135319129,0.000426998944489,3.061478037067406e-08,True,True,nan
+M13,ok,ok,True,0,effect,engine,0.0505309068343442,0.0505309068343442,0.0012138081060503,1.5086461134695898e-07,True,True,"DIDmultiplegtDYN's analytic SE (its influence functions, cohort-demeaned, with its small-s"
+M14,ok,ok,True,0,effect,engine,0.0508071929973048,0.0508071929973048,0.0005999121564144,4.349783504413303e-09,True,True,"the two-way FE DiD on the matched pixels, cluster-robust (CR1), 6 clusters"
+M15,ok,ok,True,0,effect,engine,0.0002080858115186,0.0002080858115186,0.0002907908892093,0.5137971069020149,True,True,design-based: the mean of the 4 placebo effects as a combination of the 5 yearly treated-m
+M16,ok,ok,True,0,test,engine,0.0004569807693746,0.0004569807693746,,0.9842871720855704,True,,design-based linear pre-trend of the core-minus-control gap (years as draws)
+M17,ok,ok,True,0,statistic,pre-built package,0.5790454541297008,0.5790454541297009,0.0369631169746464,1.676862166340979e-56,True,,esda: the variance of Moran's I under randomisation (= spdep); p two-sided
+M18,ok,ok,True,0,statistic,engine,0.5790454541297009,0.5790454541297009,0.0369631169746464,1.676862166340907e-56,True,,the variance of Moran's I under randomisation (spdep's formula); p two-sided
+M19,ok,ok,True,0,diagnostic,engine,0.0607765344412344,0.0607765344412344,,,True,,nan
+M20,ok,ok,True,0,,,,,,,True,,
+M21,ok,ok,True,0,effect,engine,0.0514164282698287,0.0514164282698287,0.0018639803496441,1.171938814661962e-06,True,True,"engine two-way FE (pixel_season and year x season effects), cluster-robust (CR1), clustere"
+M22,ok,ok,True,0,effect,pre-built package,0.0495176176297463,0.0495176176297463,0.0007036912065292,1.0976819546472746e-08,True,True,"the two-way FE the decomposition adds up to (12 series x 6 years), cluster-robust (CR1) by"
+M23,ok,ok,True,0,effect,engine,0.0503885223213206,0.0503885223213206,0.0003700048032925,0.001000100010001,True,True,cluster-robust (CR1); p: the wild cluster bootstrap (Webb weights)
+M24,ok,ok,True,0,effect,engine,0.0001521545934245,0.0001521545934245,0.0007239907651135,0.8418376541075869,True,True,"engine two-way FE (pixel_season and year x season effects), cluster-robust (CR1), clustere"
+M25,ok,ok,True,0,effect,engine,0.0504291478465109,0.0504291478465109,0.002549643219674,0.001,True,True,the standard deviation of the permuted estimates; p: randomisation inference
+M26,ok,ok,True,0,effect,engine,0.0504163726192419,0.0504163726192419,0.000375662793533,4.3569090225093117e-10,True,,"engine two-way FE (pixel_season and year x season effects), cluster-robust (CR1), clustere"
+M27,ok,ok,True,0,effect,pre-built package,0.0504201337424639,0.0504201337473979,0.0007964751092077,1.8620206720809292e-08,True,True,"diff-diff ImputationDiD (Borusyak, Jaravel & Spiess 2024): its conservative analytic SE, e"
+M28,ok,ok,True,0,effect,engine,0.0498898919284547,0.0498898919284547,0.00033502948615,6.677465431916985e-07,True,True,design-based: years as the draws (the year-to-year spread of the 4 pre-period gap(s) x sqr
+M29,ok,ok,True,0,effect,engine,0.0500392691903783,0.0500392691903783,0.0004421990035368,1.0220556813417278e-09,True,True,the mean of the 2 exposure-year effects of the two-way FE fit (fixest's i(exposure)); its 
+M30,ok,ok,True,0,effect,engine,0.0494643414944006,0.0494643414944006,0.0013723001119937,3.0939506551555173e-07,True,True,did::aggte(type = 'group') analytical influence-function SE (ported; DRDID's repeated-cros
+M31,ok,ok,True,0,effect,engine,0.0506027526369644,0.0506027526369644,0.0004406977278685,9.501328874571347e-10,True,True,"feols on the stacked series-years (unit x stack and Year x stack effects), CR1 clustered b"
+M32,ok,ok,True,0,effect,engine,0.0493461608734488,0.0493461608734488,0.000262162937026,8.030861806554465e-11,True,True,"etwfe's delta method on the covariance clustered by Year (6 clusters; fixest's CR1), the c"
+M33,ok,ok,True,0,effect,engine,0.0501798850375917,0.0501798850375917,0.0004177592615172,7.585138789359333e-10,True,True,"the weighted two-way FE DiD, cluster-robust (CR1), 6 clusters (Year (1 sub-watershed))"
+M34,ok,ok,True,0,effect,engine,0.0498936242215007,0.0498936242215007,0.00033502948615,6.675967182534916e-07,True,True,design-based: years as the draws (the year-to-year spread of the 4 pre-period gap(s) x sqr
+M35,ok,ok,True,0,effect,engine,0.0503176329642722,0.0503176329642722,0.0003058386783229,4.951418151877825e-07,True,True,"design-based (years as the draws: 4 pre, 1 post; one sub-watershed): the years are the clu"
+M36,ok,ok,True,0,effect,engine,0.0493934383295732,0.0493934383295732,0.0002580735825346,7.388364311926172e-11,True,True,"3 cohort x season fit(s), each a core series against the same season's ring series; each f"
+M37,ok,ok,True,0,effect,engine,0.0493934383295732,0.0493934383295732,0.0002580735825346,7.388364311926172e-11,True,True,"3 cohort x season fit(s), each a core series against the same season's ring series; each f"
+M38,ok,ok,True,0,effect,engine,0.0493934383295731,0.0493934383295731,0.0007717926752333,1.763296790882126e-08,True,True,"3 cohort x season fit(s), each a core series against the same season's ring series; each f"
+M39,ok,ok,True,0,effect,engine,0.0508461621204062,0.0508461621204062,0.0010421219392311,0.0,True,True,"grf's doubly robust ATT (average_treatment_effect, target.sample = 'treated'; ported) on t"
+M40,ok,ok,True,0,effect,engine,0.0507904568738986,0.0507904568738986,0.0008688920625017,0.0,True,True,"double ML (partially linear model, 3-fold cross-fitting, scikit-learn forests of 300 trees"
+M41,ok,ok,True,0,effect,engine,0.0502578747610475,0.0502578747610475,0.0003058386783229,4.9690997672275e-07,True,True,"design-based (years as the draws: 4 pre, 1 post; one sub-watershed): S / T / X learners gi"
+M42,ok,ok,True,0,effect,engine,0.0505499994643424,0.0505499994643424,0.0009368103022749,0.0,True,True,"the SD of the cross-fitted doubly robust (AIPW) scores / sqrt(n), each of the 461 pixel x "
+M43,ok,ok,True,0,effect,engine,0.0508461621204062,0.0508461621204062,0.0010421219392311,0.0,True,True,"grf's doubly robust ATT (average_treatment_effect, target.sample = 'treated'; ported) on t"
+M44,ok,ok,True,0,effect,engine,0.0499452580924795,0.0499452580924795,0.0003058386783229,5.062984101615393e-07,True,True,"design-based (years as the draws: 4 pre, 1 post; one sub-watershed): the BART-style stand-"
+M45,ok,ok,True,0,effect,engine,0.0496122026357572,0.0496122026357572,0.0003058386783229,5.165626869916776e-07,True,True,"design-based (years as the draws: 4 pre, 1 post; one sub-watershed): the elastic-net synth"
