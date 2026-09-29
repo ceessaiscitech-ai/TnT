@@ -333,6 +333,9 @@ if (!inherits(tE, "error")) {
   md5_0 <- tools::md5sum(panel_file())
   vars <- list(base = list(), frag_keep = list(FRAGMENT_RULE = "keep"), registry = list(TREATMENT_TIMING = "registry"), fixed_2023 = list(TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2023),
                share = list(FUND_START_RULE = "share"), rings_1_3 = list(CONTROL_RINGS = 1:3), pre4_post2 = list(PRE_YEARS = 4, POST_YEARS = 2),
+               pre_cal = list(TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022, PRE_YEARS = 2018, POST_YEARS = 2024),                    # v20.59: calendar years
+               pre_at_start = list(TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022, PRE_YEARS = 2022),                                 # v20.59: no pre year -> said, every year before
+               screen_keep = list(OUTCOME_SCREEN = "keep"),                                                                              # v20.59: the screen's cells kept
                rabi = list(SEASONS = "Rabi"), manual = list(DESIGN_MODE = "manual"), transition = list(EXCLUDE_TRANSITION_YEAR = TRUE),
                gapfilled_kept = list(EXCLUDE_GAPFILLED = FALSE), dose_amount = list(DOSE_VARIABLE = "dose_amount_sws"))
   od <- file.path(TMP, "E_out"); design_variant_samples(vars, od)
@@ -349,6 +352,15 @@ if (!inherits(tE, "error")) {
   sh <- rd("share"); chkE("share", "share rule: 10 % of the target reached Nov 2024 -> first treated Zaid 2025 (every series 2025)", !is.null(sh) && all(sh[treat == 1L, cohort] == 2025))
   r13 <- rd("rings_1_3"); chkE("rings_1_3", "CONTROL_RINGS <- 1:3 used although DESIGN_MODE = 'recommended'", !is.null(r13) && setequal(unique(r13[buff_km > 0, buff_km]), 1:3), paste(sort(unique(r13$buff_km)), collapse = ","))
   p4 <- rd("pre4_post2"); chkE("pre4_post2", "PRE_YEARS 4 / POST_YEARS 2 from the first treated year (2024): 2020-2025", !is.null(p4) && min(p4$Year) == 2020 && max(p4$Year) == 2025, paste(range(p4$Year), collapse = "-"))
+  pc <- rd("pre_cal"); chkE("pre_cal", "PRE_YEARS 2018 / POST_YEARS 2024 as CALENDAR years (v20.59): 2018-2024", !is.null(pc) && min(pc$Year) == 2018 && max(pc$Year) == 2024, if (is.null(pc)) "no sample" else paste(range(pc$Year), collapse = "-"))
+  ps <- rd("pre_at_start"); chkE("pre_at_start", "PRE_YEARS 2022 = the start (v20.58: 'USED: from 0'): said, every year before the start used", !is.null(ps) && min(ps$Year) == 2016 && any(ps$post == 0L) && any(ps$post == 1L), if (is.null(ps)) "no sample" else paste(range(ps$Year), collapse = "-"))
+  sk <- rd("screen_keep"); skj <- tryCatch(fromJSON(file.path(od, "screen_keep.json")), error = function(e) NULL)
+  chkE("screen_keep", "OUTCOME_SCREEN = 'keep': the same rows as base here (no fill year in E), the results folder tagged _screenKept", !is.null(sk) && nrow(sk) == nrow(b) && !is.null(skj$tag) && grepl("_screenKept", skj$tag, fixed = TRUE), if (is.null(skj$tag)) "no tag" else skj$tag)
+  pp <- tryCatch(panel_read(c("Year", "Treat", "post", "pre", "did", "treat", "control", "buff_km")), error = function(e) NULL)
+  chkE("panel", "the panel carries treat / control / pre / post / did (v20.59): post = the exports' Treat flag, pre = 1 - post, did = treat x post",
+       !is.null(pp) && all(c("treat", "control", "pre", "post", "did") %in% names(pp)) && all(pp$post == as.integer(pp$Treat)) && all(pp$pre == 1L - pp$post) && all(pp$did == pp$treat * pp$post) && all(pp$treat == as.integer(pp$buff_km == 0L)) && all(pp$control == as.integer(pp$buff_km %in% 1:5)),
+       if (is.null(pp)) "panel not readable" else paste(intersect(c("treat", "control", "pre", "post", "did"), names(pp)), collapse = ","))
+  chkE("panel", "R_P00 wrote panel_design_check_R.csv and panel_variation_by_block.csv (v20.59)", file.exists(file.path(OUTPUT_DIR, "panel_design_check_R.csv")) && file.exists(file.path(OUTPUT_DIR, "panel_variation_by_block.csv")))
   ra <- rd("rabi"); chkE("rabi", "SEASONS = 'Rabi': Rabi rows only", !is.null(ra) && identical(sort(unique(ra$Season)), 2L))
   mn <- rd("manual"); chkE("manual", "DESIGN_MODE = 'manual': 'data' = rings 1-5, every year", !is.null(mn) && setequal(unique(mn[buff_km > 0, buff_km]), 1:5) && min(mn$Year) == 2016)
   tr <- rd("transition"); chkE("transition", "EXCLUDE_TRANSITION_YEAR: no first treated year of a treated series", !is.null(tr) && !any(tr[treat == 1L, Year == cohort]))
@@ -357,6 +369,11 @@ if (!inherits(tE, "error")) {
   chkE("all", "the panel file is unchanged by every option (md5)", identical(unname(tools::md5sum(panel_file())), unname(md5_0)))
   COVARIATES <- "all"; xA <- load_panel_R("NDVI", model_design(verbose = FALSE, force = TRUE))       # v20.57: "all" reached no model before
   chkE("covariates_all", "COVARIATES <- 'all' = the four weather covariates in every model (covs_in)", setequal(covs_in(xA), c("Rain", "Tmax", "Tmean", "Tmin")), paste(covs_in(xA), collapse = ","))
+  pv <- attr(xA, "post_vs_panel")                                                       # v20.59: DESIGN vs PANEL -- the fund timing (Rabi 2024) against the exports' 2022 flag
+  chkE("design_vs_panel", "DESIGN vs PANEL: the fund timing differs from the panel's post (the exports' 2022 flag) on some rows and says so", !is.null(pv) && pv[2] > 0 && pv[2] < pv[1], if (is.null(pv)) "no comparison" else paste(pv[2], "of", pv[1]))
+  TREATMENT_TIMING <- "fixed"; xB2 <- load_panel_R("NDVI", model_design(verbose = FALSE, force = TRUE)); pv2 <- attr(xB2, "post_vs_panel"); TREATMENT_TIMING <- "fund"
+  chkE("design_vs_panel", "DESIGN vs PANEL: fixed 2022 = the exports' flag on every row (0 differ)", !is.null(pv2) && pv2[2] == 0 && pv2[1] == nrow(xB2), if (is.null(pv2)) "no comparison" else paste(pv2[2], "of", pv2[1]))
+  chkE("screen_evidence", "the outcome screen wrote its evidence (OUTCOME_SCREEN_NDVI.csv: rows, pixels, mean, SD, min, max per year-season)", file.exists(file.path(RESULTS_DIR, "OUTCOME_SCREEN_NDVI.csv")) && all(c("rows", "pixels", "sd_across_pixels", "min", "max", "why") %in% names(fread(file.path(RESULTS_DIR, "OUTCOME_SCREEN_NDVI.csv")))))
   COVARIATES <- c("Rain", "Tmax", "Tmean", "Tmin"); invisible(model_design(verbose = FALSE, force = TRUE))
 }
 }

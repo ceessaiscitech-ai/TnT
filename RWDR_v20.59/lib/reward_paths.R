@@ -82,6 +82,9 @@ N_MAX_UNITS         <- NULL; N_MAX_PIXELS_MIXED <- NULL; N_MAX_ML <- NULL; N_MAX
                                                                           #   a number caps it by hand. v20.55: 2 M / 400 k / 4 M (fixed)
 N_THREADS           <- max(1L, parallel::detectCores())         # v20.52: EVERY core (no reserve, no split)
 EXCLUDE_GAPFILLED   <- TRUE                                     # v20.52: rows filled from history are not estimated on (as Python)
+OUTCOME_SCREEN      <- "drop"                                  # v20.59: the outcome screen -- "drop": a year-season constant across pixels (a fill value)
+                                                               #   or with collapsed coverage leaves every model, its evidence in OUTCOME_SCREEN_<outcome>.csv |
+                                                               #   "keep": reported and KEPT (results tagged _screenKept) | "off". Set per model in its notebook
 MEMORY_SHARE        <- 1.0                                     # optional manual cap (as _paths.MEMORY_SHARE in Python)
 # v20.58 -- BEYOND 98 % OF THE RAM (never before): M01, M02, M16 and M34 go OUT OF CORE instead of stopping -- exact, never sampled
 # (lib/reward_outofcore.R: pixel partitions, the same R code per partition, the two-way FE solved from their cross-products). The engines

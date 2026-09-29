@@ -344,6 +344,73 @@ resolve_duplicates <- function(dt, keys = c("site_id", "pixel_id", "Year", "Seas
   out
 }
 
+# ---------------------------------------------------------------- 8. v20.59 -- YOUR REQUEST: the DiD design columns IN THE PANEL
+# treat (1 = the treatment area, buff_km 0; 0 = a ring), control (1 = a control ring 1-5), post (1 = post, 0 = pre: the EXPORTS' Treat flag --
+# the exporter writes 1 for every pixel from its treatment year on; a row without a usable flag takes the rule Year >= TREATMENT_YEAR, counted
+# and said), pre (1 - post) and did (treat x post). They are the panel's DEFAULT design (the exporter's timing) -- as Python's P00 writes
+# treat / treatment, control, pre, post, did / did_term (POST_FROM_EXPORT_TREAT). Every model applies ITS OWN design when it runs
+# (design_columns: the fund timing, TREATMENT_YEAR, the transition year -- your settings) and says on how many rows the two differ
+# ("DESIGN vs PANEL", load_panel_R); the model's columns are what it estimates on, never these.
+PANEL_DESIGN_COLS <- c("treat", "control", "pre", "post", "did")
+POST_FROM_EXPORT_TREAT <- TRUE           # FALSE = the rule Year >= TREATMENT_YEAR for every row (v20.58's period flag); as _prep_common.POST_FROM_EXPORT_TREAT
+panel_design_columns_R <- function(dt, treatment_year = TREATMENT_YEAR, say = TRUE) {
+  n <- nrow(dt); rule <- as.integer(dt$Year >= as.integer(treatment_year))
+  tv <- if ("Treat" %in% names(dt) && isTRUE(POST_FROM_EXPORT_TREAT)) suppressWarnings(as.numeric(dt$Treat)) else rep(NA_real_, n)
+  from_flag <- is.finite(tv) & (tv == 0 | tv == 1)
+  post_v <- fifelse(from_flag, as.integer(tv), rule)                 # a local vector (never the name of a column: data.table would read the column)
+  set(dt, j = "treat", value = as.integer(dt$buff_km == 0L)); set(dt, j = "control", value = as.integer(dt$buff_km %in% 1:5)); set(dt, j = "post", value = post_v)
+  set(dt, j = "pre", value = 1L - post_v); set(dt, j = "did", value = as.integer(dt$treat * post_v))
+  chk <- list(rows = n, from_flag = sum(from_flag), from_rule = sum(!from_flag), flag_vs_rule_differ = sum(from_flag & post_v != rule),
+              treatment_year = as.integer(treatment_year),
+              xtab = dt[, .(rows = .N), by = .(Year, Season, treat, control, pre, post, did)][order(Year, Season, -treat, control, post)])
+  setattr(dt, "design_check", chk)
+  if (say) panel_design_report_R(chk)
+  dt
+}
+panel_design_merge_R <- function(parts) {                          # the blocks' checks (R_P00 out of core) -> one check, as in memory
+  parts <- Filter(Negate(is.null), parts); if (!length(parts)) return(NULL)
+  xt <- rbindlist(lapply(parts, `[[`, "xtab"))[, .(rows = sum(rows)), by = .(Year, Season, treat, control, pre, post, did)][order(Year, Season, -treat, control, post)]
+  s <- function(k) sum(vapply(parts, function(p) as.numeric(p[[k]]), 0))
+  list(rows = s("rows"), from_flag = s("from_flag"), from_rule = s("from_rule"), flag_vs_rule_differ = s("flag_vs_rule_differ"), treatment_year = parts[[1]]$treatment_year, xtab = xt)
+}
+panel_design_report_R <- function(chk, write = TRUE) {
+  if (is.null(chk)) return(invisible(NULL))
+  if (write) fwrite(chk$xtab, file.path(OUTPUT_DIR, "panel_design_check_R.csv"))
+  g <- chk$xtab[, .(rows = sum(rows)), by = .(group = fifelse(treat == 1L, "treatment (buffer 0)", fifelse(control == 1L, "control (buffer 1-5)", "neither (invalid buffer)")), period = fifelse(post == 1L, "post", "pre"))]
+  ok(sprintf("DiD design columns in the panel: treat (buffer 0) / control (rings 1-5); post = the exports' Treat flag (1 = post, 0 = pre) on %s rows%s; pre = 1 - post; did = treat x post -> panel_design_check_R.csv",
+             format(chk$from_flag, big.mark = ","), if (chk$from_rule) sprintf(", the rule Year >= %d on %s rows without a usable flag", chk$treatment_year, format(chk$from_rule, big.mark = ",")) else ""))
+  info("rows per group x period: ", paste(sprintf("%s %s %s", g$group, g$period, format(g$rows, big.mark = ",")), collapse = " | "))
+  if (chk$flag_vs_rule_differ) info(sprintf("%s rows' exported Treat flag differs from the rule Year >= %d (an export made with another treatment year or rule): the panel FOLLOWS THE FLAG (POST_FROM_EXPORT_TREAT); every model applies its own design when it runs and says on how many rows it differs",
+                                          format(chk$flag_vs_rule_differ, big.mark = ","), chk$treatment_year))
+  invisible(chk)
+}
+
+# v20.59: does the panel carry PIXEL variation? Per variable x year x season: finite rows, mean, SD across pixels, min, max ->
+# panel_variation_by_block.csv. A year-season whose value is the same for every pixel is a FILL value, not a measurement: the outcome screen of
+# every model leaves it out (OUTCOME_SCREEN), and this table shows it right after R_P00 -- before any model runs. The parts are exact moments
+# (n, mean, M2 about it, min, max) so R_P00's blocks and pixel groups (out of core) merge to the same numbers as one pass in memory.
+panel_variation_R <- function(dt, vars = OUTCOME_VARS) {
+  vs <- intersect(vars, names(dt)); if (!length(vs)) return(NULL)
+  rbindlist(lapply(vs, function(v) {
+    x <- dt[is.finite(get(v)), { z <- as.numeric(get(v)); mu <- mean(z); .(finite = .N, mean = mu, m2 = sum((z - mu)^2), min = min(z), max = max(z)) }, by = .(Year, Season)]
+    if (nrow(x)) x[, variable := v]; x }), use.names = TRUE)
+}
+panel_variation_report_R <- function(parts, write = TRUE) {
+  vt <- rbindlist(Filter(Negate(is.null), if (is.data.frame(parts)) list(parts) else parts), use.names = TRUE)
+  if (!nrow(vt)) return(invisible(NULL))
+  vt[, `:=`(sn = sum(finite)), by = .(variable, Year, Season)]; vt[, mu := sum(finite * mean) / sn, by = .(variable, Year, Season)]
+  vt <- vt[, .(finite = sum(finite), mean = mu[1], m2 = sum(m2) + sum(finite * (mean - mu)^2), min = min(min), max = max(max)), by = .(variable, Year, Season)]
+  vt[, sd_across_pixels := fifelse(finite > 1, sqrt(m2 / (finite - 1)), 0)]; vt[, m2 := NULL]
+  vt[, constant_across_pixels := finite > 1 & sd_across_pixels <= 1e-9 * pmax(1, abs(mean))]
+  setcolorder(vt, c("variable", "Year", "Season", "finite", "mean", "sd_across_pixels", "min", "max", "constant_across_pixels")); setorder(vt, variable, Year, Season)
+  if (write) fwrite(vt, file.path(OUTPUT_DIR, "panel_variation_by_block.csv"))
+  k <- vt[constant_across_pixels == TRUE]
+  if (nrow(k)) warn(sprintf("%d of %d outcome x year-season cells hold ONE value for every pixel (a fill value, not pixel data: the outcome screen of every model leaves them out unless OUTCOME_SCREEN <- \"keep\"): %s%s -> panel_variation_by_block.csv",
+                            nrow(k), nrow(vt), paste(sprintf("%s %d %s = %s", k$variable, k$Year, SEASON_LABEL[as.character(k$Season)], formatC(k$mean, digits = 6, format = "g"))[seq_len(min(8, nrow(k)))], collapse = "; "), if (nrow(k) > 8) "; ..." else ""))
+  else ok(sprintf("pixel variation CONFIRMED in every outcome x year-season cell (%d cells, no fill value) -> panel_variation_by_block.csv", nrow(vt)))
+  invisible(vt)
+}
+
 # ---------------------------------------------------------------- 9. the dose: funds released to a sub-watershed, from the NEXT season
 next_season <- function(date) {                    # the export calendar: Kharif Jun-Sep, Rabi Oct-Feb, Zaid Mar-May
   m <- as.integer(format(date, "%m")); y <- as.integer(format(date, "%Y"))
@@ -495,14 +562,17 @@ run_prep <- function() {
                                      100 * PIXEL_OVERLAP_MIN, format(nrow(reg2), big.mark = ","), if (left) " (a chain the one-to-one merge cannot join) -- the models leave the smaller of each pair out (OVERLAP_ROWS)" else ""))
   }
   ok(sprintf("duplicates CONFIRMED removed: %s rows, every (sub-watershed, pixel, year, season) exactly once", format(nrow(dt), big.mark = ",")))
+  dt <- panel_design_columns_R(dt)                                                                  # v20.59: treat / control / pre / post / did in the panel
+  panel_variation_report_R(panel_variation_R(dt))                                                   # v20.59: pixel variation per outcome x year-season
   keep_cols <- intersect(c("pixel_id", "site_id", "Year", "Season", "latitude", "longitude", "buff_km", "sws_export", "site_check", "sws_name",
-                           "fragment", "SubwshedID", "Treat", OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), names(dt))
+                           "fragment", "SubwshedID", "Treat", PANEL_DESIGN_COLS, OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), names(dt))
   keep_cols <- setdiff(keep_cols, panel_columns_left_out_R())                                    # v20.58: the project's models' columns
   dt <- dt[, ..keep_cols]
-  # v20.57: NOTHING of the design is baked into the panel any more -- the timing (fund / registry / fixed), treat / post / did /
-  # event_time / cohort, the unit and period fixed effects (POOLED_FE) and the dose are computed by every MODEL when it runs
-  # (reward_design.R model_design + load_panel_R), from the settings in ITS notebook. Until v20.56 they were fixed here, so a
-  # change of TREATMENT_YEAR or POOLED_FE needed this hours-long step again.
+  # v20.57: NOTHING of the design a MODEL chooses is baked into the panel -- the timing (fund / registry / fixed), the unit and period fixed
+  # effects (POOLED_FE), event_time / cohort and the dose are computed by every MODEL when it runs (reward_design.R model_design +
+  # load_panel_R), from the settings in ITS notebook. Until v20.56 they were fixed here, so a change of TREATMENT_YEAR or POOLED_FE needed
+  # this hours-long step again. v20.59: the panel carries the EXPORTS' design (treat / control / pre / post / did, panel_design_columns_R)
+  # as the default every model compares its own design with -- the model's columns are the ones it estimates on.
   n_sites <- uniqueN(dt$site_id[dt$site_id > 0 & dt$fragment == 0L])
   info(sprintf("%d sub-watershed(s) in the panel after the fragment rule (the pooled design, POOLED_FE and the clusters are set by each model)", n_sites))
   ftab <- tryCatch(build_fund_tables(sort(unique(dt$Year)), out_dir = file.path(RESULTS_DIR, "FUND")), error = function(e) { warn("fund tables: ", conditionMessage(e)); NULL })

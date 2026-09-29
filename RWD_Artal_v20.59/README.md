@@ -1,9 +1,24 @@
-# RWD_Artal — the REWARD DiD pipeline (Python) for the Artal data — v20.58
+# RWD_Artal — the REWARD DiD pipeline (Python) for the Artal data — v20.59
+
+> **v20.59 — what changed for you** (details: `docs/CHANGELOG_v20.59.md`; what ran here: `docs/VALIDATION_v20.59.md`)
+> * **The panel carries the DiD design columns** — `treat` (buffer 0), `control` (rings 1–5), `post` = the exports' `Treat` flag
+>   (1 = post, 0 = pre), `pre` = 1 − post, `did` = treat × post — from P00 / R_P00 (`POST_FROM_EXPORT_TREAT`), with
+>   `panel_design_check(_R).csv` and `panel_variation_by_block.csv` (which year-seasons hold one value for every pixel).
+>   Every model still applies ITS OWN design when it runs and prints **`DESIGN vs PANEL`**: on how many rows your settings
+>   (the fund timing, `TREATMENT_YEAR`, the transition year) change the period split against the panel's columns.
+> * **`PRE_YEARS` / `POST_YEARS` take a calendar year** (`2015` = the first pre year, `2025` = the last post year) as well as
+>   a count (`4`); a year that leaves no pre year (`2022` with the start in 2022 — v20.58 printed `USED: from 0`) is said and
+>   every year before the start is used.
+> * **The outcome screen explains itself and can be kept:** `OUTCOME_SCREEN_<outcome>.csv` (rows, pixels, mean, SD, min, max per
+>   year-season) beside every result; the model option `OUTCOME_SCREEN = "drop" | "keep" | "off"`; a refusal names the file and the
+>   option instead of only "Re-export it".
+> * Re-run P00 / R_P00 first (the panel gains the five columns), then the models.
+
 
 **Where things go**
 ```
 D:\LKT\RWD_Artal\
-├── RWD_Artal_v20.58\        ← this project (unzip here); a newer version sits beside it
+├── RWD_Artal_v20.59\        ← this project (unzip here); a newer version sits beside it
 └── data\                    ← your exports (was D:\LKT\TST_Artal) -- MIGRATE_DATA.bat moves them
     └── output\              ← everything the pipeline writes (panel, results, logs)
 ```
@@ -27,7 +42,7 @@ project RWDR), `docs\` (changelog, validation, request map).
 
 **One Python project and one R project (v20.58, your instruction):** this project (RWD_Artal) for Python and RWDR for R — the RWD_Artal1
 copy is dropped from every code, path and check. The four-model pipeline (P00 + M01, M02, M16, M34, Python and R in one bundle) is
-the separate `RWD_4Models_v20.58`. Each run uses the whole machine (v20.52: no split, no cap).
+the separate `RWD_4Models_v20.59`. Each run uses the whole machine (v20.52: no split, no cap).
 
 **Checks you can run:** `selfcheck.py`, `validate_preprocessing.py`, `validate_inference.py`, `validate_all_models.py`,
 `06_Validation\V00_RUN_ALL_VALIDATIONS.py`, `06_Validation\V00d_GPU_PATH_CHECK.py` (on the A40), and (v20.54)

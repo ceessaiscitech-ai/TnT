@@ -1,9 +1,24 @@
-# RWDR — the REWARD DiD pipeline in R (RStudio and Jupyter) — v20.58
+# RWDR — the REWARD DiD pipeline in R (RStudio and Jupyter) — v20.59
+
+> **v20.59 — what changed for you** (details: `docs/CHANGELOG_v20.59.md`; what ran here: `docs/VALIDATION_v20.59.md`)
+> * **The panel carries the DiD design columns** — `treat` (buffer 0), `control` (rings 1–5), `post` = the exports' `Treat` flag
+>   (1 = post, 0 = pre), `pre` = 1 − post, `did` = treat × post — from P00 / R_P00 (`POST_FROM_EXPORT_TREAT`), with
+>   `panel_design_check(_R).csv` and `panel_variation_by_block.csv` (which year-seasons hold one value for every pixel).
+>   Every model still applies ITS OWN design when it runs and prints **`DESIGN vs PANEL`**: on how many rows your settings
+>   (the fund timing, `TREATMENT_YEAR`, the transition year) change the period split against the panel's columns.
+> * **`PRE_YEARS` / `POST_YEARS` take a calendar year** (`2015` = the first pre year, `2025` = the last post year) as well as
+>   a count (`4`); a year that leaves no pre year (`2022` with the start in 2022 — v20.58 printed `USED: from 0`) is said and
+>   every year before the start is used.
+> * **The outcome screen explains itself and can be kept:** `OUTCOME_SCREEN_<outcome>.csv` (rows, pixels, mean, SD, min, max per
+>   year-season) beside every result; the model option `OUTCOME_SCREEN = "drop" | "keep" | "off"`; a refusal names the file and the
+>   option instead of only "Re-export it".
+> * Re-run P00 / R_P00 first (the panel gains the five columns), then the models.
+
 
 **Where things go**
 ```
 D:\LKT\RWDR\
-├── RWDR_v20.58\             ← this project (unzip here)
+├── RWDR_v20.59\             ← this project (unzip here)
 └── data\                    ← your exports (was D:\LKT\TST_ArtalR) -- MIGRATE_DATA.bat moves them
     └── output\              ← everything the pipeline writes
 ```
@@ -23,7 +38,7 @@ D:\LKT\RWDR\
    through IRkernel. (`Rscript tests/run_all_tests.R quick` = models only.)
 
 ## B. Your data
-1. Exports under `D:\LKT\RWDR\data` (any sub-folders). Fill each sub-watershed's implementation year in `RWDR_v20.58\data\sites\sites.csv` (the project's own
+1. Exports under `D:\LKT\RWDR\data` (any sub-folders). Fill each sub-watershed's implementation year in `RWDR_v20.59\data\sites\sites.csv` (the project's own
    `data` folder — shapefile, sites, BM means — not your exports folder).
 2. `rstudio\R_P00_Prepare_Panel.Rmd` → Run All — builds the panel ONCE (v20.57: it takes no design setting; nothing of the design is
    written into the panel). It also reads your fund workbook (`results\FUND\FUND_TIMING_AND_DOSE.md`).
@@ -121,7 +136,7 @@ The same 49 notebooks are in `jupyter\` (kernel **R**). RStudio is the recommend
   cores on Linux / macOS), M11 synthdid's and M25 ritest's series in a fixed order; the R bridge no longer leaves a copy of each model's
   input in the temp folder.
 - **One Python project and one R project (your instruction):** RWD_Artal (Python) and this project (R); the RWD_Artal1 copy is gone.
-  The four-model pipeline (R_P00 + M01, M02, M16, M34, R and Python in one bundle) is the separate `RWD_4Models_v20.58`.
+  The four-model pipeline (R_P00 + M01, M02, M16, M34, R and Python in one bundle) is the separate `RWD_4Models_v20.59`.
 - **Beyond 98 % of the RAM -- OUT OF CORE, never sampled (your instruction: Dask and Spark as the fall-backs):** M01, M02, M16 and M34
   (`run_model_R`) and R_P00 (`run_prep`) no longer stop when the data do not fit. They run on **pixel partitions** (every row of a pixel
   together) with the SAME R code as in memory; the two-way fixed effects are solved EXACTLY from the partitions' cross-products (the unit

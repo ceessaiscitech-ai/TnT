@@ -319,8 +319,8 @@ ooc_task_prep <- function(ctx, k) {
   r <- load_rows_R(x, ctx$outcome, ctx$d, ctx$covs, ctx$loc, ctx$S, fill_src = function(need2) x_all[, c("pixel_id", "Year", "Season", need2), with = FALSE],
                    say = FALSE, fill_force = ctx$fill_force)
   x <- r$x; o <- ctx$outcome
-  scr <- if (nrow(x)) x[, { v <- get(o); mu <- mean(v); .(n = .N, mean = mu, m2 = sum((v - mu)^2), n_treated = sum(buff_km == 0), n_control = sum(buff_km > 0)) }, by = .(Year, Season)]
-         else data.table(Year = integer(0), Season = integer(0), n = integer(0), mean = numeric(0), m2 = numeric(0), n_treated = integer(0), n_control = integer(0))
+  scr <- if (nrow(x)) x[, { v <- get(o); mu <- mean(v); .(n = .N, mean = mu, m2 = sum((v - mu)^2), min = min(v), max = max(v), n_treated = sum(buff_km == 0), n_control = sum(buff_km > 0)) }, by = .(Year, Season)]   # v20.59: + min, max
+         else data.table(Year = integer(0), Season = integer(0), n = integer(0), mean = numeric(0), m2 = numeric(0), min = numeric(0), max = numeric(0), n_treated = integer(0), n_control = integer(0))
   cnt <- if ("site_id" %in% names(x)) x[, .N, by = .(site_id, Year, Season)] else x[, .(site_id = 0L, N = .N), by = .(Year, Season)]
   saveRDS(x, file.path(ctx$run_dir, sprintf("a_%04d.rds", k)), compress = FALSE)
   r$x <- NULL; c(r, list(screen = scr, counts = cnt, cols = names(x)))
@@ -332,6 +332,7 @@ ooc_task_sample <- function(ctx, k) {
   if (nrow(ctx$bad)) x <- x[!ctx$bad, on = .(Year, Season)]
   x <- design_columns(x, ctx$d, site_period = ctx$site_period, say = FALSE)
   n_tr <- attr(x, "n_transition_left_out") %||% 0L
+  pvp <- attr(x, "post_vs_panel")                                       # v20.59: read BEFORE the column subset below (a subset drops the attributes)
   keep <- intersect(c("pixel_id", "site_id", "Year", "Season", "buff_km", "site_check", o, ctx$covs, "treat", "post", "did", "event_time", "unit", "period"), names(x))
   x <- x[, ..keep]
   saveRDS(x, file.path(ctx$run_dir, sprintf("s_%04d.rds", k)), compress = FALSE); unlink(a)
@@ -343,7 +344,7 @@ ooc_task_sample <- function(ctx, k) {
   }
   pw <- ctx$m16_window
   tr <- x[post == 0L & treat == 1L & is.finite(event_time) & event_time >= pw[1] & event_time <= pw[2], .N, by = .(event_time, Year)]
-  list(n_transition = n_tr, integrity = integrity_parts_R(x),
+  list(n_transition = n_tr, integrity = integrity_parts_R(x), post_vs_panel = pvp,                          # v20.59: (rows, rows that differ) or NULL
        facts = list(n_obs = nrow(x), n_pixels = uniqueN(x$pixel_id), n_units = uniqueN(x$unit), periods = unique(x$period), sites = sort(unique(x$site_id)),
                     rings = sort(unique(x$buff_km)), years = if (nrow(x)) range(x$Year) else c(NA_integer_, NA_integer_), years_set = sort(unique(x$Year)),
                     seasons = sort(unique(x$Season)), base_s = sum(x[treat == 1 & post == 0][[o]], na.rm = TRUE), base_n = sum(is.finite(x[treat == 1 & post == 0][[o]]))),
@@ -504,13 +505,14 @@ ooc_get <- function(fits, spec, reg) {                                  # one fi
 
 # ================================================================ 5. the sample, out of core (load_panel_R's twin)
 ooc_merge_moments <- function(s) {                                       # the screen's (Year, Season) table from the partitions' moments
-  s <- rbindlist(s)
-  if (!nrow(s)) return(data.table(Year = integer(0), Season = integer(0), n = integer(0), sd = numeric(0), mean = numeric(0), n_treated = integer(0), n_control = integer(0)))
+  s <- rbindlist(s, fill = TRUE)
+  if (!nrow(s)) return(data.table(Year = integer(0), Season = integer(0), n = integer(0), sd = numeric(0), mean = numeric(0), min = numeric(0), max = numeric(0), n_pixels = numeric(0), n_treated = integer(0), n_control = integer(0)))
+  for (k in c("min", "max")) if (!k %in% names(s)) set(s, j = k, value = NA_real_)
   s[, `:=`(sn = sum(n)), by = .(Year, Season)]
   s[, mu := sum(n * mean) / sn, by = .(Year, Season)]
-  out <- s[, .(n = sum(n), m2 = sum(m2) + sum(n * (mean - mu)^2), mean = mu[1], n_treated = sum(n_treated), n_control = sum(n_control)), by = .(Year, Season)]
-  out[, sd := fifelse(n > 1, sqrt(m2 / (n - 1)), NA_real_)]
-  setorder(out, Year, Season); out[, .(Year, Season, n, sd, mean, n_treated, n_control)]
+  out <- s[, .(n = sum(n), m2 = sum(m2) + sum(n * (mean - mu)^2), mean = mu[1], min = min(min), max = max(max), n_treated = sum(n_treated), n_control = sum(n_control)), by = .(Year, Season)]
+  out[, sd := fifelse(n > 1, sqrt(m2 / (n - 1)), NA_real_)]; out[, n_pixels := NA_real_]   # v20.59: min / max travel; distinct pixels are not additive
+  setorder(out, Year, Season); out[, .(Year, Season, n, sd, mean, min, max, n_pixels, n_treated, n_control)]
 }
 integrity_merge_R <- function(ps) {
   first_dup <- ""; for (p in ps) if (nzchar(p$dup)) { first_dup <- p$dup; break }
@@ -553,10 +555,12 @@ ooc_load_R <- function(outcome, d, plan, engines) {
                             outcome, format(n0 - n1, big.mark = ","), format(n0, big.mark = ",")))
   # ---- the outcome screen on the merged moments (screen_decide / screen_refuse: the in-memory rules)
   s <- ooc_merge_moments(lapply(pa, `[[`, "screen"))
-  bad <- screen_decide(s, outcome)
+  rule <- d$outcome_screen %||% screen_rule_R()                                   # v20.59: the rule of the design (drop / keep / off), the evidence file
+  dec <- if (identical(rule, "off")) NULL else screen_decide(s, outcome, rule)
+  bad <- if (is.null(dec)) s[0, .(Year, Season)] else dec$drop
   cnt <- rbindlist(lapply(pa, `[[`, "counts"))[, .(N = sum(N)), by = .(site_id, Year, Season)]
   if (nrow(bad)) cnt <- cnt[!bad, on = .(Year, Season)]
-  screen_refuse(sort(unique(cnt[N > 0, Year])), outcome, as.integer(d$treatment_year))
+  screen_refuse(sort(unique(cnt[N > 0, Year])), outcome, as.integer(d$treatment_year), TRUE, dec)
   s1 <- unique(cnt[N > 0 & site_id > 0, site_id])
   ctx$bad <- if (nrow(bad)) bad[, .(Year, Season)] else data.table(Year = integer(0), Season = integer(0))
   ctx$site_period <- length(s1) >= 2 && identical(d$pooled_fe, "site_period")
@@ -564,6 +568,9 @@ ooc_load_R <- function(outcome, d, plan, engines) {
   pb <- ooc_map("sample", ctx, plan$K)
   n_tr <- sum(vapply(pb, function(p) as.numeric(p$n_transition), 0))
   if (isTRUE(d$exclude_transition_year)) info(sprintf("EXCLUDE_TRANSITION_YEAR: %s rows of each series' first treated year left out", format(n_tr, big.mark = ",")))
+  pv <- Filter(Negate(is.null), lapply(pb, `[[`, "post_vs_panel"))                                   # v20.59: DESIGN vs PANEL, summed over the partitions
+  post_vs_panel <- if (length(pv)) c(sum(vapply(pv, function(v) as.numeric(v[1]), 0)), sum(vapply(pv, function(v) as.numeric(v[2]), 0))) else NULL
+  design_vs_panel_say_R(post_vs_panel, d)
   fx <- lapply(pb, `[[`, "facts")
   sites <- sort(unique(unlist(lapply(fx, `[[`, "sites")))); pos <- sites[sites > 0]
   cluster_col <- if (length(pos) >= MIN_SWS_CLUSTERS) "site_id" else "Year"
@@ -575,7 +582,7 @@ ooc_load_R <- function(outcome, d, plan, engines) {
                 sites = sites, rings = sort(unique(unlist(lapply(fx, `[[`, "rings")))),
                 years = { y <- unlist(lapply(fx, `[[`, "years")); y <- y[is.finite(y)]; range(y) },
                 baseline_mean = if (bn > 0) sum(vapply(fx, function(f) as.numeric(f$base_s), 0)) / bn else NaN,
-                location_report = loc_rep)
+                location_report = loc_rep, post_vs_panel = post_vs_panel)                            # v20.59
   facts$integrity <- integrity_decide_R(integrity_merge_R(lapply(pb, `[[`, "integrity")), d, outcome, S)
   use_pos <- any(sites > 0L) && has_site
   cl_ <- lapply(pb, function(p) if (use_pos) p$cells_pos else p$cells_all)

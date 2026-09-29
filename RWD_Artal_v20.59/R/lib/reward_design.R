@@ -117,36 +117,65 @@ cluster_col_for <- function(dt) {
 }
 
 # ---------------------------------------------------------------- the outcome screen: a year the export filled is not data
-screen_outcome <- function(dt, outcome, treatment_year = TREATMENT_YEAR, refuse = TRUE) {
+# v20.59: every decision comes with its EVIDENCE -- rows, pixels, mean, SD across pixels, min and max per year-season, written to
+# OUTCOME_SCREEN_<outcome>.csv beside the results at every run -- and with a way out: OUTCOME_SCREEN <- "keep" (the model's settings) keeps the
+# flagged year-seasons (said; the results are tagged _screenKept), "off" runs no screen; "drop" (the default) leaves them out as before. A
+# refusal (fewer than 2 pre / 1 post years left) names the evidence file and the option -- your v20.58 log stopped at "Re-export it" with
+# 41 of 44 year-seasons flagged and nothing to look at.
+screen_rule_R <- function(v = .opt("OUTCOME_SCREEN", "drop")) {
+  if (isTRUE(v)) return("drop"); if (is.null(v) || isFALSE(v)) return("off")
+  v <- tolower(trimws(as.character(v)[1]))
+  if (v %in% c("drop", "true", "on")) return("drop"); if (v %in% c("keep", "report", "warn")) return("keep"); if (v %in% c("off", "false", "none", "no")) return("off")
+  stop("OUTCOME_SCREEN must be \"drop\", \"keep\" or \"off\" (got \"", v, "\")")
+}
+screen_outcome <- function(dt, outcome, treatment_year = TREATMENT_YEAR, refuse = TRUE, rule = screen_rule_R()) {
+  if (identical(rule, "off")) return(list(dt = dt, report = NULL))
   y <- dt[[outcome]]; keep <- is.finite(y)
-  s <- dt[keep, .(n = .N, sd = sd(get(outcome)), mean = mean(get(outcome)),
+  s <- dt[keep, .(n = .N, sd = sd(get(outcome)), mean = mean(get(outcome)), min = min(get(outcome)), max = max(get(outcome)),
+                  n_pixels = if ("pixel_id" %in% names(dt)) as.numeric(uniqueN(pixel_id)) else NA_real_,
                   n_treated = sum(buff_km == 0), n_control = sum(buff_km > 0)), by = .(Year, Season)]
-  bad <- screen_decide(s, outcome)
+  dec <- screen_decide(s, outcome, rule)
+  bad <- dec$drop
   if (nrow(bad)) dt <- dt[!bad, on = .(Year, Season)]
-  screen_refuse(sort(unique(dt$Year[is.finite(dt[[outcome]])])), outcome, treatment_year, refuse)
-  list(dt = dt, report = if (nrow(bad)) bad[, .(outcome = outcome, Year, Season, why)] else NULL)
+  screen_refuse(sort(unique(dt$Year[is.finite(dt[[outcome]])])), outcome, treatment_year, refuse, dec)
+  list(dt = dt, report = if (nrow(dec$bad)) dec$bad[, .(outcome = outcome, Year, Season, why)] else NULL)
 }
 # v20.58: the two decisions of the screen on its (Year, Season) table -- shared by the in-memory path above and the out-of-core path
-# (reward_outofcore.R: the same table merged from the pixel partitions), so both leave out exactly the same year-seasons
-screen_decide <- function(s, outcome) {                     # s: Year, Season, n, sd, mean, n_treated, n_control -> the rows left out
+# (reward_outofcore.R: the same table merged from the pixel partitions), so both leave out exactly the same year-seasons.
+# v20.59: s carries min, max, n_pixels too; returns list(bad = the cells that are not pixel data, drop = the cells to leave out (none under
+# "keep"), table = the evidence of every cell, path = the evidence file, n_cells)
+screen_decide <- function(s, outcome, rule = screen_rule_R()) {
   s <- copy(s); s[is.na(sd), sd := 0]
+  for (k in c("min", "max", "n_pixels")) if (!k %in% names(s)) set(s, j = k, value = NA_real_)
   mt <- median(s$n_treated); mc <- median(s$n_control)
   s[, constant := sd <= 1e-9 * pmax(1, abs(mean))]
   s[, collapse := n_treated < SCREEN_MIN_COVERAGE * mt | n_control < SCREEN_MIN_COVERAGE * mc]
+  s[, why := paste0(ifelse(constant, sprintf("constant across pixels (a fill value: %s rows%s, every value %s%s)", formatC(n, big.mark = ",", format = "d"),
+                                             ifelse(is.finite(n_pixels), sprintf(" of %s pixels", formatC(n_pixels, big.mark = ",", format = "d")), ""),
+                                             formatC(min, digits = 6, format = "g"), ifelse(is.finite(max) & max != min, paste0("..", formatC(max, digits = 6, format = "g")), "")), ""),
+                    ifelse(constant & collapse, "; ", ""),
+                    ifelse(collapse, sprintf("coverage collapsed (%s treated / %s control rows against typical %s / %s)", formatC(n_treated, big.mark = ",", format = "d"),
+                                             formatC(n_control, big.mark = ",", format = "d"), formatC(round(mt), big.mark = ",", format = "d"), formatC(round(mc), big.mark = ",", format = "d")), ""))]
+  s[, `:=`(usable = !(constant | collapse), outcome = outcome, rule = rule, left_out = (constant | collapse) & rule == "drop")]
+  setorder(s, Year, Season)
+  path <- file.path(RESULTS_DIR, sprintf("OUTCOME_SCREEN_%s.csv", outcome))
+  try({ dir.create(RESULTS_DIR, recursive = TRUE, showWarnings = FALSE)
+        fwrite(s[, .(outcome, Year, Season, season = SEASON_LABEL[as.character(Season)], rows = n, pixels = n_pixels, mean, sd_across_pixels = sd, min, max,
+                     treated_rows = n_treated, control_rows = n_control, constant, collapse, usable, rule, left_out, why)], path) }, silent = TRUE)
   bad <- s[constant | collapse]
   if (nrow(bad)) {
-    bad[, why := paste0(ifelse(constant, "constant across pixels (a fill value)", ""), ifelse(constant & collapse, "; ", ""),
-                        ifelse(collapse, sprintf("coverage collapsed (%s treated / %s control pixels)", n_treated, n_control), ""))]
-    warn(outcome, ": ", nrow(bad), " year-season(s) are NOT pixel data and are left out -- ",
-         paste(sprintf("%s %s: %s", bad$Year, SEASON_LABEL[as.character(bad$Season)], bad$why), collapse = "; "))
+    warn(outcome, ": ", nrow(bad), " of ", nrow(s), " year-season(s) are NOT pixel data", if (rule == "drop") " and are left out" else " -- KEPT (OUTCOME_SCREEN = \"keep\": the model runs on them; read its result with that in mind)", " -- ",
+         paste(sprintf("%s %s: %s", bad$Year, SEASON_LABEL[as.character(bad$Season)], bad$why), collapse = "; "),
+         " -> the evidence of every year-season (rows, pixels, mean, SD, min, max): ", path)
   }
-  bad
+  list(bad = bad, drop = if (rule == "drop") bad else bad[0], table = s, path = path, n_cells = nrow(s))
 }
-screen_refuse <- function(yrs, outcome, treatment_year, refuse = TRUE) {   # yrs: the years with a valid value after the screen
+screen_refuse <- function(yrs, outcome, treatment_year, refuse = TRUE, dec = NULL) {   # yrs: the years with a valid value after the screen
   pre <- yrs[yrs < treatment_year]; post <- yrs[yrs >= treatment_year]
   if (refuse && (length(pre) < 2 || length(post) < 1))
-    stop(sprintf("'%s' is not usable: after the fill years are removed it has %d valid pre-period year(s) [%s] and %d post-period year(s) [%s] (need >= 2 and >= 1). Re-export it.",
-                 outcome, length(pre), paste(pre, collapse = ", "), length(post), paste(post, collapse = ", ")))
+    stop(sprintf("'%s' is not usable: after the screen (%s of %s year-seasons left out as fill values / collapsed coverage) it has %d valid pre-period year(s) [%s] and %d post-period year(s) [%s] (need >= 2 and >= 1). The evidence -- rows, pixels, mean, SD, min and max per year-season -- is in %s. If those year-seasons ARE pixel data, set OUTCOME_SCREEN <- \"keep\" in this model's settings (the model then runs on every year-season, tagged _screenKept) -- or re-export the variable if they are not.",
+                 outcome, if (is.null(dec)) "?" else nrow(dec$drop), if (is.null(dec)) "?" else dec$n_cells, length(pre), paste(pre, collapse = ", "), length(post), paste(post, collapse = ", "),
+                 if (is.null(dec)) "OUTCOME_SCREEN_<outcome>.csv (beside the results)" else dec$path))
   invisible(TRUE)
 }
 
@@ -343,13 +372,15 @@ recommend_from_summary <- function(sm, treatment_year, write) {
                  sprintf("- Common shocks: %s -- years in which the core and the rings move together (weather, not an export break): the year x season fixed effects absorb them, no year is removed",
                          if (length(shocks)) paste(sort(unique(shocks)), collapse = ", ") else "none"),
                  sprintf("- Fill years: %s", if (length(fill)) paste(fill, collapse = ", ") else "none"),
+                 sprintf("- SD across pixels on the annual rows, by year (the evidence of the fill years; a fill value has SD 0): %s", paste(sprintf("%d: %.3g", tot$Year, tot$sd), collapse = ", ")),   # v20.59
                  sprintf("- Control rings: %s%s", paste(ctrl, collapse = ", "), if (length(contaminated)) sprintf(" (rings %s move with the core: spillover)", paste(contaminated, collapse = ", ")) else ""),
                  sprintf("- Seasons: %s", seas), "", "The core's own effect is never used to choose any of this."),
                file.path(RESULTS_DIR, "DESIGN_RECOMMENDATION.md"))
   }
   info(sprintf("design from the data: pre %s, post %s, control rings %s, seasons %s%s", paste(pre, collapse = ","), paste(post, collapse = ","),
                paste(ctrl, collapse = ","), seas, paste0(if (length(breaks)) paste0("; export breaks ", paste(breaks, collapse = ",")) else "",
-               if (length(shocks)) paste0("; common shocks (kept) ", paste(sort(unique(shocks)), collapse = ",")) else "")))
+               if (length(shocks)) paste0("; common shocks (kept) ", paste(sort(unique(shocks)), collapse = ",")) else "",
+               if (length(fill)) paste0("; fill years ", paste(fill, collapse = ","), " (SD across pixels on the annual rows: ", paste(sprintf("%d %.3g", tot$Year, tot$sd), collapse = ", "), ")") else "")))   # v20.59: the evidence
   rec
 }
 
@@ -404,7 +435,8 @@ design_settings <- function() {
             fragment_min_share = as.numeric(.opt("FRAGMENT_MIN_SHARE", 0.05)),
             pooled_fe = .one_of("POOLED_FE", .opt("POOLED_FE", "site_period"), c("site_period", "period")),
             exclude_gapfilled = isTRUE(.opt("EXCLUDE_GAPFILLED", TRUE)), covariates = as.character(.opt("COVARIATES", c("Rain", "Tmax", "Tmean", "Tmin"))),
-            sub_watersheds = .opt("SUB_WATERSHEDS", "data"))                    # v20.58: the processing set (the location rule)
+            sub_watersheds = .opt("SUB_WATERSHEDS", "data"),                    # v20.58: the processing set (the location rule)
+            outcome_screen = screen_rule_R(.opt("OUTCOME_SCREEN", "drop")))    # v20.59: the outcome screen's rule -- drop | keep | off
   sw <- unlist(s$sub_watersheds); if (!length(sw) || all(is.na(sw))) sw <- "data"
   s$sub_watersheds <- if (length(sw) == 1 && is.character(sw) && tolower(trimws(sw)) %in% c("data", "recommended", "auto", "major")) (if (tolower(trimws(sw)) == "major") "major" else "data") else as.character(sw)
   if (!is.finite(s$treatment_year)) stop("TREATMENT_YEAR must be a year (got ", .opt("TREATMENT_YEAR", NA), ")")
@@ -418,7 +450,16 @@ design_settings <- function() {
   }
   for (k in c("pre_years", "post_years")) {
     v <- s[[k]]
-    if (!is_data_opt(v) && !is_all_opt(v)) { n <- suppressWarnings(as.integer(v)); if (length(n) != 1 || is.na(n) || n < 1) stop(toupper(k), " must be \"data\", NA / \"all\" or a number of years >= 1 (got ", v, ")"); s[[k]] <- n }
+    if (!is_data_opt(v) && !is_all_opt(v)) {
+      # v20.59: a NUMBER OF YEARS (PRE_YEARS 4 = the 4 years before the start; POST_YEARS 2 = the start year and the next) OR a CALENDAR
+      # YEAR (PRE_YEARS 2015 = the first pre year; POST_YEARS 2025 = the last post year). v20.58 read every number as a count: your
+      # PRE_YEARS <- 2022 became year_min = 2022 - 2022 = 0 ("USED: from 0") without a word.
+      n <- suppressWarnings(as.integer(v))
+      if (length(n) != 1 || is.na(n) || n < 1 || (n > 200 && n < 1900) || n > 2100)
+        stop(toupper(k), " must be \"data\", NA / \"all\", a number of years (e.g. 4) or a calendar year (e.g. ",
+             if (k == "pre_years") "2015 = the FIRST pre year" else "2025 = the LAST post year", ") -- got ", paste(v, collapse = ","))
+      s[[k]] <- n
+    }
     else if (is_all_opt(v)) s[[k]] <- NA_integer_ else s[[k]] <- "data"
   }
   s$seasons_setting <- normalize_seasons(s$seasons)
@@ -668,6 +709,32 @@ fund_tables_R <- function(s, years = NULL) {
   out <- list(timing = tim, dose = dose, series = ser); .DESIGN_CACHE[[key]] <- out; out
 }
 
+# v20.59: PRE_YEARS / POST_YEARS -> the year window of the design. A number below 1900 counts years from the start (PRE_YEARS 4 = the 4
+# years before it, POST_YEARS 2 = the start year and the next); a CALENDAR year names the bound itself (PRE_YEARS 2015 = the first pre
+# year, POST_YEARS 2025 = the last post year). A bound that leaves NO year on its side of the start (PRE_YEARS 2022 with the start in 2022 --
+# your v20.58 log: "USED: from 0") is not a window: it is said (DESIGN IN EFFECT + a warning) and every year on that side is used instead.
+is_calendar_year <- function(v) length(v) == 1 && is.finite(v) && v >= 1900
+year_bounds_R <- function(s, dk, base, usable, rec) {
+  notes <- character(0); how_min <- "your setting"; how_max <- "your setting"
+  year_min <- if ("pre_years" %in% dk) (if (usable) as.integer(min(rec$pre_window)) else NA_integer_) else if (is.na(s$pre_years)) NA_integer_
+              else if (is_calendar_year(s$pre_years)) as.integer(s$pre_years) else as.integer(base - s$pre_years)
+  year_max <- if ("post_years" %in% dk) (if (usable) as.integer(max(rec$post_window)) else NA_integer_) else if (is.na(s$post_years)) NA_integer_
+              else if (is_calendar_year(s$post_years)) as.integer(s$post_years) else as.integer(base + s$post_years - 1L)
+  if (!"pre_years" %in% dk && is.finite(year_min) && year_min >= base) {
+    notes <- c(notes, sprintf("PRE_YEARS = %s leaves NO year before the start %d (a calendar year at or after it): every year before the start is used instead. Set PRE_YEARS to the FIRST pre year (e.g. %d), to a number of years before the start (e.g. 7) or NA (every year)",
+                              paste(s$pre_years), base, base - 7L))
+    how_min <- sprintf("PRE_YEARS %s is not before the start %d -> every year before it", paste(s$pre_years), base); year_min <- NA_integer_
+  }
+  if (!"post_years" %in% dk && is.finite(year_max) && year_max < base) {
+    notes <- c(notes, sprintf("POST_YEARS = %s leaves NO year from the start %d on (a calendar year before it): every year from the start is used instead. Set POST_YEARS to the LAST post year (e.g. %d), to a number of years from the start (e.g. 2) or NA (every year)",
+                              paste(s$post_years), base, base + 3L))
+    how_max <- sprintf("POST_YEARS %s is before the start %d -> every year from it", paste(s$post_years), base); year_max <- NA_integer_
+  }
+  list(year_min = year_min, year_max = year_max, notes = notes, how_min = how_min, how_max = how_max,
+       setting_min = if ("pre_years" %in% dk) "data" else if (is.na(s$pre_years)) "all" else if (is_calendar_year(s$pre_years)) sprintf("%d (calendar year)", s$pre_years) else sprintf("%d (years before the start)", s$pre_years),
+       setting_max = if ("post_years" %in% dk) "data" else if (is.na(s$post_years)) "all" else if (is_calendar_year(s$post_years)) sprintf("%d (calendar year)", s$post_years) else sprintf("%d (years from the start)", s$post_years))
+}
+
 model_design <- function(verbose = TRUE, force = FALSE) {
   s <- design_settings()
   key <- paste(deparse(s), collapse = ""); key <- paste(key, panel_identity(), .file_id(FUND_RELEASE_PATH), .file_id(SITES_CSV))
@@ -718,14 +785,13 @@ model_design <- function(verbose = TRUE, force = FALSE) {
   }
   src_d <- if (usable) sprintf("the data (DESIGN_RECOMMENDATION.md, %s, implementation year %d)", DESIGN_OUTCOME, base) else if (s$design_mode == "manual") "DESIGN_MODE = 'manual': 'data' = every ring / every year" else "no usable data-driven window: every ring / every year"
   rings <- if ("control_rings" %in% dk) (if (usable) as.integer(rec$control_rings) else 1:5) else s$control_rings
-  year_min <- if ("pre_years" %in% dk) (if (usable) as.integer(min(rec$pre_window)) else NA_integer_) else if (is.na(s$pre_years)) NA_integer_ else as.integer(base - s$pre_years)
-  year_max <- if ("post_years" %in% dk) (if (usable) as.integer(max(rec$post_window)) else NA_integer_) else if (is.na(s$post_years)) NA_integer_ else as.integer(base + s$post_years - 1L)
+  yb <- year_bounds_R(s, dk, base, usable, rec); year_min <- yb$year_min; year_max <- yb$year_max; notes <- c(notes, yb$notes)   # v20.59: counts OR calendar years
   if (is.finite(year_min) && is.finite(year_max) && year_min > year_max) stop(sprintf("the year window is empty (%d > %d): check PRE_YEARS / POST_YEARS", year_min, year_max))
-  drop_years <- if (usable && any(c("pre_years", "post_years") %in% dk)) sort(as.integer(Filter(function(y) (!is.finite(year_min) || y >= year_min) && (!is.finite(year_max) || y <= year_max), as.integer(unlist(rec$fill_years))))) else integer(0)
+  drop_years <- if (usable && any(c("pre_years", "post_years") %in% dk) && identical(s$outcome_screen, "drop")) sort(as.integer(Filter(function(y) (!is.finite(year_min) || y >= year_min) && (!is.finite(year_max) || y <= year_max), as.integer(unlist(rec$fill_years))))) else integer(0)   # v20.59: OUTCOME_SCREEN keep / off keeps the fill years too
   seas <- if ("seasons" %in% dk) (if (usable) normalize_seasons(rec$seasons) else "all") else s$seasons_setting
   add_ch("CONTROL_RINGS", if ("control_rings" %in% dk) "data" else s$control_rings, rings, if ("control_rings" %in% dk) src_d else "your setting")
-  add_ch("PRE_YEARS", if ("pre_years" %in% dk) "data" else if (is.na(s$pre_years)) "all" else s$pre_years, if (is.finite(year_min)) paste("from", year_min) else "every year before the start", if ("pre_years" %in% dk) src_d else "your setting")
-  add_ch("POST_YEARS", if ("post_years" %in% dk) "data" else if (is.na(s$post_years)) "all" else s$post_years, if (is.finite(year_max)) paste("to", year_max) else "every year from the start", if ("post_years" %in% dk) src_d else "your setting")
+  add_ch("PRE_YEARS", yb$setting_min, if (is.finite(year_min)) paste("from", year_min) else "every year before the start", if ("pre_years" %in% dk) src_d else yb$how_min)
+  add_ch("POST_YEARS", yb$setting_max, if (is.finite(year_max)) paste("to", year_max) else "every year from the start", if ("post_years" %in% dk) src_d else yb$how_max)
   if (length(drop_years)) add_ch("  years left out", "(from PRE_YEARS / POST_YEARS = data)", drop_years, "fill years of the data-driven window (not data)")
   add_ch("SEASONS", s$seasons_setting, seas, if ("seasons" %in% dk) src_d else "your setting")
   for (k in c("EXCLUDE_TRANSITION_YEAR", "UNIT_FE", "COHORT_OFFSET")) add_ch(k, s[[tolower(k)]], s[[tolower(k)]], "your setting")
@@ -738,6 +804,8 @@ model_design <- function(verbose = TRUE, force = FALSE) {
   add_ch("DOSE_VARIABLE", s$dose_variable, s$dose_variable, "your setting (fund file; controls and untreated periods 0)")
   add_ch("FUND_START_RULE", s$fund_start_rule, s$fund_start_rule, paste0("your setting", if (s$timing != "fund") " (used for the dose only: TREATMENT_TIMING is not 'fund')" else ""))
   add_ch("EXCLUDE_GAPFILLED", s$exclude_gapfilled, s$exclude_gapfilled, "your setting")
+  add_ch("OUTCOME_SCREEN", s$outcome_screen, s$outcome_screen, paste0("your setting", c(drop = " (a year-season constant across pixels -- a fill value -- or with collapsed coverage leaves the model; evidence: OUTCOME_SCREEN_<outcome>.csv)",
+                                                                             keep = " (such year-seasons are reported and KEPT; results tagged _screenKept)", off = " (no screen)")[[s$outcome_screen]]))
   add_ch("COVARIATES", if (length(s$covariates)) s$covariates else "none", if (length(s$covariates)) s$covariates else "none", "your setting")
   d <- list(design_mode = s$design_mode, timing = s$timing, treatment_year = as.integer(base), treatment_year_setting = s$treatment_year,
             site_start = ss, site_years = sy, control_rings = as.integer(rings), year_min = year_min, year_max = year_max, drop_years = drop_years,
@@ -745,12 +813,13 @@ model_design <- function(verbose = TRUE, force = FALSE) {
             seasons = seas, seasons_setting = s$seasons_setting, exclude_transition_year = s$exclude_transition_year, unit_fe = s$unit_fe,
             cohort_offset = s$cohort_offset, overlap_rows = s$overlap_rows, fragment_rule = s$fragment_rule, fragment_min_share = s$fragment_min_share,
             pooled_fe = s$pooled_fe, dose_variable = s$dose_variable, exclude_gapfilled = s$exclude_gapfilled, covariates = s$covariates,
+            outcome_screen = s$outcome_screen,                                                   # v20.59
             fund = list(start_rule = s$fund_start_rule, start_share = s$fund_start_share, rate_months = s$fund_rate_months, before_file = s$fund_dose_before_file),
             n_sites = length(real), sites = as.integer(real), n_fund_dated = as.integer(n_fund), data_keys = dk, choices = rbindlist(ch), notes = notes,
             sub_watersheds = s$sub_watersheds, processed = as.integer(ps$sites), processed_how = ps$how)
   if (verbose) {
     cc <- d$choices; w <- max(nchar(cc$option))
-    info("DESIGN IN EFFECT (v20.58: every option is applied here, at the model stage -- the panel is not rebuilt):\n",
+    info("DESIGN IN EFFECT (v20.59: every option is applied here, at the model stage -- the panel is not rebuilt):\n",
          paste(sprintf("  %-*s  your setting: %-34s  USED: %-48s  <- %s", w, cc$option, substr(cc$your_setting, 1, 34), substr(cc$used, 1, 48), substr(cc$from, 1, 90)), collapse = "\n"))
     for (n_ in notes) warn(n_)
   }
@@ -783,6 +852,7 @@ scenario_tag <- function(d) {
   if (!is.null(d$dose_variable) && d$dose_variable != "dose_intensity_per_ha") t <- paste0(t, c(dose_amount_sws = "_doseAmount", dose_share_of_target = "_doseShare")[[d$dose_variable]])
   if (identical(fr$before_file, "missing")) t <- paste0(t, "_doseObsOnly")
   if (isFALSE(d$exclude_gapfilled)) t <- paste0(t, "_withGapFilled")
+  if (identical(d$outcome_screen, "keep")) t <- paste0(t, "_screenKept")                        # v20.59: the screen's cells kept (as Python)
   t <- paste0(t, "_", cov_tag(d$covariates %||% COVARIATES))
   if (is.finite(d$year_min %||% NA) || is.finite(d$year_max %||% NA))
     t <- paste0(t, sprintf("_yr%s-%s", if (is.finite(d$year_min %||% NA)) d$year_min else "start", if (is.finite(d$year_max %||% NA)) d$year_max else "end"))
@@ -791,7 +861,27 @@ scenario_tag <- function(d) {
 }
 
 # ---------------------------------------------------------------- the design columns of the timing in force (as Python's build_treatment_columns)
+# v20.59: the design IN EFFECT against the panel's own post column (the exports' Treat flag, R_P00 panel_design_columns_R): the same on every
+# row, or on how many rows they differ. The DESIGN's columns are what the model estimates on -- your settings (the fund timing, TREATMENT_YEAR,
+# the transition year); the panel's are the exporter's default. cmp = c(rows compared, rows that differ); NULL = the panel carries no post column.
+design_timing_text_R <- function(d) switch(d$timing %||% "fixed",
+  fund = sprintf("fund timing: the first treated season per sub-watershed, base year %d", as.integer(d$treatment_year)),
+  registry = sprintf("registry timing, base year %d", as.integer(d$treatment_year)),
+  sprintf("fixed: post = Year >= %d%s", as.integer(d$treatment_year), if (isTRUE(d$exclude_transition_year)) " with the transition year held out" else ""))
+design_vs_panel_say_R <- function(cmp, d) {
+  if (is.null(cmp)) {
+    if (is.null(.DESIGN_CACHE$no_post_column_said)) { .DESIGN_CACHE$no_post_column_said <- TRUE
+      info("this panel carries no post column (built before v20.59): the design in effect is used as it is -- re-run R_P00 to get the exports' design columns (treat, control, pre, post, did) into the panel") }
+    return(invisible(NULL))
+  }
+  n <- as.numeric(cmp[1]); k <- as.numeric(cmp[2]); if (!is.finite(n) || n <= 0) return(invisible(NULL))
+  if (k == 0) info(sprintf("DESIGN vs PANEL: the design in effect (%s) gives the same post period as the panel's post column (the exports' Treat flag) on every one of %s rows", design_timing_text_R(d), format(n, big.mark = ",")))
+  else info(sprintf("DESIGN vs PANEL: the design in effect (%s) differs from the panel's post column (the exports' Treat flag, R_P00) on %s of %s rows (%.1f %%) -- the DESIGN's columns are what this model estimates on (your settings: TREATMENT_TIMING / TREATMENT_YEAR / EXCLUDE_TRANSITION_YEAR); the panel's are the exporter's default",
+                    design_timing_text_R(d), format(k, big.mark = ","), format(n, big.mark = ","), 100 * k / n))
+  invisible(NULL)
+}
 design_columns <- function(x, d, site_period = NULL, say = TRUE) {   # v20.58: site_period given = decided on the WHOLE sample (out of
+  if ("post" %in% names(x)) x[, .post_panel := as.integer(post)]      # v20.59: the panel's post (the exports' flag), compared below
   x[, treat := as.integer(buff_km == 0L)]                               #   core); say = FALSE: a partition's count is summed and said once
   ss <- as.data.table(d$site_start %||% data.table()); sy <- as.data.table(d$site_years %||% data.table())
   base <- as.integer(d$treatment_year)
@@ -811,6 +901,10 @@ design_columns <- function(x, d, site_period = NULL, say = TRUE) {   # v20.58: s
   if (is.null(site_period)) site_period <- uniqueN(x$site_id[x$site_id > 0]) >= 2 && identical(d$pooled_fe, "site_period")
   x[, period := if (site_period) paste(site_id, Year, Season, sep = "_") else paste(Year, Season, sep = "_")]
   x[, cohort_row := NULL]
+  cmp <- NULL
+  if (".post_panel" %in% names(x)) { cmp <- c(nrow(x), sum(x$.post_panel != x$post, na.rm = TRUE)); x[, .post_panel := NULL] }
+  setattr(x, "post_vs_panel", cmp)                                     # v20.59: (rows compared, rows that differ); NULL = no post column in the panel
+  if (say) design_vs_panel_say_R(cmp, d)
   x
 }
 attach_dose_R <- function(x, d) {
@@ -858,7 +952,7 @@ load_panel_R <- function(outcome, d = load_design(), extra = character(0), integ
   r <- load_rows_R(x, outcome, d, covs, if ("site_id" %in% names(x)) location_table_R() else NULL, S,
                    fill_src = function(need2) panel_read(c("pixel_id", "Year", "Season", need2)))
   x <- r$x; loc_rep <- r$loc_rep; n_gf <- r$n_gf
-  x <- screen_outcome(x, outcome, as.integer(d$treatment_year))$dt
+  x <- screen_outcome(x, outcome, as.integer(d$treatment_year), rule = d$outcome_screen %||% screen_rule_R())$dt   # v20.59: the rule of the design
   x <- design_columns(x, d)                                                   # v20.57: the timing in force (fund / registry / fixed)
   x[, cluster_id := as.character(get(cluster_col_for(x)))]
   x <- attach_dose_R(x, d)                                                    # v20.57: the fund file's dose under the timing in force
@@ -872,7 +966,7 @@ load_panel_R <- function(outcome, d = load_design(), extra = character(0), integ
 load_columns_R <- function(outcome, d, extra = character(0), cols = panel_names()) {   # the columns a model's sample is built from
   covs <- intersect(d$covariates %||% COVARIATES, cols)
   need <- intersect(unique(c("pixel_id", "site_id", "sws_name", "Year", "Season", "buff_km", "latitude", "longitude", "LandUse",
-                             covs, outcome, extra, "site_check", "sws_export", "GapFilled", "Coverage",
+                             covs, outcome, extra, "site_check", "sws_export", "GapFilled", "Coverage", "post",   # v20.59: the panel's post, compared with the design
                              if (is.null(fund_tables_R(list(fund_start_rule = d$fund$start_rule, fund_start_share = d$fund$start_share, fund_rate_months = d$fund$rate_months,
                                                             fund_dose_before_file = d$fund$before_file)))) d$dose_variable)), cols)
   list(covs = covs, need = need)
@@ -1042,7 +1136,7 @@ sample_facts <- function(dt, outcome) {
   list(cluster_col = cc, G = uniqueN(dt[[cc]]), n_obs = nrow(dt), n_pixels = uniqueN(dt$pixel_id), n_units = uniqueN(dt$unit),
        n_sites_pos = uniqueN(dt$site_id[dt$site_id > 0]), n_periods = uniqueN(dt$period), sites = sort(unique(dt$site_id)), rings = sort(unique(dt$buff_km)),
        years = range(dt$Year), baseline_mean = mean(dt[treat == 1 & post == 0][[outcome]], na.rm = TRUE),
-       integrity = attr(dt, "integrity"), location_report = attr(dt, "location_report"))
+       integrity = attr(dt, "integrity"), location_report = attr(dt, "location_report"), post_vs_panel = attr(dt, "post_vs_panel"))   # v20.59
 }
 save_result <- function(model, outcome, res, dt, d = load_design()) {
   tag <- scenario_tag(d); od <- file.path(RESULTS_DIR, model, tag); dir.create(od, recursive = TRUE, showWarnings = FALSE)
@@ -1072,7 +1166,8 @@ save_result <- function(model, outcome, res, dt, d = load_design()) {
                     n_periods = fx$n_periods, seasons_used = normalize_seasons(d$seasons %||% SEASONS),
                     sub_watersheds = paste(fx$sites, collapse = ","), rings = paste(fx$rings, collapse = ","),
                     years = paste(fx$years, collapse = "-"),
-                    baseline_mean = fx$baseline_mean)
+                    baseline_mean = fx$baseline_mean,
+                    post_rows_differ_from_panel = if (!is.null(fx$post_vs_panel)) as.numeric(fx$post_vs_panel[2]) else NA_real_)   # v20.59: DESIGN vs PANEL
   row[, effect_pct_of_baseline := if (kind == "effect") 100 * estimate / baseline_mean else NA_real_]
   for (k in intersect(HEADLINE_EXTRA, names(res))) if (length(res[[k]])) set(row, j = k, value = res[[k]][1])   # v20.58: e.g. M34's breakdown Mbar,
   if (kind != "effect") row[, `:=`(se_note = res$se_note %||% (if (kind == "diagnostic") "a descriptive share of variance: it has no sampling SE" else if (kind == "test") "a test statistic: read its p-value" else ""))]
@@ -1122,7 +1217,7 @@ DESIGN_DEFAULTS <- list(DESIGN_MODE = "recommended", TREATMENT_TIMING = "fund", 
                         FUND_RATE_MONTHS = 12L, FUND_DOSE_BEFORE_FILE = "backcast", DOSE_VARIABLE = "dose_intensity_per_ha", CONTROL_RINGS = "data",
                         PRE_YEARS = "data", POST_YEARS = "data", SEASONS = "all", EXCLUDE_TRANSITION_YEAR = FALSE, UNIT_FE = "pixel_season", COHORT_OFFSET = 0L,
                         OVERLAP_ROWS = "drop", FRAGMENT_RULE = "drop", FRAGMENT_MIN_SHARE = 0.05, POOLED_FE = "site_period", EXCLUDE_GAPFILLED = TRUE,
-                        COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SUB_WATERSHEDS = "data")
+                        COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SUB_WATERSHEDS = "data", OUTCOME_SCREEN = "drop")   # v20.59: + the screen's rule
 design_variant_samples <- function(variants, out_dir, outcome = "NDVI") {
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
   for (nm in names(variants)) {

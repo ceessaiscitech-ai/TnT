@@ -1,3 +1,7 @@
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+VALIDATION_KNOWN_ANSWERS_SUBSET.csv
+prebuilt_verified.json
+DESIGN_OPTIONS_VALIDATION.csv
+DESIGN_OPTIONS_VALIDATION.md

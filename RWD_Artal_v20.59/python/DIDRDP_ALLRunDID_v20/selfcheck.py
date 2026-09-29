@@ -2345,6 +2345,109 @@ def check_v20_58_out_of_core():
     else: note("one definition per function in the engine files (no silent replacement)")
 
 
+def check_v20_59():
+    """v20.59 (your v20.58 R log): PRE_YEARS / POST_YEARS as calendar years (a bound leaving no pre year is said, never 'USED: from 0'); the
+    panel carries treat / control / pre / post / did with post from the exports' Treat flag (1 = post, 0 = pre); the model stage compares
+    its design with the panel's post and says so (DESIGN vs PANEL); the outcome screen writes its evidence and has a way out (OUTCOME_SCREEN
+    keep / off), its refusal names both; P00 writes the pixel-variation report; the notebooks carry the options; R has the same rules."""
+    import inspect as _i, glob as _g, numpy as _np, pandas as _pd
+    sys.path.insert(0, HERE)
+    import _common as _C, _prep_common as _P, _outofcore as _O
+    saved = dict(_C.ACTIVE)
+    try:
+        # 1 the year window
+        _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", pre_years=2018, post_years=2024, seasons="all", verbose=False)
+        if _C.scenario_years() != (2018, 2024): bad(f"PRE_YEARS / POST_YEARS as calendar years give {_C.scenario_years()} (want (2018, 2024))")
+        _C.set_scenario(pre_years=4, post_years=2, verbose=False)
+        if _C.scenario_years() != (2018, 2023): bad(f"PRE_YEARS / POST_YEARS as counts give {_C.scenario_years()} (want (2018, 2023))")
+        _C.set_scenario(pre_years=2022, post_years="all", verbose=False)
+        if _C.scenario_years() != (None, None) or _C.year_window_dropped() != (2022, None):
+            bad(f"PRE_YEARS = 2022 with the start in 2022 is not set aside: {_C.scenario_years()} / {_C.year_window_dropped()} (v20.58 gave 'from 0')")
+        _C.resolve_design(verbose=False, force=True)
+        if not any("PRE_YEARS = 2022 leaves NO year" in n for n in _C._RESOLVED["notes"]): bad("a pre bound at the start is not said in DESIGN IN EFFECT")
+        for v in (0, 500, 2500, "x"):
+            try: _C.set_scenario(pre_years=v, verbose=False); bad(f"PRE_YEARS = {v!r} was accepted")
+            except _C.InsufficientDataError: pass
+        _C.set_scenario(pre_years="all", post_years="all", verbose=False)
+        if "_year_option(" not in _i.getsource(_C.set_scenario): bad("set_scenario does not read PRE_YEARS / POST_YEARS as counts OR calendar years")
+        note("PRE_YEARS / POST_YEARS: a number of years OR a calendar year; a bound that leaves no year on its side of the start is said and set aside (never 'from 0')")
+        # 2 the panel's DiD columns from the exports' flag (P00)
+        for c in ("treat", "did", "post", "pre", "control", "treatment", "did_term"):
+            if c not in _P.FINAL_PANEL_SCHEMA: bad(f"the panel schema lacks {c}")
+        d = _pd.DataFrame({"buff_km": [0, 0, 3, 3, 7], "Year": [2021, 2022, 2021, 2022, 2022], "Season": [0] * 5, "Treat": [0.0, 0.0, 0.0, 1.0, 1.0], "season_sort_rank": [3] * 5})
+        out = _P.build_treatment_columns(d)                    # row 2: the export says 2022 is PRE for that pixel -- the flag wins over the rule
+        if list(out["post"]) != [0, 0, 0, 1, 1] or list(out["pre"]) != [1, 1, 1, 0, 0]: bad(f"post / pre do not follow the exports' Treat flag: {list(out['post'])}")
+        if list(out["treat"]) != [1, 1, 0, 0, 0] or list(out["did"]) != [0, 0, 0, 0, 0] or list(out["control"]) != [0, 0, 1, 1, 0]: bad("treat / did / control wrong in the preparation's build_treatment_columns")
+        if out.attrs.get("post_flag_vs_rule_differ") != 1 or out.attrs.get("post_from_export_flag") != 5: bad(f"the flag-vs-rule accounting is wrong: {out.attrs}")
+        _P.POST_FROM_EXPORT_TREAT = False
+        try:
+            if list(_P.build_treatment_columns(d)["post"]) != [0, 1, 0, 1, 1]: bad("POST_FROM_EXPORT_TREAT = False does not give the rule Year >= 2022")
+        finally:
+            _P.POST_FROM_EXPORT_TREAT = True
+        pb = _i.getsource(_P.prepare_pass_b_block)
+        if "export_post_flag(" not in pb or "post_from_export_flag" not in pb: bad("PASS B's design check does not account for the exports' flag")
+        if "panel_variation_by_block.csv" not in _i.getsource(_P.run_pass_b) or "moments" not in pb: bad("P00 does not write the pixel-variation report")
+        if "post_from_export_treat" not in _i.getsource(_P.final_panel_is_valid): bad("a panel built under the other POST_FROM_EXPORT_TREAT setting is not rebuilt")
+        note("the panel carries treat / control / pre / post / did -- post = the exports' Treat flag (1 = post, 0 = pre), the rule where a row has none, counted; P00 writes panel_variation_by_block.csv")
+        # 3 the model stage: the design in effect against the panel's post, said; the aliases rebuilt
+        src = _i.getsource(_C.build_treatment_columns)
+        if "design_vs_panel(" not in src or 'out["treat"] = out["treatment"]' not in src: bad("the model stage does not compare its design with the panel's post / rebuild the treat / did aliases")
+        _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", verbose=False)
+        f = _pd.DataFrame({"pixel_id": _np.arange(6, dtype="int64"), "buff_km": [0, 0, 0, 2, 2, 2], "Year": [2021, 2022, 2023] * 2, "Season": [1] * 6,
+                           "post": [0, 0, 1, 0, 0, 1], "subwshed_id": ["SW1"] * 6, "time_fe_yearseason": ["2021_K", "2022_K", "2023_K"] * 2, "NDVI": 0.3})
+        g = _C.build_treatment_columns(f)
+        if _C.LAST_DESIGN_INFO.get("post_rows_differ_from_panel") != 2 or _C.LAST_DESIGN_INFO.get("post_rows_compared") != 6: bad(f"DESIGN vs PANEL count wrong: {_C.LAST_DESIGN_INFO}")
+        if list(g["post"]) != [0, 1, 1, 0, 1, 1] or list(g["did"]) != [0, 1, 1, 0, 0, 0] or list(g["treat"]) != [1, 1, 1, 0, 0, 0]: bad("the model's post / did / treat do not follow the design (fixed 2022)")
+        if "post" not in _C.columns_for("NDVI") or "post" not in _C.OPTIONAL_READ_COLUMNS: bad("the panel's post is not read for the comparison")
+        import _ooc_models as _OM
+        if "post_diff" not in _i.getsource(_OM._t_prep) or "say_design_vs_panel(" not in _i.getsource(_OM.prepare_sample): bad("the out-of-core path does not merge and say the DESIGN vs PANEL counts")
+        note("the model stage rebuilds treat / post / did for ITS design and says on how many rows it differs from the panel's post (DESIGN vs PANEL; out of core too)")
+        # 4 the outcome screen: evidence, rule, refusal text
+        if _C.screen_rule() != "drop": bad(f"the default screen rule is {_C.screen_rule()!r}, not 'drop'")
+        for v, w in ((True, "drop"), (False, "off"), ("keep", "keep"), ("OFF", "off")):
+            if _C._screen_rule_of(v) != w: bad(f"OUTCOME_SCREEN {v!r} -> {_C._screen_rule_of(v)!r} (want {w!r})")
+        t = _pd.DataFrame({"Year": [2020] * 4 + [2021] * 4, "Season": [0] * 8, "tr": [True, False] * 4, "y": [0.31] * 4 + [0.30, 0.35, 0.40, 0.45]})
+        gt = _C.screen_decide_table(_C._screen_table(t, _np.arange(8)), "NDVI")
+        if list(gt["usable"]) != [False, True] or "every value 0.31" not in gt["why"].iloc[0] or "4 rows of 4 pixels" not in gt["why"].iloc[0]:
+            bad(f"the screen's evidence is not in its verdict: {list(gt['why'])}")
+        for k in ("vmin", "vmax", "n_pixels", "sd"):
+            if k not in gt.columns: bad(f"the screen table lacks {k}")
+        _C.set_scenario(outcome_screen="keep", verbose=False)
+        if _C.screen_rule() != "keep" or "_screenKept" not in _C.scenario_tag(): bad("OUTCOME_SCREEN = 'keep' is not in force / not in the results tag")
+        _C.set_scenario(outcome_screen="drop", verbose=False)
+        if "_screenKept" in _C.scenario_tag(): bad("the _screenKept tag stays after OUTCOME_SCREEN = 'drop'")
+        txt = _C.screen_refusal_text("NDVI", [2015], [2025], 41, 44, "x.csv")
+        if "OUTCOME_SCREEN = 'keep'" not in txt or "x.csv" not in txt: bad("the refusal does not name the evidence file and the way out")
+        if "screen_decide_table(" not in _i.getsource(_O.screen_decision) or "screen_report(" not in _i.getsource(_O.screen_decision): bad("the out-of-core screen does not share the in-memory evidence and rule")
+        if "vmin" not in _i.getsource(_O._screen_stats): bad("the out-of-core screen moments lack min / max")
+        note("the outcome screen: every decision with its evidence (OUTCOME_SCREEN_<outcome>.csv), OUTCOME_SCREEN drop / keep / off, a refusal that names the way out; the same out of core")
+        # 5 the notebooks: OUTCOME_SCREEN set and passed, the calendar-year form documented; P00 carries POST_FROM_EXPORT_TREAT
+        nbs = [p for p in _g.glob(os.path.join(HERE, "0*", "M[0-9][0-9]_*.ipynb")) if ".ipynb_checkpoints" not in p]   # the model notebooks (not MS01)
+        miss = [os.path.basename(p) for p in nbs if not all(k in open(p, encoding="utf-8").read() for k in ("OUTCOME_SCREEN", "outcome_screen=OUTCOME_SCREEN", "calendar year"))]
+        if miss: bad(f"model notebooks without OUTCOME_SCREEN / the calendar-year note: {miss[:6]}")
+        p00 = _g.glob(os.path.join(HERE, "01_Panel_Preparation", "P00*.ipynb"))
+        if not p00 or "POST_FROM_EXPORT_TREAT" not in open(p00[0], encoding="utf-8").read(): bad("P00's settings do not carry POST_FROM_EXPORT_TREAT")
+        note(f"{len(nbs)} model notebooks set OUTCOME_SCREEN and pass it; PRE_YEARS / POST_YEARS document the calendar-year form; P00 carries POST_FROM_EXPORT_TREAT")
+        # 6 R: the same rules in the R library and notebooks
+        rl = os.path.join(os.path.dirname(os.path.dirname(HERE)), "R", "lib")
+        if os.path.isdir(rl):
+            want = {"reward_design.R": ("year_bounds_R", "screen_rule_R", "design_vs_panel_say_R", 'OUTCOME_SCREEN_%s.csv', "_screenKept", "post_vs_panel", "outcome_screen = screen_rule_R"),
+                    "reward_prep.R": ("panel_design_columns_R", "panel_variation_report_R", "POST_FROM_EXPORT_TREAT"),
+                    "reward_prep_ooc.R": ("panel_design_columns_R", "panel_variation_report_R"),
+                    "reward_outofcore.R": ("post_vs_panel", "screen_decide(s, outcome, rule)", "min = min(v), max = max(v)"),
+                    "reward_paths.R": ("OUTCOME_SCREEN",)}
+            for fn, keys in want.items():
+                pth = os.path.join(rl, fn); s_ = open(pth, encoding="utf-8").read() if os.path.exists(pth) else ""
+                m_ = [k for k in keys if k not in s_]
+                if m_: bad(f"R {fn} lacks {m_}")
+            rmd = [p for p in _g.glob(os.path.join(os.path.dirname(rl), "rstudio", "R_M*.Rmd"))]
+            m_ = [os.path.basename(p) for p in rmd if "OUTCOME_SCREEN" not in open(p, encoding="utf-8").read() or "calendar year" not in open(p, encoding="utf-8").read()]
+            if m_: bad(f"R notebooks without OUTCOME_SCREEN / the calendar-year note: {m_[:6]}")
+            note("R: the same rules (year_bounds_R, panel_design_columns_R, screen_rule_R + the evidence file, DESIGN vs PANEL, the variation report) and the same notebook options")
+    finally:
+        _C.ACTIVE.clear(); _C.ACTIVE.update(saved); _C._RESOLVED["key"] = None
+
+
 def check_v20_58_memory_batches():
     """v20.58 (found when a validation run was KILLED for memory): M25's permutations in batches were sized for 3 n-vectors per permutation
     while the peak was 5 (the demeaning's convergence test made two more n x k temporaries). The demeaning tests its convergence in place
@@ -2673,6 +2776,7 @@ def run():
     check_v20_58_out_of_core()
     check_v20_58_repeated_rows()
     check_v20_58_memory_batches()
+    check_v20_59()
     check_v20_58_m13_port()
     check_v20_35_structure()
     check_v20_35()

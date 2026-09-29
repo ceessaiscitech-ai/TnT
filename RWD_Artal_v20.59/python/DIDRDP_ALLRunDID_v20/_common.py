@@ -8,7 +8,7 @@ nothing heavy runs at import, and each notebook loads ONLY the columns it needs.
 
 Do not edit estimator maths here without re-running validate_all() at the bottom.
 """
-import os, sys, json, gc, warnings
+import os, sys, json, gc, warnings, math
 
 # ---- ENVIRONMENT CHECK (v15.3): refuse to run inside ArcGIS Pro's write-protected Python 3.7 ----
 
@@ -1199,9 +1199,101 @@ def nonnegative_columns(est_cols, outcome):
 # of ~0 (your beta 0.000014, SE 0.00000000). A year-season is screened out when the outcome is CONSTANT across pixels,
 # or when its coverage (treated or control) collapses below 5 % of the typical year-season. An outcome left without
 # two valid pre-period years (or any valid post year) is refused with that reason -- never estimated on fill values.
-OUTCOME_SCREEN = True
+OUTCOME_SCREEN = "drop"          # v20.59: the outcome screen's RULE -- "drop" (True): a year-season whose values are constant across pixels (a fill
+                                 #   value) or whose coverage collapsed leaves every model, as before | "keep": it is reported, its evidence written
+                                 #   and KEPT (the model runs; results tagged _screenKept) | "off" (False): no screen. Set in each model's CELL 1
+                                 #   (OUTCOME_SCREEN -> set_scenario(outcome_screen=...)). The evidence of every decision -- rows, pixels, mean, SD,
+                                 #   min and max per year-season -- is OUTCOME_SCREEN_<outcome>.csv beside the results (every run, every rule).
 SCREEN_MIN_COVERAGE = 0.05
 SCREEN_REPORT = {}
+SCREEN_EVIDENCE = {}             # v20.59: outcome -> the per-cell evidence table of the last screen (what OUTCOME_SCREEN_<outcome>.csv holds)
+
+def _screen_rule_of(v):
+    if v is True: return "drop"
+    if v is False or v is None: return "off"
+    v = str(v).strip().lower()
+    if v in ("drop", "true", "on", "1"): return "drop"
+    if v in ("keep", "report", "warn"): return "keep"
+    if v in ("off", "false", "none", "0", "no"): return "off"
+    raise InsufficientDataError(f"OUTCOME_SCREEN must be 'drop', 'keep' or 'off' (got {v!r})")
+
+def screen_rule(scn=None):
+    """v20.59: the screen's rule in force -- 'drop' | 'keep' | 'off' (the design's outcome_screen, else the constant OUTCOME_SCREEN)."""
+    a = scn if scn is not None else globals().get("ACTIVE")
+    v = a.get("outcome_screen") if isinstance(a, dict) else None
+    return _screen_rule_of(OUTCOME_SCREEN if v is None else v)
+
+def _screen_table(t, pixel_ids=None):
+    """v20.59: the screen's evidence per (Year, Season) from t (Year, Season, tr, y; finite y only): rows, pixels, mean, SD across the rows,
+    min, max, treated / control rows."""
+    g = t.groupby(["Year", "Season"]).agg(n=("y", "size"), mean=("y", "mean"), sd=("y", "std"), vmin=("y", "min"), vmax=("y", "max"))
+    g["n_treated"] = t[t.tr].groupby(["Year", "Season"]).size().reindex(g.index).fillna(0).astype(int)
+    g["n_control"] = t[~t.tr].groupby(["Year", "Season"]).size().reindex(g.index).fillna(0).astype(int)
+    g["n_pixels"] = (t.assign(_p=np.asarray(pixel_ids)).groupby(["Year", "Season"])["_p"].nunique().reindex(g.index).fillna(0).astype(float)
+                     if pixel_ids is not None else np.nan)
+    return g
+
+def screen_decide_table(g, outcome):
+    """v20.59: the screen's two decisions on its (Year, Season) table -- constant across pixels (a fill value), coverage collapsed -- added as
+    the columns usable / why, each with its numbers. Shared by the in-memory screen, the per-variable report (P09) and the out-of-core path."""
+    g = g.copy()
+    g["sd"] = g["sd"].fillna(0.0)
+    const = g["sd"] <= 1e-9 * np.maximum(1.0, g["mean"].abs())
+    med_t, med_c = float(g["n_treated"].median()), float(g["n_control"].median())
+    collapse = (g["n_treated"] < SCREEN_MIN_COVERAGE * med_t) | (g["n_control"] < SCREEN_MIN_COVERAGE * med_c)
+    why = []
+    for (yy, ss), r in g.iterrows():
+        w = []
+        if const.loc[(yy, ss)]:
+            npx = r.get("n_pixels", np.nan)
+            w.append(f"constant across pixels (a fill value: {int(r.n):,} rows" + (f" of {int(npx):,} pixels" if np.isfinite(npx) else "")
+                     + f", every value {r.vmin:.6g}" + (f"..{r.vmax:.6g}" if r.vmax != r.vmin else "") + ")")
+        if collapse.loc[(yy, ss)]:
+            w.append(f"coverage collapsed ({int(r.n_treated):,} treated / {int(r.n_control):,} control rows against typical {med_t:,.0f} / {med_c:,.0f})")
+        why.append("; ".join(w))
+    g["usable"] = ~(const | collapse); g["why"] = why; g["outcome"] = outcome
+    return g
+
+def screen_evidence_path(outcome):
+    try: os.makedirs(RESULTS_ROOT, exist_ok=True)
+    except Exception: pass
+    return os.path.join(RESULTS_ROOT, f"OUTCOME_SCREEN_{outcome}.csv")
+
+def screen_report(g, outcome, rule=None, verbose=True):
+    """v20.59: the screen's report from its decided table -- the evidence file (every cell, every rule), the message with the numbers, and
+    what to leave out: (the (Year, Season) cells to DROP -- none under 'keep', the report rows, the evidence path)."""
+    rule = rule or screen_rule()
+    bad = g[~g["usable"]]
+    rep_rows = [{"outcome": outcome, "Year": int(yy), "Season": SEASON_LABEL.get(int(ss), ss), "why": r.why} for (yy, ss), r in bad.iterrows()]
+    SCREEN_REPORT[outcome] = rep_rows
+    ev = g.reset_index()
+    ev["season"] = ev["Season"].map(lambda s: SEASON_LABEL.get(int(s), s)); ev["rule"] = rule; ev["left_out"] = (~ev["usable"]) & (rule == "drop")
+    ev = ev.rename(columns={"n": "rows", "n_pixels": "pixels", "sd": "sd_across_pixels", "vmin": "min", "vmax": "max", "n_treated": "treated_rows", "n_control": "control_rows"})
+    ev = ev[[c for c in ("outcome", "Year", "Season", "season", "rows", "pixels", "mean", "sd_across_pixels", "min", "max", "treated_rows", "control_rows", "usable", "rule", "left_out", "why") if c in ev.columns]]
+    SCREEN_EVIDENCE[outcome] = ev
+    path = screen_evidence_path(outcome)
+    try: ev.to_csv(path, index=False)
+    except Exception: path = "(the evidence file could not be written)"
+    if rep_rows and verbose:
+        warn(f"{outcome}: {len(rep_rows)} of {len(g)} year-season(s) are NOT pixel data"
+             + (" and are left out" if rule == "drop" else " -- KEPT (OUTCOME_SCREEN = 'keep': the model runs on them; read its result with that in mind)")
+             + " -- " + "; ".join(f"{r['Year']} {r['Season']}: {r['why']}" for r in rep_rows[:6]) + ("; ..." if len(rep_rows) > 6 else "")
+             + f" -> the evidence of every year-season (rows, pixels, mean, SD, min, max): {path}")
+    drop = set((int(a), int(b)) for a, b in bad.index) if rule == "drop" else set()
+    return drop, rep_rows, path
+
+def screen_refusal_text(outcome, pre, post, n_bad, n_cells, path):
+    return (f"'{outcome}' is not usable: after the screen ({n_bad} of {n_cells} year-seasons left out as fill values / collapsed coverage) it has "
+            f"{len(pre)} valid pre-period year(s) {pre} and {len(post)} post-period year(s) {post} (need >= 2 and >= 1). The evidence -- rows, "
+            f"pixels, mean, SD, min and max per year-season -- is in {path}. If those year-seasons ARE pixel data, set OUTCOME_SCREEN = 'keep' in "
+            f"this model's settings (the model then runs on every year-season, tagged _screenKept) -- or re-export the variable if they are not.")
+
+def screen_refuse_years(outcome, yrs, n_bad, n_cells, path, refuse=True):
+    """v20.59: fewer than 2 pre / 1 post years left after the screen -> the refusal names the evidence and the way out."""
+    T = int(ACTIVE.get("treatment_year") or 2022)
+    pre, post = [v for v in yrs if v < T], [v for v in yrs if v >= T]
+    if refuse and (len(pre) < 2 or not post):
+        raise InsufficientDataError(screen_refusal_text(outcome, pre, post, n_bad, n_cells, path))
 
 DATA_RULES_VERSION = "20.58"    # bump when a data rule changes (screen, zeros, ...): cached package inputs are rebuilt
                                 # v20.57: the fund timing and dose, the fragment rule and the always-rebuilt cohorts
@@ -1280,7 +1372,10 @@ def screened_year_seasons(outcome, with_years=False):
     return (bad, good) if with_years else bad
 
 def screen_outcome_frame(df, outcome, verbose=True, refuse=True):
-    if not OUTCOME_SCREEN or outcome not in getattr(df, "columns", ()) or "Year" not in df.columns or not len(df):
+    """The outcome screen on a loaded frame (v20.45; v20.59: the evidence of every decision, the rule OUTCOME_SCREEN drop / keep / off, and a
+    refusal that names the evidence file and the way out)."""
+    rule = screen_rule()
+    if rule == "off" or outcome not in getattr(df, "columns", ()) or "Year" not in df.columns or not len(df):
         return df
     y = pd.to_numeric(df[outcome], errors="coerce").values.astype("float64")
     fin = np.isfinite(y)
@@ -1288,32 +1383,13 @@ def screen_outcome_frame(df, outcome, verbose=True, refuse=True):
     tr = (pd.to_numeric(df["buff_km"], errors="coerce").values == TREAT_CORE_BUFFKM) if "buff_km" in df.columns else np.zeros(len(df), bool)
     t = pd.DataFrame({"Year": pd.to_numeric(df["Year"], errors="coerce").values, "Season": season, "tr": tr, "y": y})[fin]
     if not len(t): return df
-    g = t.groupby(["Year", "Season"]).agg(n=("y", "size"), sd=("y", "std"), mean=("y", "mean"))
-    g["n_treated"] = t[t.tr].groupby(["Year", "Season"]).size().reindex(g.index).fillna(0)
-    g["n_control"] = t[~t.tr].groupby(["Year", "Season"]).size().reindex(g.index).fillna(0)
-    const = g["sd"].fillna(0.0) <= 1e-9 * np.maximum(1.0, g["mean"].abs())
-    med_t, med_c = float(g["n_treated"].median()), float(g["n_control"].median())
-    collapse = (g["n_treated"] < SCREEN_MIN_COVERAGE * med_t) | (g["n_control"] < SCREEN_MIN_COVERAGE * med_c)
-    bad = g[const | collapse].copy()
-    rep_rows = []
-    for (yy, ss), r in bad.iterrows():
-        why = ("constant across pixels (a fill value)" if const.loc[(yy, ss)] else "") + \
-              (("; " if const.loc[(yy, ss)] else "") + f"coverage collapsed ({int(r.n_treated):,} treated / {int(r.n_control):,} control pixels)"
-               if collapse.loc[(yy, ss)] else "")
-        rep_rows.append({"outcome": outcome, "Year": int(yy), "Season": SEASON_LABEL.get(int(ss), ss), "why": why})
-    SCREEN_REPORT[outcome] = rep_rows
-    if rep_rows:
-        drop = pd.MultiIndex.from_arrays([pd.to_numeric(df["Year"], errors="coerce").values, season]).isin(bad.index)
-        df = df[~drop]
-        if verbose:
-            warn(f"{outcome}: {len(rep_rows)} year-season(s) are NOT pixel data and are left out -- "
-                 + "; ".join(f"{r['Year']} {r['Season']}: {r['why']}" for r in rep_rows[:6]) + ("; ..." if len(rep_rows) > 6 else ""))
-    T = int(ACTIVE.get("treatment_year") or 2022)
-    yrs = sorted(set(int(v) for v in pd.to_numeric(df["Year"], errors="coerce").dropna().unique()))
-    pre, post = [v for v in yrs if v < T], [v for v in yrs if v >= T]
-    if refuse and (len(pre) < 2 or not post):
-        raise InsufficientDataError(f"'{outcome}' is not usable: after the fill years are removed it has {len(pre)} valid pre-period "
-                                    f"year(s) {pre} and {len(post)} post-period year(s) {post} (need >= 2 and >= 1). Re-export it.")
+    g = screen_decide_table(_screen_table(t, df["pixel_id"].values[fin] if "pixel_id" in df.columns else None), outcome)
+    drop, rep_rows, path = screen_report(g, outcome, rule, verbose=verbose)
+    if drop:
+        m = pd.MultiIndex.from_arrays([pd.to_numeric(df["Year"], errors="coerce").values, season]).isin(sorted(drop))
+        df = df[~m]
+    yrs = sorted(set(int(v) for v in pd.to_numeric(df["Year"], errors="coerce").dropna().unique())) if len(df) else []
+    screen_refuse_years(outcome, yrs, len(rep_rows), len(g), path, refuse=refuse)
     return df
 
 def screen_all_outcomes(outcomes=None, write=True, verbose=True):
@@ -1325,22 +1401,25 @@ def screen_all_outcomes(outcomes=None, write=True, verbose=True):
         if not p or not os.path.exists(p): continue
         try:
             pf = _pq.ParquetFile(p); acc = {}
-            for i in range(pf.num_row_groups):
+            for i in range(pf.num_row_groups):        # v20.59: exact moments row group by row group (mean / M2 combined, as the out-of-core screen), min, max
                 d = pf.read_row_group(i, columns=[x for x in ("Year", "Season", "buff_km", o) if x in pf.schema_arrow.names]).to_pandas()
                 v = pd.to_numeric(d[o], errors="coerce"); f = np.isfinite(v.values)
                 d = d[f].assign(_v=v[f].astype("float64"), _tr=(pd.to_numeric(d.loc[f, "buff_km"], errors="coerce") == TREAT_CORE_BUFFKM))
                 for k, gg in d.groupby(["Year", "Season"]):
-                    a = acc.setdefault(k, [0, 0.0, 0.0, 0, 0])
-                    a[0] += len(gg); a[1] += float(gg._v.sum()); a[2] += float((gg._v ** 2).sum()); a[3] += int(gg._tr.sum()); a[4] += int((~gg._tr).sum())
+                    n, mu = len(gg), float(gg._v.mean()); m2 = float(((gg._v - mu) ** 2).sum())
+                    a = acc.get(k)
+                    if a is None: acc[k] = [n, mu, m2, int(gg._tr.sum()), int((~gg._tr).sum()), float(gg._v.min()), float(gg._v.max())]; continue
+                    N = a[0] + n; dlt = mu - a[1]
+                    a[1] = a[1] + dlt * n / N; a[2] = a[2] + m2 + dlt * dlt * a[0] * n / N; a[0] = N
+                    a[3] += int(gg._tr.sum()); a[4] += int((~gg._tr).sum()); a[5] = min(a[5], float(gg._v.min())); a[6] = max(a[6], float(gg._v.max()))
             if not acc: continue
-            g = pd.DataFrame([{"Year": k[0], "Season": k[1], "n": a[0], "mean": a[1] / a[0],
-                               "sd": np.sqrt(max(0.0, a[2] / a[0] - (a[1] / a[0]) ** 2)), "n_treated": a[3], "n_control": a[4]} for k, a in acc.items()])
-            mt, mc = g.n_treated.median(), g.n_control.median()
-            for r in g.itertuples():
-                c_ = r.sd <= 1e-7 * max(1.0, abs(r.mean)); k_ = (r.n_treated < SCREEN_MIN_COVERAGE * mt) or (r.n_control < SCREEN_MIN_COVERAGE * mc)
-                rows.append({"outcome": o, "Year": int(r.Year), "Season": SEASON_LABEL.get(int(r.Season), r.Season), "treated_pixels": int(r.n_treated),
-                             "control_pixels": int(r.n_control), "sd_across_pixels": float(r.sd), "usable": not (c_ or k_),
-                             "why": ("constant (fill)" if c_ else "") + ("; " if c_ and k_ else "") + ("coverage collapsed" if k_ else "")})
+            g = pd.DataFrame([{"Year": int(k[0]), "Season": int(k[1]), "n": a[0], "mean": a[1], "sd": (math.sqrt(a[2] / (a[0] - 1)) if a[0] > 1 else 0.0),
+                               "vmin": a[5], "vmax": a[6], "n_treated": a[3], "n_control": a[4], "n_pixels": np.nan} for k, a in acc.items()]).set_index(["Year", "Season"])
+            g = screen_decide_table(g, o)                       # v20.59: the same two decisions, the same numbers, as the models' screen
+            for (yy, ss), r in g.iterrows():
+                rows.append({"outcome": o, "Year": int(yy), "Season": SEASON_LABEL.get(int(ss), ss), "treated_pixels": int(r.n_treated),
+                             "control_pixels": int(r.n_control), "rows": int(r.n), "mean": float(r["mean"]), "sd_across_pixels": float(r.sd),
+                             "min": float(r.vmin), "max": float(r.vmax), "usable": bool(r.usable), "why": r.why})
         except Exception as e:
             rows.append({"outcome": o, "why": f"screen failed: {e}"})
     out = pd.DataFrame(rows)
@@ -1349,8 +1428,9 @@ def screen_all_outcomes(outcomes=None, write=True, verbose=True):
         bad = out[out.get("usable", True) == False]
         md = ["# Outcome screen -- year-seasons that are not pixel data", "",
               f"{len(bad)} of {len(out)} outcome x year-season cells are left out of every model (constant fill values or collapsed coverage).", "",
-              "| outcome | year | season | treated px | control px | why |", "|---|---|---|---|---|---|"]
-        md += [f"| {r.outcome} | {r.Year} | {r.Season} | {r.treated_pixels:,} | {r.control_pixels:,} | {r.why} |" for r in bad.itertuples()]
+              "| outcome | year | season | treated px | control px | mean | SD across pixels | min | max | why |", "|---|---|---|---|---|---|---|---|---|---|"]
+        md += [f"| {r.outcome} | {r.Year} | {r.Season} | {r.treated_pixels:,} | {r.control_pixels:,} | {r.mean:.6g} | {r.sd_across_pixels:.3g} | {r.min:.6g} | {r.max:.6g} | {r.why} |" for r in bad.itertuples()]
+        md += ["", f"Rule in force: OUTCOME_SCREEN = {screen_rule()!r} ('drop' leaves these cells out of every model; 'keep' keeps them, said; 'off' runs no screen)."]
         open(os.path.join(RESULTS_ROOT, "OUTCOME_SCREEN.md"), "w", encoding="utf-8").write("\n".join(md) + "\n")
         if verbose: info(f"outcome screen: {len(bad)} outcome x year-season cells are fill / collapsed -> OUTCOME_SCREEN.md")
     return out
@@ -2179,6 +2259,7 @@ ZERO_RULE_EXCEPT = ()                # variables where 0 is a valid value (e.g. 
 FLOORED_COVARIATES = ("Rain", "Tmax", "Tmean", "Tmin")   # v20.30: floored at 0 during preparation -> a 0 is a real value
                                                           # (dry season / the floor), never a masked cell
 DESIGN_TERM_COLS = {"did_term", "did_x_cov", "did_g3", "did_high", "did_low", "high_cov", "treat_core", "treatment", "post", "pre", "fake_did",
+                    "treat", "did", "control",                       # v20.59: the panel's DiD columns (the names R's panel uses)
                     "did_placebo", "did_stack", "did_naive", "frac_seasons_treated", "is_near_ring", "dose_term"}
 def _is_design_term(col):
     """v20.58: a design indicator (a DiD term, a group dummy) entering a regression as a regressor: 0 is a real value there. v20.57 applied the
@@ -2205,7 +2286,7 @@ MODELS_NEEDING_ALL_RINGS = set()   # v20.58 (YOUR RULE: the rings you set are th
 CLEAN_CONTROLS = True      # pooled multi-site panels: a pixel TREATED in any sub-watershed is never a control, and a pixel in
                            # several sites' rings enters once -- otherwise one pixel's value sits on both sides of the DiD
 CURRENT_MODEL_ID = None    # set by results_dir(MODEL_ID) in each notebook's CELL 1
-OPTIONAL_READ_COLUMNS = {"sws_name", "site_check", "latitude", "longitude", "dose_per_subwshed", "GapFilled", "Coverage", "OptTier",
+OPTIONAL_READ_COLUMNS = {"sws_name", "site_check", "latitude", "longitude", "dose_per_subwshed", "GapFilled", "Coverage", "OptTier", "post",   # v20.59: post
                          "LandUse", "LandUseDW", "District", "area_hectare", "first_treat_season",   # v20.58: a four-model panel lacks them
                          "fragment", "sws_id_export", "dose_amount_sws", "dose_intensity_per_ha",   # v20.57: fragment rule, dose
                          "first_treat_agri_year"}      # v20.57: rebuilt by build_treatment_columns from the timing in force -- never required
@@ -2218,6 +2299,8 @@ def columns_for(outcome, extra=()):
     assert_is_outcome(outcome)
     cols = set(ID_FE_COLS) | {outcome} | set(extra)
     cols |= {"GapFilled", "Coverage"}                                    # v20.35: read when present, never required
+    cols |= {"post"}                                                     # v20.59: the panel's post (the exports' Treat flag) -- read when present,
+                                                                         #   compared with the design in effect (build_treatment_columns), never estimated on
     cols |= {"LandUse"}                          # v20.44: a DESCRIPTOR (M10's land-use group, CATE splits) -- loaded,
                                                  # never required and never a covariate unless the model asks for it
     cols |= {c for c in DEFAULT_COVARIATES if c != outcome}
@@ -2988,6 +3071,8 @@ def recommend_design(outcome="NDVI", treatment_year=None, write=True, verbose=Tr
               f"- **Common shocks:** {sorted(set(shocks)) or 'none'} -- years in which the core and the rings move together (weather, not an export break): "
               f"the year x season fixed effects absorb them, no year is removed",
               f"- **Fill years (not data):** {fill or 'none'}",
+              "- **SD across pixels on the annual rows, by year (the evidence of the fill years; a fill value has SD 0):** "   # v20.59
+              + ", ".join(f"{int(y)}: {float(sdv.get(y, float('nan'))):.3g}" for y in yrs),
               f"- **Control rings:** {ctrl} -- " + (f"rings {contaminated} move with the core relative to ring {far} (spillover) and are left out" if contaminated else "no inner ring moves with the core"),
               f"- **Seasons:** {seas}", f"- **Share of core pixels with a history in {T - 1}, by year:** {rec['linkage']}", "",
               "The core's own effect is never used to choose any of this."]
@@ -2995,7 +3080,8 @@ def recommend_design(outcome="NDVI", treatment_year=None, write=True, verbose=Tr
     if verbose:
         info(f"design from the data: pre {pre}, post {post}, control rings {ctrl}, seasons {seas}"
              + (f"; export breaks {sorted(set(breaks))}" if breaks else "") + (f"; common shocks (kept) {sorted(set(shocks))}" if shocks else "")
-             + (f"; fill years {fill}" if fill else "") + " -> DESIGN_RECOMMENDATION.md")
+             + (f"; fill years {fill} (SD across pixels on the annual rows: " + ", ".join(f"{int(y)} {float(sdv.get(y, float('nan'))):.3g}" for y in yrs) + ")" if fill else "")   # v20.59: the evidence
+             + " -> DESIGN_RECOMMENDATION.md")
     return rec
 
 def audit_results(root=None, write=True, verbose=True):
@@ -3168,6 +3254,8 @@ ACTIVE = {"control_zones": tuple(DEFAULT_CONTROL_ZONES), "treatment_year": TREAT
           # v20.57: the fund workbook -> timing (TREATMENT_TIMING = "fund") and the dose of every timing (_fund.py)
           "dose_variable": "dose_intensity_per_ha", "fund_start_rule": "backcast", "fund_start_share": 0.10,
           "fund_rate_months": 12, "fund_dose_before_file": "backcast", "exclude_gapfilled": True,
+          # v20.59: the outcome screen's rule -- "drop" (a fill-value / collapsed year-season leaves the model) | "keep" | "off" (OUTCOME_SCREEN)
+          "outcome_screen": "drop",
           # v20.12: which rows enter the estimation. "seasonal" = Kharif/Rabi/Zaid (Season 1-3, the default);
           # "yearly" = the annual composite rows (Season 0) -- the only place ESI / RUSLE / WSI / WSSI have values;
           # "all" = both (rarely appropriate: mixes two temporal resolutions).
@@ -3228,7 +3316,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                  nonnegative=None, nonnegative_mode=None, nonnegative_scope=None, overlap_rows=None, timing=None, site_start=None,
                  design_mode=None, fragment_rule=None, fragment_min_share=None, dose_variable=None, fund_start_rule=None,
                  fund_start_share=None, fund_rate_months=None, fund_dose_before_file=None, exclude_gapfilled=None, sub_watersheds=None,
-                 persist=False, verbose=True):
+                 outcome_screen=None, persist=False, verbose=True):
     """Set the run's control rings and treatment timing. Call it in CELL 1, BEFORE loading the panel.
     post_cutoff defaults to treatment_year (shifting the timing shifts the pre/post split with it).
 
@@ -3255,7 +3343,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                    ("fragment_min_share", fragment_min_share), ("dose_variable", dose_variable), ("fund_start_rule", fund_start_rule),
                    ("fund_start_share", fund_start_share), ("fund_rate_months", fund_rate_months),
                    ("fund_dose_before_file", fund_dose_before_file), ("exclude_gapfilled", exclude_gapfilled),
-                   ("overlap_rows", overlap_rows), ("sub_watersheds", sub_watersheds)):   # v20.57: overlap_rows was missing; v20.58: the processing set
+                   ("overlap_rows", overlap_rows), ("sub_watersheds", sub_watersheds), ("outcome_screen", outcome_screen)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule
         if _v is not None: _EXPLICIT_KEYS.add(_k)
     # v20.57: which keys the notebook set, in the form load_scenario() respects (a "data" option is explicit too)
     for _k, _v in (("treatment_year_setting", treatment_year), ("post_cutoff_setting", post_cutoff), ("seasons_setting", seasons),
@@ -3325,6 +3413,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
         _b = str(fund_dose_before_file).strip().lower()
         if _b not in ("backcast", "missing"): raise InsufficientDataError(f"fund_dose_before_file must be 'backcast' or 'missing' (got {fund_dose_before_file!r})")
         ACTIVE["fund_dose_before_file"] = _b
+    if outcome_screen is not None: ACTIVE["outcome_screen"] = _screen_rule_of(outcome_screen)     # v20.59: drop | keep | off
     if treatment_year is not None: _EXPLICIT_KEYS.add("post_cutoff")
     if all_years: _EXPLICIT_KEYS.update({"pre_years", "post_years", "year_min", "year_max"})
     if control_zones is not None: ACTIVE["control_zones"] = parse_control_zones(control_zones)
@@ -3421,8 +3510,16 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
         if o_ not in ("drop", "keep"): raise InsufficientDataError(f"overlap_rows must be 'drop' or 'keep' (got {overlap_rows!r})")
         ACTIVE["overlap_rows"] = o_
     if all_years: ACTIVE.update({"pre_years": None, "post_years": None, "year_min": None, "year_max": None, "drop_years": []})
-    if pre_years is not None: ACTIVE["pre_years"] = int(pre_years); ACTIVE["year_min"] = None
-    if post_years is not None: ACTIVE["post_years"] = int(post_years); ACTIVE["year_max"] = None
+    # v20.59: PRE_YEARS / POST_YEARS take a NUMBER OF YEARS (4 = the 4 years before / from the start) OR a CALENDAR YEAR (2015 = the first pre
+    # year, 2025 = the last post year). v20.58 read every number as a count (R too): PRE_YEARS = 2022 became year_min = 2022 - 2022 = 0.
+    if pre_years is not None:
+        _n = _year_option("PRE_YEARS", pre_years)
+        if _n >= 1900: ACTIVE.update({"year_min": _n, "pre_years": None}); _EXPLICIT_KEYS.add("year_min")
+        else: ACTIVE.update({"pre_years": _n, "year_min": None})
+    if post_years is not None:
+        _n = _year_option("POST_YEARS", post_years)
+        if _n >= 1900: ACTIVE.update({"year_max": _n, "post_years": None}); _EXPLICIT_KEYS.add("year_max")
+        else: ACTIVE.update({"post_years": _n, "year_max": None})
     if year_min is not None: ACTIVE.update({"year_min": int(year_min), "pre_years": None})
     if year_max is not None: ACTIVE.update({"year_max": int(year_max), "post_years": None})
     lo, hi = scenario_years()
@@ -3447,13 +3544,46 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
              "results go to the scenario sub-folder so runs never overwrite each other")
     return dict(ACTIVE)
 
+def _year_option(name, v):
+    """v20.59: PRE_YEARS / POST_YEARS as an integer -- a count of years (1..200) or a calendar year (1900..2100); anything else is refused."""
+    try:
+        n = int(v)
+    except Exception:
+        raise InsufficientDataError(f"{name} must be 'data', 'all', a number of years (e.g. 4) or a calendar year (e.g. "
+                                    f"{'2015 = the FIRST pre year' if name == 'PRE_YEARS' else '2025 = the LAST post year'}) -- got {v!r}")
+    if n < 1 or (200 < n < 1900) or n > 2100:
+        raise InsufficientDataError(f"{name} must be 'data', 'all', a number of years (e.g. 4) or a calendar year (e.g. "
+                                    f"{'2015 = the FIRST pre year' if name == 'PRE_YEARS' else '2025 = the LAST post year'}) -- got {v!r}")
+    return n
+
+def year_window_setting_text(scn=None):
+    """v20.59: PRE_YEARS / POST_YEARS as set, in words (for DESIGN IN EFFECT): (pre_text, post_text)."""
+    a = scn or ACTIVE; dk = set(a.get("data_keys") or [])
+    pre = ("data" if "pre_years" in dk else f"{a['pre_years']} (years before the start)" if a.get("pre_years") is not None
+           else f"{a['year_min']} (calendar year)" if a.get("year_min") is not None else "all")
+    post = ("data" if "post_years" in dk else f"{a['post_years']} (years from the start)" if a.get("post_years") is not None
+            else f"{a['year_max']} (calendar year)" if a.get("year_max") is not None else "all")
+    return pre, post
+
+def year_window_dropped(scn=None):
+    """v20.59: the bounds that leave NO year on their side of the start -- (year_min or None, year_max or None) -- such a bound is not a
+    window and is not applied (scenario_years); resolve_design says so."""
+    a = scn or ACTIVE; cut = int(a["post_cutoff"]); dk = set(a.get("data_keys") or [])
+    lo = a.get("year_min") if ("pre_years" not in dk and a.get("year_min") is not None and int(a["year_min"]) >= cut) else None
+    hi = a.get("year_max") if ("post_years" not in dk and a.get("year_max") is not None and int(a["year_max"]) < cut) else None
+    return lo, hi
+
 def scenario_years(scn=None):
-    """(first_year, last_year) of the scenario's window; None means 'whatever the panel has'."""
+    """(first_year, last_year) of the scenario's window; None means 'whatever the panel has'.
+    v20.59: a lower bound at / after the start, or an upper bound before it, leaves no year on its side of the start and is not a
+    window -- it is left out here (resolve_design reports it in DESIGN IN EFFECT and as a warning); the count forms never reach it."""
     a = scn or ACTIVE
     lo, hi = a.get("year_min"), a.get("year_max")
     cut = int(a["post_cutoff"])
     if lo is None and a.get("pre_years") is not None: lo = cut - int(a["pre_years"])
     if hi is None and a.get("post_years") is not None: hi = cut + int(a["post_years"]) - 1
+    if lo is not None and int(lo) >= cut: lo = None
+    if hi is not None and int(hi) < cut: hi = None
     return (int(lo) if lo is not None else None, int(hi) if hi is not None else None)
 
 def year_window_text(scn=None):
@@ -3688,6 +3818,7 @@ def scenario_tag(scn=None):
         t += {"dose_amount_sws": "_doseAmount", "dose_share_of_target": "_doseShare"}.get(a.get("dose_variable"), "_dose")
     if a.get("fund_dose_before_file", "backcast") == "missing": t += "_doseObsOnly"
     if a.get("exclude_gapfilled", True) is False: t += "_withGapFilled"                                          # v20.57
+    if screen_rule(a) == "keep": t += "_screenKept"                                                           # v20.59: the screen's cells kept
     if a.get("drop_years"): t += "_no" + "-".join(str(int(y)) for y in a["drop_years"])
     _sync_negative_switch()                                                               # v20.33: one suffix only
     _cv = list(a.get("covariates", STANDARD_COVARIATES))
@@ -3712,7 +3843,7 @@ SCENARIO_KEYS = ("control_zones", "treatment_year", "post_cutoff", "exclude_tran
                  "timing", "site_start",                                                     # v20.57: the fund / registry / fixed timing
                  "design_mode", "data_keys", "treatment_year_setting", "post_cutoff_setting", "seasons_setting",
                  "site_years_setting", "site_start_setting", "drop_years", "fragment_rule", "fragment_min_share", "sub_watersheds", "dose_variable",
-                 "fund_start_rule", "fund_start_share", "fund_rate_months", "fund_dose_before_file", "exclude_gapfilled")
+                 "fund_start_rule", "fund_start_share", "fund_rate_months", "fund_dose_before_file", "exclude_gapfilled", "outcome_screen")   # v20.59
 def scenario_file(path=None):
     """Where a scenario chosen during panel preparation is stored: next to the prepared panel."""
     return path or os.path.join(os.path.dirname(PREPARED_PANEL), "did_scenario.json")
@@ -4264,7 +4395,7 @@ def resolve_design(verbose=True, force=False, frame=None):
             ACTIVE["post_years"] = None; ACTIVE["year_max"] = int(max(rec["post_window"])) if usable else None
         if "seasons" in dk:
             ACTIVE["seasons"] = normalize_seasons(rec["seasons"]) if usable else "all"; _SEASON_CHOICE.clear()
-        if dk & {"pre_years", "post_years"} and usable:
+        if dk & {"pre_years", "post_years"} and usable and screen_rule() == "drop":   # v20.59: OUTCOME_SCREEN keep / off keeps the fill years too
             lo_, hi_ = scenario_years()
             ACTIVE["drop_years"] = sorted(int(y) for y in (rec.get("fill_years") or []) if (lo_ is None or y >= lo_) and (hi_ is None or y <= hi_))
         else:
@@ -4275,10 +4406,19 @@ def resolve_design(verbose=True, force=False, frame=None):
     _cz = ACTIVE["control_zones"]
     ch("CONTROL_ZONES", "data" if "control_zones" in dk else list(_cz), list(_cz), src_d if "control_zones" in dk else "your setting")
     lo_, hi_ = scenario_years()
-    ch("PRE_YEARS", "data" if "pre_years" in dk else (ACTIVE.get("pre_years") if ACTIVE.get("pre_years") is not None else ("year_min " + str(ACTIVE["year_min"]) if ACTIVE.get("year_min") is not None else "all")),
-       f"from {lo_}" if lo_ is not None else "every year before the start", src_d if "pre_years" in dk else "your setting")
-    ch("POST_YEARS", "data" if "post_years" in dk else (ACTIVE.get("post_years") if ACTIVE.get("post_years") is not None else ("year_max " + str(ACTIVE["year_max"]) if ACTIVE.get("year_max") is not None else "all")),
-       f"to {hi_}" if hi_ is not None else "every year from the start", src_d if "post_years" in dk else "your setting")
+    # v20.59: a calendar-year bound that leaves no year on its side of the start (PRE_YEARS = 2022 with the start in 2022) is said, never applied
+    _dlo, _dhi = year_window_dropped(); _base_ = int(ACTIVE["treatment_year"]); _pre_txt, _post_txt = year_window_setting_text()
+    _how_lo = "your setting"; _how_hi = "your setting"
+    if _dlo is not None:
+        notes.append(f"PRE_YEARS = {_dlo} leaves NO year before the start {_base_} (a calendar year at or after it): every year before the start is used "
+                     f"instead. Set PRE_YEARS to the FIRST pre year (e.g. {_base_ - 7}), to a number of years before the start (e.g. 7) or 'all'")
+        _how_lo = f"PRE_YEARS {_dlo} is not before the start {_base_} -> every year before it"
+    if _dhi is not None:
+        notes.append(f"POST_YEARS = {_dhi} leaves NO year from the start {_base_} on (a calendar year before it): every year from the start is used "
+                     f"instead. Set POST_YEARS to the LAST post year (e.g. {_base_ + 3}), to a number of years from the start (e.g. 2) or 'all'")
+        _how_hi = f"POST_YEARS {_dhi} is before the start {_base_} -> every year from it"
+    ch("PRE_YEARS", _pre_txt, f"from {lo_}" if lo_ is not None else "every year before the start", src_d if "pre_years" in dk else _how_lo)
+    ch("POST_YEARS", _post_txt, f"to {hi_}" if hi_ is not None else "every year from the start", src_d if "post_years" in dk else _how_hi)
     if ACTIVE.get("drop_years"):
         ch("  years left out", "(from PRE_YEARS / POST_YEARS = data)", ACTIVE["drop_years"], "fill years of the data-driven window (not data)")
     ch("SEASONS", ACTIVE.get("seasons_setting"), ACTIVE.get("seasons"), src_d if "seasons" in dk else "your setting")
@@ -4300,6 +4440,9 @@ def resolve_design(verbose=True, force=False, frame=None):
     ch("FUND_START_RULE", ACTIVE.get("fund_start_rule"), ACTIVE.get("fund_start_rule"),
        "your setting" + ("" if t == "fund" else " (used for the dose only: TREATMENT_TIMING is not 'fund')"))
     ch("EXCLUDE_GAPFILLED", ACTIVE.get("exclude_gapfilled", True), ACTIVE.get("exclude_gapfilled", True), "your setting")
+    ch("OUTCOME_SCREEN", ACTIVE.get("outcome_screen", OUTCOME_SCREEN), screen_rule(),
+       "your setting" + {"drop": " (a year-season constant across pixels -- a fill value -- or with collapsed coverage leaves the model; evidence: OUTCOME_SCREEN_<outcome>.csv)",
+                         "keep": " (such year-seasons are reported and KEPT; results tagged _screenKept)", "off": " (no screen)"}[screen_rule()])
     ch("COVARIATES", ",".join(ACTIVE.get("covariates") or []) or "none", ",".join(ACTIVE.get("covariates") or []) or "none", "your setting")
     import copy as _cp
     ACTIVE["n_sites"] = len(real)
@@ -4308,7 +4451,7 @@ def resolve_design(verbose=True, force=False, frame=None):
     if verbose:
         w = max(len(c["option"]) for c in choices)
         lines = [f"  {c['option']:<{w}}  your setting: {c['your_setting'][:34]:<34}  USED: {c['used'][:48]:<48}  <- {c['from'][:90]}" for c in choices]
-        info("DESIGN IN EFFECT (v20.58: every option is applied here, at the model stage -- the panel is not rebuilt; the location rule: only the processed sub-watershed(s)):\n" + "\n".join(lines))
+        info("DESIGN IN EFFECT (v20.59: every option is applied here, at the model stage -- the panel is not rebuilt; the location rule: only the processed sub-watershed(s)):\n" + "\n".join(lines))
         for n_ in notes: warn(n_)
     return dict(ACTIVE)
 
@@ -4426,7 +4569,7 @@ def results_dir(model_id, scn=None, make=True):
 
 def scenario_columns_match(df):
     """True when df's treatment columns were built with the ACTIVE scenario (checked against buff_km / Year)."""
-    need = {"treatment", "control", "post", "did_term", "in_analysis_sample", "event_time"}
+    need = {"treatment", "control", "post", "did_term", "in_analysis_sample", "event_time", "treat", "did"}   # v20.59: + the aliases treat / did
     if not need <= set(df.columns) or "buff_km" not in df.columns or "Year" not in df.columns:
         return False
     if len(df) == 0: return True
@@ -4435,7 +4578,9 @@ def scenario_columns_match(df):
     ok_ctrl = bool((h["control"].astype("int8").values == bk.isin(list(ACTIVE["control_zones"])).astype("int8").values).all())
     ok_post = bool((h["post"].astype("int8").values == (h["Year"] >= ACTIVE["post_cutoff"]).astype("int8").values).all())
     ok_et = bool((h["event_time"].values == (h["Year"] - ACTIVE["treatment_year"]).values).all())
-    return ok_ctrl and ok_post and ok_et
+    ok_alias = bool((h["treat"].astype("int8").values == h["treatment"].astype("int8").values).all()
+                    and (h["did"].astype("int8").values == h["did_term"].astype("int8").values).all())   # v20.59: a stale alias = a rebuild
+    return ok_ctrl and ok_post and ok_et and ok_alias
 
 def _drop_years_outside_window(df):
     """v20.2: rows outside the scenario's year window never reach an estimator."""
@@ -4484,6 +4629,44 @@ def apply_scenario(df, force=False):
     except Exception: pass                                  #   table version treatment_coverage() below shadowed it and called
     return df                                               #   apply_scenario again: 328 nested copies of the frame per model)
 
+_DESIGN_VS_PANEL_SAID = set()
+def _design_timing_text():
+    """v20.59: the timing in force, in words, for the design-vs-panel line."""
+    t = ACTIVE.get("timing", "fixed")
+    if t == "fund": return f"fund timing: the first treated season per sub-watershed, base year {ACTIVE.get('treatment_year')}"
+    if t == "registry": return f"registry timing, base year {ACTIVE.get('treatment_year')}"
+    return (f"fixed: post = Year >= {ACTIVE.get('post_cutoff')}"
+            + (" with the transition year held out" if ACTIVE.get("exclude_transition_year") else ""))
+
+def say_design_vs_panel(n_differ, n_rows):
+    """v20.59: the one line every model prints -- the design IN EFFECT against the panel's post column (the exports' Treat flag, P00 /
+    R_P00): the same on every row, or on how many rows (and why) they differ. The DESIGN's columns are what the model estimates on."""
+    LAST_DESIGN_INFO["post_rows_differ_from_panel"] = int(n_differ); LAST_DESIGN_INFO["post_rows_compared"] = int(n_rows)
+    if not n_rows: return
+    if n_differ == 0:
+        info(f"DESIGN vs PANEL: the design in effect ({_design_timing_text()}) gives the same post period as the panel's post column "
+             f"(the exports' Treat flag) on every one of {n_rows:,} rows")
+    else:
+        info(f"DESIGN vs PANEL: the design in effect ({_design_timing_text()}) differs from the panel's post column (the exports' Treat flag, P00) "
+             f"on {n_differ:,} of {n_rows:,} rows ({n_differ / n_rows:.1%}) -- the DESIGN's columns are what this model estimates on (your settings: "
+             f"TREATMENT_TIMING / TREATMENT_YEAR / EXCLUDE_TRANSITION_YEAR); the panel's are the exporter's default")
+
+def design_vs_panel(out, post_panel):
+    """v20.59: compare the design's post with the panel's (None: the frame carried none -- a panel built before v20.59, or a synthetic
+    frame); inside an out-of-core worker the counts are recorded and the parent says them once."""
+    if post_panel is None:
+        LAST_DESIGN_INFO["post_rows_differ_from_panel"] = None; LAST_DESIGN_INFO["post_rows_compared"] = 0
+        if not _OOC_WORKER and "no_post" not in _DESIGN_VS_PANEL_SAID and not getattr(out, "attrs", {}).get("synthetic"):
+            _DESIGN_VS_PANEL_SAID.add("no_post")
+            info("this frame carries no post column of the panel (built before v20.59, or not read): the design in effect is used as it is -- "
+                 "re-run P00 to get the exports' design columns (treat, control, pre, post, did) into the panel")
+        return
+    n = int(len(out)); k = int((out["post"].values.astype(np.int8) != post_panel).sum()) if n else 0
+    if _OOC_WORKER:
+        LAST_DESIGN_INFO["post_rows_differ_from_panel"] = k; LAST_DESIGN_INFO["post_rows_compared"] = n
+    else:
+        say_design_vs_panel(k, n)
+
 def build_treatment_columns(df, control_zones=None, treatment_year=None,
                              pre_cutoff=None, post_cutoff=None, year_col="Year",
                              exclude_transition_year=None, copy=False):
@@ -4505,6 +4688,9 @@ def build_treatment_columns(df, control_zones=None, treatment_year=None,
     post_cutoff = int(post_cutoff) if post_cutoff is not None else int(ACTIVE["post_cutoff"])
     exclude_transition_year = ACTIVE["exclude_transition_year"] if exclude_transition_year is None else bool(exclude_transition_year)
     out = df.copy() if copy else df
+    # v20.59: the panel's OWN post (the exports' Treat flag, P00) is kept aside and compared with the design in effect below -- the design's
+    # columns are what the model estimates on; the comparison says whether, and on how many rows, your settings change the period split
+    _post_panel = pd.to_numeric(out["post"], errors="coerce").fillna(-1).astype("int8").values.copy() if "post" in out.columns else None
     bk = pd.to_numeric(out["buff_km"], errors="coerce")
     out["treatment"] = (bk == TREAT_CORE_BUFFKM).astype("int8")
     out["control"]   = bk.isin(list(control_zones)).astype("int8")
@@ -4560,6 +4746,7 @@ def build_treatment_columns(df, control_zones=None, treatment_year=None,
         else:
             out["unit_id"] = _pid
     out["did_term"] = (out["treatment"] * out["post"]).astype("int8")
+    out["treat"] = out["treatment"]; out["did"] = out["did_term"]      # v20.59: the panel's DiD names, REBUILT here for this design (never stale)
     # staggered designs read the cohort from first_treat_agri_year: the first treated year of the row's own series (the timing in
     # force); control rings are never treated by design -> +inf, the never-treated code the staggered estimators use.
     # v20.57: ALWAYS rebuilt. v20.56 rebuilt it only with per-site years -- with ONE treatment year the panel's column stayed as
@@ -4599,6 +4786,8 @@ def build_treatment_columns(df, control_zones=None, treatment_year=None,
     LAST_DESIGN_INFO.update({"contaminated_control_rows": int(sum(v for k, v in _lr.items() if str(k).startswith("3|0|"))),
                              "duplicate_rows_across_sites": int(sum(v for k, v in _lr.items() if str(k).startswith("3|1|"))),
                              "location_rows": dict(_lr)})
+    design_vs_panel(out, _post_panel)                                    # v20.59: the design in effect against the panel's post column, said (after the
+                                                                         #   info above is reset, so the count stays in LAST_DESIGN_INFO)
     out["in_analysis_sample"] = np.asarray(in_grp).astype("int8")
     _sample_integrity_once(out, control_zones)                      # v20.58: the post-conditions, CONFIRMED on the estimation sample
     if not df.attrs.get("synthetic"): _cache_design_se(out)          # v20.58: the design-based check of THIS sample, for the headline

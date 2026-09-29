@@ -123,7 +123,7 @@ EXPECT_DOSE = {("backcast", 1, 2024, 2): 30.0 / 4632.33845007,        # Rabi 202
 BASE = {"DESIGN_MODE": "recommended", "TREATMENT_TIMING": "fund", "TREATMENT_YEAR": 2022, "FUND_START_RULE": "backcast", "FUND_DOSE_BEFORE_FILE": "backcast",
         "DOSE_VARIABLE": "dose_intensity_per_ha", "CONTROL_RINGS": "data", "PRE_YEARS": "data", "POST_YEARS": "data", "SEASONS": "all",
         "EXCLUDE_TRANSITION_YEAR": False, "UNIT_FE": "pixel_season", "OVERLAP_ROWS": "drop", "FRAGMENT_RULE": "drop", "POOLED_FE": "site_period",
-        "EXCLUDE_GAPFILLED": True, "COVARIATES": ["Rain", "Tmax", "Tmean", "Tmin"]}
+        "EXCLUDE_GAPFILLED": True, "COVARIATES": ["Rain", "Tmax", "Tmean", "Tmin"], "OUTCOME_SCREEN": "drop"}
 VARIANTS = {
     "base":                   {},
     "timing_registry":        {"TREATMENT_TIMING": "registry"},
@@ -137,6 +137,9 @@ VARIANTS = {
     "rings_1_3":              {"CONTROL_RINGS": [1, 2, 3]},
     "rings_2_4":              {"CONTROL_RINGS": [2, 4]},
     "pre4_post2":             {"PRE_YEARS": 4, "POST_YEARS": 2},
+    "pre2018_post2024":       {"PRE_YEARS": 2018, "POST_YEARS": 2024},                                     # v20.59: calendar years
+    "pre_at_start_2022":      {"TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022, "PRE_YEARS": 2022},   # v20.59: no pre year -> every year before the start, said
+    "screen_keep":            {"OUTCOME_SCREEN": "keep"},                                                  # v20.59: the fill year kept, tagged _screenKept
     "pre_all_post_all":       {"PRE_YEARS": None, "POST_YEARS": None},
     "manual_mode":            {"DESIGN_MODE": "manual"},
     "manual_rings_1_3_pre4":  {"DESIGN_MODE": "recommended", "CONTROL_RINGS": [1, 2, 3], "PRE_YEARS": 4},
@@ -163,7 +166,7 @@ def py_kwargs(o):
                 seasons=("+".join(sea) if isinstance(sea, list) else sea), exclude_transition_year=bool(o["EXCLUDE_TRANSITION_YEAR"]),
                 unit_fe=o["UNIT_FE"], overlap_rows=o["OVERLAP_ROWS"], fragment_rule=o["FRAGMENT_RULE"], pooled_fe=o["POOLED_FE"],
                 exclude_gapfilled=bool(o["EXCLUDE_GAPFILLED"]), covariates=(list(o["COVARIATES"]) if o["COVARIATES"] else "none"),
-                cluster="site", cohort_offset=0, nonnegative=False)
+                cluster="site", cohort_offset=0, nonnegative=False, outcome_screen=o.get("OUTCOME_SCREEN", "drop"))
 
 def py_sample(C, o):
     C.set_scenario(verbose=False, all_years=True)
@@ -258,7 +261,15 @@ def expect(panel, name, o, py, meta, full):
     rec(panel, name, "seasons = the choice", sea == want_s, f"used {sorted(sea)}, setting {o['SEASONS']}")
     yrs = sorted(py.Year.unique())
     base_y = min(v[0] for v in meta["site_start"].values()) if meta["site_start"] else (min(meta["site_years"].values()) if meta["site_years"] else int(o["TREATMENT_YEAR"]))
-    if o["PRE_YEARS"] == "data" and o["DESIGN_MODE"] == "recommended":
+    if isinstance(o["PRE_YEARS"], int) and o["PRE_YEARS"] >= 1900:                 # v20.59: a CALENDAR year = the first pre year (a year at /
+        lo = o["PRE_YEARS"] if o["PRE_YEARS"] < base_y else 2015                     #   after the start leaves no pre year: every year before it)
+        hi = o["POST_YEARS"] if isinstance(o["POST_YEARS"], int) and o["POST_YEARS"] >= 1900 else 2025
+        rec(panel, name, "years = the calendar years PRE_YEARS / POST_YEARS (a bound at / after the start -> every year before it, said)",
+            yrs[0] == lo and yrs[-1] == hi and (2017 in yrs or o.get("OUTCOME_SCREEN") != "keep"), f"{yrs[0]}..{yrs[-1]} (want {lo}..{hi}; base {base_y})")
+    elif o.get("OUTCOME_SCREEN") == "keep":                                          # v20.59: the fill year (2017 annual) is KEPT, the folder says so
+        rec(panel, name, "OUTCOME_SCREEN = 'keep': the fill year-season is kept and the results folder is tagged _screenKept",
+            (2017, 0) in set(zip(py.Year, py.Season)) and "_screenKept" in meta["tag"], f"years {yrs}; tag {meta['tag']}")
+    elif o["PRE_YEARS"] == "data" and o["DESIGN_MODE"] == "recommended":
         rec(panel, name, "years: the data window without the fill year", 2017 not in yrs and yrs[0] == 2015 and yrs[-1] == 2025, f"{yrs}")
     elif isinstance(o["PRE_YEARS"], int):
         lo = base_y - o["PRE_YEARS"]; hi = (base_y + o["POST_YEARS"] - 1) if isinstance(o["POST_YEARS"], int) else 2025

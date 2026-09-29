@@ -507,9 +507,10 @@ def _screen_stats(df, outcome):
     tr = (pd.to_numeric(df["buff_km"], errors="coerce").values == C.TREAT_CORE_BUFFKM) if "buff_km" in df.columns else np.zeros(len(df), bool)
     t = pd.DataFrame({"Year": pd.to_numeric(df["Year"], errors="coerce").values, "Season": season, "tr": tr, "y": y})[fin]
     if not len(t): return []
-    g = t.groupby(["Year", "Season"]).agg(n=("y", "size"), mean=("y", "mean"), var=("y", "var"), nt=("tr", "sum"))
+    g = t.groupby(["Year", "Season"]).agg(n=("y", "size"), mean=("y", "mean"), var=("y", "var"), nt=("tr", "sum"), vmin=("y", "min"), vmax=("y", "max"))
     g["var"] = g["var"].fillna(0.0)
-    return [(float(Y), int(S), int(r["n"]), float(r["mean"]), float(r["var"] * (r["n"] - 1)), int(r["nt"]), int(r["n"] - r["nt"])) for (Y, S), r in g.iterrows()]
+    return [(float(Y), int(S), int(r["n"]), float(r["mean"]), float(r["var"] * (r["n"] - 1)), int(r["nt"]), int(r["n"] - r["nt"]), float(r["vmin"]), float(r["vmax"]))   # v20.59: + min, max
+            for (Y, S), r in g.iterrows()]
 
 
 def _t_load(p):
@@ -662,39 +663,25 @@ def _report_load(info, o):
 
 
 def screen_decision(stats, outcome, refuse=True):
-    """screen_outcome_frame on the whole panel from the partitions' pieces: (the Year x Season cells left out, the report rows)."""
+    """screen_outcome_frame on the whole panel from the partitions' pieces: (the Year x Season cells left out, the report rows).
+    v20.59: the same decisions, evidence file (OUTCOME_SCREEN_<outcome>.csv), rule (drop / keep / off) and refusal text as in memory."""
     C = _C()
-    if not C.OUTCOME_SCREEN or not stats: return set(), []
+    rule = C.screen_rule()
+    if rule == "off" or not stats: return set(), []
     acc = {}
-    for Y, S, n, mean, m2, nt, nc in stats:
+    for Y, S, n, mean, m2, nt, nc, vmin, vmax in stats:
         a = acc.get((Y, S))
-        if a is None: acc[(Y, S)] = [n, mean, m2, nt, nc]; continue
+        if a is None: acc[(Y, S)] = [n, mean, m2, nt, nc, vmin, vmax]; continue
         n1, m1, q1 = a[0], a[1], a[2]; N = n1 + n; dlt = mean - m1
         a[1] = m1 + dlt * n / N; a[2] = q1 + m2 + dlt * dlt * n1 * n / N; a[0] = N; a[3] += nt; a[4] += nc
+        a[5] = min(a[5], vmin); a[6] = max(a[6], vmax)
     keys = sorted(acc)
     g = pd.DataFrame([{"Year": k[0], "Season": k[1], "n": a[0], "mean": a[1], "sd": (math.sqrt(a[2] / (a[0] - 1)) if a[0] > 1 else np.nan),
-                       "n_treated": a[3], "n_control": a[4]} for k, a in zip(keys, [acc[k] for k in keys])]).set_index(["Year", "Season"])
-    const = g["sd"].fillna(0.0) <= 1e-9 * np.maximum(1.0, g["mean"].abs())
-    med_t, med_c = float(g["n_treated"].median()), float(g["n_control"].median())
-    collapse = (g["n_treated"] < C.SCREEN_MIN_COVERAGE * med_t) | (g["n_control"] < C.SCREEN_MIN_COVERAGE * med_c)
-    bad = g[const | collapse]
-    rep = []
-    for (yy, ss), r in bad.iterrows():
-        why = ("constant across pixels (a fill value)" if const.loc[(yy, ss)] else "") + \
-              (("; " if const.loc[(yy, ss)] else "") + f"coverage collapsed ({int(r.n_treated):,} treated / {int(r.n_control):,} control pixels)"
-               if collapse.loc[(yy, ss)] else "")
-        rep.append({"outcome": outcome, "Year": int(yy), "Season": C.SEASON_LABEL.get(int(ss), ss), "why": why})
-    C.SCREEN_REPORT[outcome] = rep
-    badset = set((int(a), int(b)) for a, b in bad.index)
-    if rep:
-        _say("warn", f"{outcome}: {len(rep)} year-season(s) are NOT pixel data and are left out -- "
-             + "; ".join(f"{r['Year']} {r['Season']}: {r['why']}" for r in rep[:6]) + ("; ..." if len(rep) > 6 else ""))
-    T = int(C.ACTIVE.get("treatment_year") or 2022)
+                       "vmin": a[5], "vmax": a[6], "n_treated": a[3], "n_control": a[4], "n_pixels": np.nan} for k, a in zip(keys, [acc[k] for k in keys])]).set_index(["Year", "Season"])
+    g = C.screen_decide_table(g, outcome)
+    badset, rep, path = C.screen_report(g, outcome, rule, verbose=True)
     yrs = sorted(set(int(k[0]) for k in keys if (int(k[0]), int(k[1])) not in badset))
-    pre, post = [v for v in yrs if v < T], [v for v in yrs if v >= T]
-    if refuse and (len(pre) < 2 or not post):
-        raise C.InsufficientDataError(f"'{outcome}' is not usable: after the fill years are removed it has {len(pre)} valid pre-period "
-                                      f"year(s) {pre} and {len(post)} post-period year(s) {post} (need >= 2 and >= 1). Re-export it.")
+    C.screen_refuse_years(outcome, yrs, len(rep), len(g), path, refuse=refuse)
     return badset, rep
 
 

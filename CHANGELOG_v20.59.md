@@ -1,0 +1,93 @@
+# v20.59 — the panel carries the DiD design columns from the exports' Treat flag (1 = post, 0 = pre); the outcome screen explains itself and can be kept; PRE_YEARS / POST_YEARS take calendar years; every model says where its design differs from the panel's
+
+Three bundles, as before: `RWD_4Models_v20.59` (P00 + M01, M02, M16, M34 in Python and R), `RWD_Artal_v20.59` (the full Python
+pipeline, all 45 models, with the R library beside it) and `RWDR_v20.59` (the full R pipeline). The engines are the same files in all
+three (byte for byte); what differs is configuration and notebooks, as in v20.58. Nothing of v20.58 is removed: every function, file,
+option and default is still there and still means what it meant. Your paths are unchanged.
+
+## What your v20.58 R log showed, and what was behind it
+
+Your run (`R_M01`, NDVI, Jantapur, `TREATMENT_TIMING <- "fixed"`, `PRE_YEARS <- 2022`, `EXCLUDE_GAPFILLED <- FALSE`) did not estimate
+anything. Three things in it, and what each was:
+
+1. **`PRE_YEARS  your setting: 2022  USED: from 0`.** v20.58 read every number in PRE_YEARS / POST_YEARS as a COUNT of years
+   (PRE_YEARS 4 = the four years before the start), so 2022 became `year_min = 2022 - 2022 = 0` — a window "from year 0", applied
+   without a word (it happened to keep every year). Python did the same. **Fixed (both engines):** a number below 1900 is a count, a number
+   from 1900 on is a CALENDAR YEAR — `PRE_YEARS <- 2015` = the first pre year, `POST_YEARS <- 2025` = the last post year. A calendar year
+   that leaves no year on its side of the start (`PRE_YEARS <- 2022` with the start in 2022) is not a window: DESIGN IN EFFECT says
+   `PRE_YEARS 2022 is not before the start 2022 -> every year before it`, a warning names the two valid forms, and every year before the
+   start is used. Anything else (0, 500, 2500, text) is refused with the same message.
+2. **`41 year-season(s) are NOT pixel data and are left out -- 2015 Yearly: constant across pixels (a fill value); ...`, then
+   `'NDVI' is not usable: ... 1 valid pre-period year(s) [2015] and 1 post-period year(s) [2025] ... Re-export it.`** The outcome screen
+   (v20.45) leaves out a year-season whose value is the SAME for every pixel: that is a fill value, not a measurement, and a DiD on it has
+   no cross-sectional variation. On your panel it flagged 41 of the 44 year-seasons of NDVI, EVI and SAVI — and then stopped with
+   "Re-export it", showing nothing of what it had measured and offering no way to run. **Fixed (both engines, in memory and out of core):**
+   - every decision now comes with its EVIDENCE: `OUTCOME_SCREEN_<outcome>.csv` beside the results — per year-season the rows, the pixels,
+     the mean, the SD across pixels, the min and the max, the treated / control rows, the verdict and the rule — and the message names the
+     numbers (`2016 Yearly: constant across pixels (a fill value: 1,612,000 rows of 1,612,000 pixels, every value 0.3456)`);
+   - a new option in every model's settings, `OUTCOME_SCREEN` — `"drop"` (the default, as before), `"keep"` (the flagged year-seasons are
+     reported and KEPT: the model runs on every year-season, its results go to a folder tagged `_screenKept`) or `"off"`; with `"keep"` /
+     `"off"` the data-driven design (`PRE_YEARS / POST_YEARS = "data"`) keeps its fill years too;
+   - the refusal names the evidence file and the option: `... The evidence -- rows, pixels, mean, SD, min and max per year-season -- is in
+     <results>/OUTCOME_SCREEN_NDVI.csv. If those year-seasons ARE pixel data, set OUTCOME_SCREEN <- "keep" ... -- or re-export the variable
+     if they are not`;
+   - P00 / R_P00 now write `panel_variation_by_block.csv` (per outcome x year x season: finite rows, mean, SD across pixels, min, max,
+     `constant_across_pixels`) and say at once which cells hold one value for every pixel — so you see it right after the panel is built,
+     before any model runs, and can tell an export problem from a code problem;
+   - the design from the data prints the SD across pixels of every year beside its fill years (DESIGN_RECOMMENDATION.md too).
+   **What the evidence will tell you on your data.** The screen's test is exact: SD across 1.6 million pixels below 1e-9 means every pixel
+   carries the same number. If `OUTCOME_SCREEN_NDVI.csv` shows `min == max` on those 41 cells, the exports hold one value per year-season
+   (a fill / projection of the exporter, not a measurement) and no pixel-level DiD can be estimated on them — `"keep"` will run, but its
+   SE will be ~0 and flagged. If it shows a spread, the screen was wrong and the file shows why; either way the run no longer stops blind.
+3. **The panel had no design columns.** R_P00's panel carried the exports' `Treat` flag but nothing a DiD reads; every model built its
+   own `treat / post / did` when it ran, and nothing said whether that matched the exports. **Your request, implemented (both engines):**
+   - the panel carries **`treat`** (1 = the treatment area, buff_km 0), **`control`** (1 = a control ring 1–5), **`post`** = the exports'
+     `Treat` flag (1 = post, 0 = pre — the exporter's own timing, written for every pixel; a row without a usable flag takes the rule
+     `Year >= TREATMENT_YEAR`, counted and said), **`pre`** = 1 − post and **`did`** = treat x post. Python's panel keeps its names
+     `treatment` / `did_term` and adds `treat` / `did` beside them, so both panels carry the same five columns.
+     `P.POST_FROM_EXPORT_TREAT` (P00_Settings) / `POST_FROM_EXPORT_TREAT` (`lib/reward_prep.R`) = `True`; `False` gives v20.58's rule. The
+     setting is recorded with the panel (`panel_build_settings.json` / `panel_build_settings_R.csv`) and P00 rebuilds a panel built under the
+     other one. `panel_design_check.csv` / `panel_design_check_R.csv` list the rows per year x season x group x period and how many rows'
+     exported flag differs from the rule.
+   - **the customisation question — which columns a model estimates on.** Every model still applies ITS OWN design when it runs (the fund
+     timing, `TREATMENT_YEAR`, the transition year, the rings, the years, the seasons — your settings) and rebuilds `treat / post / did`
+     for it; the panel's columns are the exporter's default, never the input of an estimate. New at every run, in memory and out of core:
+     **`DESIGN vs PANEL`** — `the design in effect (fixed: post = Year >= 2022) gives the same post period as the panel's post column (the
+     exports' Treat flag) on every one of 70,425,719 rows`, or `... (fund timing ...) differs from the panel's post column on 12,345,678 of
+     70,425,719 rows (17.5 %) -- the DESIGN's columns are what this model estimates on (your settings ...); the panel's are the exporter's
+     default`. The count is in every result row (`post_rows_differ_from_panel`). A panel built before v20.59 (no `post` column) is said
+     once; the models run on their own design as before.
+
+## Where each change lives
+
+| what | Python | R |
+|---|---|---|
+| calendar years in PRE_YEARS / POST_YEARS; a bound at the start said and set aside | `_common.set_scenario` (`_year_option`), `scenario_years`, `year_window_dropped`, `resolve_design` | `reward_design.R` `design_settings`, `year_bounds_R`, `model_design` |
+| the panel's design columns from the exports' flag | `_prep_common.build_treatment_columns` (`export_post_flag`, `POST_FROM_EXPORT_TREAT`), `FINAL_PANEL_SCHEMA` (+ `treat`, `did`), `prepare_pass_b_block` (the design check), `run_pass_b`, `final_panel_is_valid` | `reward_prep.R` `panel_design_columns_R` / `panel_design_report_R` (run_prep), `reward_prep_ooc.R` (block by block, merged) |
+| DESIGN vs PANEL at the model stage | `_common.build_treatment_columns` -> `design_vs_panel` / `say_design_vs_panel`; `_ooc_models._t_prep` + `prepare_sample` (out of core, summed) | `reward_design.R` `design_columns` -> `design_vs_panel_say_R`, `sample_facts`, `save_result` (`post_rows_differ_from_panel`); `reward_outofcore.R` `ooc_task_sample` / `ooc_load_R` |
+| the outcome screen: evidence, rule, refusal | `_common.screen_decide_table`, `screen_report`, `screen_refuse_years`, `screen_outcome_frame`, `screen_all_outcomes` (P09), `screen_rule`, `set_scenario(outcome_screen=)`, `scenario_tag` (`_screenKept`); `_outofcore.screen_decision` / `_screen_stats` (min, max) | `reward_design.R` `screen_rule_R`, `screen_outcome`, `screen_decide`, `screen_refuse`, `design_settings`, `scenario_tag`; `reward_outofcore.R` (`ooc_task_prep` moments + min / max, `ooc_merge_moments`, `ooc_load_R`); `reward_paths.R` `OUTCOME_SCREEN` |
+| the pixel-variation report of P00 | `_prep_common.prepare_pass_b_block` (exact moments per block, merged out of core by `_merge_moments`), `run_pass_b` -> `panel_variation_by_block.csv` | `reward_prep.R` `panel_variation_R` / `panel_variation_report_R` (in memory and block by block) |
+| the notebooks | every model's CELL 1: `OUTCOME_SCREEN`, passed to `set_scenario`; PRE_YEARS / POST_YEARS document the calendar-year form; P00_Settings: `P.POST_FROM_EXPORT_TREAT` | every `R_Mxx` (Rmd and Jupyter): `OUTCOME_SCREEN <- "drop"`, the calendar-year form documented |
+
+## Checks
+
+- `selfcheck_4models.py` / `selfcheck.py`: `check_v20_59` — the year window (calendar years, counts, the bound at the start, refused
+  values), the panel's columns from the flag (and `POST_FROM_EXPORT_TREAT = False`), the model-stage comparison and its count, the
+  screen's evidence / rule / refusal text (in memory and out of core), the notebooks' options, the R library's functions.
+- `validate_preprocessing.py`: the design case now expects the panel to FOLLOW the exports' flag (post = 1 from 2023 where the export
+  says so), the flag-vs-rule count in `panel_build_settings.json`, and a rebuild when `POST_FROM_EXPORT_TREAT` changes.
+- `validate_design_options.py`: variants `pre2018_post2024` (calendar years), `pre_at_start_2022` (every year before the start, said)
+  and `screen_keep` (the fill year kept, folder `_screenKept`), R == Python where R runs.
+- `tests/run_all_tests.R` scenario E: `pre_cal`, `pre_at_start`, `screen_keep`; the panel's five columns and the two P00 reports;
+  DESIGN vs PANEL under the fund timing (differs, said) and under fixed 2022 (0 rows differ); the screen's evidence file.
+
+What ran on the delivered code, and what could not run here, is in `VALIDATION_v20.59.md`.
+
+## Re-run order
+
+1. **P00 / R_P00** (the panel gains `treat / control / pre / post / did`; Python's P00 rebuilds by itself because the panel lacks the new
+   columns; R_P00 always rebuilds). Read `panel_variation_by_block.csv` and the `pixel variation` line: it says at once whether your
+   exports carry one value per year-season.
+2. **The models.** With your settings as they were, `PRE_YEARS <- 2022` now warns and uses every year before 2022 (set `PRE_YEARS <- 2015`
+   or `7` to say it exactly). If the screen still flags the year-seasons, open `OUTCOME_SCREEN_NDVI.csv`: `min == max` on a cell means the
+   export holds one value there; `OUTCOME_SCREEN <- "keep"` runs the model on them regardless (results tagged `_screenKept`).

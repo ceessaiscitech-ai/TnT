@@ -531,14 +531,28 @@ def main():
         g = pan_.groupby("buff_km")[["treatment", "control"]].max()
         okb = (g.loc[0, "treatment"] == 1 and g.loc[0, "control"] == 0 and all(g.loc[k, "control"] == 1 and g.loc[k, "treatment"] == 0 for k in (1, 2, 3, 4, 5))
                and -1 in g.index and g.loc[-1, "treatment"] == 0 and g.loc[-1, "control"] == 0)
-        okp = bool((pan_.post == (pan_.Year >= 2022).astype(int)).all() and (pan_.pre == (pan_.Year < 2022).astype(int)).all()
-                   and (pan_.did_term == pan_.treatment * pan_.post).all())
+        # v20.59 (your rule): the panel's post / pre FOLLOW the exports' Treat flag (this export: 1 from 2023), pre = 1 - post, did = treat x post;
+        # the flag-vs-rule disagreement (2022) is counted, not applied; treat / did are the aliases every model and R's panel read
+        okp = bool((pan_.post == (pan_.Year >= 2023).astype(int)).all() and (pan_.pre == (1 - pan_.post)).all()
+                   and (pan_.did_term == pan_.treatment * pan_.post).all() and (pan_.treat == pan_.treatment).all() and (pan_.did == pan_.did_term).all())
         n_mis = int(pan_.loc[pan_.Year == 2022, "treat_period_mismatch_flag"].sum())
-        if okb and okp and n_mis == len(codes) and len(dz):
+        _bs = json.load(open(os.path.join(o_, "panel_build_settings.json")))
+        okf = bool(_bs.get("post_from_export_treat")) and int(_bs.get("post_from_export_flag_rows", 0)) == len(pan_) and int(_bs.get("post_flag_vs_rule_differ_rows", 0)) == n_mis
+        if okb and okp and okf and n_mis == len(codes) and len(dz):
             ok(f"design: '1 km' / 2.0000001 / 'Buffer_3' / 'ring-4' recoded to rings 1-4 (control), 0 = treatment, 7 in neither group; "
-               f"post = Year >= 2022, did = treatment x post; the mis-flagged 2022 export Treat detected on {n_mis} rows")
+               f"post = the exports' Treat flag (1 from 2023 here), pre = 1 - post, did = treat x post, treat / did aliases; the flag differs from the rule "
+               f"Year >= 2022 on {n_mis} rows -- counted in panel_build_settings.json, the flag applied (POST_FROM_EXPORT_TREAT)")
         else:
-            bad(f"design case wrong: buffers {okb}, periods {okp}, Treat mismatches {n_mis} (expected {len(codes)})")
+            bad(f"design case wrong: buffers {okb}, periods {okp}, build settings {okf}, Treat mismatches {n_mis} (expected {len(codes)})")
+        # v20.59: POST_FROM_EXPORT_TREAT = False -> the rule for every row (the v20.58 panel), and the panel is rebuilt when the setting changes
+        P.POST_FROM_EXPORT_TREAT = False
+        try:
+            if P.final_panel_is_valid(os.path.join(o_, "did_panel_full.parquet")): bad("a panel built from the exports' flag was accepted after POST_FROM_EXPORT_TREAT changed to False")
+            _r, _u, _e, _d, sh2_ = P.run_pass_a(inp_, td_, o_, n_workers=1); P.run_pass_b(sh2_, o_, n_workers=1)
+            pan2_ = P.pq.read_table(os.path.join(o_, "did_panel_full.parquet")).to_pandas()
+            (ok if bool((pan2_.post == (pan2_.Year >= 2022).astype(int)).all()) else bad)("POST_FROM_EXPORT_TREAT = False: post = the rule Year >= 2022 on every row (the v20.58 panel), rebuilt when the setting changed")
+        finally:
+            P.POST_FROM_EXPORT_TREAT = True
     except Exception as e:
         bad(f"design check raised {type(e).__name__}: {e}"); traceback.print_exc(limit=2)
 

@@ -223,6 +223,7 @@ def _t_prep(p):
     res = {"rows": 0, "path": None}
     if not len(d): return res
     d = C.build_treatment_columns(d, control_zones=p["control_zones"])
+    res["post_diff"] = C.LAST_DESIGN_INFO.get("post_rows_differ_from_panel"); res["post_n"] = int(C.LAST_DESIGN_INFO.get("post_rows_compared", 0) or 0)   # v20.59
     d = d[d["in_analysis_sample"] == 1]
     if p.get("dropna") and p["outcome"] in d.columns: d = d.dropna(subset=[p["outcome"]])
     if not len(d): return res
@@ -303,6 +304,8 @@ def prepare_sample(panel, model, control_zones=None, ref=-1, pre_window=(-4, -2)
     C.LAST_DESIGN_INFO.update({"contaminated_control_rows": int(sum(v for k, v in lr.items() if str(k).startswith("3|0|"))),
                                "duplicate_rows_across_sites": int(sum(v for k, v in lr.items() if str(k).startswith("3|1|"))),
                                "location_rows": dict(lr)})
+    _pv = [r for r in [g["result"] for g in got] if r.get("post_diff") is not None]     # v20.59: the design-vs-panel counts of every partition, said once
+    if _pv: C.say_design_vs_panel(sum(int(r["post_diff"]) for r in _pv), sum(int(r["post_n"]) for r in _pv))
     cols = res[0]["cols"] if res else list(panel.cols)
     sites = sorted(set().union(*[set(r["sites"]) for r in res])) if res and res[0]["sites"] is not None else None
     rows = int(sum(r["rows"] for r in res))

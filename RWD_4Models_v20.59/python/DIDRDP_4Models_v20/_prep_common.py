@@ -199,6 +199,10 @@ except Exception:
 
 TREATMENT_YEAR=2022; PRE_CUTOFF=2022; POST_CUTOFF=2022   # v20.27: treatment start year 2022 -- pre = Year < 2022, post = Year >= 2022
 EXCLUDE_TRANSITION_YEAR = False                           # True = hold 2022 out of both periods (robustness check)
+POST_FROM_EXPORT_TREAT = True   # v20.59 (YOUR RULE): the panel's post / pre come from the exports' Treat flag (1 = post, 0 = pre -- the exporter's
+                                # own timing, written for every pixel); a row without a usable flag takes the rule Year >= TREATMENT_YEAR (counted,
+                                # said). False = the rule for every row (v20.58). Every model applies ITS OWN design when it runs (the fund
+                                # timing, TREATMENT_YEAR, the transition year) and says on how many rows it differs from the panel's columns.
 VALID_BUFFERS = (0, 1, 2, 3, 4, 5)                        # buffer 0 = treatment area; 1-5 km rings = control area
 TREAT_CORE_BUFFKM=0; DEFAULT_CONTROL_ZONES=(1,2,3,4,5)
 UID_MATCH_TOLERANCE_M=3.0; ROW_GROUP_SIZE=2_560_000   # v20.58: 5x (was 512,000)
@@ -798,6 +802,12 @@ def final_panel_is_valid(path=None, required_cols=None, min_rows=1):
                  + f"vs {bool(DEDUP_FILL_FROM_DUPLICATES)} now -> will rebuild so repeated rows are dropped whole "
                  f"(set ACCEPT_PANEL_WITHOUT_PIXEL_MERGE = True to keep it)")
             return False
+        # v20.59: the panel's post / pre come from the exports' Treat flag (POST_FROM_EXPORT_TREAT) -- another setting means another panel
+        _pf_want = bool(POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR); _pf_got = _got.get("post_from_export_treat") if _got else None
+        if _pf_got is not None and bool(_pf_got) != _pf_want and not ACCEPT_PANEL_WITHOUT_PIXEL_MERGE:
+            warn(f"final panel exists but its post / pre columns were built {'from the exports Treat flag' if _pf_got else 'from the rule Year >= TREATMENT_YEAR'} "
+                 f"(POST_FROM_EXPORT_TREAT = {bool(_pf_got)}) vs {_pf_want} now -> will rebuild (set ACCEPT_PANEL_WITHOUT_PIXEL_MERGE = True to keep it)")
+            return False
         if _got.get("negative_barrier") != _nb_want and not ACCEPT_PANEL_WITHOUT_PIXEL_MERGE:
             warn(f"final panel exists but was built with other negative-covariate settings ({_got.get('negative_barrier')} vs {_nb_want}) "
                  f"-> will rebuild PASS B (set ACCEPT_PANEL_WITHOUT_PIXEL_MERGE = True to keep it)")
@@ -1385,18 +1395,33 @@ def build_fe_and_treatment(df):
     return df
 
 
+def export_post_flag(df):
+    """v20.59: the exports' Treat flag as the post indicator -- 1.0 (post) / 0.0 (pre) per row, NaN where a row has no usable flag (no Treat
+    column, a blank, or a value other than 0 / 1). The exporter writes Treat = 1 for EVERY pixel from its treatment year on (1 = post,
+    0 = pre); it says nothing about the treatment AREA (that is buff_km 0)."""
+    if "Treat" not in df.columns: return None
+    v = pd.to_numeric(df["Treat"], errors="coerce").values.astype("float64")
+    ok_ = np.isfinite(v) & ((v == 0) | (v == 1))
+    return np.where(ok_, v, np.nan)
+
+
+PANEL_DESIGN_COLUMNS = ("treat", "control", "pre", "post", "did")   # v20.59: the DiD columns every model reads -- the same names in R's panel
+
 def build_treatment_columns(df, control_zones=DEFAULT_CONTROL_ZONES, treatment_year=TREATMENT_YEAR,
                              pre_cutoff=None, post_cutoff=POST_CUTOFF, year_col="Year",
                              exclude_transition_year=None):
     """v14 -- YOUR SPECIFICATION, implemented literally:
-        treatment  = 1 where buff_km == 0, else 0
+        treatment  = 1 where buff_km == 0, else 0                          (alias treat -- v20.59)
         control    = 1 where buff_km in {1,2,3,4,5}, else 0
-        post       = 1 where Year >= 2023, else 0
-        pre        = 1 where Year <  2023, else 0            (2022 is PRE, per your latest spec)
-        did_term   = treatment * post
+        post       = the exports' Treat flag: 1 = post, 0 = pre (v20.59, POST_FROM_EXPORT_TREAT); a row without a usable flag: Year >= 2022
+        pre        = 1 - post
+        did_term   = treatment * post                                      (alias did -- v20.59)
     The earlier names (treat_core, control_zone_selected, pre_period, post_period) are kept as
     exact aliases so every model notebook keeps working unchanged.
-    exclude_transition_year=True restores the earlier design that drops 2022 from BOTH periods."""
+    exclude_transition_year=True restores the earlier design that drops 2022 from BOTH periods (the rule, not the flag: the flag
+    cannot say 'neither period').
+    These are the panel's DEFAULT design (the exporter's timing). Every model rebuilds them for ITS design when it runs
+    (_common.build_treatment_columns) and reports on how many rows the two differ."""
     out = df.copy()
     bk = pd.to_numeric(out["buff_km"], errors="coerce")
     out["treatment"] = (bk == TREAT_CORE_BUFFKM).astype("int8")
@@ -1407,12 +1432,24 @@ def build_treatment_columns(df, control_zones=DEFAULT_CONTROL_ZONES, treatment_y
     _yr = pd.to_numeric(out[year_col], errors="coerce")
     if exclude_transition_year:
         _post_start = max(int(post_cutoff), int(treatment_year) + 1)
-        out["post"] = (_yr >= _post_start).astype("int8")
-        out["pre"] = (_yr < int(treatment_year)).astype("int8")
+        rule_post = (_yr >= _post_start).astype("int8").values
+        rule_pre = (_yr < int(treatment_year)).astype("int8").values
     else:
-        out["post"] = (_yr >= int(post_cutoff)).astype("int8")
-        out["pre"] = (_yr < int(post_cutoff)).astype("int8")
+        rule_post = (_yr >= int(post_cutoff)).astype("int8").values
+        rule_pre = (_yr < int(post_cutoff)).astype("int8").values
+    # v20.59 -- YOUR RULE: post / pre from the exports' Treat flag (1 = post, 0 = pre) where a row has one; the rule where it has none
+    flag = export_post_flag(out) if (POST_FROM_EXPORT_TREAT and not exclude_transition_year) else None
+    if flag is not None:
+        _ok = np.isfinite(flag)
+        out["post"] = np.where(_ok, flag, rule_post).astype("int8")
+        out["pre"] = (1 - out["post"].values).astype("int8")
+        out.attrs["post_from_export_flag"] = int(_ok.sum()); out.attrs["post_from_rule"] = int((~_ok).sum())
+        out.attrs["post_flag_vs_rule_differ"] = int((_ok & (np.nan_to_num(flag, nan=-1) != rule_post)).sum())
+    else:
+        out["post"] = rule_post.astype("int8"); out["pre"] = rule_pre.astype("int8")
+        out.attrs["post_from_export_flag"] = 0; out.attrs["post_from_rule"] = int(len(out)); out.attrs["post_flag_vs_rule_differ"] = 0
     out["did_term"] = (out["treatment"] * out["post"]).astype("int8")
+    out["treat"] = out["treatment"]; out["did"] = out["did_term"]     # v20.59: the DiD names every model (and R's panel) reads
     # aliases used by the 45 model notebooks
     out["treat_core"] = out["treatment"]; out["control_zone_selected"] = out["control"]
     out["pre_period"] = out["pre"];       out["post_period"] = out["post"]
@@ -1569,6 +1606,8 @@ FINAL_PANEL_SCHEMA = {
     # ---- DiD design (your names; aliases are re-derived at model time, not stored) ----
     "buff_km": "int8", "treatment": "int8", "control": "int8", "pre": "int8", "post": "int8",
     "did_term": "int8", "in_analysis_sample": "int8",
+    "treat": "int8", "did": "int8",     # v20.59 (your request): the DiD columns under the names every model and R's panel use --
+                                        # treat = treatment, did = did_term (post / pre from the exports' Treat flag: POST_FROM_EXPORT_TREAT)
     # event_time and period_index are NOT stored: build_treatment_columns re-derives both from
     # Year/Season at model time (saves 5 bytes/row = 5 GB at 1B rows).
     # ---- treatment timing / dose (NaN-able -> float32) ----
@@ -2293,10 +2332,14 @@ def prepare_pass_b_block(yr, se, shard_path, dose_table=None, crosswalk=None):
     _core = (pd.to_numeric(block["buff_km"], errors="coerce") == TREAT_CORE_BUFFKM).values if "buff_km" in block.columns else np.zeros(len(block), bool)
     mp_stats["per_variable"] = {}
     for c in _vars:
-        _f = np.isfinite(pd.to_numeric(block[c], errors="coerce").values.astype(np.float64))
+        _v = pd.to_numeric(block[c], errors="coerce").values.astype(np.float64); _f = np.isfinite(_v)
+        # v20.59: the block's exact moments (mean, M2 about it; merged across out-of-core pieces by the parallel formula) -> panel_variation_by_block.csv:
+        # does the panel carry PIXEL variation in this variable and year-season, or one value for every pixel (a fill value)?
+        _mu = float(_v[_f].mean()) if _f.any() else float("nan"); _m2 = float(((_v[_f] - _mu) ** 2).sum()) if _f.any() else 0.0
         mp_stats["per_variable"][c] = {"finite": int(_f.sum()), "finite_core": int((_f & _core).sum()),
                                        "finite_rings": int((_f & ~_core).sum()),
-                                       "zero_after_policy": int((pd.to_numeric(block[c], errors="coerce") == 0).sum())}
+                                       "zero_after_policy": int((pd.to_numeric(block[c], errors="coerce") == 0).sum()),
+                                       "moments": [[int(_f.sum()), _mu, _m2, float(_v[_f].min()) if _f.any() else float("nan"), float(_v[_f].max()) if _f.any() else float("nan")]]}
     mp_stats["rows_after_policy"] = int(len(block)); mp_stats["rows_core_after"] = int(_core.sum())
     mp_stats["rows_rings_after"] = int((~_core).sum())
     kinds = block.attrs.get("duplicate_kinds", {}); filled = block.attrs.get("values_filled_from_duplicates", 0)
@@ -2337,19 +2380,27 @@ def prepare_pass_b_block(yr, se, shard_path, dose_table=None, crosswalk=None):
     _ps = max(int(POST_CUTOFF), int(TREATMENT_YEAR) + 1) if EXCLUDE_TRANSITION_YEAR else int(POST_CUTOFF)
     _exp_t = (_bk == TREAT_CORE_BUFFKM); _exp_c = np.isin(_bk, list(DEFAULT_CONTROL_ZONES))
     _exp_post = _yr >= _ps; _exp_pre = _yr < (int(TREATMENT_YEAR) if EXCLUDE_TRANSITION_YEAR else int(POST_CUTOFF))
+    _flag = export_post_flag(block) if (POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR) else None   # v20.59: the exports' flag where a row has one
+    if _flag is not None:
+        _fok = np.isfinite(_flag); _exp_post = np.where(_fok, _flag == 1, _exp_post); _exp_pre = ~_exp_post
     _t = block["treatment"].values.astype(int); _c = block["control"].values.astype(int)
     _po = block["post"].values.astype(int); _pr = block["pre"].values.astype(int); _dd = block["did_term"].values.astype(int)
     viol = {"treatment_not_buffer0": int((_t != _exp_t.astype(int)).sum()),
             "control_not_buffer1to5": int((_c != _exp_c.astype(int)).sum()),
             "treatment_and_control": int(((_t == 1) & (_c == 1)).sum()),
-            "post_not_rule": int((_po != _exp_post.astype(int)).sum()),
-            "pre_not_rule": int((_pr != _exp_pre.astype(int)).sum()),
-            "did_not_treatment_x_post": int((_dd != _t * _po).sum())}
+            "post_not_flag_or_rule": int((_po != _exp_post.astype(int)).sum()),
+            "pre_not_flag_or_rule": int((_pr != _exp_pre.astype(int)).sum()),
+            "did_not_treatment_x_post": int((_dd != _t * _po).sum()),
+            "treat_not_treatment": int((block["treat"].values.astype(int) != _t).sum()),        # v20.59: the aliases every model reads
+            "did_not_did_term": int((block["did"].values.astype(int) != _dd).sum())}
     _grp = np.where(_t == 1, "treatment (buffer 0)", np.where(_c == 1, "control (buffer 1-5)", "neither (invalid buffer)"))
     _per = np.where(_po == 1, "post", np.where(_pr == 1, "pre", "transition"))
     xt = pd.DataFrame({"buff_km": _bk, "group": _grp, "period": _per}).value_counts().rename("rows").reset_index()
     mp_stats["design"] = {"violations": viol, "xtab": xt.to_dict("records"),
                           "invalid_buffer_rows": int((_bk < 0).sum()),
+                          "post_from_export_flag": int(block.attrs.get("post_from_export_flag", 0)),      # v20.59
+                          "post_from_rule": int(block.attrs.get("post_from_rule", 0)),
+                          "post_flag_vs_rule_differ": int(block.attrs.get("post_flag_vs_rule_differ", 0)),
                           "export_treat_mismatch_rows": int(pd.to_numeric(block.get("treat_period_mismatch_flag", pd.Series(0, index=block.index)), errors="coerce").fillna(0).sum()),
                           "buff_km_recoded": dict(block.attrs.get("buff_km_recoded", {}))}
     # v20.6: treatment_group / control_group / pre_period / post_period / row_id are in DROPPED_FROM_PANEL, so
@@ -2388,6 +2439,19 @@ def _mapped_ids(t, m):
         if hit.any():
             v = v.copy(); v[hit] = m.reindex(v[hit])["canonical_pixel_id"].values.astype(np.int64)
     return v
+
+def _merge_moments(parts):
+    """v20.59: [n, mean, M2, min, max] pieces (one per out-of-core piece of a block) -> (n, mean, SD, min, max) of the whole block, exactly
+    (the parallel-variance formula); None when nothing is finite."""
+    n = 0; mu = 0.0; m2 = 0.0; lo = float("inf"); hi = float("-inf")
+    for p in parts:
+        k = int(p[0])
+        if not k: continue
+        d = float(p[1]) - mu; N = n + k
+        mu = mu + d * k / N; m2 = m2 + float(p[2]) + d * d * n * k / N; n = N
+        lo = min(lo, float(p[3])); hi = max(hi, float(p[4]))
+    if not n: return None
+    return (n, mu, (m2 / (n - 1)) ** 0.5 if n > 1 else 0.0, lo, hi)
 
 def _merge_stats(dicts):
     out = {}
@@ -2559,7 +2623,9 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
     policy_totals = {"zero_cells_set_missing": 0, "rows_dropped_no_outcome": 0, "rows_remapped_near_duplicate": 0}
     dedup_totals = {"values_filled": 0, "values_not_used": 0, "not_used_by_variable": {}}        # v20.58
     missing_rows = []                                        # v20.17: per block x variable
-    design_rows, design_viol, design_notes = [], {}, {"invalid_buffer_rows": 0, "export_treat_mismatch_rows": 0}   # v20.27
+    variation_rows = []                                      # v20.59: per block x variable -- rows, mean, SD across pixels, min, max (pixel variation, or a fill value)
+    design_rows, design_viol, design_notes = [], {}, {"invalid_buffer_rows": 0, "export_treat_mismatch_rows": 0,   # v20.27
+                                                      "post_from_export_flag": 0, "post_from_rule": 0, "post_flag_vs_rule_differ": 0}   # v20.59
     neg_rows = []                                                                                                   # v20.30
     def _emit(r):
         key, path, nrows, dlog, removed, kinds, filled, n_pix, mp = r
@@ -2584,6 +2650,11 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
                                  "rows_rings_in_export": mp.get("rows_rings", rr), "finite_rings": st_.get("finite_rings", 0),
                                  "share_missing_rings": round(1 - st_.get("finite_rings", 0) / max(mp.get("rows_rings", rr), 1), 4),
                                  "zero_after_policy": st_["zero_after_policy"]})
+            _mm = _merge_moments(st_.get("moments") or [])                       # v20.59
+            if _mm is not None:
+                variation_rows.append({"Year": key[0], "Season": SEASON_LABEL[key[1]], "variable": v_, "finite": _mm[0], "mean": _mm[1],
+                                       "sd_across_pixels": _mm[2], "min": _mm[3], "max": _mm[4],
+                                       "constant_across_pixels": bool(_mm[0] > 1 and _mm[2] <= 1e-9 * max(1.0, abs(_mm[1])))})
             _floored_ = {k for k, r in NEGATIVE_COVARIATE_RULE.items() if r == "zero" and not ALLOW_NEGATIVE_COVARIATES}
             if st_["zero_after_policy"] and ZERO_AS_MISSING and v_ not in ZERO_RULE_EXCEPT and v_ not in _floored_:   # v20.30
                 raise RuntimeError(f"INTERNAL: {st_['zero_after_policy']} exact-zero {v_} cells survived the missing-value "
@@ -2675,6 +2746,9 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
                                             "nodata_below": NODATA_SENTINEL_BELOW, "temperature_clamp_nodata": TEMPERATURE_CLAMP_NODATA},
                        "dedup_priority": DEDUP_PRIORITY, "zero_as_missing": bool(ZERO_AS_MISSING),
                        "dedup_fill_from_duplicates": bool(DEDUP_FILL_FROM_DUPLICATES),                        # v20.58
+                       "post_from_export_treat": bool(POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR),   # v20.59
+                       "post_from_export_flag_rows": int(design_notes.get("post_from_export_flag", 0)), "post_from_rule_rows": int(design_notes.get("post_from_rule", 0)),
+                       "post_flag_vs_rule_differ_rows": int(design_notes.get("post_flag_vs_rule_differ", 0)),
                        "dedup_values_filled": int(dedup_totals["values_filled"]), "dedup_values_not_used": int(dedup_totals["values_not_used"]),
                        "rows_remapped_near_duplicate": _rem, "written": _ts()}, _fh, indent=1, default=str)
     except Exception as _e:
@@ -2691,21 +2765,46 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
             ok("no negative covariate values in the panel (negative_covariates_report.csv is empty)")
     except Exception as _e:
         warn(f"negative-covariate report skipped ({_e})")
+    # v20.59: PIXEL VARIATION per block x variable -- a year-season with ONE value for every pixel is a fill value, not a measurement: the outcome
+    # screen of every model leaves it out (OUTCOME_SCREEN); this table shows it right after P00, before any model runs
+    try:
+        if variation_rows:
+            vt = pd.DataFrame(variation_rows).sort_values(["variable", "Year", "Season"])
+            vt.to_csv(os.path.join(output_dir, "panel_variation_by_block.csv"), index=False)
+            _k = vt[vt["constant_across_pixels"] & vt["variable"].isin(OUTCOME_VARS + ["ESI", "WSSI", "WSI", "SMDI", "VCI", "TCI", "VHI"])]
+            if len(_k):
+                warn(f"{len(_k)} of {int(vt['variable'].isin(OUTCOME_VARS + ['ESI', 'WSSI', 'WSI', 'SMDI', 'VCI', 'TCI', 'VHI']).sum())} outcome x year-season cells hold ONE value for "
+                     f"every pixel (a fill value, not pixel data: the outcome screen of every model leaves them out unless OUTCOME_SCREEN = 'keep'): "
+                     + "; ".join(f"{r.variable} {r.Year} {r.Season} = {r.mean:.6g}" for r in _k.head(8).itertuples()) + ("; ..." if len(_k) > 8 else "")
+                     + " -> panel_variation_by_block.csv")
+            else:
+                ok(f"pixel variation CONFIRMED in every outcome x year-season cell ({len(vt):,} cells, no fill value) -> panel_variation_by_block.csv")
+    except Exception as _e:
+        warn(f"variation report skipped ({_e})")
     # v20.27: the DiD design, as built -- rows per buffer x group x period, with the rules it was checked against
     try:
         if design_rows:
             dz = pd.DataFrame(design_rows)
             dz.to_csv(os.path.join(output_dir, "panel_design_check.csv"), index=False)
             summ = dz.groupby(["group", "period"])["rows"].sum().unstack(fill_value=0)
-            info(f"DiD design (treatment year {TREATMENT_YEAR}: pre = Year < {TREATMENT_YEAR}, post = Year >= "
-                 f"{max(int(POST_CUTOFF), int(TREATMENT_YEAR) + 1) if EXCLUDE_TRANSITION_YEAR else int(POST_CUTOFF)}; buffer 0 = treatment, 1-5 = control):")
+            _ps_ = max(int(POST_CUTOFF), int(TREATMENT_YEAR) + 1) if EXCLUDE_TRANSITION_YEAR else int(POST_CUTOFF)
+            if POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR:      # v20.59: your rule -- the exports' flag is the panel's period
+                info(f"DiD design columns in the panel -- treat / treatment (buffer 0), control (rings 1-5), post = the exports' Treat flag (1 = post, 0 = pre): "
+                     f"{design_notes['post_from_export_flag']:,} rows from the flag, {design_notes['post_from_rule']:,} without a usable flag from the rule "
+                     f"Year >= {_ps_}; pre = 1 - post; did / did_term = treat x post. The models apply THEIR design when they run and say where it differs:")
+            else:
+                info(f"DiD design (treatment year {TREATMENT_YEAR}: pre = Year < {TREATMENT_YEAR}, post = Year >= {_ps_}; buffer 0 = treatment, 1-5 = control"
+                     + ("; POST_FROM_EXPORT_TREAT = False: the rule, not the exports' flag" if not POST_FROM_EXPORT_TREAT else "; the transition year is held out: the rule, not the flag") + "):")
             print(summ.to_string())
             ok(f"design rules hold on every row ({sum(design_viol.values())} violations) -> panel_design_check.csv")
             if design_notes["invalid_buffer_rows"]:
                 warn(f"{design_notes['invalid_buffer_rows']:,} rows carry a buffer code outside 0-5 -- they are in NEITHER group (see panel_design_check.csv)")
             if design_notes["export_treat_mismatch_rows"]:
                 warn(f"{design_notes['export_treat_mismatch_rows']:,} rows whose EXPORTED Treat flag disagrees with Treat = 1{{Year >= {TREATMENT_YEAR}}} "
-                     f"(an export made with another treatment year or rule); the panel uses the rule, not the flag")
+                     f"(an export made with another treatment year or rule)"
+                     + (" -- the panel's post / pre FOLLOW THE FLAG (POST_FROM_EXPORT_TREAT = True, your rule); every model applies its own design "
+                        "when it runs and says on how many rows it differs from the panel's" if POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR
+                        else "; the panel uses the rule, not the flag"))
     except RuntimeError:
         raise
     except Exception as _e:

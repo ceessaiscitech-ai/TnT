@@ -89,12 +89,14 @@ ooc_task_p00_block <- function(ctx, k) {
   if (no) stop("duplicate removal FAILED: a pixel outside every polygon is still repeated in a year-season -- please report this")
   n2 <- nrow(dt) - uniqueN(dt, by = c("pixel_id", "Year", "Season"))
   reg2 <- if (isTRUE(NEAR_DUPLICATE_PIXELS)) .reg_parts(dt) else NULL
+  dt <- panel_design_columns_R(dt, say = FALSE); dchk <- attr(dt, "design_check")                  # v20.59: the DiD columns, per block
+  vpart <- panel_variation_R(dt)                                                                    # v20.59: the block's exact moments per outcome
   dt <- dt[, intersect(ctx$keep, names(dt)), with = FALSE]
   sites0 <- unique(dt$site_id[dt$site_id > 0 & dt$fragment == 0L])
   setorder(dt, Year, Season, site_id, pixel_id)
   out <- file.path(ctx$run_dir, sprintf("out_%06d.rds", k)); saveRDS(dt, out, compress = FALSE)
   list(rows = nrow(dt), dedup = dd, n_no = n_no, n2 = n2, reg2 = reg2, sites0 = sites0, sites = sort(unique(dt$site_id)), pixels = unique(dt$pixel_id),
-       block = job$block, j = j, file = out)
+       block = job$block, j = j, file = out, design = dchk, variation = vpart)
 }
 
 # ---------------------------------------------------------------- the pipeline block by block (run_prep's twin)
@@ -143,9 +145,9 @@ run_prep_ooc <- function(files, t0 = Sys.time(), why = "") {
           else data.table(pixel_id = character(0), canonical_pixel_id = character(0), canonical_lat = numeric(0), canonical_lon = numeric(0), overlap = numeric(0))
   # the panel's columns and their types: those of rbindlist(fill = TRUE) over EVERY file, then the columns R_P00 adds
   tys <- list(); for (p in good) for (c_ in names(p$types)) tys[[c_]] <- max(tys[[c_]] %||% 0L, p$types[[c_]])
-  all_cols <- unique(c(unlist(lapply(good, function(p) names(p$types))), "site_id", "ring_poly", "site_check", "sws_name", "fragment"))
+  all_cols <- unique(c(unlist(lapply(good, function(p) names(p$types))), "site_id", "ring_poly", "site_check", "sws_name", "fragment", PANEL_DESIGN_COLS))
   keep <- intersect(c("pixel_id", "site_id", "Year", "Season", "latitude", "longitude", "buff_km", "sws_export", "site_check", "sws_name",
-                      "fragment", "SubwshedID", "Treat", OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), all_cols)
+                      "fragment", "SubwshedID", "Treat", PANEL_DESIGN_COLS, OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), all_cols)
   keep <- setdiff(keep, panel_columns_left_out_R())
   # PASS 2: the blocks (a block larger than one task's share of the RAM: in pixel groups)
   bl <- rbindlist(lapply(good, `[[`, "blocks"))[, .(N = sum(N)), by = .(Year, Season)][order(Year, Season)]
@@ -178,6 +180,8 @@ run_prep_ooc <- function(files, t0 = Sys.time(), why = "") {
                                      100 * PIXEL_OVERLAP_MIN, format(nrow(reg2), big.mark = ","), if (left) " (a chain the one-to-one merge cannot join) -- the models leave the smaller of each pair out (OVERLAP_ROWS)" else ""))
   }
   ok(sprintf("duplicates CONFIRMED removed: %s rows, every (sub-watershed, pixel, year, season) exactly once", format(rows, big.mark = ",")))
+  panel_design_report_R(panel_design_merge_R(lapply(p2, `[[`, "design")))                       # v20.59: the blocks' design checks, said once
+  panel_variation_report_R(lapply(p2, `[[`, "variation"))                                        # v20.59: the blocks' moments merged exactly
   n_sites <- length(unique(unlist(lapply(p2, `[[`, "sites0"))))
   info(sprintf("%d sub-watershed(s) in the panel after the fragment rule (the pooled design, POOLED_FE and the clusters are set by each model)", n_sites))
   ftab <- tryCatch(build_fund_tables(sort(unique(bl$Year)), out_dir = file.path(RESULTS_DIR, "FUND")), error = function(e) { warn("fund tables: ", conditionMessage(e)); NULL })
