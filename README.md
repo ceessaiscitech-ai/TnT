@@ -2,10 +2,18 @@
 
 | folder | what it is |
 |---|---|
-| `RWD_4Models_v20.59/` | the four-model pipeline (P00 + M01, M02, M16, M34) in Python **and** R — the bundle behind the v20.58 run this version fixes |
 | `RWD_Artal_v20.59/` | the full Python pipeline (P00 + all 45 models), with the R library beside it |
 | `RWDR_v20.59/` | the full R pipeline (R_P00 + all 45 models; RStudio and Jupyter) |
 | `CHANGELOG_v20.59.md` | what changed in this version and why (also in each bundle's `docs/`) |
 
 The engines (`python/DIDRDP_*/_common.py`, `_prep_common.py`, `_outofcore.py`, `_ooc_models.py`; `R/lib/*.R` / `lib/*.R`) are the same files in
-all three bundles, byte for byte; each bundle's `docs/VALIDATION_v20.59.md` says which gates ran on this code and where.
+both bundles, byte for byte; each bundle's `docs/VALIDATION_v20.59.md` says which gates ran on this code and where.
+The four-model bundle (`RWD_4Models`) is discontinued at your request: its four models (M01, M02, M16, M34) are part of both
+remaining pipelines, and the validators that ran on it (`selfcheck.py`, `validate_preprocessing.py`, `validate_known_answers.py`,
+`validate_design_options.py`) are the same scripts in `RWD_Artal_v20.59/python/DIDRDP_ALLRunDID_v20/`.
+
+**The period and the groups in the DID-ready panel (v20.59, your rule):** every input file's `Treat` column is 1 = post-treatment,
+0 = pre-period; `PERIOD_RULE` (`P00_Settings` / `lib/reward_paths.R`) says whether the panel's `post` / `pre` come from that column
+(`"treat"`, the default), from `Year >= TREATMENT_YEAR` (`"year"`) or from both, which must agree (`"both"`: a disagreeing row
+leaves, counted). `buff_km` / `distance` 0 = the treatment area (`treat` = 1), 1–5 = the control rings (`control` = 1); `did` = treat x post.
+P00 / R_P00 confirm this on every input file (`input_design_audit.csv` / `input_design_audit_R.csv`) before the panel is built.

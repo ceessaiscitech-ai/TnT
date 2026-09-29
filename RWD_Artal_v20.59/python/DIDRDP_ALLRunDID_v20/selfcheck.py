@@ -2382,13 +2382,39 @@ def check_v20_59():
         _P.POST_FROM_EXPORT_TREAT = False
         try:
             if list(_P.build_treatment_columns(d)["post"]) != [0, 1, 0, 1, 1]: bad("POST_FROM_EXPORT_TREAT = False does not give the rule Year >= 2022")
+            if _P.period_rule() != "year": bad("POST_FROM_EXPORT_TREAT = False is not the older name of PERIOD_RULE = 'year'")
         finally:
             _P.POST_FROM_EXPORT_TREAT = True
+        # v20.59 -- YOUR RULE: PERIOD_RULE "treat" | "year" | "both"; the input audit (Treat 1 / 0, buff_km 0 / 1-5) per file
+        if _P.period_rule() != "treat" or tuple(_P.PERIOD_RULES) != ("treat", "year", "both"): bad(f"PERIOD_RULE default / choices wrong: {_P.period_rule()!r} {_P.PERIOD_RULES}")
+        try:
+            _P.PERIOD_RULE = "year"
+            if list(_P.build_treatment_columns(d)["post"]) != [0, 1, 0, 1, 1]: bad("PERIOD_RULE = 'year' does not give the rule Year >= 2022")
+            _P.PERIOD_RULE = "both"
+            ob = _P.build_treatment_columns(d)                    # row 2 (2022, flag 0, rule 1) disagrees: it LEAVES
+            if len(ob) != 4 or list(ob["post"]) != [0, 0, 1, 1] or ob.attrs.get("period_rows_dropped") != 1 or ob.attrs.get("post_flag_vs_rule_differ") != 0:
+                bad(f"PERIOD_RULE = 'both' does not drop the disagreeing row: {len(ob)} rows, {ob.attrs}")
+            d2, au = _P.audit_and_apply_period_rule(d.assign(Treat=[0.0, 0.0, float("nan"), 1.0, 1.0]), "x.csv")
+            if len(d2) != 3 or au["rows_dropped_period_disagree"] != 2 or au["treat_vs_year_disagree_rows"] != 1 or au["treat_unusable_rows"] != 1: bad(f"the PASS A audit under 'both' is wrong: {len(d2)} rows, {au}")
+            _P.PERIOD_RULE = "treat"
+            d3, au = _P.audit_and_apply_period_rule(d, "y.csv")
+            want = {"rows": 5, "treat_post_rows": 2, "treat_pre_rows": 3, "treat_unusable_rows": 0, "treat_vs_year_disagree_rows": 1, "buff0_treatment_rows": 2,
+                    "buff1to5_control_rows": 2, "buff_outside_0to5_rows": 1, "rows_dropped_period_disagree": 0, "period_rule": "treat"}
+            if len(d3) != 5 or any(au.get(k) != v for k, v in want.items()): bad(f"the PASS A audit is wrong: {au}")
+            _P.PERIOD_RULE = "nonsense"
+            try: _P.period_rule(); bad("an unknown PERIOD_RULE is not refused")
+            except ValueError: pass
+        finally:
+            _P.PERIOD_RULE = "treat"
+        pa = _i.getsource(_P.run_pass_a) + _i.getsource(_P._pa_worker)
+        if "__input_audit__" not in pa or "input_audit_report(" not in pa or "audit_and_apply_period_rule(" not in pa: bad("PASS A does not audit the input files (input_design_audit.csv)")
         pb = _i.getsource(_P.prepare_pass_b_block)
-        if "export_post_flag(" not in pb or "post_from_export_flag" not in pb: bad("PASS B's design check does not account for the exports' flag")
+        if "export_post_flag(" not in pb or "post_from_export_flag" not in pb or "period_rule()" not in pb: bad("PASS B's design check does not account for the exports' flag / PERIOD_RULE")
         if "panel_variation_by_block.csv" not in _i.getsource(_P.run_pass_b) or "moments" not in pb: bad("P00 does not write the pixel-variation report")
-        if "post_from_export_treat" not in _i.getsource(_P.final_panel_is_valid): bad("a panel built under the other POST_FROM_EXPORT_TREAT setting is not rebuilt")
-        note("the panel carries treat / control / pre / post / did -- post = the exports' Treat flag (1 = post, 0 = pre), the rule where a row has none, counted; P00 writes panel_variation_by_block.csv")
+        if '"period_rule"' not in _i.getsource(_P.run_pass_b): bad("panel_build_settings.json does not record PERIOD_RULE")
+        if "period_rule()" not in _i.getsource(_P.final_panel_is_valid): bad("a panel built under another PERIOD_RULE is not rebuilt")
+        note("the panel carries treat / control / pre / post / did -- PERIOD_RULE 'treat' (the exports' Treat flag: 1 = post, 0 = pre) | 'year' | 'both' (a disagreeing row leaves); "
+             "PASS A confirms Treat 1 / 0 and buff_km 0 / 1-5 on every input file (input_design_audit.csv); P00 writes panel_variation_by_block.csv")
         # 3 the model stage: the design in effect against the panel's post, said; the aliases rebuilt
         src = _i.getsource(_C.build_treatment_columns)
         if "design_vs_panel(" not in src or 'out["treat"] = out["treatment"]' not in src: bad("the model stage does not compare its design with the panel's post / rebuild the treat / did aliases")
@@ -2426,16 +2452,16 @@ def check_v20_59():
         miss = [os.path.basename(p) for p in nbs if not all(k in open(p, encoding="utf-8").read() for k in ("OUTCOME_SCREEN", "outcome_screen=OUTCOME_SCREEN", "calendar year"))]
         if miss: bad(f"model notebooks without OUTCOME_SCREEN / the calendar-year note: {miss[:6]}")
         p00 = _g.glob(os.path.join(HERE, "01_Panel_Preparation", "P00*.ipynb"))
-        if not p00 or "POST_FROM_EXPORT_TREAT" not in open(p00[0], encoding="utf-8").read(): bad("P00's settings do not carry POST_FROM_EXPORT_TREAT")
-        note(f"{len(nbs)} model notebooks set OUTCOME_SCREEN and pass it; PRE_YEARS / POST_YEARS document the calendar-year form; P00 carries POST_FROM_EXPORT_TREAT")
+        if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("POST_FROM_EXPORT_TREAT", "P.PERIOD_RULE = ")): bad("P00's settings do not carry PERIOD_RULE / POST_FROM_EXPORT_TREAT")
+        note(f"{len(nbs)} model notebooks set OUTCOME_SCREEN and pass it; PRE_YEARS / POST_YEARS document the calendar-year form; P00 carries PERIOD_RULE")
         # 6 R: the same rules in the R library and notebooks
         rl = os.path.join(os.path.dirname(os.path.dirname(HERE)), "R", "lib")
         if os.path.isdir(rl):
             want = {"reward_design.R": ("year_bounds_R", "screen_rule_R", "design_vs_panel_say_R", 'OUTCOME_SCREEN_%s.csv', "_screenKept", "post_vs_panel", "outcome_screen = screen_rule_R"),
-                    "reward_prep.R": ("panel_design_columns_R", "panel_variation_report_R", "POST_FROM_EXPORT_TREAT"),
-                    "reward_prep_ooc.R": ("panel_design_columns_R", "panel_variation_report_R"),
+                    "reward_prep.R": ("panel_design_columns_R", "panel_variation_report_R", "POST_FROM_EXPORT_TREAT", "period_rule_R", "input_audit_R", "input_audit_report_R", "input_design_audit_R.csv", '"period_rule", "period_rows_dropped"'),
+                    "reward_prep_ooc.R": ("panel_design_columns_R", "panel_variation_report_R", "input_audit_report_R", "audit = aud", '"period_rule", "period_rows_dropped"'),
                     "reward_outofcore.R": ("post_vs_panel", "screen_decide(s, outcome, rule)", "min = min(v), max = max(v)"),
-                    "reward_paths.R": ("OUTCOME_SCREEN",)}
+                    "reward_paths.R": ("OUTCOME_SCREEN", 'PERIOD_RULE       <- "treat"')}
             for fn, keys in want.items():
                 pth = os.path.join(rl, fn); s_ = open(pth, encoding="utf-8").read() if os.path.exists(pth) else ""
                 m_ = [k for k in keys if k not in s_]

@@ -361,6 +361,24 @@ if (!inherits(tE, "error")) {
        !is.null(pp) && all(c("treat", "control", "pre", "post", "did") %in% names(pp)) && all(pp$post == as.integer(pp$Treat)) && all(pp$pre == 1L - pp$post) && all(pp$did == pp$treat * pp$post) && all(pp$treat == as.integer(pp$buff_km == 0L)) && all(pp$control == as.integer(pp$buff_km %in% 1:5)),
        if (is.null(pp)) "panel not readable" else paste(intersect(c("treat", "control", "pre", "post", "did"), names(pp)), collapse = ","))
   chkE("panel", "R_P00 wrote panel_design_check_R.csv and panel_variation_by_block.csv (v20.59)", file.exists(file.path(OUTPUT_DIR, "panel_design_check_R.csv")) && file.exists(file.path(OUTPUT_DIR, "panel_variation_by_block.csv")))
+  # v20.59 -- YOUR RULE confirmed on the input files: input_design_audit_R.csv (Treat 1 = post / 0 = pre, buff_km 0 = treatment / 1-5 = control), PERIOD_RULE recorded
+  ia <- tryCatch(fread(file.path(OUTPUT_DIR, "input_design_audit_R.csv")), error = function(e) NULL)
+  bsr <- tryCatch(fread(file.path(OUTPUT_DIR, "panel_build_settings_R.csv")), error = function(e) NULL)
+  chkE("panel", "R_P00 confirmed every input file (input_design_audit_R.csv): Treat 1 / 0 on every row, buff_km 0 / 1-5 on every row, PERIOD_RULE 'treat' recorded in panel_build_settings_R.csv",
+       !is.null(ia) && nrow(ia) > 0 && all(ia$treat_column_in_file) && all(ia$treat_unusable_rows == 0L) && all(ia$buff_outside_0to5_rows == 0L) && sum(ia$treat_post_rows) > 0 && sum(ia$treat_pre_rows) > 0
+       && sum(ia$buff0_treatment_rows) > 0 && sum(ia$buff1to5_control_rows) > 0 && all(ia$period_rule == "treat") && identical(period_rule_R(), "treat")
+       && !is.null(bsr) && identical(bsr[setting == "period_rule", value], "treat") && identical(bsr[setting == "period_rows_dropped", value], "0"),
+       if (is.null(ia)) "audit not readable" else sprintf("%d files, post %d, pre %d, buff0 %d, buff1-5 %d", nrow(ia), sum(ia$treat_post_rows), sum(ia$treat_pre_rows), sum(ia$buff0_treatment_rows), sum(ia$buff1to5_control_rows)))
+  # the rule on a small frame: "year" = the Year rule, "both" drops the disagreeing row (the exports' flag 0 in 2022 against the rule 1)
+  dq <- data.table(buff_km = c(0L, 0L, 3L, 3L, 7L), Year = c(2021L, 2022L, 2021L, 2022L, 2022L), Season = 0L, Treat = c(0, 0, 0, 1, 1))
+  q_treat <- panel_design_columns_R(copy(dq), say = FALSE)
+  PERIOD_RULE <- "year"; q_year <- panel_design_columns_R(copy(dq), say = FALSE)
+  PERIOD_RULE <- "both"; q_both <- panel_design_columns_R(copy(dq), say = FALSE); ab <- input_audit_R(copy(dq), "q.csv")
+  PERIOD_RULE <- "treat"
+  chkE("panel", "PERIOD_RULE 'treat' | 'year' | 'both' on a small frame: the flag / the rule / the disagreeing row leaves (v20.59)",
+       identical(q_treat$post, c(0L, 0L, 0L, 1L, 1L)) && identical(q_year$post, c(0L, 1L, 0L, 1L, 1L)) && nrow(q_both) == 4L && identical(q_both$post, c(0L, 0L, 1L, 1L))
+       && identical(attr(q_both, "design_check")$rows_dropped, 1L) && ab$treat_vs_year_disagree_rows == 1L && ab$buff_outside_0to5_rows == 1L && ab$buff0_treatment_rows == 2L,
+       sprintf("treat %s | year %s | both %s (%d rows)", paste(q_treat$post, collapse = ""), paste(q_year$post, collapse = ""), paste(q_both$post, collapse = ""), nrow(q_both)))
   ra <- rd("rabi"); chkE("rabi", "SEASONS = 'Rabi': Rabi rows only", !is.null(ra) && identical(sort(unique(ra$Season)), 2L))
   mn <- rd("manual"); chkE("manual", "DESIGN_MODE = 'manual': 'data' = rings 1-5, every year", !is.null(mn) && setequal(unique(mn[buff_km > 0, buff_km]), 1:5) && min(mn$Year) == 2016)
   tr <- rd("transition"); chkE("transition", "EXCLUDE_TRANSITION_YEAR: no first treated year of a treated series", !is.null(tr) && !any(tr[treat == 1L, Year == cohort]))

@@ -2,7 +2,9 @@
 
 > **v20.59 — what changed for you** (details: `docs/CHANGELOG_v20.59.md`; what ran here: `docs/VALIDATION_v20.59.md`)
 > * **The panel carries the DiD design columns** — `treat` (buffer 0), `control` (rings 1–5), `post` = the exports' `Treat` flag
->   (1 = post, 0 = pre), `pre` = 1 − post, `did` = treat × post — from P00 / R_P00 (`POST_FROM_EXPORT_TREAT`), with
+>   (1 = post, 0 = pre), `pre` = 1 − post, `did` = treat × post — from P00 / R_P00 (`PERIOD_RULE`: `"treat"` the exports' column,
+>   `"year"` the rule `Year >= TREATMENT_YEAR`, `"both"` = the two must agree, a disagreeing row leaves), with
+>   `input_design_audit(_R).csv` — every input file confirmed: `Treat` 1 = post / 0 = pre, `buff_km` 0 = treatment / 1–5 = control —
 >   `panel_design_check(_R).csv` and `panel_variation_by_block.csv` (which year-seasons hold one value for every pixel).
 >   Every model still applies ITS OWN design when it runs and prints **`DESIGN vs PANEL`**: on how many rows your settings
 >   (the fund timing, `TREATMENT_YEAR`, the transition year) change the period split against the panel's columns.
@@ -41,8 +43,8 @@ not your exports folder).
 project RWDR), `docs\` (changelog, validation, request map).
 
 **One Python project and one R project (v20.58, your instruction):** this project (RWD_Artal) for Python and RWDR for R — the RWD_Artal1
-copy is dropped from every code, path and check. The four-model pipeline (P00 + M01, M02, M16, M34, Python and R in one bundle) is
-the separate `RWD_4Models_v20.59`. Each run uses the whole machine (v20.52: no split, no cap).
+copy is dropped from every code, path and check. The four-model bundle (RWD_4Models) is discontinued in v20.59 at your request:
+M01, M02, M16 and M34 are part of this pipeline. Each run uses the whole machine (v20.52: no split, no cap).
 
 **Checks you can run:** `selfcheck.py`, `validate_preprocessing.py`, `validate_inference.py`, `validate_all_models.py`,
 `06_Validation\V00_RUN_ALL_VALIDATIONS.py`, `06_Validation\V00d_GPU_PATH_CHECK.py` (on the A40), and (v20.54)

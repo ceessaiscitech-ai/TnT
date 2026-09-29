@@ -544,13 +544,38 @@ def main():
                f"Year >= 2022 on {n_mis} rows -- counted in panel_build_settings.json, the flag applied (POST_FROM_EXPORT_TREAT)")
         else:
             bad(f"design case wrong: buffers {okb}, periods {okp}, build settings {okf}, Treat mismatches {n_mis} (expected {len(codes)})")
-        # v20.59: POST_FROM_EXPORT_TREAT = False -> the rule for every row (the v20.58 panel), and the panel is rebuilt when the setting changes
+        # v20.59 -- YOUR RULE confirmed on the input files: input_design_audit.csv (Treat 1 = post / 0 = pre, buff_km 0 / 1-5, the flag-vs-year disagreement)
+        ia_ = pd.read_csv(os.path.join(o_, "input_design_audit.csv"))
+        r_ = ia_.loc[ia_.file == "design_case.csv"].iloc[0]
+        oka = bool(len(ia_) >= 1 and r_.treat_column_in_file and r_.treat_post_rows == len(codes) and r_.treat_pre_rows == 3 * len(codes) and r_.treat_unusable_rows == 0
+                   and r_.treat_vs_year_disagree_rows == len(codes) and r_.buff0_treatment_rows == 4 and r_.buff1to5_control_rows == 20 and r_.buff_outside_0to5_rows == 4
+                   and r_.period_rule == "treat" and r_.rows_dropped_period_disagree == 0 and _bs.get("period_rule") == "treat" and _bs.get("period_rows_dropped") == 0)
+        (ok if oka else bad)(f"input_design_audit.csv confirms the input file: Treat 1 = post on {r_.treat_post_rows} rows / 0 = pre on {r_.treat_pre_rows}, buff_km 0 (treatment) on "
+                             f"{r_.buff0_treatment_rows} rows / 1-5 (control) on {r_.buff1to5_control_rows} / outside on {r_.buff_outside_0to5_rows}, the flag and Year >= 2022 disagree on "
+                             f"{r_.treat_vs_year_disagree_rows}; PERIOD_RULE {r_.period_rule!r} recorded in panel_build_settings.json")
+        # v20.59: PERIOD_RULE = "both" -> the 2022 rows (flag 0, rule 1) LEAVE the panel in PASS A, counted per file and in panel_build_settings.json
+        P.PERIOD_RULE = "both"
+        try:
+            if P.final_panel_is_valid(os.path.join(o_, "did_panel_full.parquet")): bad("a panel built under PERIOD_RULE = 'treat' was accepted after the rule changed to 'both'")
+            _r, _u, _e, _d, sh3_ = P.run_pass_a(inp_, td_, o_, n_workers=1); P.run_pass_b(sh3_, o_, n_workers=1)
+            pan3_ = P.pq.read_table(os.path.join(o_, "did_panel_full.parquet")).to_pandas()
+            ia3_ = pd.read_csv(os.path.join(o_, "input_design_audit.csv")); r3_ = ia3_.loc[ia3_.file == "design_case.csv"].iloc[0]
+            bs3_ = json.load(open(os.path.join(o_, "panel_build_settings.json")))
+            okb3 = bool(2022 not in set(pan3_.Year) and len(pan3_) == len(pan_) - len(codes)
+                        and (pan3_.post == (pan3_.Year >= 2022).astype(int)).all() and r3_.rows_dropped_period_disagree == len(codes)
+                        and bs3_.get("period_rule") == "both" and bs3_.get("period_rows_dropped") == len(codes))
+            (ok if okb3 else bad)(f"PERIOD_RULE = 'both': the {len(codes)} rows whose Treat flag and Year rule disagree LEFT the panel in PASS A "
+                                  f"(rows_dropped_period_disagree {r3_.rows_dropped_period_disagree}, panel {len(pan3_)} of {len(pan_)} rows, period_rows_dropped {bs3_.get('period_rows_dropped')}); "
+                                  f"post = the flag = the rule on every remaining row; rebuilt when the rule changed")
+        finally:
+            P.PERIOD_RULE = "treat"
+        # v20.59: POST_FROM_EXPORT_TREAT = False (= PERIOD_RULE "year") -> the rule for every row (the v20.58 panel), and the panel is rebuilt when the setting changes
         P.POST_FROM_EXPORT_TREAT = False
         try:
             if P.final_panel_is_valid(os.path.join(o_, "did_panel_full.parquet")): bad("a panel built from the exports' flag was accepted after POST_FROM_EXPORT_TREAT changed to False")
             _r, _u, _e, _d, sh2_ = P.run_pass_a(inp_, td_, o_, n_workers=1); P.run_pass_b(sh2_, o_, n_workers=1)
             pan2_ = P.pq.read_table(os.path.join(o_, "did_panel_full.parquet")).to_pandas()
-            (ok if bool((pan2_.post == (pan2_.Year >= 2022).astype(int)).all()) else bad)("POST_FROM_EXPORT_TREAT = False: post = the rule Year >= 2022 on every row (the v20.58 panel), rebuilt when the setting changed")
+            (ok if bool((pan2_.post == (pan2_.Year >= 2022).astype(int)).all() and len(pan2_) == len(pan_)) else bad)("POST_FROM_EXPORT_TREAT = False (PERIOD_RULE 'year'): post = the rule Year >= 2022 on every row (the v20.58 panel), rebuilt when the setting changed")
         finally:
             P.POST_FROM_EXPORT_TREAT = True
     except Exception as e:

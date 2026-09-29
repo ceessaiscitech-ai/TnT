@@ -2,7 +2,9 @@
 
 > **v20.59 — what changed for you** (details: `docs/CHANGELOG_v20.59.md`; what ran here: `docs/VALIDATION_v20.59.md`)
 > * **The panel carries the DiD design columns** — `treat` (buffer 0), `control` (rings 1–5), `post` = the exports' `Treat` flag
->   (1 = post, 0 = pre), `pre` = 1 − post, `did` = treat × post — from P00 / R_P00 (`POST_FROM_EXPORT_TREAT`), with
+>   (1 = post, 0 = pre), `pre` = 1 − post, `did` = treat × post — from P00 / R_P00 (`PERIOD_RULE`: `"treat"` the exports' column,
+>   `"year"` the rule `Year >= TREATMENT_YEAR`, `"both"` = the two must agree, a disagreeing row leaves), with
+>   `input_design_audit(_R).csv` — every input file confirmed: `Treat` 1 = post / 0 = pre, `buff_km` 0 = treatment / 1–5 = control —
 >   `panel_design_check(_R).csv` and `panel_variation_by_block.csv` (which year-seasons hold one value for every pixel).
 >   Every model still applies ITS OWN design when it runs and prints **`DESIGN vs PANEL`**: on how many rows your settings
 >   (the fund timing, `TREATMENT_YEAR`, the transition year) change the period split against the panel's columns.
@@ -136,7 +138,7 @@ The same 49 notebooks are in `jupyter\` (kernel **R**). RStudio is the recommend
   cores on Linux / macOS), M11 synthdid's and M25 ritest's series in a fixed order; the R bridge no longer leaves a copy of each model's
   input in the temp folder.
 - **One Python project and one R project (your instruction):** RWD_Artal (Python) and this project (R); the RWD_Artal1 copy is gone.
-  The four-model pipeline (R_P00 + M01, M02, M16, M34, R and Python in one bundle) is the separate `RWD_4Models_v20.59`.
+  The four-model bundle (RWD_4Models) is discontinued in v20.59 at your request: M01, M02, M16 and M34 are part of this pipeline.
 - **Beyond 98 % of the RAM -- OUT OF CORE, never sampled (your instruction: Dask and Spark as the fall-backs):** M01, M02, M16 and M34
   (`run_model_R`) and R_P00 (`run_prep`) no longer stop when the data do not fit. They run on **pixel partitions** (every row of a pixel
   together) with the SAME R code as in memory; the two-way fixed effects are solved EXACTLY from the partitions' cross-products (the unit

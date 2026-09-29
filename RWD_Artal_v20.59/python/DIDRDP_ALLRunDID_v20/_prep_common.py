@@ -199,7 +199,13 @@ except Exception:
 
 TREATMENT_YEAR=2022; PRE_CUTOFF=2022; POST_CUTOFF=2022   # v20.27: treatment start year 2022 -- pre = Year < 2022, post = Year >= 2022
 EXCLUDE_TRANSITION_YEAR = False                           # True = hold 2022 out of both periods (robustness check)
-POST_FROM_EXPORT_TREAT = True   # v20.59 (YOUR RULE): the panel's post / pre come from the exports' Treat flag (1 = post, 0 = pre -- the exporter's
+PERIOD_RULE = "treat"           # v20.59 (YOUR RULE): what sets the panel's post (1) / pre (0) -- "treat": the exports' Treat column (1 = post,
+                                #   0 = pre; a row without a usable flag takes the Year rule, counted) | "year": the rule Year >= TREATMENT_YEAR for
+                                #   every row (v20.58) | "both": the Treat column AND the Year rule, and they must AGREE -- a row where they disagree
+                                #   (or whose flag is not 0 / 1) LEAVES the DID-ready panel, counted per input file (input_design_audit.csv) and said.
+                                #   The treatment AREA is never read from Treat: buff_km / distance 0 = the treatment area, 1-5 = the control rings.
+POST_FROM_EXPORT_TREAT = True   # the older switch (kept): False = "year" while PERIOD_RULE is "treat"; period_rule() gives the rule in effect.
+                                # v20.59 (YOUR RULE): the panel's post / pre come from the exports' Treat flag (1 = post, 0 = pre -- the exporter's
                                 # own timing, written for every pixel); a row without a usable flag takes the rule Year >= TREATMENT_YEAR (counted,
                                 # said). False = the rule for every row (v20.58). Every model applies ITS OWN design when it runs (the fund
                                 # timing, TREATMENT_YEAR, the transition year) and says on how many rows it differs from the panel's columns.
@@ -803,10 +809,11 @@ def final_panel_is_valid(path=None, required_cols=None, min_rows=1):
                  f"(set ACCEPT_PANEL_WITHOUT_PIXEL_MERGE = True to keep it)")
             return False
         # v20.59: the panel's post / pre come from the exports' Treat flag (POST_FROM_EXPORT_TREAT) -- another setting means another panel
-        _pf_want = bool(POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR); _pf_got = _got.get("post_from_export_treat") if _got else None
-        if _pf_got is not None and bool(_pf_got) != _pf_want and not ACCEPT_PANEL_WITHOUT_PIXEL_MERGE:
-            warn(f"final panel exists but its post / pre columns were built {'from the exports Treat flag' if _pf_got else 'from the rule Year >= TREATMENT_YEAR'} "
-                 f"(POST_FROM_EXPORT_TREAT = {bool(_pf_got)}) vs {_pf_want} now -> will rebuild (set ACCEPT_PANEL_WITHOUT_PIXEL_MERGE = True to keep it)")
+        _pr_want = period_rule()
+        _pr_got = (_got.get("period_rule") or (("treat" if _got.get("post_from_export_treat") else "year") if "post_from_export_treat" in _got else None)) if _got else None
+        if _pr_got is not None and str(_pr_got) != _pr_want and not ACCEPT_PANEL_WITHOUT_PIXEL_MERGE:
+            warn(f"final panel exists but its post / pre columns were built under PERIOD_RULE = {_pr_got!r} ({PERIOD_RULE_TEXT.get(str(_pr_got), '?')}) "
+                 f"vs {_pr_want!r} now -> will rebuild (set ACCEPT_PANEL_WITHOUT_PIXEL_MERGE = True to keep it)")
             return False
         if _got.get("negative_barrier") != _nb_want and not ACCEPT_PANEL_WITHOUT_PIXEL_MERGE:
             warn(f"final panel exists but was built with other negative-covariate settings ({_got.get('negative_barrier')} vs {_nb_want}) "
@@ -1009,6 +1016,7 @@ def load_and_harmonize(path, unresolved_log=None, parse_errors_log=None):
     # without it is not rejected -- Treat is derived from the rule Treat = 1{Year >= TREATMENT_YEAR} and logged
     if "Treat" not in df.columns and "Year" in df.columns:
         df["Treat"] = (pd.to_numeric(df["Year"], errors="coerce") >= TREATMENT_YEAR).astype("float64")
+        df.attrs["treat_derived_from_year"] = True                    # v20.59: input_design_audit says so (the file carries no Treat column)
         if unresolved_log is not None:
             unresolved_log.append((os.path.basename(path), f"Treat not in the source -> derived from the rule (1 for Year >= {TREATMENT_YEAR})"))
     missing_essential = [c for c in ESSENTIAL_COLS if c not in df.columns]
@@ -1405,6 +1413,78 @@ def export_post_flag(df):
     return np.where(ok_, v, np.nan)
 
 
+PERIOD_RULES = ("treat", "year", "both")
+PERIOD_RULE_TEXT = {"treat": "post / pre = the exports' Treat column (1 = post, 0 = pre)", "year": "post / pre = the rule Year >= TREATMENT_YEAR",
+                    "both": "post / pre = the exports' Treat column, which must AGREE with the rule Year >= TREATMENT_YEAR (a disagreeing row leaves)"}
+
+def period_rule(exclude_transition_year=None):
+    """v20.59 -- YOUR RULE: the rule in effect for the panel's post / pre: 'treat' (the exports' Treat column: 1 = post, 0 = pre), 'year'
+    (the rule Year >= TREATMENT_YEAR) or 'both' (the column and the rule must agree; a row where they disagree leaves the panel).
+    PERIOD_RULE decides; the older POST_FROM_EXPORT_TREAT = False still means 'year' while PERIOD_RULE is left at 'treat'. With the
+    transition year held out (EXCLUDE_TRANSITION_YEAR) the flag cannot say 'neither period', so the rule is 'year'."""
+    r = str(PERIOD_RULE if PERIOD_RULE is not None else "treat").strip().lower()
+    if r not in PERIOD_RULES:
+        raise ValueError(f"PERIOD_RULE must be one of {PERIOD_RULES} (P00_Settings), not {PERIOD_RULE!r}")
+    if r == "treat" and not POST_FROM_EXPORT_TREAT: r = "year"
+    if exclude_transition_year is None: exclude_transition_year = EXCLUDE_TRANSITION_YEAR
+    return "year" if exclude_transition_year else r
+
+def input_design_audit(df, path, treat_in_file=True):
+    """v20.59 -- YOUR RULE, confirmed on EVERY input file (one row per file -> input_design_audit.csv): the Treat column carries 1 = post /
+    0 = pre (rows of each, rows with another value), the buff_km / distance column carries 0 = the treatment area and 1-5 = the control
+    rings (rows of each, rows outside 0-5), and on how many rows the Treat flag and the rule Year >= TREATMENT_YEAR disagree."""
+    n = int(len(df)); _na = pd.Series(np.nan, index=df.index)
+    t = pd.to_numeric(df["Treat"], errors="coerce") if "Treat" in df.columns else _na
+    bk = pd.to_numeric(df["buff_km"], errors="coerce") if "buff_km" in df.columns else _na
+    yr = pd.to_numeric(df["Year"], errors="coerce") if "Year" in df.columns else _na
+    n_post, n_pre = int((t == 1).sum()), int((t == 0).sum())
+    n_b0, n_b15 = int((bk == 0).sum()), int(bk.isin([1, 2, 3, 4, 5]).sum())
+    if "treat_period_mismatch_flag" in df.columns: n_dis = int(pd.to_numeric(df["treat_period_mismatch_flag"], errors="coerce").fillna(0).sum())
+    else: n_dis = int((t.notna() & (t.round() != (yr >= TREATMENT_YEAR).astype(int))).sum())
+    return {"file": os.path.basename(path), "rows": n, "treat_column_in_file": bool(treat_in_file and "Treat" in df.columns),
+            "treat_post_rows": n_post, "treat_pre_rows": n_pre, "treat_unusable_rows": n - n_post - n_pre,
+            "year_min": (int(yr.min()) if yr.notna().any() else None), "year_max": (int(yr.max()) if yr.notna().any() else None),
+            "year_rule_post_rows": int((yr >= TREATMENT_YEAR).sum()), "treat_vs_year_disagree_rows": n_dis,
+            "buff0_treatment_rows": n_b0, "buff1to5_control_rows": n_b15, "buff_outside_0to5_rows": n - n_b0 - n_b15,
+            "period_rule": period_rule(), "rows_dropped_period_disagree": 0}
+
+def audit_and_apply_period_rule(df, path, treat_in_file=True):
+    """v20.59: the audit of one input file (input_design_audit) and, under PERIOD_RULE = 'both', the rows whose Treat flag and Year rule
+    disagree (or whose flag is not 0 / 1) LEAVE here -- in PASS A, before the duplicates are resolved, so another export's consistent
+    row of the same pixel-period can stand in. Returns (df, audit row)."""
+    aud = input_design_audit(df, path, treat_in_file)
+    if period_rule() == "both":
+        t = pd.to_numeric(df["Treat"], errors="coerce") if "Treat" in df.columns else pd.Series(np.nan, index=df.index)
+        rule = (pd.to_numeric(df["Year"], errors="coerce") >= TREATMENT_YEAR).astype(int)
+        drop = ~((t == 0) | (t == 1)) | (t.round() != rule)
+        n = int(drop.sum())
+        if n: df = df.loc[~drop.values].reset_index(drop=True)
+        aud["rows_dropped_period_disagree"] = n
+    return df, aud
+
+def input_audit_report(rows, out_dir):
+    """v20.59: the confirmation of the input files, said once and written -> input_design_audit.csv (one row per file)."""
+    if not rows: return None
+    a = pd.DataFrame(rows); os.makedirs(out_dir, exist_ok=True); a.to_csv(os.path.join(out_dir, "input_design_audit.csv"), index=False)
+    s = lambda k: int(pd.to_numeric(a[k], errors="coerce").fillna(0).sum()) if k in a.columns else 0
+    r = period_rule(); n_no = int((~a["treat_column_in_file"].astype(bool)).sum())
+    ok(f"input files CONFIRMED ({len(a)} files, {s('rows'):,} rows): Treat column 1 = post on {s('treat_post_rows'):,} rows, 0 = pre on {s('treat_pre_rows'):,} rows"
+       + (f", {s('treat_unusable_rows'):,} rows with another value" if s("treat_unusable_rows") else "")
+       + f"; buff_km 0 = the treatment area on {s('buff0_treatment_rows'):,} rows, 1-5 = the control rings on {s('buff1to5_control_rows'):,} rows"
+       + (f", {s('buff_outside_0to5_rows'):,} rows outside 0-5 (in neither group)" if s("buff_outside_0to5_rows") else "")
+       + f"; PERIOD_RULE = {r!r}: {PERIOD_RULE_TEXT[r]} -> input_design_audit.csv")
+    if n_no: warn(f"{n_no} file(s) carry NO Treat column: 1 = post / 0 = pre was derived from the rule Year >= {TREATMENT_YEAR} for them (input_design_audit.csv)")
+    d = s("treat_vs_year_disagree_rows")
+    if d:
+        nf = int((pd.to_numeric(a["treat_vs_year_disagree_rows"], errors="coerce").fillna(0) > 0).sum())
+        warn(f"{d:,} rows in {nf} file(s) where the Treat flag and the rule Year >= {TREATMENT_YEAR} DISAGREE (an export made with another treatment year or rule) -- "
+             + {"treat": "the panel's post / pre FOLLOW THE FLAG (PERIOD_RULE = 'treat')", "year": "the panel's post / pre follow the YEAR RULE (PERIOD_RULE = 'year')",
+                "both": f"they LEFT the panel ({s('rows_dropped_period_disagree'):,} rows dropped; PERIOD_RULE = 'both')"}[r])
+    elif s("rows_dropped_period_disagree"):
+        warn(f"{s('rows_dropped_period_disagree'):,} rows without a usable Treat flag (not 0 / 1) LEFT the panel (PERIOD_RULE = 'both')")
+    if s("buff_outside_0to5_rows"): warn(f"{s('buff_outside_0to5_rows'):,} rows carry a buffer code outside 0-5: in NEITHER group (input_design_audit.csv)")
+    return a
+
 PANEL_DESIGN_COLUMNS = ("treat", "control", "pre", "post", "did")   # v20.59: the DiD columns every model reads -- the same names in R's panel
 
 def build_treatment_columns(df, control_zones=DEFAULT_CONTROL_ZONES, treatment_year=TREATMENT_YEAR,
@@ -1437,14 +1517,22 @@ def build_treatment_columns(df, control_zones=DEFAULT_CONTROL_ZONES, treatment_y
     else:
         rule_post = (_yr >= int(post_cutoff)).astype("int8").values
         rule_pre = (_yr < int(post_cutoff)).astype("int8").values
-    # v20.59 -- YOUR RULE: post / pre from the exports' Treat flag (1 = post, 0 = pre) where a row has one; the rule where it has none
-    flag = export_post_flag(out) if (POST_FROM_EXPORT_TREAT and not exclude_transition_year) else None
+    # v20.59 -- YOUR RULE (PERIOD_RULE): post / pre from the exports' Treat column (1 = post, 0 = pre), from the Year rule, or from both
+    _prule = period_rule(exclude_transition_year)
+    flag = export_post_flag(out) if _prule != "year" else None
+    out.attrs["period_rule"] = _prule; out.attrs["period_rows_dropped"] = 0
     if flag is not None:
-        _ok = np.isfinite(flag)
+        _ok = np.isfinite(flag); _differ = _ok & (np.nan_to_num(flag, nan=-1) != rule_post)
+        if _prule == "both":                          # the column and the rule must AGREE: a disagreeing row (or one without a usable flag) leaves
+            _drop = _differ | ~_ok
+            if _drop.any():
+                _attrs = dict(out.attrs); out = out.loc[~_drop].reset_index(drop=True); out.attrs.update(_attrs)
+                flag, rule_post, _ok, _differ = flag[~_drop], rule_post[~_drop], _ok[~_drop], _differ[~_drop]
+            out.attrs["period_rows_dropped"] = int(_drop.sum())
         out["post"] = np.where(_ok, flag, rule_post).astype("int8")
         out["pre"] = (1 - out["post"].values).astype("int8")
         out.attrs["post_from_export_flag"] = int(_ok.sum()); out.attrs["post_from_rule"] = int((~_ok).sum())
-        out.attrs["post_flag_vs_rule_differ"] = int((_ok & (np.nan_to_num(flag, nan=-1) != rule_post)).sum())
+        out.attrs["post_flag_vs_rule_differ"] = int(_differ.sum())
     else:
         out["post"] = rule_post.astype("int8"); out["pre"] = rule_pre.astype("int8")
         out.attrs["post_from_export_flag"] = 0; out.attrs["post_from_rule"] = int(len(out)); out.attrs["post_flag_vs_rule_differ"] = 0
@@ -1717,6 +1805,7 @@ def _pa_worker(path):
     df = m.load_and_harmonize(path, unresolved_log=unresolved, parse_errors_log=errors)
     if df is None:
         return None, unresolved, errors, dedup
+    _tin = not bool(df.attrs.get("treat_derived_from_year", False))   # v20.59: did the file carry its Treat column?
     df["pixel_id"] = m.assign_pixel_ids(df["latitude"].values, df["longitude"].values)
     df, _st = m.tag_sites(df, path)                            # v20.28: SWS verified BEFORE de-duplication
     df, _st = m.tag_fragments(df, _st)                         # v20.57: the file's own sub-watershed; fragments of others coded
@@ -1724,6 +1813,8 @@ def _pa_worker(path):
     df, _mp = m.apply_missing_policy(df, drop_empty=False)     # v20.16; v20.58: empty rows stay until the cross-file dedup (PASS B)
     df, dedup = m.resolve_duplicates(df, conflict_log=dedup)
     df = m.data_qc(df)
+    df, _aud = m.audit_and_apply_period_rule(df, path, treat_in_file=_tin)   # v20.59: Treat 1 / 0, buff_km 0 / 1-5 confirmed per file; PERIOD_RULE
+    unresolved.append(("__input_audit__", os.path.basename(path), _aud))
     df = m.build_fe_and_treatment(df)
     df = m._drop_source_ids(df)                                # v20.51
     return df, unresolved, errors, dedup
@@ -1757,6 +1848,7 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
     registry = _UIDs()
     unresolved_cols, parse_errors, dedup_conflicts = [], [], []
     site_tag_rows = []                                          # v20.28: per-file SWS tagging
+    input_audit_rows = []                                       # v20.59: per-file Treat / buff_km audit (PERIOD_RULE)
     shard_writers = {}   # (Year,Season) -> pq.ParquetWriter
     _mem_on = [bool(IN_MEMORY_BLOCKS if in_memory is None else in_memory)]; _mem_blocks = {}; _mem_bytes = [0]   # v20.30
     def _write_group(key, group):
@@ -1802,13 +1894,16 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
         u, e, d = [], [], []
         df = load_and_harmonize(f, unresolved_log=u, parse_errors_log=e)
         if df is None: return None, u, e, d
+        _tin = not bool(df.attrs.get("treat_derived_from_year", False))   # v20.59
         df["pixel_id"] = assign_pixel_ids(df["latitude"].values, df["longitude"].values)
         df, _st = tag_sites(df, f)                             # v20.28: SWS verified BEFORE de-duplication
         df, _st = tag_fragments(df, _st)                       # v20.57: the file's own sub-watershed; fragments of others coded
         u.append(("__site_tagging__", os.path.basename(f), _st))
         df, _mp = apply_missing_policy(df, drop_empty=False)   # v20.16: NaN/0 -> NaN BEFORE dedup; v20.58: empty rows stay until PASS B's dedup
         df, d = resolve_duplicates(df, conflict_log=d)
-        df = data_qc(df); df = build_fe_and_treatment(df); df = _drop_source_ids(df)   # v20.51
+        df = data_qc(df)
+        df, _aud = audit_and_apply_period_rule(df, f, treat_in_file=_tin); u.append(("__input_audit__", os.path.basename(f), _aud))   # v20.59
+        df = build_fe_and_treatment(df); df = _drop_source_ids(df)   # v20.51
         df.attrs["missing_policy"] = _mp
         return df, u, e, d
     pool = None
@@ -1847,7 +1942,9 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
         for _x in u_:                                           # v20.28: per-file SWS tagging records
             if isinstance(_x, (list, tuple)) and len(_x) == 3 and _x[0] == "__site_tagging__":
                 site_tag_rows.append({"file": _x[1], **(_x[2] or {})})
-        u_ = [_x for _x in u_ if not (isinstance(_x, (list, tuple)) and len(_x) == 3 and _x[0] == "__site_tagging__")]
+            elif isinstance(_x, (list, tuple)) and len(_x) == 3 and _x[0] == "__input_audit__":
+                input_audit_rows.append(dict(_x[2] or {}))
+        u_ = [_x for _x in u_ if not (isinstance(_x, (list, tuple)) and len(_x) == 3 and _x[0] in ("__site_tagging__", "__input_audit__"))]
         unresolved_cols.extend(u_); parse_errors.extend(e_); dedup_conflicts.extend(d_)
         if df is None:
             continue
@@ -1892,6 +1989,11 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
 
     with open(os.path.join(temp_dir, "unresolved_columns.json"), "w") as fh:
         json.dump(unresolved_cols, fh, indent=2)
+    # v20.59 -- YOUR RULE confirmed on the input files: Treat 1 = post / 0 = pre, buff_km 0 = treatment / 1-5 = control -> input_design_audit.csv
+    try:
+        input_audit_report(input_audit_rows, output_dir or os.path.dirname(os.path.abspath(temp_dir)))
+    except Exception as _e:
+        warn(f"input_design_audit.csv not written ({_e})")
     # v20.28: which SWS every file's rows were confirmed / corrected / assigned to (one row per file)
     if site_tag_rows:
         st_ = pd.DataFrame(site_tag_rows)
@@ -2380,7 +2482,7 @@ def prepare_pass_b_block(yr, se, shard_path, dose_table=None, crosswalk=None):
     _ps = max(int(POST_CUTOFF), int(TREATMENT_YEAR) + 1) if EXCLUDE_TRANSITION_YEAR else int(POST_CUTOFF)
     _exp_t = (_bk == TREAT_CORE_BUFFKM); _exp_c = np.isin(_bk, list(DEFAULT_CONTROL_ZONES))
     _exp_post = _yr >= _ps; _exp_pre = _yr < (int(TREATMENT_YEAR) if EXCLUDE_TRANSITION_YEAR else int(POST_CUTOFF))
-    _flag = export_post_flag(block) if (POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR) else None   # v20.59: the exports' flag where a row has one
+    _flag = export_post_flag(block) if period_rule() != "year" else None   # v20.59: the exports' flag where a row has one (PERIOD_RULE)
     if _flag is not None:
         _fok = np.isfinite(_flag); _exp_post = np.where(_fok, _flag == 1, _exp_post); _exp_pre = ~_exp_post
     _t = block["treatment"].values.astype(int); _c = block["control"].values.astype(int)
@@ -2401,6 +2503,8 @@ def prepare_pass_b_block(yr, se, shard_path, dose_table=None, crosswalk=None):
                           "post_from_export_flag": int(block.attrs.get("post_from_export_flag", 0)),      # v20.59
                           "post_from_rule": int(block.attrs.get("post_from_rule", 0)),
                           "post_flag_vs_rule_differ": int(block.attrs.get("post_flag_vs_rule_differ", 0)),
+                          "period_rule": str(block.attrs.get("period_rule", period_rule())),
+                          "period_rows_dropped": int(block.attrs.get("period_rows_dropped", 0)),
                           "export_treat_mismatch_rows": int(pd.to_numeric(block.get("treat_period_mismatch_flag", pd.Series(0, index=block.index)), errors="coerce").fillna(0).sum()),
                           "buff_km_recoded": dict(block.attrs.get("buff_km_recoded", {}))}
     # v20.6: treatment_group / control_group / pre_period / post_period / row_id are in DROPPED_FROM_PANEL, so
@@ -2738,15 +2842,21 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
     except Exception:
         pass
     # v20.25: how this panel was built -- final_panel_is_valid() compares it with the current settings
+    _period_dropped = 0                                          # v20.59: rows PASS A dropped under PERIOD_RULE = "both" (input_design_audit.csv)
     try:
         _rem = int(policy_totals.get("rows_remapped_near_duplicate", 0))
+        try:
+            _ia = os.path.join(output_dir, "input_design_audit.csv")
+            if os.path.exists(_ia): _period_dropped = int(pd.to_numeric(pd.read_csv(_ia)["rows_dropped_period_disagree"], errors="coerce").fillna(0).sum())
+        except Exception: pass
         with open(os.path.join(output_dir, "panel_build_settings.json"), "w", encoding="utf-8") as _fh:
             json.dump({"engine_policy": "v20.58", "near_duplicate_pixels": _overlap_stats,
                        "negative_barrier": {"rule": dict(NEGATIVE_COVARIATE_RULE), "allow_negative": bool(ALLOW_NEGATIVE_COVARIATES),
                                             "nodata_below": NODATA_SENTINEL_BELOW, "temperature_clamp_nodata": TEMPERATURE_CLAMP_NODATA},
                        "dedup_priority": DEDUP_PRIORITY, "zero_as_missing": bool(ZERO_AS_MISSING),
                        "dedup_fill_from_duplicates": bool(DEDUP_FILL_FROM_DUPLICATES),                        # v20.58
-                       "post_from_export_treat": bool(POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR),   # v20.59
+                       "post_from_export_treat": period_rule() != "year",                                          # v20.59
+                       "period_rule": period_rule(), "period_rows_dropped": _period_dropped,                       # v20.59 (PERIOD_RULE)
                        "post_from_export_flag_rows": int(design_notes.get("post_from_export_flag", 0)), "post_from_rule_rows": int(design_notes.get("post_from_rule", 0)),
                        "post_flag_vs_rule_differ_rows": int(design_notes.get("post_flag_vs_rule_differ", 0)),
                        "dedup_values_filled": int(dedup_totals["values_filled"]), "dedup_values_not_used": int(dedup_totals["values_not_used"]),
@@ -2788,13 +2898,16 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
             dz.to_csv(os.path.join(output_dir, "panel_design_check.csv"), index=False)
             summ = dz.groupby(["group", "period"])["rows"].sum().unstack(fill_value=0)
             _ps_ = max(int(POST_CUTOFF), int(TREATMENT_YEAR) + 1) if EXCLUDE_TRANSITION_YEAR else int(POST_CUTOFF)
-            if POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR:      # v20.59: your rule -- the exports' flag is the panel's period
-                info(f"DiD design columns in the panel -- treat / treatment (buffer 0), control (rings 1-5), post = the exports' Treat flag (1 = post, 0 = pre): "
-                     f"{design_notes['post_from_export_flag']:,} rows from the flag, {design_notes['post_from_rule']:,} without a usable flag from the rule "
-                     f"Year >= {_ps_}; pre = 1 - post; did / did_term = treat x post. The models apply THEIR design when they run and say where it differs:")
+            _prule = period_rule()
+            if _prule != "year":                                          # v20.59: your rule -- the exports' Treat column is the panel's period
+                info(f"DiD design columns in the panel -- treat / treatment (buffer 0 = the treatment area), control (rings 1-5), post = the exports' Treat column "
+                     f"(1 = post, 0 = pre; PERIOD_RULE = {_prule!r}): {design_notes['post_from_export_flag']:,} rows from the flag"
+                     + (f", {design_notes['post_from_rule']:,} without a usable flag from the rule Year >= {_ps_}" if _prule == "treat" else
+                        f", every one AGREEING with the rule Year >= {_ps_}" + (f" ({_period_dropped:,} disagreeing rows left in PASS A)" if _period_dropped else ""))
+                     + "; pre = 1 - post; did / did_term = treat x post. The models apply THEIR design when they run and say where it differs:")
             else:
                 info(f"DiD design (treatment year {TREATMENT_YEAR}: pre = Year < {TREATMENT_YEAR}, post = Year >= {_ps_}; buffer 0 = treatment, 1-5 = control"
-                     + ("; POST_FROM_EXPORT_TREAT = False: the rule, not the exports' flag" if not POST_FROM_EXPORT_TREAT else "; the transition year is held out: the rule, not the flag") + "):")
+                     + ("; the transition year is held out: the rule, not the flag" if EXCLUDE_TRANSITION_YEAR else "; PERIOD_RULE = 'year': the rule, not the exports' flag") + "):")
             print(summ.to_string())
             ok(f"design rules hold on every row ({sum(design_viol.values())} violations) -> panel_design_check.csv")
             if design_notes["invalid_buffer_rows"]:
@@ -2802,9 +2915,9 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
             if design_notes["export_treat_mismatch_rows"]:
                 warn(f"{design_notes['export_treat_mismatch_rows']:,} rows whose EXPORTED Treat flag disagrees with Treat = 1{{Year >= {TREATMENT_YEAR}}} "
                      f"(an export made with another treatment year or rule)"
-                     + (" -- the panel's post / pre FOLLOW THE FLAG (POST_FROM_EXPORT_TREAT = True, your rule); every model applies its own design "
-                        "when it runs and says on how many rows it differs from the panel's" if POST_FROM_EXPORT_TREAT and not EXCLUDE_TRANSITION_YEAR
-                        else "; the panel uses the rule, not the flag"))
+                     + (" -- the panel's post / pre FOLLOW THE FLAG (PERIOD_RULE = 'treat', your rule); every model applies its own design "
+                        "when it runs and says on how many rows it differs from the panel's" if _prule == "treat"
+                        else (" -- PERIOD_RULE = 'both': these rows are NOT in the panel" if _prule == "both" else "; the panel uses the rule, not the flag")))
     except RuntimeError:
         raise
     except Exception as _e:

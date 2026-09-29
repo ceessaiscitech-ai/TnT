@@ -60,6 +60,11 @@ POST_YEARS        <- "data"             # "data" | NA (every year from the start
 SEASONS           <- "all"              # YOUR RULE: annual composite + Kharif / Rabi / Zaid together (year AND season variation) | "seasonal"
                                         #   (the three seasons only) | "yearly" | one or several seasons: "Rabi", c("Rabi", "Zaid") | "auto" = the data
 EXCLUDE_TRANSITION_YEAR <- FALSE        # TRUE = the first treated year of each series leaves the sample (robustness)
+PERIOD_RULE       <- "treat"            # v20.59 (YOUR RULE, R_P00): what sets the panel's post (1) / pre (0) -- "treat": the exports' Treat column
+                                        #   (1 = post, 0 = pre; a row without a usable flag takes the Year rule, counted) | "year": Year >= TREATMENT_YEAR
+                                        #   for every row (v20.58) | "both": the Treat column AND the Year rule must AGREE -- a row where they disagree
+                                        #   (or whose flag is not 0 / 1) LEAVES the DID-ready panel, counted per input file (input_design_audit_R.csv).
+                                        #   The treatment AREA is never read from Treat: buff_km / distance 0 = the treatment area, 1-5 = the control rings
 UNIT_FE           <- "pixel_season"     # one fixed effect per pixel x season series | "pixel"
 COHORT_OFFSET     <- 0L                 # shift every cohort by N years (robustness)
 SUB_WATERSHEDS    <- "data"             # v20.58: the sub-watershed(s) a run processes: "data" = every one with >= FRAGMENT_MIN_SHARE of the largest

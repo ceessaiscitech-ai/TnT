@@ -48,6 +48,7 @@ ooc_task_p00_read <- function(ctx, i) {
   f <- ctx$files[i]
   x <- tryCatch(read_export(f$file, f$Year, f$Season, f$sws_hint, f$folder, f$sws_file, f$mtime), error = function(e) e)
   if (inherits(x, "error")) return(list(ok = FALSE, warn = paste0(basename(f$file), ": ", conditionMessage(x))))
+  aud <- attr(x, "input_audit")                                                     # v20.59: read BEFORE any subset (a subset drops attributes)
   x[, pixel_id := pixel_ids(latitude, longitude)]
   x[, sws_export := suppressWarnings(as.integer(if ("SWSiD_All" %in% names(x)) SWSiD_All else NA_integer_))]
   x[is.na(sws_hint), sws_hint := ""]
@@ -57,7 +58,7 @@ ooc_task_p00_read <- function(ctx, i) {
     y <- blocks$Year[b]; s <- blocks$Season[b]; d <- file.path(ctx$run_dir, "blocks", sprintf("%d_%d", y, s)); dir.create(d, recursive = TRUE, showWarnings = FALSE)
     saveRDS(x[Year == y & Season == s], file.path(d, sprintf("f_%06d.rds", i)), compress = FALSE)
   }
-  list(ok = TRUE, rows = nrow(x), src_file = if (nrow(x)) x$src_file[1] else basename(f$file), sws_file = f$sws_file,
+  list(ok = TRUE, rows = nrow(x), src_file = if (nrow(x)) x$src_file[1] else basename(f$file), sws_file = f$sws_file, audit = aud,
        px = unique(x[, .(pixel_id, latitude, longitude, sws_export)], by = c("pixel_id", "sws_export")),
        pairs = x[, .N, by = .(pixel_id, sws_export)], types = vapply(x, .rank_type, 1L), reg = .reg_parts(x), blocks = blocks)
 }
@@ -116,6 +117,8 @@ run_prep_ooc <- function(files, t0 = Sys.time(), why = "") {
   nrow_all <- sum(vapply(good, function(p) as.numeric(p$rows), 0))
   if (!nrow_all) stop("no export could be read under ", ROOT)
   ok(sprintf("%s rows read from %d files%s", format(nrow_all, big.mark = ","), nrow(files) - n_bad, if (n_bad) sprintf(" (%d unreadable, see above)", n_bad) else ""))
+  aud <- rbindlist(Filter(Negate(is.null), lapply(good, `[[`, "audit")), fill = TRUE)            # v20.59: Treat 1 / 0 and buff_km 0 / 1-5 CONFIRMED per file
+  input_audit_report_R(aud)
   good <- Filter(function(p) p$rows > 0, good)
   ids <- sws_names()
   nm_tab <- unique(rbindlist(lapply(good, function(p) data.table(src_file = p$src_file, sws_file = p$sws_file))))[, .(files = .N), by = sws_file]
@@ -212,9 +215,10 @@ run_prep_ooc <- function(files, t0 = Sys.time(), why = "") {
   if (!is.null(writer)) { writer$Close(); sink$close() }
   if (!HAS_ARROW) info("arrow is not installed: the panel is written as ", panel_file(), " (install arrow: faster and smaller)")
   fwrite(data.table(setting = c("engine_policy", "dedup_priority", "dedup_fill_from_duplicates", "dedup_values_filled", "dedup_values_not_used",
-                                "near_duplicate_pixels", "pixel_overlap_min", "written"),
-                    value = c("v20.58", DEDUP_PRIORITY, as.character(isTRUE(DEDUP_FILL_FROM_DUPLICATES)), as.character(n_fill),
+                                "near_duplicate_pixels", "pixel_overlap_min", "period_rule", "period_rows_dropped", "written"),
+                    value = c("v20.59", DEDUP_PRIORITY, as.character(isTRUE(DEDUP_FILL_FROM_DUPLICATES)), as.character(n_fill),
                               as.character(n_unused), as.character(isTRUE(NEAR_DUPLICATE_PIXELS)), as.character(PIXEL_OVERLAP_MIN),
+                              period_rule_R(), as.character(if (nrow(aud)) sum(aud$rows_dropped_period_disagree, na.rm = TRUE) else 0L),   # v20.59
                               format(Sys.time(), "%Y-%m-%d %H:%M:%S"))), file.path(OUTPUT_DIR, "panel_build_settings_R.csv"))
   bal <- rbindlist(bal)[order(Year, Season)]
   fwrite(bal, file.path(OUTPUT_DIR, "panel_balance_by_block.csv"))

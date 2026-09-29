@@ -1,9 +1,37 @@
 # v20.59 — the panel carries the DiD design columns from the exports' Treat flag (1 = post, 0 = pre); the outcome screen explains itself and can be kept; PRE_YEARS / POST_YEARS take calendar years; every model says where its design differs from the panel's
 
-Three bundles, as before: `RWD_4Models_v20.59` (P00 + M01, M02, M16, M34 in Python and R), `RWD_Artal_v20.59` (the full Python
-pipeline, all 45 models, with the R library beside it) and `RWDR_v20.59` (the full R pipeline). The engines are the same files in all
-three (byte for byte); what differs is configuration and notebooks, as in v20.58. Nothing of v20.58 is removed: every function, file,
-option and default is still there and still means what it meant. Your paths are unchanged.
+Two bundles: `RWD_Artal_v20.59` (the full Python pipeline, all 45 models, with the R library beside it) and `RWDR_v20.59` (the full R
+pipeline). The engines are the same files in both (byte for byte); what differs is configuration and notebooks, as in v20.58. The
+four-model bundle (`RWD_4Models`, P00 + M01, M02, M16, M34) is discontinued at your request: its models are part of both pipelines.
+Nothing of v20.58 is removed from the two: every function, file, option and default is still there and still means what it meant.
+Your paths are unchanged.
+
+## Your second request — the period from the `Treat` column, the groups from `buff_km`, confirmed on every input file
+
+- **The input files' `Treat` column is the period flag: 1 = post-treatment, 0 = pre-period.** It is never the treatment AREA: that is the
+  `buff_km` / `distance` column — 0 = the treatment area, 1–5 = the control rings. Both engines now say this in one setting and confirm it
+  on every file before the panel is built.
+- **`PERIOD_RULE`** (`P.PERIOD_RULE` in P00_Settings; `PERIOD_RULE` in `lib/reward_paths.R`) — how the DID-ready panel's `post` / `pre`
+  are set: `"treat"` (default) = the exports' `Treat` column (a row without a usable flag takes the Year rule, counted and said);
+  `"year"` = the rule `Year >= TREATMENT_YEAR` for every row (v20.58); `"both"` = the `Treat` column AND the Year rule, which must
+  AGREE — a row where they disagree (or whose flag is not 0 / 1) leaves the panel in PASS A / `read_export`, before the duplicates are
+  resolved (another export's consistent row of the same pixel-period can then stand in), counted per file and in the panel's settings
+  (`period_rows_dropped`). `POST_FROM_EXPORT_TREAT` is kept as the older name (`False` = `"year"`). An unknown value is refused with the
+  three choices named. A panel built under another rule is rebuilt (`panel_build_settings.json` / `panel_build_settings_R.csv` record
+  `period_rule`).
+- **The input audit — `input_design_audit.csv` (P00) / `input_design_audit_R.csv` (R_P00)**, one row per input file: whether the file
+  carries `Treat`, rows with 1 (post) / 0 (pre) / another value, the years, rows the Year rule calls post, rows where the flag and the rule
+  disagree, rows with `buff_km` 0 (treatment) / 1–5 (control) / outside 0–5, the rule in effect and the rows it dropped. Printed once:
+  `input files CONFIRMED (N files, R rows): Treat column 1 = post on ... rows, 0 = pre on ...; buff_km 0 = the treatment area on ...
+  rows, 1-5 = the control rings on ...; PERIOD_RULE = 'treat': ...`, with a WARNING for files without `Treat`, for flag-vs-year
+  disagreements (and what the rule in effect does with them) and for buffer codes outside 0–5. The same in memory and out of core
+  (Python's PASS A workers; R's `read_export` -> `run_prep` / `ooc_task_p00_read` -> `run_prep_ooc`).
+- **The DID-ready panel** therefore carries, for every row: `treat` (buff_km 0), `control` (rings 1–5), `post` / `pre` under the rule
+  in effect, `did` = treat x post — and every model still applies ITS OWN design when it runs and reports `DESIGN vs PANEL`.
+- **The Python error you saw** (the same refusal as R's: `'NDVI' is not usable ... Re-export it`) had the same cause and takes the same
+  fixes: the outcome screen now writes its evidence (`OUTCOME_SCREEN_<outcome>.csv`, min / max per year-season), `OUTCOME_SCREEN = "keep"`
+  runs the model regardless, and P00's `panel_variation_by_block.csv` shows the pixel spread per year-season right after the panel is
+  built — `screen_outcome_frame` / `screen_all_outcomes` in `_common.py`, the same texts as `reward_design.R`.
 
 ## What your v20.58 R log showed, and what was behind it
 
@@ -63,6 +91,7 @@ anything. Three things in it, and what each was:
 | what | Python | R |
 |---|---|---|
 | calendar years in PRE_YEARS / POST_YEARS; a bound at the start said and set aside | `_common.set_scenario` (`_year_option`), `scenario_years`, `year_window_dropped`, `resolve_design` | `reward_design.R` `design_settings`, `year_bounds_R`, `model_design` |
+| the period rule and the input audit | `_prep_common.PERIOD_RULE`, `period_rule`, `input_design_audit`, `audit_and_apply_period_rule` (PASS A, `_pa_worker`), `input_audit_report` (`run_pass_a` -> `input_design_audit.csv`), `run_pass_b` (`panel_build_settings.json`: `period_rule`, `period_rows_dropped`), `final_panel_is_valid` | `reward_paths.R` `PERIOD_RULE`; `reward_prep.R` `period_rule_R`, `input_audit_R`, `input_audit_report_R` (`read_export` -> `run_prep` -> `input_design_audit_R.csv`), `panel_design_columns_R`; `reward_prep_ooc.R` `ooc_task_p00_read` (`audit`), `run_prep_ooc`; `panel_build_settings_R.csv` |
 | the panel's design columns from the exports' flag | `_prep_common.build_treatment_columns` (`export_post_flag`, `POST_FROM_EXPORT_TREAT`), `FINAL_PANEL_SCHEMA` (+ `treat`, `did`), `prepare_pass_b_block` (the design check), `run_pass_b`, `final_panel_is_valid` | `reward_prep.R` `panel_design_columns_R` / `panel_design_report_R` (run_prep), `reward_prep_ooc.R` (block by block, merged) |
 | DESIGN vs PANEL at the model stage | `_common.build_treatment_columns` -> `design_vs_panel` / `say_design_vs_panel`; `_ooc_models._t_prep` + `prepare_sample` (out of core, summed) | `reward_design.R` `design_columns` -> `design_vs_panel_say_R`, `sample_facts`, `save_result` (`post_rows_differ_from_panel`); `reward_outofcore.R` `ooc_task_sample` / `ooc_load_R` |
 | the outcome screen: evidence, rule, refusal | `_common.screen_decide_table`, `screen_report`, `screen_refuse_years`, `screen_outcome_frame`, `screen_all_outcomes` (P09), `screen_rule`, `set_scenario(outcome_screen=)`, `scenario_tag` (`_screenKept`); `_outofcore.screen_decision` / `_screen_stats` (min, max) | `reward_design.R` `screen_rule_R`, `screen_outcome`, `screen_decide`, `screen_refuse`, `design_settings`, `scenario_tag`; `reward_outofcore.R` (`ooc_task_prep` moments + min / max, `ooc_merge_moments`, `ooc_load_R`); `reward_paths.R` `OUTCOME_SCREEN` |
@@ -71,15 +100,20 @@ anything. Three things in it, and what each was:
 
 ## Checks
 
-- `selfcheck_4models.py` / `selfcheck.py`: `check_v20_59` — the year window (calendar years, counts, the bound at the start, refused
-  values), the panel's columns from the flag (and `POST_FROM_EXPORT_TREAT = False`), the model-stage comparison and its count, the
-  screen's evidence / rule / refusal text (in memory and out of core), the notebooks' options, the R library's functions.
-- `validate_preprocessing.py`: the design case now expects the panel to FOLLOW the exports' flag (post = 1 from 2023 where the export
-  says so), the flag-vs-rule count in `panel_build_settings.json`, and a rebuild when `POST_FROM_EXPORT_TREAT` changes.
+- `selfcheck.py`: `check_v20_59` — the year window (calendar years, counts, the bound at the start, refused values), the panel's
+  columns from the flag, `PERIOD_RULE` `"treat"` / `"year"` / `"both"` on a small frame (the disagreeing row leaves under `"both"`; an
+  unknown value refused; `POST_FROM_EXPORT_TREAT = False` = `"year"`), the PASS A audit's counts, the model-stage comparison and its
+  count, the screen's evidence / rule / refusal text (in memory and out of core), the notebooks' options, the R library's functions.
+- `validate_preprocessing.py`: the design case expects the panel to FOLLOW the exports' flag (post = 1 from 2023 where the export says
+  so), `input_design_audit.csv` with the file's counts (7 post / 21 pre rows, 4 treatment / 20 control / 4 outside, 7 disagreements),
+  then the same exports under `PERIOD_RULE = "both"` (the 7 disagreeing rows leave in PASS A, counted per file and in
+  `panel_build_settings.json`, the panel rebuilt) and under `"year"` (the v20.58 panel).
 - `validate_design_options.py`: variants `pre2018_post2024` (calendar years), `pre_at_start_2022` (every year before the start, said)
   and `screen_keep` (the fill year kept, folder `_screenKept`), R == Python where R runs.
 - `tests/run_all_tests.R` scenario E: `pre_cal`, `pre_at_start`, `screen_keep`; the panel's five columns and the two P00 reports;
-  DESIGN vs PANEL under the fund timing (differs, said) and under fixed 2022 (0 rows differ); the screen's evidence file.
+  `input_design_audit_R.csv` (every file confirmed, `period_rule` in `panel_build_settings_R.csv`); `PERIOD_RULE` `"treat"` / `"year"` /
+  `"both"` on a small frame; DESIGN vs PANEL under the fund timing (differs, said) and under fixed 2022 (0 rows differ); the screen's
+  evidence file.
 
 What ran on the delivered code, and what could not run here, is in `VALIDATION_v20.59.md`.
 

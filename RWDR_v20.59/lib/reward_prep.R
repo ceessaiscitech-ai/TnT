@@ -142,7 +142,8 @@ read_export <- function(file, Year, Season, hint, folder, sws_file = NA_integer_
       set(dt, j = k, value = as.integer(col))
     } else stop("cannot determine ", k, " -- not in the file name and no ", k, " column")
   }
-  if (!"Treat" %in% names(dt)) dt[, Treat := as.numeric(Year >= TREATMENT_YEAR)]                    # a period flag the panel never relies on
+  treat_in_file <- "Treat" %in% names(dt)                                                              # v20.59: input_audit_R says when it is not
+  if (!treat_in_file) dt[, Treat := as.numeric(Year >= TREATMENT_YEAR)]                              # a file without the column: the Year rule (said)
   miss <- setdiff(ESSENTIAL_COLS, names(dt))
   if (length(miss)) stop("REJECTED, missing essential columns ", paste(miss, collapse = ", "))
   keep <- intersect(c("latitude", "longitude", "buff_km", "SubwshedID", "SWSiD_All", "SWS_Name", "Year", "Season", "Treat",
@@ -152,10 +153,19 @@ read_export <- function(file, Year, Season, hint, folder, sws_file = NA_integer_
   for (v in intersect(c(OUTCOME_VARS, WEATHER_VARS), names(dt))) if (!is.numeric(dt[[v]])) set(dt, j = v, value = suppressWarnings(as.numeric(dt[[v]])))
   dt[, buff_km := recode_buff_km(buff_km)]
   dt[, `:=`(latitude = as.numeric(latitude), longitude = as.numeric(longitude))]
+  # v20.59 -- YOUR RULE, confirmed per file: Treat 1 = post / 0 = pre, buff_km 0 = the treatment area / 1-5 = the control rings (input_audit_R);
+  # under PERIOD_RULE = "both" a row whose Treat flag and Year rule disagree (or whose flag is not 0 / 1) LEAVES here, before the duplicates
+  # are resolved (another export's consistent row of the same pixel-period can then stand in) -- as _prep_common.audit_and_apply_period_rule
+  aud <- input_audit_R(dt, file, treat_in_file)
+  if (identical(period_rule_R(), "both")) {
+    tv <- suppressWarnings(as.numeric(dt$Treat)); drop <- !(tv %in% c(0, 1)) | as.integer(tv) != as.integer(dt$Year >= TREATMENT_YEAR); drop[is.na(drop)] <- TRUE
+    if (any(drop)) { dt <- dt[!drop]; aud[, rows_dropped_period_disagree := sum(drop)] }
+  }
   dt <- apply_missing_policy(dt, drop_empty = FALSE)                                # v20.58: empty rows leave after the dedup (run_prep)
   dt[, `:=`(sws_hint = hint, folder = folder, src_file = basename(file), sws_file = sws_file,
             file_mtime = if (is.na(mtime)) as.numeric(file.mtime(file)) else mtime,
             schema_vintage = if ("DataYear" %in% names(dt)) "2026plus" else "2015_2025")]
+  setattr(dt, "input_audit", aud)                                                    # v20.59: read by run_prep / ooc_task_p00_read (before any subset)
   dt
 }
 
@@ -352,16 +362,70 @@ resolve_duplicates <- function(dt, keys = c("site_id", "pixel_id", "Year", "Seas
 # (design_columns: the fund timing, TREATMENT_YEAR, the transition year -- your settings) and says on how many rows the two differ
 # ("DESIGN vs PANEL", load_panel_R); the model's columns are what it estimates on, never these.
 PANEL_DESIGN_COLS <- c("treat", "control", "pre", "post", "did")
-POST_FROM_EXPORT_TREAT <- TRUE           # FALSE = the rule Year >= TREATMENT_YEAR for every row (v20.58's period flag); as _prep_common.POST_FROM_EXPORT_TREAT
+POST_FROM_EXPORT_TREAT <- TRUE           # the older switch (kept): FALSE = "year" while PERIOD_RULE is "treat"; period_rule_R() gives the rule in effect
+PERIOD_RULES <- c("treat", "year", "both")
+PERIOD_RULE_TEXT <- c(treat = "post / pre = the exports' Treat column (1 = post, 0 = pre)", year = "post / pre = the rule Year >= TREATMENT_YEAR",
+                      both = "post / pre = the exports' Treat column, which must AGREE with the rule Year >= TREATMENT_YEAR (a disagreeing row leaves)")
+period_rule_R <- function() {
+  # v20.59 -- YOUR RULE: the rule in effect for the panel's post / pre: "treat" (the exports' Treat column: 1 = post, 0 = pre), "year" (the rule
+  # Year >= TREATMENT_YEAR) or "both" (the column and the rule must agree; a row where they disagree leaves the panel). PERIOD_RULE
+  # (lib/reward_paths.R) decides; the older POST_FROM_EXPORT_TREAT = FALSE still means "year" while PERIOD_RULE is left at "treat".
+  r <- if (exists("PERIOD_RULE") && !is.null(PERIOD_RULE)) tolower(trimws(as.character(PERIOD_RULE)[1])) else "treat"
+  if (!r %in% PERIOD_RULES) stop("PERIOD_RULE must be one of ", paste(shQuote(PERIOD_RULES), collapse = ", "), " (lib/reward_paths.R), not ", shQuote(r))
+  if (r == "treat" && !isTRUE(POST_FROM_EXPORT_TREAT)) r <- "year"
+  r
+}
+input_audit_R <- function(dt, file, treat_in_file = TRUE) {
+  # v20.59 -- YOUR RULE, confirmed on EVERY input file (one row per file -> input_design_audit_R.csv): the Treat column carries 1 = post /
+  # 0 = pre (rows of each, rows with another value), buff_km / distance carries 0 = the treatment area and 1-5 = the control rings (rows of
+  # each, rows outside 0-5), and on how many rows the Treat flag and the rule Year >= TREATMENT_YEAR disagree. As _prep_common.input_design_audit.
+  n <- nrow(dt); tv <- if ("Treat" %in% names(dt)) suppressWarnings(as.numeric(dt$Treat)) else rep(NA_real_, n)
+  bk <- if ("buff_km" %in% names(dt)) suppressWarnings(as.numeric(dt$buff_km)) else rep(NA_real_, n)
+  yr <- suppressWarnings(as.numeric(dt$Year)); rule <- as.integer(yr >= TREATMENT_YEAR)
+  n_post <- sum(tv == 1, na.rm = TRUE); n_pre <- sum(tv == 0, na.rm = TRUE); n_b0 <- sum(bk == 0, na.rm = TRUE); n_b15 <- sum(bk %in% 1:5)
+  data.table(file = basename(file), rows = n, treat_column_in_file = isTRUE(treat_in_file) && "Treat" %in% names(dt),
+             treat_post_rows = n_post, treat_pre_rows = n_pre, treat_unusable_rows = n - n_post - n_pre,
+             year_min = if (any(is.finite(yr))) min(yr[is.finite(yr)]) else NA_real_, year_max = if (any(is.finite(yr))) max(yr[is.finite(yr)]) else NA_real_,
+             year_rule_post_rows = sum(rule == 1L, na.rm = TRUE),
+             treat_vs_year_disagree_rows = sum(is.finite(tv) & (tv == 0 | tv == 1) & as.integer(tv) != rule, na.rm = TRUE),
+             buff0_treatment_rows = n_b0, buff1to5_control_rows = n_b15, buff_outside_0to5_rows = n - n_b0 - n_b15,
+             period_rule = period_rule_R(), rows_dropped_period_disagree = 0L)
+}
+input_audit_report_R <- function(aud, write = TRUE) {
+  # v20.59: the confirmation of the input files, said once and written -> input_design_audit_R.csv (as Python's input_design_audit.csv)
+  if (is.null(aud) || !nrow(aud)) return(invisible(NULL))
+  if (write) fwrite(aud, file.path(OUTPUT_DIR, "input_design_audit_R.csv"))
+  s <- function(k) sum(as.numeric(aud[[k]]), na.rm = TRUE); fm <- function(x) format(x, big.mark = ","); r <- period_rule_R()
+  n_no <- sum(!as.logical(aud$treat_column_in_file), na.rm = TRUE)
+  ok(sprintf("input files CONFIRMED (%d files, %s rows): Treat column 1 = post on %s rows, 0 = pre on %s rows%s; buff_km 0 = the treatment area on %s rows, 1-5 = the control rings on %s rows%s; PERIOD_RULE = '%s': %s -> input_design_audit_R.csv",
+             nrow(aud), fm(s("rows")), fm(s("treat_post_rows")), fm(s("treat_pre_rows")),
+             if (s("treat_unusable_rows")) sprintf(", %s rows with another value", fm(s("treat_unusable_rows"))) else "",
+             fm(s("buff0_treatment_rows")), fm(s("buff1to5_control_rows")),
+             if (s("buff_outside_0to5_rows")) sprintf(", %s rows outside 0-5 (in neither group)", fm(s("buff_outside_0to5_rows"))) else "", r, PERIOD_RULE_TEXT[[r]]))
+  if (n_no) warn(sprintf("%d file(s) carry NO Treat column: 1 = post / 0 = pre was derived from the rule Year >= %d for them (input_design_audit_R.csv)", n_no, TREATMENT_YEAR))
+  d <- s("treat_vs_year_disagree_rows")
+  if (d) warn(sprintf("%s rows in %d file(s) where the Treat flag and the rule Year >= %d DISAGREE (an export made with another treatment year or rule) -- %s",
+                      fm(d), sum(aud$treat_vs_year_disagree_rows > 0, na.rm = TRUE), TREATMENT_YEAR,
+                      switch(r, treat = "the panel's post / pre FOLLOW THE FLAG (PERIOD_RULE = 'treat')", year = "the panel's post / pre follow the YEAR RULE (PERIOD_RULE = 'year')",
+                             both = sprintf("they LEFT the panel (%s rows dropped; PERIOD_RULE = 'both')", fm(s("rows_dropped_period_disagree"))))))
+  else if (s("rows_dropped_period_disagree")) warn(sprintf("%s rows without a usable Treat flag (not 0 / 1) LEFT the panel (PERIOD_RULE = 'both')", fm(s("rows_dropped_period_disagree"))))
+  if (s("buff_outside_0to5_rows")) warn(sprintf("%s rows carry a buffer code outside 0-5: in NEITHER group (input_design_audit_R.csv)", fm(s("buff_outside_0to5_rows"))))
+  invisible(aud)
+}
 panel_design_columns_R <- function(dt, treatment_year = TREATMENT_YEAR, say = TRUE) {
+  pr <- period_rule_R(); n0 <- nrow(dt)
+  if (identical(pr, "both") && "Treat" %in% names(dt)) {              # the column and the rule must AGREE (read_export already dropped these; confirmed here)
+    tv0 <- suppressWarnings(as.numeric(dt$Treat)); drop <- !(tv0 %in% c(0, 1)) | as.integer(tv0) != as.integer(dt$Year >= as.integer(treatment_year)); drop[is.na(drop)] <- TRUE
+    if (any(drop)) dt <- dt[!drop]
+  }
   n <- nrow(dt); rule <- as.integer(dt$Year >= as.integer(treatment_year))
-  tv <- if ("Treat" %in% names(dt) && isTRUE(POST_FROM_EXPORT_TREAT)) suppressWarnings(as.numeric(dt$Treat)) else rep(NA_real_, n)
+  tv <- if ("Treat" %in% names(dt) && !identical(pr, "year")) suppressWarnings(as.numeric(dt$Treat)) else rep(NA_real_, n)
   from_flag <- is.finite(tv) & (tv == 0 | tv == 1)
   post_v <- fifelse(from_flag, as.integer(tv), rule)                 # a local vector (never the name of a column: data.table would read the column)
   set(dt, j = "treat", value = as.integer(dt$buff_km == 0L)); set(dt, j = "control", value = as.integer(dt$buff_km %in% 1:5)); set(dt, j = "post", value = post_v)
   set(dt, j = "pre", value = 1L - post_v); set(dt, j = "did", value = as.integer(dt$treat * post_v))
   chk <- list(rows = n, from_flag = sum(from_flag), from_rule = sum(!from_flag), flag_vs_rule_differ = sum(from_flag & post_v != rule),
-              treatment_year = as.integer(treatment_year),
+              treatment_year = as.integer(treatment_year), period_rule = pr, rows_dropped = n0 - n,
               xtab = dt[, .(rows = .N), by = .(Year, Season, treat, control, pre, post, did)][order(Year, Season, -treat, control, post)])
   setattr(dt, "design_check", chk)
   if (say) panel_design_report_R(chk)
@@ -370,17 +434,24 @@ panel_design_columns_R <- function(dt, treatment_year = TREATMENT_YEAR, say = TR
 panel_design_merge_R <- function(parts) {                          # the blocks' checks (R_P00 out of core) -> one check, as in memory
   parts <- Filter(Negate(is.null), parts); if (!length(parts)) return(NULL)
   xt <- rbindlist(lapply(parts, `[[`, "xtab"))[, .(rows = sum(rows)), by = .(Year, Season, treat, control, pre, post, did)][order(Year, Season, -treat, control, post)]
-  s <- function(k) sum(vapply(parts, function(p) as.numeric(p[[k]]), 0))
-  list(rows = s("rows"), from_flag = s("from_flag"), from_rule = s("from_rule"), flag_vs_rule_differ = s("flag_vs_rule_differ"), treatment_year = parts[[1]]$treatment_year, xtab = xt)
+  s <- function(k) sum(vapply(parts, function(p) as.numeric(p[[k]] %||% 0), 0))
+  list(rows = s("rows"), from_flag = s("from_flag"), from_rule = s("from_rule"), flag_vs_rule_differ = s("flag_vs_rule_differ"), treatment_year = parts[[1]]$treatment_year,
+       period_rule = parts[[1]]$period_rule %||% period_rule_R(), rows_dropped = s("rows_dropped"), xtab = xt)
 }
 panel_design_report_R <- function(chk, write = TRUE) {
   if (is.null(chk)) return(invisible(NULL))
   if (write) fwrite(chk$xtab, file.path(OUTPUT_DIR, "panel_design_check_R.csv"))
   g <- chk$xtab[, .(rows = sum(rows)), by = .(group = fifelse(treat == 1L, "treatment (buffer 0)", fifelse(control == 1L, "control (buffer 1-5)", "neither (invalid buffer)")), period = fifelse(post == 1L, "post", "pre"))]
-  ok(sprintf("DiD design columns in the panel: treat (buffer 0) / control (rings 1-5); post = the exports' Treat flag (1 = post, 0 = pre) on %s rows%s; pre = 1 - post; did = treat x post -> panel_design_check_R.csv",
-             format(chk$from_flag, big.mark = ","), if (chk$from_rule) sprintf(", the rule Year >= %d on %s rows without a usable flag", chk$treatment_year, format(chk$from_rule, big.mark = ",")) else ""))
+  pr <- chk$period_rule %||% period_rule_R()
+  if (identical(pr, "year"))
+    ok(sprintf("DiD design columns in the panel: treat (buffer 0 = the treatment area) / control (rings 1-5); post = the rule Year >= %d on every row (PERIOD_RULE = 'year'); pre = 1 - post; did = treat x post -> panel_design_check_R.csv", chk$treatment_year))
+  else
+    ok(sprintf("DiD design columns in the panel: treat (buffer 0 = the treatment area) / control (rings 1-5); post = the exports' Treat column (1 = post, 0 = pre; PERIOD_RULE = '%s') on %s rows%s; pre = 1 - post; did = treat x post -> panel_design_check_R.csv",
+               pr, format(chk$from_flag, big.mark = ","),
+               if (identical(pr, "both")) sprintf(", every one AGREEING with the rule Year >= %d%s", chk$treatment_year, if (chk$rows_dropped %||% 0) sprintf(" (%s disagreeing rows left)", format(chk$rows_dropped, big.mark = ",")) else "")
+               else if (chk$from_rule) sprintf(", the rule Year >= %d on %s rows without a usable flag", chk$treatment_year, format(chk$from_rule, big.mark = ",")) else ""))
   info("rows per group x period: ", paste(sprintf("%s %s %s", g$group, g$period, format(g$rows, big.mark = ",")), collapse = " | "))
-  if (chk$flag_vs_rule_differ) info(sprintf("%s rows' exported Treat flag differs from the rule Year >= %d (an export made with another treatment year or rule): the panel FOLLOWS THE FLAG (POST_FROM_EXPORT_TREAT); every model applies its own design when it runs and says on how many rows it differs",
+  if (chk$flag_vs_rule_differ) info(sprintf("%s rows' exported Treat flag differs from the rule Year >= %d (an export made with another treatment year or rule): the panel FOLLOWS THE FLAG (PERIOD_RULE = 'treat'); every model applies its own design when it runs and says on how many rows it differs",
                                           format(chk$flag_vs_rule_differ, big.mark = ","), chk$treatment_year))
   invisible(chk)
 }
@@ -512,8 +583,10 @@ run_prep <- function() {
   parts <- lapply(seq_len(nrow(files)), function(i) with(files[i], tryCatch(read_export(file, Year, Season, sws_hint, folder, sws_file, mtime),
                   error = function(e) { warn(basename(file), ": ", conditionMessage(e)); NULL })))
   n_bad <- sum(vapply(parts, is.null, logical(1)))
+  aud <- rbindlist(Filter(Negate(is.null), lapply(parts, function(p) if (is.null(p)) NULL else attr(p, "input_audit"))), fill = TRUE)   # v20.59
   dt <- rbindlist(parts, fill = TRUE)
   if (!nrow(dt)) stop("no export could be read under ", ROOT)
+  input_audit_report_R(aud)                                                                      # v20.59: Treat 1 / 0 and buff_km 0 / 1-5 CONFIRMED per file
   ok(sprintf("%s rows read from %d files%s", format(nrow(dt), big.mark = ","), nrow(files) - n_bad, if (n_bad) sprintf(" (%d unreadable, see above)", n_bad) else ""))
   dt[, pixel_id := pixel_ids(latitude, longitude)]                                                 # PASS A: the id from the coordinates
   ids <- sws_names()
@@ -587,9 +660,10 @@ run_prep <- function() {
   panel_write(dt)                                                                                 # arrow, else CSV
   # v20.58: how this panel was built (as Python's panel_build_settings.json) -- load_panel_R says so when a panel's repeated rows filled gaps
   fwrite(data.table(setting = c("engine_policy", "dedup_priority", "dedup_fill_from_duplicates", "dedup_values_filled", "dedup_values_not_used",
-                                "near_duplicate_pixels", "pixel_overlap_min", "written"),
-                    value = c("v20.58", DEDUP_PRIORITY, as.character(isTRUE(DEDUP_FILL_FROM_DUPLICATES)), as.character(dd_stats$filled %||% 0L),
+                                "near_duplicate_pixels", "pixel_overlap_min", "period_rule", "period_rows_dropped", "written"),
+                    value = c("v20.59", DEDUP_PRIORITY, as.character(isTRUE(DEDUP_FILL_FROM_DUPLICATES)), as.character(dd_stats$filled %||% 0L),
                               as.character(dd_stats$not_used %||% 0L), as.character(isTRUE(NEAR_DUPLICATE_PIXELS)), as.character(PIXEL_OVERLAP_MIN),
+                              period_rule_R(), as.character(if (nrow(aud)) sum(aud$rows_dropped_period_disagree, na.rm = TRUE) else 0L),   # v20.59
                               format(Sys.time(), "%Y-%m-%d %H:%M:%S"))), file.path(OUTPUT_DIR, "panel_build_settings_R.csv"))
   bal <- dt[, .(pixels = uniqueN(pixel_id)), by = .(Year, Season)][order(Year, Season)]
   fwrite(bal, file.path(OUTPUT_DIR, "panel_balance_by_block.csv"))
