@@ -203,6 +203,65 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
 `control_selection_decide_R` / `record_control_selection_R`, `select_controls_R` (in `load_panel_R`), `reward_outofcore.R`
 `ooc_task_presel`, `ctx$ctrl_sel`; `reward_paths.R` defaults.
 
+## Your validation request — the three specifications (panel preparation, the surrogate / synthetic DiD engine, the configuration and orchestrator), checked against the code and integrated where missing
+
+What the three specifications asked for was compared item by item with the code as delivered after the fifth request. Already there
+(kept, no change): `CONTROL_SELECTION = "pre_rings"` / `"pre_blocks"` on the pre period with the control pixels locked across the panel,
+`SAME_PIXELS`, the seasons filter (`SEASONS = "Rabi"`), `CLUSTER = "block"`, the coverage screen, dual-language parity with identical
+parameter names, the out-of-core parent's single decision. Missing or partial, now integrated in both languages (every model notebook,
+P00 / R_P00, the R library, in memory and out of core):
+
+**Specification 1 — panel preparation.**
+- `DONUT_RINGS` (default `[1]` in every notebook / `1L` in R; the engine's own default is none): the rings next to the treated core leave
+  the control pool before any control choice (spatial / hydrological spillover). Tag `_donut1`; the design report's row `DONUT_RINGS`.
+- `CONTROL_SELECT_ON = "rmse"`: the pre-period RMSE of the cell-wise treated-minus-ring differences as the closeness (the spec's
+  "pre-treatment bias / RMSE"), beside `"trend"`, `"level"`, `"both"`; the evidence file carries `rmse_gap` for every candidate.
+  `select_optimal_control_rings(df, outcome_var, treat_ring=0, candidate_rings=[2,3,4,5], pre_years=range(2015,2022), top_k=2)`
+  (R `select_optimal_control_rings_R`) is the spec's function, a thin wrapper over the same decision: the chosen rings and the table.
+- `PRECISION_TOLERANCE` (1e-6): `|value| <= tolerance` is the no-data zero at the panel (`_prep_common.PRECISION_TOLERANCE`, R
+  `apply_missing_policy`) and at the model stage (`_usable`); a year-season is "constant across pixels" within it (the screen).
+- `LANDUSE_KEEP` (`"all"` | class codes): a pixel is kept by its PRE-period modal `LandUse` class, so the works cannot move it between
+  groups; `BASELINE_NDVI_MIN` (e.g. 0.25): a pixel whose pre-period mean NDVI is at or below it leaves (an agricultural mask on the
+  baseline). Both decide per pixel on the pre period and apply to the whole panel (tags `_lu2`, `_ndviPre0.25`).
+- `MIN_PIXEL_COVERAGE_PCT` (default 0.05 = the v20.58 screen; the spec's 0.70 in the configuration file): a year-season whose treated or
+  control coverage falls below this share of the typical one is screened out (tag `_cov70`).
+- `DROP_SINGLETONS` (True in every notebook; the engines' own default is False, so an old notebook without the line runs as before): series
+  seen once leave BEFORE the demeaning (`estimate_twfe_did`, R `fe_fit`), counted and said; tag `_noSingle`.
+
+**Specification 2 — the surrogate / synthetic DiD engine** (`surrogate_did_estimator.py`, `lib/surrogate_did_estimator.R`; the same
+numbers to 1e-8):
+- `synthetic_did_two_level`: level 1 aggregates the panel to (sub-watershed, ring, season) x year cells, fits the ridge-regularised
+  simplex unit weights (SLSQP, or projected gradient beyond 400 units -- no N0 x N0 matrix) and time weights on the pre years
+  (2015-2021 by the design), the SDiD ATT per season block with a leave-one-donor-out jackknife SE and the pre-RMSPE; level 2 runs the
+  pixel-level WLS two-way FE with the cell's unit weight spread over its pixels x the time weight, CR1 clustered on `subwshed_id`
+  (or the block / year rule). Output: `synthetic_did_two_level_<outcome>.csv` + blocks, unit weights per ring, time weights, pixel WLS.
+  M11 (`m11_sdid` in R, CELL 3b in the Python notebook) runs it beside the existing SDiD.
+- `surrogate_index_did` (Athey, Chetty, Imbens, Kang): the Kharif surrogates (`NDWI`, `LSWI`, `NDMI`, `Rain` -- those the panel has)
+  predict the Rabi / Zaid outcome on the control pool (ridge, year dummies), the index replaces the outcome, the DiD on the index with a
+  leave-one-cluster-out jackknife SE. M07 (`m07_surrogate_index` in R, CELL 3b in Python) runs it when the panel carries no external
+  surrogate columns.
+- `standard_row` / `save_outputs`: one row per estimator -- ATT, SE, p, pre-RMSPE, N, clusters, the weights beside.
+
+**Specification 3 — the configuration and the orchestrator.** `config/analysis_config.yaml` (+ `.json`; the same file in both bundles):
+`ANALYSIS_VARIABLE`, `SEASON_FILTER`, `DONUT_RINGS`, `CONTROL_SELECTION_METHOD` (`all` | `pre_bias_min` | `closest_1` | `closest_2`,
+mapped to `CONTROL_SELECTION` / `CONTROL_SELECT_K`), `CONTROL_SELECT_ON`, `PRECISION_TOLERANCE`, `MIN_PIXEL_COVERAGE_PCT`, `CLUSTER_VAR`,
+`ESTIMATOR`, the masks, `SAME_PIXELS`, `DROP_SINGLETONS`, the timing, the surrogates. `orchestrator.py` and `orchestrator.R` read it,
+refuse a wrong value with the allowed set, run the PRE-EXECUTION checks on every sample (panel integrity: the treated and the control
+pixel sets are the same before and after treatment; the singleton pre-flight; floating-point range safety: the outcome within its
+physical bounds, no no-data code, the zero-padding counted -- `outcome_range_check` / `_R`, also said by every model run) and write
+`SPEC_COMPARISON_<outcome>.csv` (R `_R.csv`): the canonical TWFE (every ring, every season), the donut TWFE (`SEASON_FILTER`, the donut
+rings out), the variable-matched control DiD (the pre-period-chosen rings), the two-level synthetic DiD and the surrogate index -- beta,
+SE, p, the pre-trend p (a differential pre-period slope, clustered), N, clusters, the sample tag.
+`python orchestrator.py --config config/analysis_config.yaml` / `Rscript orchestrator.R config/analysis_config.yaml` (`--dry-run` /
+`dry_run` prints the sample tag of every spec without estimating).
+
+Found while integrating: the two-level SDiD's season-block weights used the pixel count of whichever cell-year row came first, and the
+two languages order those rows differently (0.015015 vs 0.014956 on the synthetic panel) -- now the cell's largest pixel count in both.
+Found by `validate_design_options.py`: `set_scenario(baseline_ndvi_min=None)` meant "not given", so a notebook's `BASELINE_NDVI_MIN = None`
+could not switch the mask off after an earlier value in the same kernel (every later variant kept `_ndviPre0.3`); now None resets it (a
+sentinel marks "not given"), and the self-check confirms the reset. The `"rmse"` rule's folder tag (`_ctrlPre2rR`) was missing in both
+engines (R's tag lookup stopped on it).
+
 ## Found by running R here (v20.59, after the first delivery)
 
 - **R_P00 stopped before writing the panel** when an outcome column had no finite value at all (`panel_variation_R`: the empty part
@@ -229,6 +288,7 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
 | the outcome screen: evidence, rule, refusal | `_common.screen_decide_table`, `screen_report`, `screen_refuse_years`, `screen_outcome_frame`, `screen_all_outcomes` (P09), `screen_rule`, `set_scenario(outcome_screen=)`, `scenario_tag` (`_screenKept`); `_outofcore.screen_decision` / `_screen_stats` (min, max) | `reward_design.R` `screen_rule_R`, `screen_outcome`, `screen_decide`, `screen_refuse`, `design_settings`, `scenario_tag`; `reward_outofcore.R` (`ooc_task_prep` moments + min / max, `ooc_merge_moments`, `ooc_load_R`); `reward_paths.R` `OUTCOME_SCREEN` |
 | the pixel-variation report of P00 | `_prep_common.prepare_pass_b_block` (exact moments per block, merged out of core by `_merge_moments`), `run_pass_b` -> `panel_variation_by_block.csv` | `reward_prep.R` `panel_variation_R` / `panel_variation_report_R` (in memory and block by block) |
 | the panel's design as the default, `Treat` dropped, one site and ring per pixel | `_common.ACTIVE["design_source"]`, `_design_source_of`, `set_scenario(design_source=)`, `build_treatment_columns` (the override, `_post_design`), `design_vs_panel` / `say_design_vs_panel`, tag `_panelDesign`; `_prep_common.PIXEL_ONE_SITE`, `tag_sites`, `confirm_pixel_consistency` (`run_pass_b`) | `reward_design.R` `design_settings` (`design_source`), `design_columns`, `design_vs_panel_say_R`, `DESIGN_DEFAULTS`; `reward_paths.R` `PIXEL_ONE_SITE`, `DESIGN_SOURCE`; `reward_prep.R` `overlay_sws`, `ring_from_polygon_codes`, `panel_pixel_consistency_R`, `keep_cols` without `Treat`; `reward_prep_ooc.R` (`pix`, `n_rep_in`, `all_cols` without `Treat`) |
+| the three specifications | `_common.donut_rule`, `landuse_rule`, `baseline_ndvi_rule`, `_pixel_baseline`, `select_optimal_control_rings`, `outcome_range_check` / `OUTCOME_BOUNDS` / `NODATA_VALUES`, `control_selection_decide` (`rmse_gap`), `_usable` (the tolerance), `estimate_twfe_did` (`DROP_SINGLETONS`), `set_scenario` / `scenario_tag` / `_design_key` / `resolve_design` (the new keys); `_prep_common.PRECISION_TOLERANCE`; `surrogate_did_estimator.py`; `orchestrator.py`, `config/analysis_config.yaml` / `.json`; `validate_orchestrator.py` | `reward_design.R` `donut_rule_R`, `landuse_rule_R`, `baseline_ndvi_rule_R`, `.pixel_baseline_R`, `select_optimal_control_rings_R`, `outcome_range_check_R`, `control_selection_decide_R` (`rmse_gap`), `load_panel_R` (the hook order), `design_settings` / `scenario_tag` / `DESIGN_DEFAULTS`; `reward_prep.R` (the tolerance); `reward_models_core.R` `fe_fit` (`DROP_SINGLETONS`), `m11_sdid`, `m07_surrogate_index`; `reward_outofcore.R` (the rules per partition); `lib/surrogate_did_estimator.R`; `orchestrator.R`, `config/analysis_config.yaml` |
 | the notebooks | every model's CELL 1: `OUTCOME_SCREEN`, passed to `set_scenario`; PRE_YEARS / POST_YEARS document the calendar-year form; P00_Settings: `P.POST_FROM_EXPORT_TREAT` | every `R_Mxx` (Rmd and Jupyter): `OUTCOME_SCREEN <- "drop"`, the calendar-year form documented |
 
 ## Checks
@@ -266,6 +326,22 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
   `TREATMENT_YEAR = 2023` = the fixed-2022 estimate to 1e-12 with the 2022 rows counted as differing; `"model"` = 2023; the same in R);
   `validate_design_options.py` (`design_panel`, `design_panel_fixed_2023`, R == Python); `validate_preprocessing.py` (the shapefile case's
   consistency); `tests/run_all_tests.R` E (`Treat` absent, `design_panel`, `panel_pixel_consistency_R.csv` with 0 offenders).
+
+- The three specifications: `selfcheck.py` (the rules present and in order in `build_treatment_columns`; a ten-pixel frame where
+  `DONUT_RINGS [1]` removes ring 1, `LANDUSE_KEEP [1]` and `BASELINE_NDVI_MIN` keep the right pixels, `"rmse"` picks rings 2 and 3,
+  `select_optimal_control_rings` agrees, `outcome_range_check` flags 1.7 and -9999, `DROP_SINGLETONS` drops the one series seen once;
+  the module's simplex fit; the configuration's keys and defaults, `closest_1` -> `pre_rings` K = 1, five wrong configurations
+  refused; every notebook and P00 / R_P00 carry the settings; the R library's functions; M11 / M07 carry the new cells);
+  `validate_did_spec.py` (the donut sample = explicit-dummy OLS within 2 SE of the true effect; `"rmse"` = the two smallest RMSE gaps
+  recomputed independently; the two-level SDiD within 0.01 of the true +0.05 and its pixel WLS too; the surrogate index runs; range
+  safety on the DGP; R: the same donut beta to 1e-8, the same rings under `"rmse"`, the same SDiD ATT / SE / pixel-WLS beta and the
+  same surrogate ATT / SE to 1e-8, `select_optimal_control_rings_R` the same rings); `validate_design_options.py` (`donut_ring1`,
+  `donut_rings12_rabi`, `ctrl_pre_rmse`, `landuse_keep_1`, `baseline_ndvi_030`, `coverage_pct_099`, `singletons_kept` on every panel,
+  R == Python); `validate_out_of_core.py --only ctrl` (`donut_ring1`, `baseline_ndvi` + `"rmse"` out of core = in memory on every
+  engine); `validate_orchestrator.py` (NEW: six wrong configurations refused in Python and one in R; the five specs estimated in both
+  languages on a synthetic panel; the pre-flight refuses control pixels that differ between pre and post and a no-data code; Python ==
+  R on beta, SE, p, the pre-trend p, N and clusters to 1e-6 for every spec); `tests/run_all_tests.R` E (`donut1`, `ctrl_rmse`,
+  `ndvi_base`, `no_single_on`, `outcome_range_check_R`).
 
 What ran on the delivered code, and what could not run here, is in `VALIDATION_v20.59.md`.
 
