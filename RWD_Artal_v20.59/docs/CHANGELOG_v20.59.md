@@ -167,6 +167,36 @@ memory and out of core) count, per pixel, the distinct `site_id`, `buff_km` and 
 rows; the verdict is one line of the log (`pixel consistency CONFIRMED: N pixels ...`) and the offenders, if any, are in
 `panel_pixel_consistency.csv` / `panel_pixel_consistency_R.csv`.
 
+## Your fifth request — the control group chosen on the PRE period (per outcome, fixed across the panel); what to change for a credible estimate
+
+`ECONOMETRIC_ADVICE_v20.59.md` (root and both `docs/`) answers the question behind the request — which customisations are legitimate
+when the estimate is not significant, and which are not (a rule that picks controls, years or rings because the estimate then becomes
+significant selects on the result). The code side:
+
+**`CONTROL_SELECTION`** (CELL 1 of every model notebook and `R_Mxx`; the panel-level default in `P00_Settings` / `R_P00`):
+`"rings"` (as before: every ring of `CONTROL_RINGS`) | `"pre_rings"` (per outcome, the `CONTROL_SELECT_K` = 1 or 2 buffers whose
+PRE-period series is closest to the treatment area's -- your "perfect buffer") | `"pre_blocks"` (control CLUSTERS -- ~1 km blocks of
+pixels -- from any part of the buffers, the closest first, until `CONTROL_SELECT_RATIO` x the treated pixels -- your "cluster
+controls"). `CONTROL_SELECT_ON`: `"trend"` (the demeaned pre series' distance -- the parallel-trends distance, recommended) |
+`"level"` (nearest to the pre mean) | `"both"`. The decision is a function of the PRE period alone, made once per outcome and applied
+to every year and season, so the control pixels are the same across the whole panel (your rule); unselected control rows leave the
+sample, treated rows never do. Evidence: `CONTROL_SELECTION_<outcome>.csv` (R: `_R.csv`) beside the results -- every candidate's
+pre-period rows, pixels, level gap, trend distance, slope difference, score, rank, selected. Results tagged `_ctrlPre2r` /
+`_ctrlPreBlk3x` (`L` / `B` for the level / both rules); the design report carries the row `CONTROL_SELECTION`. A rule named after the
+post period, the outcome's mean or the result is refused with the reason. Out of core the parent decides once on the merged
+pre-period facts of every partition (`_ooc_models.decide_controls_ooc`, R `ooc_task_presel`) and every worker applies the same set.
+
+**`CLUSTER = "block"`** (both languages): ~1 km spatial blocks of pixels (`CONTROL_BLOCK_DEG`, 0.01 deg) as the clusters of the
+cluster-robust SE -- hundreds to thousands of clusters instead of 2 sub-watersheds or 10 years; tag `_clBlock`. The block of a pixel
+comes from its id (a pure function of the rounded coordinate since v14), or from the frame's latitude / longitude when the ids are
+plain numbers (a synthetic panel); the same rule in R (`block_ids_R`).
+
+Where: Python `_common.select_controls`, `control_selection_aggregates` / `control_selection_decide` / `record_control_selection`,
+`block_ids`, `_cluster_key`, `columns_for` (latitude / longitude read when a block rule is set), `_ooc_models._t_presel` /
+`decide_controls_ooc`; R `reward_design.R` `control_selection_R`, `block_ids_R`, `control_selection_facts_R` /
+`control_selection_decide_R` / `record_control_selection_R`, `select_controls_R` (in `load_panel_R`), `reward_outofcore.R`
+`ooc_task_presel`, `ctx$ctrl_sel`; `reward_paths.R` defaults.
+
 ## Found by running R here (v20.59, after the first delivery)
 
 - **R_P00 stopped before writing the panel** when an outcome column had no finite value at all (`panel_variation_R`: the empty part
@@ -212,6 +242,16 @@ rows; the verdict is one line of the log (`pixel consistency CONFIRMED: N pixels
   `"both"` on a small frame; DESIGN vs PANEL under the fund timing (differs, said) and under fixed 2022 (0 rows differ); the screen's
   evidence file.
 
+- The fifth request: `selfcheck.py` (the rule parsed and the post- / outcome-based names refused; a synthetic frame where rings 1 and 3
+  share the treated pre-trend and rings 1 and 2 the closest level -- `"trend"` picks 1 and 3, `"level"` picks 1 and 2, the same
+  pixels in every year and season, the evidence file written, `pre_blocks` stops at the ratio, `CLUSTER = "block"` clusters on the
+  blocks; block ids from int / 18-digit / R ids and from coordinates; every notebook and P00 / R_P00 carry and pass the settings; the
+  out-of-core parent decides once); `validate_did_spec.py` (`"level"` K = 2 -> rings 1 and 2 by the DGP's ring levels; `"trend"` = the
+  two smallest pre-trend distances recomputed independently from every loaded row; the evidence file's numbers; the same control
+  pixels in every year-season; M01 on the chosen rings = explicit-dummy OLS; the post-based rule refused; R the same rings, the same
+  beta to 1e-8); `validate_design_options.py` (`ctrl_pre_rings2`, `ctrl_pre_ring1_level`, `ctrl_pre_blocks`, `cluster_block` on every
+  panel, R == Python); `validate_out_of_core.py --only ctrl` (the three rules out of core = in memory on every engine, the same
+  decision); `tests/run_all_tests.R` E (`ctrl_pre2`, `cluster_block`).
 - The fourth request: `selfcheck.py` (`DESIGN_SOURCE` parsed and refused, the tag, a six-row frame under `"panel"` -- post / pre / did
   = the panel's, the design's differing rows counted, cohort and event time from the panel's first post year -- and back under
   `"model"`; every notebook carries and passes `DESIGN_SOURCE`; P00 / R_P00 carry `PIXEL_ONE_SITE`; the R library's functions;

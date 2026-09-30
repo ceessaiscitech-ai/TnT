@@ -219,7 +219,7 @@ ooc_read_part <- function(ctx, k, cols = NULL) {
 
 # ================================================================ 2. the engines: the same task function everywhere
 ooc_task_run <- function(task, ctx, k) {                                 # in this session (batches) or in a worker's R (reward_ooc_task.R)
-  fn <- switch(task, prep = ooc_task_prep, sample = ooc_task_sample, gram = ooc_task_gram, scores = ooc_task_scores, recommend = ooc_task_recommend,
+  fn <- switch(task, prep = ooc_task_prep, presel = ooc_task_presel, sample = ooc_task_sample, gram = ooc_task_gram, scores = ooc_task_scores, recommend = ooc_task_recommend,
                p00_read = ooc_task_p00_read, p00_block = ooc_task_p00_block, stop("unknown out-of-core task ", task))
   fn(ctx, k)
 }
@@ -327,13 +327,21 @@ ooc_task_prep <- function(ctx, k) {
 }
 # SAMPLE (phase B): the screen's year-seasons out, the design columns of the timing in force, the final sample written; the facts of the
 # sample (integrity, the result row's facts, the design SE's cells, what M02 / M16 need to know)
+ooc_task_presel <- function(ctx, k) {                                    # v20.59: one partition's pre-period facts for CONTROL_SELECTION
+  a <- file.path(ctx$run_dir, sprintf("a_%04d.rds", k)); x <- readRDS(a)
+  if (nrow(ctx$bad)) x <- x[!ctx$bad, on = .(Year, Season)]
+  x <- design_columns(x, ctx$d, site_period = ctx$site_period, say = FALSE)
+  control_selection_facts_R(x, ctx$outcome, ctx$d)
+}
 ooc_task_sample <- function(ctx, k) {
   a <- file.path(ctx$run_dir, sprintf("a_%04d.rds", k)); x <- readRDS(a); o <- ctx$outcome
   if (nrow(ctx$bad)) x <- x[!ctx$bad, on = .(Year, Season)]
   x <- design_columns(x, ctx$d, site_period = ctx$site_period, say = FALSE)
+  x <- select_controls_R(x, o, ctx$d, sel = ctx$ctrl_sel, say = FALSE)     # v20.59: the parent's decision applied (the same pixels in every partition)
+  if (identical(ctx$d$cluster, "block")) x[, block_id := block_ids_R(x, ctx$d$control_block_deg %||% 0.01)]   # v20.59
   n_tr <- attr(x, "n_transition_left_out") %||% 0L
   pvp <- attr(x, "post_vs_panel")                                       # v20.59: read BEFORE the column subset below (a subset drops the attributes)
-  keep <- intersect(c("pixel_id", "site_id", "Year", "Season", "buff_km", "site_check", o, ctx$covs, "treat", "post", "did", "event_time", "unit", "period"), names(x))
+  keep <- intersect(c("pixel_id", "site_id", "Year", "Season", "buff_km", "site_check", o, ctx$covs, "treat", "post", "did", "event_time", "unit", "period", "block_id"), names(x))
   x <- x[, ..keep]
   saveRDS(x, file.path(ctx$run_dir, sprintf("s_%04d.rds", k)), compress = FALSE); unlink(a)
   cells <- function(pos) {                                               # the design SE's cells (design_se / design_se_event): unit-demeaned
@@ -347,7 +355,8 @@ ooc_task_sample <- function(ctx, k) {
   list(n_transition = n_tr, integrity = integrity_parts_R(x), post_vs_panel = pvp,                          # v20.59: (rows, rows that differ) or NULL
        facts = list(n_obs = nrow(x), n_pixels = uniqueN(x$pixel_id), n_units = uniqueN(x$unit), periods = unique(x$period), sites = sort(unique(x$site_id)),
                     rings = sort(unique(x$buff_km)), years = if (nrow(x)) range(x$Year) else c(NA_integer_, NA_integer_), years_set = sort(unique(x$Year)),
-                    seasons = sort(unique(x$Season)), base_s = sum(x[treat == 1 & post == 0][[o]], na.rm = TRUE), base_n = sum(is.finite(x[treat == 1 & post == 0][[o]]))),
+                    seasons = sort(unique(x$Season)), base_s = sum(x[treat == 1 & post == 0][[o]], na.rm = TRUE), base_n = sum(is.finite(x[treat == 1 & post == 0][[o]])),
+                    blocks_set = if ("block_id" %in% names(x)) unique(x$block_id) else NULL),                                   # v20.59
        cells_all = cells(FALSE), cells_pos = if ("site_id" %in% names(x)) cells(TRUE) else NULL,
        ks02 = sort(unique(x[treat == 1L & is.finite(event_time), event_time])), m16_tr = tr[, .(event_time, Year)],
        m16_g = x[post == 0L, .(s = sum(get(o)), n = .N), by = .(site_id, Year, treat)])
@@ -564,6 +573,13 @@ ooc_load_R <- function(outcome, d, plan, engines) {
   s1 <- unique(cnt[N > 0 & site_id > 0, site_id])
   ctx$bad <- if (nrow(bad)) bad[, .(Year, Season)] else data.table(Year = integer(0), Season = integer(0))
   ctx$site_period <- length(s1) >= 2 && identical(d$pooled_fe, "site_period")
+  ctx$ctrl_sel <- NULL                                                                      # v20.59: CONTROL_SELECTION decided ONCE by the parent on the
+  if (!identical(d$control_selection %||% "rings", "rings")) {                              #   merged pre-period facts of every partition; the workers apply it
+    pf <- ooc_map("presel", ctx, plan$K)
+    facts <- list(agg_t = rbindlist(lapply(pf, `[[`, "agg_t")), t_pixels = sum(vapply(pf, function(p) as.numeric(p$t_pixels), 0)),
+                  agg_c = rbindlist(lapply(pf, `[[`, "agg_c")), pix_c = rbindlist(lapply(pf, `[[`, "pix_c")), mode = d$control_selection)
+    dec <- control_selection_decide_R(facts, outcome, d); ctx$ctrl_sel <- record_control_selection_R(dec$tab, dec$chosen, outcome, d)
+  }
   # ---- phase B: the design columns, the final sample and its facts
   pb <- ooc_map("sample", ctx, plan$K)
   n_tr <- sum(vapply(pb, function(p) as.numeric(p$n_transition), 0))
@@ -573,9 +589,9 @@ ooc_load_R <- function(outcome, d, plan, engines) {
   design_vs_panel_say_R(post_vs_panel, d)
   fx <- lapply(pb, `[[`, "facts")
   sites <- sort(unique(unlist(lapply(fx, `[[`, "sites")))); pos <- sites[sites > 0]
-  cluster_col <- if (length(pos) >= MIN_SWS_CLUSTERS) "site_id" else "Year"
+  cluster_col <- if (identical(d$cluster, "block")) "block_id" else if (length(pos) >= MIN_SWS_CLUSTERS) "site_id" else "Year"   # v20.59: ~1 km blocks
   years_set <- sort(unique(unlist(lapply(fx, `[[`, "years_set"))))
-  G <- if (cluster_col == "site_id") length(unique(sites)) else length(years_set)
+  G <- if (cluster_col == "site_id") length(unique(sites)) else if (cluster_col == "block_id") length(unique(unlist(lapply(fx, `[[`, "blocks_set")))) else length(years_set)
   bn <- sum(vapply(fx, function(f) as.numeric(f$base_n), 0))
   facts <- list(cluster_col = cluster_col, G = G, n_obs = sum(vapply(fx, function(f) as.numeric(f$n_obs), 0)), n_pixels = sum(vapply(fx, function(f) as.numeric(f$n_pixels), 0)),
                 n_units = sum(vapply(fx, function(f) as.numeric(f$n_units), 0)), n_sites_pos = length(pos), n_periods = length(unique(unlist(lapply(fx, `[[`, "periods")))),

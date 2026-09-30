@@ -224,6 +224,7 @@ def _t_prep(p):
     if not len(d): return res
     d = C.build_treatment_columns(d, control_zones=p["control_zones"])
     res["post_diff"] = C.LAST_DESIGN_INFO.get("post_rows_differ_from_panel"); res["post_n"] = int(C.LAST_DESIGN_INFO.get("post_rows_compared", 0) or 0)   # v20.59
+    if C.ACTIVE.get("cluster") == "block" and "pixel_id" in d.columns: d["block_id"] = C.block_ids(d)   # v20.59
     d = d[d["in_analysis_sample"] == 1]
     if p.get("dropna") and p["outcome"] in d.columns: d = d.dropna(subset=[p["outcome"]])
     if not len(d): return res
@@ -248,6 +249,39 @@ def _t_prep(p):
 O.register("prep", _t_prep)
 
 
+def _t_presel(p):
+    """v20.59: one partition's PRE-period facts for CONTROL_SELECTION (the design columns of this run first, the selection itself OFF so
+    that every control row is counted); the parent merges the sums exactly and decides once for the whole sample."""
+    C = _C()
+    d = O.read_part(p["path"], p["bad"])
+    if not len(d): return {"empty": True}
+    saved = C.ACTIVE.get("control_selection"); C.ACTIVE["control_selection"] = "rings"
+    try: d = C.build_treatment_columns(d, control_zones=p["control_zones"])
+    finally: C.ACTIVE["control_selection"] = saved
+    f = C.control_selection_aggregates(d, d["in_analysis_sample"].values == 1, p["outcome"])
+    return {"agg_t": f["agg_t"].to_dict("list"), "t_pixels": f["t_pixels"], "agg_c": f["agg_c"].to_dict("list"), "pix_c": f["pix_c"].to_dict("list"), "mode": f["mode"]}
+
+
+O.register("presel", _t_presel)
+
+
+def decide_controls_ooc(pool, pay, outcome):
+    """v20.59: the parent's decision under CONTROL_SELECTION from every partition's pre-period facts (pixel partitions: the pixel counts add
+    exactly); kept in ACTIVE so that the 'prep' workers apply the same fixed set."""
+    C = _C()
+    if C.ACTIVE.get("control_selection", "rings") == "rings": return None
+    sel = C.ACTIVE.get("control_selected")
+    if isinstance(sel, dict) and sel.get("outcome") == outcome and sel.get("mode") == C.ACTIVE.get("control_selection") and sel.get("key") == C._control_selection_key(): return sel
+    got = pool.map("presel", pay)
+    parts = [g["result"] for g in got if g["result"] and not g["result"].get("empty")]
+    if not parts: raise C.InsufficientDataError(f"CONTROL_SELECTION: no pre-period rows of {outcome} in any partition")
+    facts = {"agg_t": pd.concat([pd.DataFrame(r["agg_t"]) for r in parts], ignore_index=True), "t_pixels": int(sum(r["t_pixels"] for r in parts)),
+             "agg_c": pd.concat([pd.DataFrame(r["agg_c"]) for r in parts], ignore_index=True), "pix_c": pd.concat([pd.DataFrame(r["pix_c"]) for r in parts], ignore_index=True),
+             "mode": parts[0]["mode"]}
+    tab, chosen = C.control_selection_decide(facts, outcome)
+    return C.record_control_selection(tab, chosen, outcome)
+
+
 def _cluster_key_ooc(cols, sites, col="subwshed_id"):
     """_cluster_key on the whole sample (its sub-watershed count), with the same side effects (LAST_CLUSTER_USED, the message once)."""
     C = _C()
@@ -258,6 +292,8 @@ def _cluster_key_ooc(cols, sites, col="subwshed_id"):
         C.LAST_CLUSTER_USED["value"] = "Year"; return "Year"
     if mode == "subwshed" and col in cols:
         C.LAST_CLUSTER_USED["value"] = col; return col
+    if mode == "block" and "block_id" in cols:                                                     # v20.59
+        C.LAST_CLUSTER_USED["value"] = "block_id"; return "block_id"
     if "site_id" in cols:
         n_ = len(sites or [])
         if n_ >= C.MIN_SWS_CLUSTERS:
@@ -284,6 +320,7 @@ def prepare_sample(panel, model, control_zones=None, ref=-1, pre_window=(-4, -2)
     pool = O.Pool(panel.engine)
     pay = [{"path": p, "bad": sorted(panel.screen_bad), "control_zones": cz, "model": model, "outcome": panel.outcome,
             "dropna": model in ("M16", "M34"), "ref": ref, "pre_window": tuple(pre_window)} for p in panel.paths]
+    decide_controls_ooc(pool, pay, panel.outcome)                        # v20.59: CONTROL_SELECTION decided once by the parent, applied by every worker
     got = pool.map("prep", pay)
     res = [g["result"] for g in got if g["result"]["rows"]]
     if balanced and res:                                                # the periods of the WHOLE sample, then the pixels observed in all

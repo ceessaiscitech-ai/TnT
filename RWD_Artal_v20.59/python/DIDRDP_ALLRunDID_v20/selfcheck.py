@@ -2553,6 +2553,66 @@ def check_v20_59():
             if m_: bad(f"R notebooks without DESIGN_SOURCE <- 'panel': {m_[:6]}")
         note("YOUR RULES: DESIGN_SOURCE 'panel' in every notebook (the panel's treat / control / pre / post / did estimated on; 'model' = design-based modelling; tag _panelDesign; "
              "cohort = the panel's first post year); Treat used and not kept in either language; PIXEL_ONE_SITE (one sub-watershed and one ring per pixel, the polygon decides) confirmed on the finished panel in both languages")
+        # 8 v20.59 (your fifth request): the control group chosen on the PRE period (CONTROL_SELECTION), the same pixels in every year and season; a
+        #   post- / outcome-based rule refused; ~1 km blocks as clusters (CLUSTER = 'block'); the out-of-core parent decides once
+        for v, w in (("pre_rings", "pre_rings"), ("Pre-Blocks", "pre_blocks"), ("all", "rings"), ("rings", "rings")):
+            if _C._control_selection_of(v) != w: bad(f"CONTROL_SELECTION {v!r} -> {_C._control_selection_of(v)!r} (want {w!r})")
+        for v in ("post_means", "best_outcome", "post_rings", "closest_mean"):
+            try: _C._control_selection_of(v); bad(f"CONTROL_SELECTION {v!r} (a post- / outcome-based rule) is not refused")
+            except Exception: pass
+        _rng = _np.random.default_rng(3); _rows = []
+        for _ring in range(6):
+            for _k in range(30):
+                for _y in range(2016, 2026):
+                    for _s in (1, 2):
+                        _v = 0.30 + 0.02 * _ring + 0.01 * (_y - 2016) + {0: 0.0, 1: 0.0, 2: 0.004, 3: 0.0, 4: 0.012, 5: 0.008}[_ring] * (_y - 2016) + 0.02 * _s + _rng.normal(0, 0.003) + (0.05 if _ring == 0 and _y >= 2022 else 0)
+                        _rows.append(((10500000 + 1000 * _ring + _k) * 10 ** 9 + 25500000 + 3 * _k, _ring, _y, _s, 7, "SW7", f"{_y}_{_s}", _v, int(_y >= 2022)))
+        fr = _pd.DataFrame(_rows, columns=["pixel_id", "buff_km", "Year", "Season", "site_id", "subwshed_id", "time_fe_yearseason", "NDVI", "post"])
+        _co = _C.CURRENT_OUTCOME; _C.CURRENT_OUTCOME = "NDVI"
+        try:
+            _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", design_source="model", control_selection="pre_rings", control_select_k=2, control_select_on="trend", verbose=False)
+            g = _C.build_treatment_columns(fr.copy()); sg = g[g.in_analysis_sample == 1]
+            rg = sorted(set(sg.loc[sg.treatment == 0, "buff_km"].astype(int)))
+            if rg != [1, 3] or "_ctrlPre2r" not in _C.scenario_tag() or (_C.LAST_DESIGN_INFO.get("control_selection") or {}).get("units") != [1, 3]:
+                bad(f"pre_rings on 'trend' does not pick the two rings that share the treated pre-trend (got {rg}; tag {_C.scenario_tag()}; {_C.LAST_DESIGN_INFO.get('control_selection')})")
+            if sg[sg.treatment == 0].groupby(["Year", "Season"])["pixel_id"].apply(frozenset).nunique() != 1 or sg.loc[sg.treatment == 1, "pixel_id"].nunique() != 30: bad("the chosen control pixels are not the same in every year and season / treated pixels touched")
+            if not os.path.exists(_C.control_selection_path("NDVI")): bad("CONTROL_SELECTION_NDVI.csv (the evidence) was not written")
+            _C.set_scenario(control_select_on="level", verbose=False); g = _C.build_treatment_columns(fr.copy()); sg = g[g.in_analysis_sample == 1]
+            if sorted(set(sg.loc[sg.treatment == 0, "buff_km"].astype(int))) != [1, 2] or "_ctrlPre2rL" not in _C.scenario_tag(): bad("pre_rings on 'level' does not pick the two rings with the closest pre level")
+            _mp = _C.CONTROL_BLOCK_MIN_PIXELS; _C.CONTROL_BLOCK_MIN_PIXELS = 5
+            try:
+                _C.set_scenario(control_selection="pre_blocks", control_select_ratio=1.0, control_select_on="trend", verbose=False); g = _C.build_treatment_columns(fr.copy()); sg = g[g.in_analysis_sample == 1]
+                if "_ctrlPreBlk1x" not in _C.scenario_tag() or sg.loc[sg.treatment == 0, "pixel_id"].nunique() < 30 or sg.loc[sg.treatment == 0, "pixel_id"].nunique() >= 150: bad(f"pre_blocks does not stop at the ratio ({sg.loc[sg.treatment == 0, 'pixel_id'].nunique()} control pixels; tag {_C.scenario_tag()})")
+            finally: _C.CONTROL_BLOCK_MIN_PIXELS = _mp
+            if int(_C.block_id_from_pixel(_np.array([10500000 * 10 ** 9 + 25500000]))[0]) != 10500025500 or int(_C.block_id_from_pixel(_pd.Series(["10500000_25500000"]))[0]) != 10500025500 \
+               or int(_C.block_id_from_pixel(_pd.Series(["010500000025500000"]))[0]) != 10500025500: bad("block_id_from_pixel is not the ~1 km block of the id (Python int / 18-digit / R 'ls_lo' ids)")
+            _fb = _pd.DataFrame({"pixel_id": [1, 2, 3], "latitude": [15.0, 15.0, 15.02], "longitude": [75.0, 75.005, 75.0]})
+            if list(_C.block_ids(_fb)) != [10500025500, 10500025500, 10502025500]: bad(f"block_ids does not fall back to the coordinates for plain ids: {list(_C.block_ids(_fb))}")
+            _C.set_scenario(control_selection="rings", cluster="block", verbose=False); g = _C.build_treatment_columns(fr.copy())
+            if _C._cluster_key(g, "subwshed_id") != "block_id" or "_clBlock" not in _C.scenario_tag() or g["block_id"].nunique() < 6: bad("CLUSTER = 'block' does not cluster on the ~1 km blocks")
+            if not all(_C.ACTIVE.get(k) is not None for k in ("control_selection", "control_select_k", "control_select_ratio", "control_select_on")) or "control_selected" not in _C.SCENARIO_KEYS: bad("the control selection is not part of the scenario the workers receive")
+        finally:
+            _C.CURRENT_OUTCOME = _co; _C.set_scenario(control_selection="rings", cluster="site", verbose=False)
+        import _ooc_models as _OM2
+        if "decide_controls_ooc(" not in _i.getsource(_OM2.prepare_sample) or "presel" not in _i.getsource(_OM2._t_presel): bad("the out-of-core path does not decide the control selection once in the parent")
+        if "select_controls(out, in_grp, CURRENT_OUTCOME)" not in _i.getsource(_C.build_treatment_columns): bad("build_treatment_columns does not apply CONTROL_SELECTION")
+        miss = [os.path.basename(p) for p in nbs + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) if not all(k in open(p, encoding="utf-8").read() for k in ("CONTROL_SELECTION", "control_selection=CONTROL_SELECTION", "cluster=CLUSTER", "CONTROL_SELECT_ON"))]
+        if miss: bad(f"model notebooks without CONTROL_SELECTION / CLUSTER passed to set_scenario: {miss[:6]}")
+        if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("CONTROL_SELECTION", "control_selection=CONTROL_SELECTION", "cluster=CLUSTER", "CONTROL_SELECT_ON")): bad("P00_Settings lacks the panel-level CONTROL_SELECTION / CLUSTER defaults")
+        for q in rp00:
+            t_ = open(q, encoding="utf-8").read()
+            if "CONTROL_SELECTION <- " not in t_ or "CLUSTER           <- " not in t_ or "CONTROL_SELECT_ON <- " not in t_: bad(f"{os.path.basename(q)} lacks the panel-level CONTROL_SELECTION / CLUSTER defaults")
+        if os.path.isdir(rl):
+            want = {"reward_design.R": ("control_selection_R", "block_id_R", "select_controls_R", "control_selection_decide_R", "control_selection_facts_R", "record_control_selection_R", "_ctrlPre", "_clBlock", 'cluster = .one_of("CLUSTER"'),
+                    "reward_outofcore.R": ("ooc_task_presel", "ctx$ctrl_sel", "presel = ooc_task_presel", "blocks_set"),
+                    "reward_paths.R": ('CONTROL_SELECTION   <- "rings"', 'CLUSTER             <- "auto"', "CONTROL_BLOCK_MIN_PIXELS")}
+            for fn, keys in want.items():
+                s_ = open(os.path.join(rl, fn), encoding="utf-8").read(); m_ = [k for k in keys if k not in s_]
+                if m_: bad(f"R {fn} lacks {m_}")
+            m_ = [os.path.basename(p) for p in rmd if "CONTROL_SELECTION <- " not in open(p, encoding="utf-8").read() or "CLUSTER          <- " not in open(p, encoding="utf-8").read()]
+            if m_: bad(f"R notebooks without CONTROL_SELECTION / CLUSTER: {m_[:6]}")
+        note("your fifth request: CONTROL_SELECTION 'rings' | 'pre_rings' | 'pre_blocks' -- the control group chosen on the PRE period only (trend / level / both), per outcome, the same pixels in every "
+             "year and season, evidence CONTROL_SELECTION_<outcome>.csv, tag _ctrlPre...; a post- / outcome-based rule refused; CLUSTER 'block' (~1 km blocks); the same in R, in memory and out of core")
     finally:
         _C.ACTIVE.clear(); _C.ACTIVE.update(saved); _C._RESOLVED["key"] = None
 

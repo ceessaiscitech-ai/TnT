@@ -106,6 +106,13 @@ EXCLUDE_GAPFILLED   <- TRUE                                     # v20.52: rows f
 DESIGN_SOURCE       <- "model"                                 # v20.59: the library's default for the validators and the bridge; EVERY model notebook and R_P00
                                                                #   set DESIGN_SOURCE <- "panel" (the panel's treat / control / pre / post / did -- the exports' Treat
                                                                #   flag, PERIOD_RULE -- are estimated on); "model" = the design in effect (design-based modelling)
+CONTROL_SELECTION   <- "rings"                                 # v20.59 (your fifth request): "rings" = every ring of CONTROL_RINGS is the control group | "pre_rings" =
+CONTROL_SELECT_K    <- 2L                                      #   per outcome, the CONTROL_SELECT_K rings whose PRE-period series is closest to the treatment area's |
+CONTROL_SELECT_RATIO <- 3                                      #   "pre_blocks" = ~1 km blocks of control pixels chosen the same way until CONTROL_SELECT_RATIO x the
+CONTROL_SELECT_ON   <- "trend"                                 #   treated pixels. "trend" (the demeaned pre series' distance) | "level" | "both". Decided on the PRE
+CONTROL_BLOCK_DEG   <- 0.01                                    #   period only, the same pixels in every year and season; evidence CONTROL_SELECTION_<outcome>_R.csv
+CONTROL_BLOCK_MIN_PIXELS <- 30L                                #   a block with fewer control pixels in the pre period is not a candidate
+CLUSTER             <- "auto"                                  # v20.59: "auto" (the sub-watersheds; fewer than MIN_SWS_CLUSTERS -> the years) | "block" (~1 km blocks)
 PIXEL_ONE_SITE      <- TRUE                                    # v20.59 (YOUR RULE): ONE sub-watershed and ONE ring per pixel in the whole panel -- the polygon that
                                                                #   holds the point (core first, then the lower id) decides, whatever the file carried; a pixel appears
                                                                #   once per year-season. FALSE = the v20.58 rule (a point in two zones kept once per sub-watershed)

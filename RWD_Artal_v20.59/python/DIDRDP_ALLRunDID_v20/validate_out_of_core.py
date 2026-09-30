@@ -33,11 +33,11 @@ import sys, os, json, glob, time
 eng, kind, panel, results, models = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], json.loads(sys.argv[5])
 sys.path.insert(0, eng); os.chdir(eng)
 import _common as C, validate_all_models as VM, validate_known_answers as KA
-coh = json.loads(sys.argv[6])
+coh = json.loads(sys.argv[6]); extra = json.loads(sys.argv[7]) if len(sys.argv) > 7 else {}
 C.PREPARED_PANEL = panel; C.RESULTS_ROOT = results; C.ESTIMATOR_FILES_DIR = os.path.join(os.path.dirname(results), "ef_" + os.path.basename(results))
 C.SELECTED_OUTCOMES = ["NDVI"]; C.GROUND_LINKS_PATH = os.path.join(results, "P08", "ground_links.parquet"); C.clear_panel_cache()
 C.set_scenario(verbose=False, all_years=True)
-kw = dict(control_zones="1-5", treatment_year=2022, seasons="all", unit_fe="pixel_season", covariates="all", overlap_rows="drop")
+kw = dict(control_zones="1-5", treatment_year=2022, seasons="all", unit_fe="pixel_season", covariates="all", overlap_rows="drop"); kw.update(extra)
 if kind == "single": C.set_scenario(verbose=False, cluster="site", pooled_fe="period", use_site_years=False, **kw)
 else: C.set_scenario(verbose=False, cluster="site", pooled_fe="site_period", site_years={int(k): int(v) for k, v in coh.items()}, **kw)
 C.save_scenario(verbose=False); C.PANEL_SCENARIO_OVERRIDES_CELL1 = True
@@ -149,6 +149,41 @@ def check_known(base, engines, rows):
             rows.append({"check": f"known answers: {kind}", "engine": e, "files": n, "differences": len(diffs),
                          "verdict": "IDENTICAL" if ran and not diffs else "FAILED", "detail": "; ".join(diffs[:3]) or f"{time.time() - t0:.0f} s, 5 pixel partitions"})
             print(f"[{'OK' if rows[-1]['verdict'] == 'IDENTICAL' else 'FAILED'}]  known {kind} {e}: {n} files, {len(diffs)} differences", flush=True)
+
+
+def check_ctrl(base, engines, rows):
+    """v20.59 (your fifth request): CONTROL_SELECTION 'pre_rings' / 'pre_blocks' and CLUSTER 'block' out of core = in memory -- the parent decides the control
+    set once on the merged pre-period facts of the partitions and every worker applies it; the same result files, byte for byte in their numbers."""
+    import validate_known_answers as KA, pyarrow as pa, pyarrow.parquet as pq
+    df, coh = KA.make_panel("single")
+    for label, extra in (("pre_rings", {"control_selection": "pre_rings", "control_select_k": 2, "control_select_on": "trend"}),
+                         ("pre_blocks", {"control_selection": "pre_blocks", "control_select_ratio": 2.0}),
+                         ("cluster_block", {"cluster": "block"})):
+        d = os.path.join(base, f"ctrl_{label}"); os.makedirs(d, exist_ok=True)
+        panel = os.path.join(d, "panel.parquet"); pq.write_table(pa.Table.from_pandas(df, preserve_index=False), panel)
+        mem = os.path.join(d, "memory"); models = ["M01", "M02"]
+        r = _run(["-c", KNOWN_RUNNER, HERE, "single", panel, mem, json.dumps(models), json.dumps({str(k): v for k, v in coh.items()}), json.dumps(extra)],
+                 env={"REWARD_PREBUILT_MODE": "off", "REWARD_FORCE_OUT_OF_CORE": None})
+        sm = _status(r)
+        if "@@DONE@@" not in r.stdout or any(s["status"] != "ok" or s["error"] for s in sm):
+            rows.append({"check": f"control selection: {label}", "engine": "memory", "files": 0, "differences": 1, "verdict": "FAILED", "detail": (r.stdout + r.stderr)[-300:]}); continue
+        ev = glob.glob(os.path.join(mem, "CONTROL_SELECTION_NDVI.csv")) if label != "cluster_block" else ["-"]
+        if not ev: rows.append({"check": f"control selection: {label}", "engine": "memory", "files": 0, "differences": 1, "verdict": "FAILED", "detail": "no CONTROL_SELECTION_NDVI.csv beside the results"}); continue
+        for e in engines:
+            out = os.path.join(d, f"ooc_{e}"); t0 = time.time()
+            r = _run(["-c", KNOWN_RUNNER, HERE, "single", panel, out, json.dumps(models), json.dumps({str(k): v for k, v in coh.items()}), json.dumps(extra)],
+                     env={"REWARD_PREBUILT_MODE": "off", "REWARD_FORCE_OUT_OF_CORE": e, "REWARD_OOC_PARTITIONS": "5"})
+            st = _status(r)
+            ran = "@@DONE@@" in r.stdout and all(s["status"] == "ok" and not s["error"] and s["out_of_core"] for s in st) and len(st) == len(models)
+            n, diffs = compare(mem, out, models=models) if ran else (0, [f"the out-of-core run failed: {(r.stdout + r.stderr)[-300:]}"])
+            if ran and label != "cluster_block":
+                a_ = pd.read_csv(os.path.join(mem, "CONTROL_SELECTION_NDVI.csv")); b_ = glob.glob(os.path.join(out, "CONTROL_SELECTION_NDVI.csv"))
+                b_ = pd.read_csv(b_[0]) if b_ else None
+                if b_ is None or sorted(a_.loc[a_.selected, "unit"]) != sorted(b_.loc[b_.selected, "unit"]) or not np.allclose(a_.sort_values("unit").trend_distance.values, b_.sort_values("unit").trend_distance.values, atol=1e-9):
+                    diffs.append("the out-of-core control choice / its pre-period facts differ from the in-memory ones")
+            rows.append({"check": f"control selection: {label}", "engine": e, "files": n, "differences": len(diffs),
+                         "verdict": "IDENTICAL" if ran and not diffs else "FAILED", "detail": "; ".join(diffs[:3]) or f"{time.time() - t0:.0f} s, 5 pixel partitions"})
+            print(f"[{'OK' if rows[-1]['verdict'] == 'IDENTICAL' else 'FAILED'}]  control selection {label} {e}: {n} files, {len(diffs)} differences", flush=True)
 
 
 def check_layout(base, engines, rows):
@@ -295,7 +330,7 @@ def check_streaming(base, rows, layout_res):
 
 
 def main(argv):
-    only = set(argv[argv.index("--only") + 1].split(",")) if "--only" in argv else {"known", "layout", "p00", "switch", "streaming"}
+    only = set(argv[argv.index("--only") + 1].split(",")) if "--only" in argv else {"known", "layout", "p00", "switch", "streaming", "ctrl"}
     want = argv[argv.index("--engines") + 1].split(",") if "--engines" in argv else ENGINES
     av = engines_available(want)
     engines = [e for e in want if av[e][0]]
@@ -304,6 +339,7 @@ def main(argv):
     base = tempfile.mkdtemp(prefix="reward_ooc_"); print(f"[INFO]    working in {base}; engines: {engines}", flush=True)
     t0 = time.time()
     if "known" in only: check_known(base, engines, rows)
+    if "ctrl" in only and engines: check_ctrl(base, engines, rows)          # v20.59: the control selection out of core
     lay = check_layout(base, engines, rows) if ("layout" in only or "streaming" in only) and engines else None
     if "p00" in only and engines: check_p00(base, engines, rows)
     if "switch" in only: check_switch(base, rows)

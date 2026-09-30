@@ -337,6 +337,8 @@ if (!inherits(tE, "error")) {
                pre_at_start = list(TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022, PRE_YEARS = 2022),                                 # v20.59: no pre year -> said, every year before
                screen_keep = list(OUTCOME_SCREEN = "keep"),                                                                              # v20.59: the screen's cells kept
                design_panel = list(DESIGN_SOURCE = "panel", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2023),                           # v20.59: the panel's post (2022) wins over 2023
+               ctrl_pre2 = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # v20.59: the pre period picks 2 rings
+               cluster_block = list(CLUSTER = "block", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                  # v20.59: ~1 km blocks as clusters
                rabi = list(SEASONS = "Rabi"), manual = list(DESIGN_MODE = "manual"), transition = list(EXCLUDE_TRANSITION_YEAR = TRUE),
                gapfilled_kept = list(EXCLUDE_GAPFILLED = FALSE), dose_amount = list(DOSE_VARIABLE = "dose_amount_sws"))
   od <- file.path(TMP, "E_out"); design_variant_samples(vars, od)
@@ -367,6 +369,15 @@ if (!inherits(tE, "error")) {
   chkE("design_panel", "DESIGN_SOURCE = 'panel' under TREATMENT_YEAR 2023: post = the panel's post (Year >= 2022) on every row, cohort 2022, the results folder tagged _panelDesign",
        !is.null(dp) && all(dp$post == as.integer(dp$Year >= 2022L)) && all(dp[treat == 1L, cohort] == 2022) && !is.null(dpj$tag) && grepl("_panelDesign", dpj$tag, fixed = TRUE),
        if (is.null(dpj$tag)) "no tag" else dpj$tag)
+  cp <- rd("ctrl_pre2"); cpj <- tryCatch(fromJSON(file.path(od, "ctrl_pre2.json")), error = function(e) NULL)
+  cpf <- tryCatch(fread(file.path(RESULTS_DIR, "CONTROL_SELECTION_NDVI_R.csv")), error = function(e) NULL)
+  chkE("ctrl_pre2", "CONTROL_SELECTION = 'pre_rings', K = 2 (v20.59): exactly 2 control rings, the same control pixels in every year-season, the folder tagged _ctrlPre2r, CONTROL_SELECTION_NDVI_R.csv with 5 rings and 2 selected",
+       !is.null(cp) && uniqueN(cp[treat == 0L, buff_km]) == 2 && uniqueN(cp[treat == 0L, .(k = paste(sort(unique(buff_km)), collapse = ",")), by = .(Year, Season)]$k) == 1 && !is.null(cpj$tag) && grepl("_ctrlPre2r", cpj$tag, fixed = TRUE)
+       && !is.null(cpf) && nrow(cpf) == 5 && sum(cpf$selected) == 2 && setequal(cpf[selected == TRUE, unit], unique(cp[treat == 0L, buff_km])),
+       if (is.null(cp)) "no sample" else sprintf("rings %s | tag %s | evidence %s", paste(sort(unique(cp[treat == 0L, buff_km])), collapse = ","), cpj$tag, if (is.null(cpf)) "missing" else nrow(cpf)))
+  cb <- rd("cluster_block"); cbj <- tryCatch(fromJSON(file.path(od, "cluster_block.json")), error = function(e) NULL)
+  chkE("cluster_block", "CLUSTER = 'block' (v20.59): ~1 km blocks as the clusters (many), the folder tagged _clBlock", !is.null(cb) && uniqueN(cb$cluster_id) > 20 && !is.null(cbj$tag) && grepl("_clBlock", cbj$tag, fixed = TRUE),
+       if (is.null(cb)) "no sample" else sprintf("%d clusters | %s", uniqueN(cb$cluster_id), cbj$tag))
   pcx <- tryCatch(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")), error = function(e) NULL)
   chkE("panel", "R_P00 confirmed the pixel consistency (v20.59): panel_pixel_consistency_R.csv written with 0 offenders (one sub-watershed and one ring per pixel, once per year-season)",
        !is.null(pcx) && nrow(pcx) == 0, if (is.null(pcx)) "file missing" else sprintf("%d offenders", nrow(pcx)))

@@ -32,6 +32,14 @@ FUND_START_RULE  <- "backcast"      # fund timing: "backcast" | "share" (the amo
 DOSE_VARIABLE    <- "dose_intensity_per_ha"   # the dose (fund file): amount released / treatment area | "dose_amount_sws" | "dose_share_of_target"
                                               #   -- 0 on the control rings and before the treatment starts
 CONTROL_RINGS    <- "data"          # control ring(s): "data" | 1:5 | 1:3 | 2:5 | c(1, 3, 5)
+CONTROL_SELECTION <- "rings"        # v20.59 (your rule): "rings" = every ring of CONTROL_RINGS is the control group | "pre_rings" = per outcome, the CONTROL_SELECT_K
+                                    #   rings whose PRE-period series is closest to the treatment area's | "pre_blocks" = ~1 km blocks of control pixels chosen the same way until
+                                    #   CONTROL_SELECT_RATIO x the treated pixels. Decided on the PRE period ONLY (a post- or outcome-based rule is refused), the same control
+                                    #   pixels in every year and season; evidence CONTROL_SELECTION_<outcome>_R.csv beside the results; results tagged _ctrlPre...
+CONTROL_SELECT_K <- 2L              # pre_rings: how many rings (1-5)
+CONTROL_SELECT_RATIO <- 3           # pre_blocks: control pixels >= this x the treated pixels
+CONTROL_SELECT_ON <- "trend"        # "trend" (the demeaned pre series' distance = what the parallel-trends assumption asks) | "level" (the pre mean's gap) | "both"
+CLUSTER          <- "auto"          # v20.59: "auto" (the sub-watersheds; fewer than 6 -> the years) | "block" (~1 km spatial blocks of pixels: many clusters, spatial correlation absorbed)
 PRE_YEARS        <- "data"          # years BEFORE the start: "data" | NA (every year) | 4 (the 4 years before) | 2015 (a calendar year = the FIRST pre year)
 POST_YEARS       <- "data"          # years FROM the start:   "data" | NA (every year) | 2 (the start year + 1) | 2025 (a calendar year = the LAST post year)
 SEASONS          <- "all"           # "all" (annual composite + Kharif/Rabi/Zaid: year AND season variation) | "seasonal" | "yearly" |

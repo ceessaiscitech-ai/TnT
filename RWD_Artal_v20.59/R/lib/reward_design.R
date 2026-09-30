@@ -437,7 +437,15 @@ design_settings <- function() {
             exclude_gapfilled = isTRUE(.opt("EXCLUDE_GAPFILLED", TRUE)), covariates = as.character(.opt("COVARIATES", c("Rain", "Tmax", "Tmean", "Tmin"))),
             sub_watersheds = .opt("SUB_WATERSHEDS", "data"),                    # v20.58: the processing set (the location rule)
             outcome_screen = screen_rule_R(.opt("OUTCOME_SCREEN", "drop")),    # v20.59: the outcome screen's rule -- drop | keep | off
-            design_source = .one_of("DESIGN_SOURCE", .opt("DESIGN_SOURCE", "model"), c("panel", "model")))   # v20.59: "panel" = the panel's columns are estimated on (the notebooks' default) | "model" = the design in effect
+            design_source = .one_of("DESIGN_SOURCE", .opt("DESIGN_SOURCE", "model"), c("panel", "model")),   # v20.59: "panel" = the panel's columns are estimated on (the notebooks' default) | "model" = the design in effect
+            control_selection = control_selection_R(.opt("CONTROL_SELECTION", "rings")),                    # v20.59 (your fifth request): rings | pre_rings | pre_blocks
+            control_select_k = as.integer(.opt("CONTROL_SELECT_K", 2L)), control_select_ratio = as.numeric(.opt("CONTROL_SELECT_RATIO", 3)),
+            control_select_on = .one_of("CONTROL_SELECT_ON", .opt("CONTROL_SELECT_ON", "trend"), c("trend", "level", "both")),
+            control_block_deg = as.numeric(.opt("CONTROL_BLOCK_DEG", 0.01)),
+            cluster = .one_of("CLUSTER", .opt("CLUSTER", "auto"), c("auto", "block")))                     # v20.59: ~1 km spatial blocks as clusters
+  if (!(is.finite(s$control_select_k) && s$control_select_k >= 1L && s$control_select_k <= 5L)) stop("CONTROL_SELECT_K must be 1..5")
+  if (!(is.finite(s$control_select_ratio) && s$control_select_ratio > 0)) stop("CONTROL_SELECT_RATIO must be > 0")
+  if (!(is.finite(s$control_block_deg) && s$control_block_deg >= 0.001 && s$control_block_deg <= 1)) stop("CONTROL_BLOCK_DEG must be between 0.001 and 1 degree")
   sw <- unlist(s$sub_watersheds); if (!length(sw) || all(is.na(sw))) sw <- "data"
   s$sub_watersheds <- if (length(sw) == 1 && is.character(sw) && tolower(trimws(sw)) %in% c("data", "recommended", "auto", "major")) (if (tolower(trimws(sw)) == "major") "major" else "data") else as.character(sw)
   if (!is.finite(s$treatment_year)) stop("TREATMENT_YEAR must be a year (got ", .opt("TREATMENT_YEAR", NA), ")")
@@ -809,6 +817,11 @@ model_design <- function(verbose = TRUE, force = FALSE) {
                                                                              keep = " (such year-seasons are reported and KEPT; results tagged _screenKept)", off = " (no screen)")[[s$outcome_screen]]))
   add_ch("DESIGN_SOURCE", s$design_source, s$design_source, paste0("your setting", c(panel = " (the PANEL's treat / control / pre / post / did -- the exports' Treat flag, PERIOD_RULE -- are estimated on; the design in effect above is compared with them)",
                                                                        model = " (the design in effect above is estimated on -- design-based modelling; DESIGN_SOURCE <- \"panel\" estimates on the panel's columns)")[[s$design_source]]))
+  add_ch("CONTROL_SELECTION", s$control_selection, s$control_selection, paste0("your setting", switch(s$control_selection,
+         rings = " (every ring of CONTROL_RINGS is the control group)",
+         pre_rings = sprintf(" (per outcome, the %d ring(s) whose PRE-period series is closest to the treatment area's -- '%s'; decided on the pre period only, the same pixels in every year and season; CONTROL_SELECTION_<outcome>_R.csv)", s$control_select_k, s$control_select_on),
+         pre_blocks = sprintf(" (per outcome, ~%.1f km blocks of control pixels closest to the treatment area's PRE-period series -- '%s' -- until %g x the treated pixels; the same pixels in every year and season; CONTROL_SELECTION_<outcome>_R.csv)", s$control_block_deg * 111, s$control_select_on, s$control_select_ratio))))
+  add_ch("CLUSTER", s$cluster, s$cluster, paste0("your setting", if (identical(s$cluster, "block")) " (~1 km spatial blocks of pixels -- many clusters, the spatial correlation of neighbouring pixels absorbed)" else sprintf(" (the sub-watershed; fewer than %d sub-watersheds -> the years)", MIN_SWS_CLUSTERS)))
   add_ch("COVARIATES", if (length(s$covariates)) s$covariates else "none", if (length(s$covariates)) s$covariates else "none", "your setting")
   d <- list(design_mode = s$design_mode, timing = s$timing, treatment_year = as.integer(base), treatment_year_setting = s$treatment_year,
             site_start = ss, site_years = sy, control_rings = as.integer(rings), year_min = year_min, year_max = year_max, drop_years = drop_years,
@@ -817,6 +830,8 @@ model_design <- function(verbose = TRUE, force = FALSE) {
             cohort_offset = s$cohort_offset, overlap_rows = s$overlap_rows, fragment_rule = s$fragment_rule, fragment_min_share = s$fragment_min_share,
             pooled_fe = s$pooled_fe, dose_variable = s$dose_variable, exclude_gapfilled = s$exclude_gapfilled, covariates = s$covariates,
             outcome_screen = s$outcome_screen, design_source = s$design_source,                  # v20.59
+            control_selection = s$control_selection, control_select_k = s$control_select_k, control_select_ratio = s$control_select_ratio,   # v20.59 (your fifth request)
+            control_select_on = s$control_select_on, control_block_deg = s$control_block_deg, cluster = s$cluster,
             fund = list(start_rule = s$fund_start_rule, start_share = s$fund_start_share, rate_months = s$fund_rate_months, before_file = s$fund_dose_before_file),
             n_sites = length(real), sites = as.integer(real), n_fund_dated = as.integer(n_fund), data_keys = dk, choices = rbindlist(ch), notes = notes,
             sub_watersheds = s$sub_watersheds, processed = as.integer(ps$sites), processed_how = ps$how)
@@ -857,6 +872,10 @@ scenario_tag <- function(d) {
   if (isFALSE(d$exclude_gapfilled)) t <- paste0(t, "_withGapFilled")
   if (identical(d$outcome_screen, "keep")) t <- paste0(t, "_screenKept")                        # v20.59: the screen's cells kept (as Python)
   if (identical(d$design_source, "panel")) t <- paste0(t, "_panelDesign")                       # v20.59: the panel's design estimated on (as Python)
+  cs <- d$control_selection %||% "rings"                                                        # v20.59: the pre period's control choice (as Python)
+  if (cs %in% c("pre_rings", "pre_blocks")) t <- paste0(t, if (identical(cs, "pre_rings")) sprintf("_ctrlPre%dr", as.integer(d$control_select_k %||% 2L)) else sprintf("_ctrlPreBlk%gx", as.numeric(d$control_select_ratio %||% 3)),
+                                                      c(trend = "", level = "L", both = "B")[[d$control_select_on %||% "trend"]])
+  if (identical(d$cluster, "block")) t <- paste0(t, "_clBlock")                                  # v20.59: ~1 km spatial blocks as clusters (as Python)
   t <- paste0(t, "_", cov_tag(d$covariates %||% COVARIATES))
   if (is.finite(d$year_min %||% NA) || is.finite(d$year_max %||% NA))
     t <- paste0(t, sprintf("_yr%s-%s", if (is.finite(d$year_min %||% NA)) d$year_min else "start", if (is.finite(d$year_max %||% NA)) d$year_max else "end"))
@@ -888,6 +907,93 @@ design_vs_panel_say_R <- function(cmp, d) {
                     design_timing_text_R(d), format(k, big.mark = ","), format(n, big.mark = ","), 100 * k / n))
   invisible(NULL)
 }
+# ================================================================ v20.59 (your fifth request): the control group chosen on the PRE period
+# CONTROL_SELECTION -- "rings" (every ring of CONTROL_RINGS) | "pre_rings" (per outcome, the CONTROL_SELECT_K rings whose PRE-period series is
+# closest to the treatment area's) | "pre_blocks" (~1 km blocks of control pixels, the closest first, until CONTROL_SELECT_RATIO x the treated
+# pixels). The decision is a function of the PRE period alone, made once per outcome and kept for every year and season (the same control
+# pixels across the whole panel); a rule on the post period, the outcome's overall mean or the result is refused (it selects on the outcome).
+# The same numbers as Python's select_controls (in memory and out of core: the parent merges the partitions' sums exactly).
+control_selection_R <- function(v) {
+  s <- gsub("[- ]", "_", tolower(trimws(as.character(v)[1])))
+  if (s %in% c("ring", "all", "all_rings", "none", "off", "false")) s <- "rings"
+  if (s %in% c("pre_ring", "prerings", "pre", "pre_trend", "pretrend")) s <- "pre_rings"
+  if (s %in% c("pre_block", "preblocks", "blocks", "block")) s <- "pre_blocks"
+  if (grepl("post|mean|outcome|best|signif|result", s))
+    stop("CONTROL_SELECTION \"", v, "\": choosing the control group on the POST period, on the outcome's overall mean or on the result selects on the outcome -- ",
+         "the estimate is then biased by construction. Use \"pre_rings\" or \"pre_blocks\" (the PRE period decides, the same pixels in every year and season) or \"rings\"")
+  if (!s %in% c("rings", "pre_rings", "pre_blocks")) stop("CONTROL_SELECTION must be \"rings\", \"pre_rings\" or \"pre_blocks\" (got \"", v, "\")")
+  s
+}
+block_id_R <- function(pixel_id, deg = 0.01) {                                      # Python's block_id_from_pixel: the ~1 km block from the id alone
+  units <- max(1, round(deg * 1e5))
+  s <- if (is.character(pixel_id)) pixel_id else if (inherits(pixel_id, "integer64")) as.character(pixel_id) else sprintf("%.0f", as.numeric(pixel_id))
+  has <- grepl("_", s, fixed = TRUE); ls <- numeric(length(s)); lo <- numeric(length(s))
+  if (any(has)) { p <- tstrsplit(s[has], "_", fixed = TRUE); ls[has] <- as.numeric(p[[1]]); lo[has] <- as.numeric(p[[2]]) }
+  if (any(!has)) { z <- s[!has]; z <- paste0(strrep("0", pmax(0L, 18L - nchar(z))), z); n <- nchar(z); ls[!has] <- as.numeric(substr(z, 1, n - 9)); lo[!has] <- as.numeric(substr(z, n - 8, n)) }
+  (ls %/% units) * 1e6 + (lo %/% units)
+}
+block_ids_R <- function(x, deg = 0.01) {                                           # Python's block_ids: the id when it encodes the coordinates, else the
+  b <- block_id_R(x$pixel_id, deg)                                                  #   frame's latitude / longitude (a synthetic panel with plain ids)
+  if (all(b < 1e6) && all(c("latitude", "longitude") %in% names(x)) && all(is.finite(x$latitude)) && all(is.finite(x$longitude))) {
+    units <- max(1, round(deg * 1e5)); b <- (round((x$latitude + 90) * 1e5) %/% units) * 1e6 + (round((x$longitude + 180) * 1e5) %/% units)
+  }
+  b
+}
+control_selection_facts_R <- function(x, o, d) {
+  mode <- d$control_selection %||% "rings"
+  m <- x[post == 0L & is.finite(get(o)), intersect(c("pixel_id", "buff_km", "Year", "Season", "treat", "latitude", "longitude", o), names(x)), with = FALSE]
+  m[, unit := if (identical(mode, "pre_rings")) as.numeric(buff_km) else block_ids_R(m, d$control_block_deg %||% 0.01)]
+  tt <- m[treat == 1L]; cc <- m[treat == 0L]
+  list(agg_t = tt[, .(s = sum(get(o)), n = .N), by = .(Year, Season)], t_pixels = uniqueN(tt$pixel_id),
+       agg_c = cc[, .(s = sum(get(o)), n = .N), by = .(unit, Year, Season)], pix_c = cc[, .(pixels = uniqueN(pixel_id)), by = unit], mode = mode)
+}
+control_selection_decide_R <- function(facts, o, d) {
+  mode <- facts$mode; on <- d$control_select_on %||% "trend"
+  agg_t <- facts$agg_t[, .(s = sum(s), n = sum(n)), by = .(Year, Season)]; agg_c <- facts$agg_c[, .(s = sum(s), n = sum(n)), by = .(unit, Year, Season)]
+  pix_c <- facts$pix_c[, .(pixels = sum(pixels)), by = unit]
+  if (!nrow(agg_t) || !nrow(agg_c)) stop(sprintf("CONTROL_SELECTION: no pre-period rows of %s to decide on (treated cells %d, control cells %d)", o, nrow(agg_t), nrow(agg_c)))
+  agg_t[, `:=`(m_t = s / n, ti = Year * 10 + Season)]; mt_all <- sum(agg_t$s) / sum(agg_t$n)
+  g <- merge(agg_c, agg_t[, .(Year, Season, m_t, ti)], by = c("Year", "Season")); g[, dif := s / n - m_t]
+  if (!nrow(g)) stop(sprintf("CONTROL_SELECTION: no control unit shares a pre-period cell with the treatment area (%s)", o))
+  tab <- g[, { lev <- mean(dif); xx <- ti - mean(ti); sxx <- sum(xx^2)
+               .(pre_cells = .N, pre_rows = sum(n), pre_mean_control = sum(s) / sum(n), pre_mean_treated = mt_all, level_gap = lev, trend_distance = mean(abs(dif - lev)),
+                 slope_difference_per_period = if (sxx > 0) sum(xx * (dif - lev)) / sxx else 0) }, by = unit]
+  tab <- merge(tab, pix_c, by = "unit", all.x = TRUE); tab[is.na(pixels), pixels := 0L]; setnames(tab, "pixels", "pre_pixels")
+  tab[, score := switch(on, trend = trend_distance, level = abs(level_gap), both = trend_distance + abs(level_gap))]
+  tab[, candidate := pre_cells >= max(1, ceiling(0.5 * nrow(agg_t)))]
+  if (identical(mode, "pre_blocks")) tab[, candidate := candidate & pre_pixels >= .opt("CONTROL_BLOCK_MIN_PIXELS", 30L)]
+  tab[, cand_i := as.integer(candidate)]; setorder(tab, -cand_i, score, unit); tab[, cand_i := NULL]; tab[, rank := .I]
+  chosen <- if (identical(mode, "pre_rings")) head(tab[candidate == TRUE, unit], as.integer(d$control_select_k %||% 2L)) else {
+    need <- as.numeric(d$control_select_ratio %||% 3) * max(1, facts$t_pixels); ch <- numeric(0); got <- 0
+    for (i in which(tab$candidate)) { ch <- c(ch, tab$unit[i]); got <- got + tab$pre_pixels[i]; if (got >= need) break }
+    ch }
+  tab[, selected := unit %in% chosen]; tab[, `:=`(outcome = o, kind = if (identical(mode, "pre_rings")) "ring" else "block", rule = on)]
+  setcolorder(tab, c("outcome", "kind", "unit", "pre_cells", "pre_rows", "pre_pixels", "pre_mean_control", "pre_mean_treated", "level_gap", "trend_distance",
+                     "slope_difference_per_period", "score", "candidate", "rank", "selected", "rule"))
+  list(tab = tab, chosen = as.numeric(chosen))
+}
+record_control_selection_R <- function(tab, chosen, o, d, say = TRUE) {
+  mode <- d$control_selection; ch <- tab[selected == TRUE]
+  try(fwrite(tab, file.path(RESULTS_DIR, sprintf("CONTROL_SELECTION_%s_R.csv", o))), silent = TRUE)
+  if (say) info(sprintf("CONTROL_SELECTION = \"%s\" (%s): decided on the PRE period only (%s), fixed for the whole panel -- %s chosen of %d (pre-trend distance %s; level gap %s); %s control pixels for %s candidates -> CONTROL_SELECTION_%s_R.csv",
+                        mode, o, d$control_select_on %||% "trend", if (identical(mode, "pre_rings")) paste0("ring(s) ", paste(chosen, collapse = ", ")) else paste0("block(s) ", length(chosen)), nrow(tab),
+                        paste(signif(head(ch$trend_distance, 5), 4), collapse = ", "), paste(sprintf("%+.4g", head(ch$level_gap, 5)), collapse = ", "),
+                        format(sum(ch$pre_pixels), big.mark = ","), format(sum(tab$pre_pixels), big.mark = ","), o))
+  if (say && identical(mode, "pre_rings") && any(!tab$selected)) { w <- min(tab[selected == FALSE, trend_distance]); b <- max(ch$trend_distance)
+    if (is.finite(w) && b > w) warn(sprintf("CONTROL_SELECTION (%s): the rule '%s' kept a ring whose pre-trend distance (%.4g) is larger than a left-out ring's (%.4g) -- 'trend' is what the parallel-trends assumption asks for", o, d$control_select_on, b, w)) }
+  list(outcome = o, mode = mode, units = as.numeric(chosen))
+}
+select_controls_R <- function(x, o, d, sel = NULL, say = TRUE) {
+  mode <- d$control_selection %||% "rings"
+  if (identical(mode, "rings")) return(x)
+  if (is.null(sel)) { dec <- control_selection_decide_R(control_selection_facts_R(x, o, d), o, d); sel <- record_control_selection_R(dec$tab, dec$chosen, o, d, say = say) }
+  unit <- if (identical(mode, "pre_rings")) as.numeric(x$buff_km) else block_ids_R(x, d$control_block_deg %||% 0.01)
+  keep <- x$treat == 1L | unit %in% sel$units
+  ats <- attributes(x); y <- x[keep]
+  for (a in setdiff(names(ats), c("names", "row.names", "class", ".internal.selfref"))) setattr(y, a, ats[[a]])
+  setattr(y, "control_selection", sel); y
+}
+
 design_columns <- function(x, d, site_period = NULL, say = TRUE) {   # v20.58: site_period given = decided on the WHOLE sample (out of
   if ("post" %in% names(x)) x[, .post_panel := as.integer(post)]      # v20.59: the panel's post (the exports' flag), compared below
   x[, treat := as.integer(buff_km == 0L)]                               #   core); say = FALSE: a partition's count is summed and said once
@@ -969,7 +1075,9 @@ load_panel_R <- function(outcome, d = load_design(), extra = character(0), integ
   x <- r$x; loc_rep <- r$loc_rep; n_gf <- r$n_gf
   x <- screen_outcome(x, outcome, as.integer(d$treatment_year), rule = d$outcome_screen %||% screen_rule_R())$dt   # v20.59: the rule of the design
   x <- design_columns(x, d)                                                   # v20.57: the timing in force (fund / registry / fixed)
-  x[, cluster_id := as.character(get(cluster_col_for(x)))]
+  x <- select_controls_R(x, outcome, d)                                       # v20.59: CONTROL_SELECTION -- the pre period's choice, fixed for the panel
+  if (identical(d$cluster, "block")) { x[, block_id := block_ids_R(x, d$control_block_deg %||% 0.01)]; x[, cluster_id := as.character(block_id)] }   # v20.59
+  else x[, cluster_id := as.character(get(cluster_col_for(x)))]
   x <- attach_dose_R(x, d)                                                    # v20.57: the fund file's dose under the timing in force
   setattr(x, "n_gapfilled_excluded", if (isTRUE(d$exclude_gapfilled %||% EXCLUDE_GAPFILLED)) n_gf else 0L)
   setattr(x, "covariates_used", covs)                                         # v20.57: what covs_in() hands every model
@@ -1232,7 +1340,8 @@ DESIGN_DEFAULTS <- list(DESIGN_MODE = "recommended", TREATMENT_TIMING = "fund", 
                         FUND_RATE_MONTHS = 12L, FUND_DOSE_BEFORE_FILE = "backcast", DOSE_VARIABLE = "dose_intensity_per_ha", CONTROL_RINGS = "data",
                         PRE_YEARS = "data", POST_YEARS = "data", SEASONS = "all", EXCLUDE_TRANSITION_YEAR = FALSE, UNIT_FE = "pixel_season", COHORT_OFFSET = 0L,
                         OVERLAP_ROWS = "drop", FRAGMENT_RULE = "drop", FRAGMENT_MIN_SHARE = 0.05, POOLED_FE = "site_period", EXCLUDE_GAPFILLED = TRUE,
-                        COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SUB_WATERSHEDS = "data", OUTCOME_SCREEN = "drop", DESIGN_SOURCE = "model")   # v20.59: + the screen's rule, the design's source
+                        COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SUB_WATERSHEDS = "data", OUTCOME_SCREEN = "drop", DESIGN_SOURCE = "model",   # v20.59: + the screen's rule, the design's source
+                        CONTROL_SELECTION = "rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_RATIO = 3, CONTROL_SELECT_ON = "trend", CONTROL_BLOCK_DEG = 0.01, CLUSTER = "auto")   # v20.59: the control selection, the cluster
 design_variant_samples <- function(variants, out_dir, outcome = "NDVI") {
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
   for (nm in names(variants)) {

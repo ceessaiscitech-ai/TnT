@@ -23,3 +23,8 @@ on) -- `"model"` is design-based modelling (the timing / `TREATMENT_YEAR` settin
 and one ring per pixel** (`PIXEL_ONE_SITE`, both languages): the polygon that holds a row's latitude / longitude decides its
 sub-watershed and ring, so the same pixel has the same `site_id` / `buff_km` in every year and season and appears once per
 year-season -- confirmed on the finished panel (`panel_pixel_consistency.csv` / `panel_pixel_consistency_R.csv`).
+**The control group chosen on the PRE period** (`CONTROL_SELECTION`, both languages, panel level and every model): `"pre_rings"` =
+the 1 or 2 buffers whose pre-period series is closest to the treatment area's; `"pre_blocks"` = control clusters (~1 km blocks) from
+any part of the buffers; `"trend"` / `"level"` / `"both"` as the closeness; the same control pixels in every year and season; the
+evidence in `CONTROL_SELECTION_<outcome>.csv`; a post- or outcome-based rule is refused. `CLUSTER = "block"` clusters the SE on ~1 km
+blocks. What to change when the estimate is not significant, and what never to change: `ECONOMETRIC_ADVICE_v20.59.md`.

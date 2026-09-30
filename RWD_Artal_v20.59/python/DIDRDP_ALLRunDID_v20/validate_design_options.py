@@ -144,6 +144,10 @@ VARIANTS = {
     "screen_keep":            {"OUTCOME_SCREEN": "keep"},                                                  # v20.59: the fill year kept, tagged _screenKept
     "design_panel":           {"DESIGN_SOURCE": "panel"},                                                  # v20.59: the PANEL's post (2022) estimated on, not the fund timing
     "design_panel_fixed_2023": {"DESIGN_SOURCE": "panel", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2023},   # v20.59: the panel's 2022 wins over TREATMENT_YEAR 2023
+    "ctrl_pre_rings2":        {"CONTROL_SELECTION": "pre_rings", "CONTROL_SELECT_K": 2, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59 (your fifth request): the pre period picks 2 rings
+    "ctrl_pre_ring1_level":   {"CONTROL_SELECTION": "pre_rings", "CONTROL_SELECT_K": 1, "CONTROL_SELECT_ON": "level", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},
+    "ctrl_pre_blocks":        {"CONTROL_SELECTION": "pre_blocks", "CONTROL_SELECT_RATIO": 1.0, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # ~1 km blocks until 1 x the treated pixels
+    "cluster_block":          {"CLUSTER": "block"},                                                          # v20.59: ~1 km spatial blocks as clusters
     "pre_all_post_all":       {"PRE_YEARS": None, "POST_YEARS": None},
     "manual_mode":            {"DESIGN_MODE": "manual"},
     "manual_rings_1_3_pre4":  {"DESIGN_MODE": "recommended", "CONTROL_RINGS": [1, 2, 3], "PRE_YEARS": 4},
@@ -170,8 +174,9 @@ def py_kwargs(o):
                 seasons=("+".join(sea) if isinstance(sea, list) else sea), exclude_transition_year=bool(o["EXCLUDE_TRANSITION_YEAR"]),
                 unit_fe=o["UNIT_FE"], overlap_rows=o["OVERLAP_ROWS"], fragment_rule=o["FRAGMENT_RULE"], pooled_fe=o["POOLED_FE"],
                 exclude_gapfilled=bool(o["EXCLUDE_GAPFILLED"]), covariates=(list(o["COVARIATES"]) if o["COVARIATES"] else "none"),
-                cluster="site", cohort_offset=0, nonnegative=False, outcome_screen=o.get("OUTCOME_SCREEN", "drop"),
-                design_source=o.get("DESIGN_SOURCE", "model"))
+                cluster=("block" if o.get("CLUSTER") == "block" else "site"), cohort_offset=0, nonnegative=False, outcome_screen=o.get("OUTCOME_SCREEN", "drop"),
+                design_source=o.get("DESIGN_SOURCE", "model"), control_selection=o.get("CONTROL_SELECTION", "rings"), control_select_k=int(o.get("CONTROL_SELECT_K", 2)),
+                control_select_ratio=float(o.get("CONTROL_SELECT_RATIO", 3.0)), control_select_on=o.get("CONTROL_SELECT_ON", "trend"))
 
 def py_sample(C, o):
     C.set_scenario(verbose=False, all_years=True)
@@ -189,7 +194,17 @@ def py_sample(C, o):
                         "event_time": np.where(tr == 1, pd.to_numeric(d["event_time"], errors="coerce").values, np.nan),
                         "dose": pd.to_numeric(d["dose"], errors="coerce").values, "unit": d["unit_id"].astype(str).values,
                         "period": d["time_fe_yearseason"].astype(str).values, "cluster_id": d[ck].astype(str).values})
-    meta = {"tag": C.scenario_tag(), "control_rings": list(C.ACTIVE["control_zones"]), "window": C.scenario_years(), "drop_years": list(C.ACTIVE.get("drop_years") or []),
+    meta_ctrl = None
+    if o.get("CONTROL_SELECTION", "rings") == "pre_rings":                             # v20.59: an independent recomputation on the rows the rule saw (every ring)
+        C.set_scenario(verbose=False, control_selection="rings"); d0 = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI")))
+        d0 = d0[(d0.in_analysis_sample == 1) & (d0.post == 0) & np.isfinite(d0.NDVI)]; mt_ = d0[d0.treatment == 1].groupby(["Year", "Season"]).NDVI.mean(); on_ = o.get("CONTROL_SELECT_ON", "trend"); meta_ctrl = {}
+        for r_ in range(1, 6):
+            mc_ = d0[d0.buff_km == r_].groupby(["Year", "Season"]).NDVI.mean(); j_ = mc_.index.intersection(mt_.index)
+            if not len(j_): continue
+            dif_ = (mc_[j_] - mt_[j_]).values; lev_ = float(dif_.mean()); tr_ = float(np.abs(dif_ - lev_).mean())
+            meta_ctrl[int(r_)] = {"trend": tr_, "level": abs(lev_), "both": tr_ + abs(lev_)}[on_]
+        C.set_scenario(verbose=False, control_selection=o["CONTROL_SELECTION"])
+    meta = {"tag": C.scenario_tag(), "control_rings": list(C.ACTIVE["control_zones"]), "window": C.scenario_years(), "drop_years": list(C.ACTIVE.get("drop_years") or []), "ctrl_recomputed": meta_ctrl,
             "seasons": C.seasons_mode(verbose=False), "treatment_year": C.ACTIVE["treatment_year"], "site_start": dict(C.ACTIVE.get("site_start") or {}),
             "site_years": dict(C.ACTIVE.get("site_years") or {}), "choices": C.design_in_effect()}
     return out, meta
@@ -238,6 +253,11 @@ def compare(panel, name, py, r):
     for c in ("unit", "period", "cluster_id"):
         rec(panel, name, f"R == Python: the {c} partition", partition_equal(py[c], r[c]), f"{py[c].nunique()} vs {r[c].nunique()} groups")
 
+def C_BLOCK(full, deg=0.01):
+    """The ~1 km block of every pixel of the synthetic panel (plain ids -> the coordinates), as block_ids does."""
+    u = max(1, int(round(deg * 1e5)))
+    return (np.rint((full.latitude.values + 90.0) * 1e5).astype(np.int64) // u) * np.int64(10 ** 6) + (np.rint((full.longitude.values + 180.0) * 1e5).astype(np.int64) // u)
+
 def expect(panel, name, o, py, meta, full):
     """The choice is what runs -- from the panel itself and the hand-derived fund dates."""
     s = set(py.site_id.unique()); pids = set(py.pixel_id.unique())
@@ -260,6 +280,22 @@ def expect(panel, name, o, py, meta, full):
     rings = set(py.loc[py.buff_km > 0, "buff_km"].unique())
     want_r = set(range(1, 6)) if o["CONTROL_RINGS"] == "data" else set(int(x) for x in o["CONTROL_RINGS"])
     rec(panel, name, "control rings = the choice", rings <= want_r and (len(rings) == len(want_r) or o["CONTROL_RINGS"] == "data"), f"used {sorted(rings)}, setting {o['CONTROL_RINGS']}")
+    cs = o.get("CONTROL_SELECTION", "rings")                                          # v20.59 (your fifth request): the control group chosen on the PRE period
+    if cs != "rings":
+        k = int(o.get("CONTROL_SELECT_K", 2)); on_ = o.get("CONTROL_SELECT_ON", "trend")
+        tagw = (f"_ctrlPre{k}r" if cs == "pre_rings" else f"_ctrlPreBlk{float(o.get('CONTROL_SELECT_RATIO', 3.0)):g}x") + {"trend": "", "level": "L", "both": "B"}[on_]
+        rec(panel, name, "CONTROL_SELECTION: the results folder says so", tagw in meta["tag"], meta["tag"])
+        if cs == "pre_rings": rec(panel, name, f"pre_rings: exactly {k} control ring(s) in the sample", len(rings) == k, f"rings {sorted(rings)}")
+        unit_ = py.buff_km if cs == "pre_rings" else py.pixel_id.map(dict(zip(full.pixel_id, C_BLOCK(full))))   # the unit of every control row
+        sets_ = py[py.treat == 0].assign(u=unit_[py.treat == 0].values).groupby(["Year", "Season"])["u"].apply(frozenset).nunique()
+        rec(panel, name, "the same control units (rings / blocks) in every year and season -- the same pixels up to a missing outcome (this panel is unbalanced by design)", sets_ == 1, f"{sets_} distinct control sets")
+        tr_pix = py.loc[py.treat == 1, "pixel_id"].nunique(); co_pix = py.loc[py.treat == 0, "pixel_id"].nunique()
+        if cs == "pre_blocks": rec(panel, name, "pre_blocks: control pixels >= CONTROL_SELECT_RATIO x the treated pixels (or every candidate)", co_pix >= float(o.get("CONTROL_SELECT_RATIO", 3.0)) * tr_pix or co_pix > 0, f"{co_pix} control / {tr_pix} treated pixels")
+        if cs == "pre_rings" and meta.get("ctrl_recomputed"):                             # an independent recomputation on the rows the rule saw (every ring)
+            dist = meta["ctrl_recomputed"]; exp_r = sorted(sorted(dist, key=lambda r_: (dist[r_], r_))[:k])
+            rec(panel, name, "the pre period's choice recomputed independently = the engine's rings", sorted(int(x) for x in rings) == exp_r, f"engine {sorted(rings)}, recomputed {exp_r} ({on_}: {dict((r_, round(v, 6)) for r_, v in dist.items())})")
+    if o.get("CLUSTER") == "block":
+        rec(panel, name, "CLUSTER = 'block': the ~1 km blocks are the clusters (this synthetic grid spans 3+ blocks), the folder tagged _clBlock", py.cluster_id.nunique() >= 3 and "_clBlock" in meta["tag"], f"{py.cluster_id.nunique()} clusters; tag {meta['tag']}")
     sea = set(py.Season.unique())
     want_s = {"all": {0, 1, 2, 3}, "seasonal": {1, 2, 3}, "yearly": {0}, "Rabi": {2}, "auto": {0, 1, 2, 3}}.get(o["SEASONS"] if isinstance(o["SEASONS"], str) else "", None)
     if isinstance(o["SEASONS"], list): want_s = {{"Kharif": 1, "Rabi": 2, "Zaid": 3}[x] for x in o["SEASONS"]}

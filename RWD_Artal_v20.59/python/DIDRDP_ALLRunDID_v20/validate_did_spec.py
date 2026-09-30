@@ -180,6 +180,30 @@ bm, _sem = C.estimate_twfe_did(sm, "NDVI", "did_term", "pixel_id", "time_fe_year
 check("DESIGN_SOURCE = 'model' (design-based modelling): post = Year >= 2023 (the setting), no _panelDesign tag, a different estimate",
       (dm["post"].values == (dm["Year"].values >= 2023).astype(int)).all() and "_panelDesign" not in C.scenario_tag() and abs(bm - b) > 1e-6, f"{bm:.8f} vs {b:.8f}")
 C.set_scenario(timing="fixed", treatment_year=T0, design_source="model", verbose=False); C._RESOLVED["key"] = None
+# v20.59 (your fifth request): the control group chosen on the PRE period -- per outcome, the same pixels in every year and season; never on the post period
+C.set_scenario(control_selection="pre_rings", control_select_k=2, control_select_on="level", verbose=False); C._RESOLVED["key"] = None
+dl = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); sl = dl[dl.in_analysis_sample == 1].copy()
+check("CONTROL_SELECTION = 'pre_rings', K = 2 on 'level': rings 1 and 2 (the DGP's ring levels are 0.30 + 0.02 x ring), the folder tagged _ctrlPre2rL",
+      set(sl.loc[sl.treatment == 0, "buff_km"].astype(int)) == {1, 2} and "_ctrlPre2rL" in C.scenario_tag(), f"rings {sorted(sl.loc[sl.treatment == 0, 'buff_km'].unique())}, tag {C.scenario_tag()}")
+C.set_scenario(control_select_on="trend", verbose=False); C._RESOLVED["key"] = None
+dt_ = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); st = dt_[dt_.in_analysis_sample == 1].copy()
+pre_ = dt_[(dt_.post == 0) & np.isfinite(dt_.NDVI)]; mt_ = pre_[pre_.treatment == 1].groupby(["Year", "Season"]).NDVI.mean(); dist_ = {}
+for r_ in range(1, 6):
+    mc_ = pre_[pre_.buff_km == r_].groupby(["Year", "Season"]).NDVI.mean(); j_ = mc_.index.intersection(mt_.index); dif_ = (mc_[j_] - mt_[j_]).values
+    dist_[r_] = float(np.abs(dif_ - dif_.mean()).mean())
+exp2 = sorted(sorted(dist_, key=lambda r_: (dist_[r_], r_))[:2]); got2 = sorted(set(st.loc[st.treatment == 0, "buff_km"].astype(int)))
+check("pre_rings on 'trend': the engine's two rings = the two smallest pre-trend distances recomputed independently from every loaded row", got2 == exp2, f"engine {got2}, recomputed {exp2} from {dict((k_, round(v_, 6)) for k_, v_ in dist_.items())}")
+ev = pd.read_csv(C.control_selection_path("NDVI"))
+check("CONTROL_SELECTION_NDVI.csv: every ring's pre-period facts, the two selected = the engine's rings, the rule recorded", len(ev) == 5 and sorted(ev.loc[ev.selected, "unit"].astype(int)) == got2 and (ev.rule == "trend").all() and np.allclose(sorted(ev.trend_distance), sorted(dist_.values()), atol=1e-9), str(ev[["unit", "trend_distance", "level_gap", "selected"]].to_dict("records"))[:300])
+sets_ = st[st.treatment == 0].groupby(["Year", "Season"]).pixel_id.apply(frozenset).nunique()
+check("the control pixels are the same in every year and season (fixed across the whole panel); the treated pixels untouched", sets_ == 1 and st.loc[st.treatment == 1, "pixel_id"].nunique() == s.loc[s.treatment == 1, "pixel_id"].nunique(), f"{sets_} distinct control sets")
+bt_, set__ = C.estimate_twfe_did(st, "NDVI", "did_term", "pixel_id", "time_fe_yearseason", "subwshed_id")
+check("M01 on the chosen rings = explicit-dummy OLS on that sample to 1e-8 (the estimator is unchanged, only the control group)", abs(bt_ - ols_on(st)) < 1e-8, f"{bt_:.10f} vs {ols_on(st):.10f} on {len(st)} rows")
+try:
+    C.set_scenario(control_selection="post_means", verbose=False); check("a post-period / outcome-mean rule is refused (it selects on the outcome)", False, "accepted")
+except Exception as e_:
+    check("a post-period / outcome-mean rule is refused (it selects on the outcome)", "selects on the outcome" in str(e_), str(e_)[:120])
+C.set_scenario(control_selection="rings", control_select_on="trend", verbose=False); C._RESOLVED["key"] = None
 # ---------------------------------------------------------------- 4 R on the same exports
 rroot = ROOT + "/R"; shutil.copytree(ROOT + "/data", rroot); RLIB = os.path.dirname(C.r_bridge_script())
 rs = f"""
@@ -201,6 +225,10 @@ EXCLUDE_GAPFILLED <- TRUE
 DESIGN_SOURCE <- "panel"; TREATMENT_YEAR <- 2023; dpn <- model_design(verbose = FALSE, force = TRUE); xp <- load_panel_R("NDVI", dpn); fp <- fe_fit(xp, "NDVI", "did"); tag_p <- scenario_tag(dpn); pvp <- attr(xp, "post_vs_panel")
 DESIGN_SOURCE <- "model"; dmn <- model_design(verbose = FALSE, force = TRUE); xm <- load_panel_R("NDVI", dmn); fm <- fe_fit(xm, "NDVI", "did"); tag_m <- scenario_tag(dmn)
 TREATMENT_YEAR <- {T0}
+CONTROL_SELECTION <- "pre_rings"; CONTROL_SELECT_K <- 2L; CONTROL_SELECT_ON <- "trend"; dcs <- model_design(verbose = FALSE, force = TRUE); xs <- load_panel_R("NDVI", dcs); fs <- fe_fit(xs, "NDVI", "did"); tag_s <- scenario_tag(dcs)
+sel_rings <- sort(unique(xs[treat == 0L, buff_km])); sel_fixed <- uniqueN(xs[treat == 0L, .(k = paste(sort(pixel_id), collapse = ",")), by = .(Year, Season)]$k)
+CONTROL_SELECT_ON <- "level"; dcl <- model_design(verbose = FALSE, force = TRUE); xl <- load_panel_R("NDVI", dcl); sel_rings_level <- sort(unique(xl[treat == 0L, buff_km]))
+CONTROL_SELECTION <- "rings"; CONTROL_SELECT_ON <- "trend"
 HAS_FIXEST <<- FALSE; f2 <- fe_fit(x, "NDVI", "did")
 writeLines(jsonlite::toJSON(list(n = f1$n, G = f1$G, fixest_beta = unname(f1$coef["did"]), fixest_se = unname(f1$se["did"]), fixest_engine = f1$engine,
                                  builtin_beta = unname(f2$coef["did"]), builtin_se = unname(f2$se["did"]), builtin_engine = f2$engine,
@@ -211,6 +239,8 @@ writeLines(jsonlite::toJSON(list(n = f1$n, G = f1$G, fixest_beta = unname(f1$coe
                                  panel_post_ok = all(xp$post == as.integer(xp$Year >= {T0})) && all(xp$did == xp$treat * xp$post) && all(xp[treat == 1L, cohort] == {T0}),
                                  model_beta = unname(fm$coef["did"]), model_post_ok = all(xm$post == as.integer(xm$Year >= 2023)), model_tag = tag_m,
                                  panel_has_treat = "Treat" %in% panel_names(),
+                                 sel_rings = as.list(sel_rings), sel_beta = unname(fs$coef["did"]), sel_n = fs$n, sel_tag = tag_s, sel_fixed = sel_fixed, sel_rings_level = as.list(sel_rings_level),
+                                 sel_file = file.exists(file.path(RESULTS_DIR, "CONTROL_SELECTION_NDVI_R.csv")),
                                  pixel_consistency_offenders = nrow(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")))), auto_unbox = TRUE, digits = NA), file.path(root, "r_m01.json"))
 cat("@@RDONE@@\\n")
 """
@@ -244,6 +274,10 @@ else:
     check("R DESIGN vs PANEL under the panel source: the design in effect (2023) differs on the 2022 rows, said (as Python)", (rj.get("panel_pvp") or [0, 0])[1] == 4 * len(pts), str(rj.get("panel_pvp")))
     check("R DESIGN_SOURCE <- 'model': post = Year >= 2023, no _panelDesign tag, the same beta as Python's design-based estimate to 1e-8",
           bool(rj.get("model_post_ok")) and "_panelDesign" not in str(rj.get("model_tag")) and abs(rj["model_beta"] - bm) < 1e-8, f"R {rj.get('model_beta')} vs Python {bm:.10f}")
+    check("R CONTROL_SELECTION <- 'pre_rings' (trend, K = 2): the same two rings as Python's, the same pixels in every year-season, the same beta to 1e-8, _ctrlPre2r tag, the evidence file written",
+          sorted(int(v) for v in (rj.get("sel_rings") or [])) == got2 and rj.get("sel_fixed") == 1 and abs(rj["sel_beta"] - bt_) < 1e-8 and rj.get("sel_n") == len(st) and "_ctrlPre2r" in str(rj.get("sel_tag")) and rj.get("sel_file") is True,
+          f"R rings {rj.get('sel_rings')} beta {rj.get('sel_beta')} n {rj.get('sel_n')} vs Python {got2} {bt_:.10f} n {len(st)}; tag {rj.get('sel_tag')}")
+    check("R 'level' K = 2: rings 1 and 2 (as Python)", sorted(int(v) for v in (rj.get("sel_rings_level") or [])) == [1, 2], str(rj.get("sel_rings_level")))
     st_r = rp.merge(STRAY[["latitude", "longitude"]].drop_duplicates(), on=["latitude", "longitude"])
     check("R_P00 panel: Treat used and not kept; the 5 pixels of the Beguru file once per year-season in sub-watershed 7 ring 0; panel_pixel_consistency_R.csv with 0 offenders",
           rj.get("panel_has_treat") is False and rj.get("pixel_consistency_offenders") == 0 and len(st_r) == 5 * len(years) * len(seasons)
