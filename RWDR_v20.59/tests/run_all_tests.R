@@ -340,6 +340,10 @@ if (!inherits(tE, "error")) {
                ctrl_pre2 = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # v20.59: the pre period picks 2 rings
                cluster_block = list(CLUSTER = "block", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                  # v20.59: ~1 km blocks as clusters
                pix_all = list(SAME_PIXELS = "all", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                    # v20.59: a balanced pixel set
+               donut1 = list(DONUT_RINGS = 1L, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                       # spec 1: ring 1 leaves the control pool
+               ctrl_rmse = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_ON = "rmse", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # spec 1: the RMSE rule
+               ndvi_base = list(BASELINE_NDVI_MIN = 0.30, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                              # spec 1: the pre-period mean NDVI mask
+               no_single_off = list(DROP_SINGLETONS = FALSE, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                           # spec 1: the singleton pre-flight off
                rabi = list(SEASONS = "Rabi"), manual = list(DESIGN_MODE = "manual"), transition = list(EXCLUDE_TRANSITION_YEAR = TRUE),
                gapfilled_kept = list(EXCLUDE_GAPFILLED = FALSE), dose_amount = list(DOSE_VARIABLE = "dose_amount_sws"))
   od <- file.path(TMP, "E_out"); design_variant_samples(vars, od)
@@ -385,6 +389,27 @@ if (!inherits(tE, "error")) {
   pc_ <- if (!is.null(pa)) pa[, .(k = uniqueN(paste(Year, Season))), by = pixel_id] else NULL
   chkE("pix_all", "SAME_PIXELS = 'all' (v20.59): every pixel of the sample in every year-season (a balanced pixel set), the folder tagged _pixAll",
        !is.null(pa) && all(pc_$k == uniqueN(paste(pa$Year, pa$Season))) && !is.null(paj$tag) && grepl("_pixAll", paj$tag, fixed = TRUE), if (is.null(pa)) "no sample" else sprintf("%d pixel(s) short | %s", sum(pc_$k < uniqueN(paste(pa$Year, pa$Season))), paj$tag))
+  dn1 <- rd("donut1"); dn1j <- tryCatch(fromJSON(file.path(od, "donut1.json")), error = function(e) NULL)                     # spec 1
+  chkE("donut1", "DONUT_RINGS <- 1L (spec 1): no control row of ring 1, rings 2-5 stay, the folder tagged _donut1",
+       !is.null(dn1) && !any(dn1[treat == 0L, buff_km] == 1L) && setequal(unique(dn1[treat == 0L, buff_km]), 2:5) && !is.null(dn1j$tag) && grepl("_donut1", dn1j$tag, fixed = TRUE),
+       if (is.null(dn1)) "no sample" else sprintf("rings %s | %s", paste(sort(unique(dn1[treat == 0L, buff_km])), collapse = ","), dn1j$tag))
+  cr <- rd("ctrl_rmse"); crj <- tryCatch(fromJSON(file.path(od, "ctrl_rmse.json")), error = function(e) NULL)
+  crf <- tryCatch(fread(file.path(RESULTS_DIR, "CONTROL_SELECTION_NDVI_R.csv")), error = function(e) NULL)
+  crx <- if (!is.null(crf) && "rmse_gap" %in% names(crf)) { o_ <- crf[order(rmse_gap, unit)]; sort(o_$unit[1:2]) } else NULL                 # the two smallest RMSE gaps of the evidence
+  chkE("ctrl_rmse", "CONTROL_SELECT_ON <- 'rmse' (spec 1): the 2 rings with the smallest pre-period RMSE gap of the evidence table, the folder tagged _ctrlPre2rR",
+       !is.null(cr) && uniqueN(cr[treat == 0L, buff_km]) == 2 && !is.null(crx) && setequal(crx, unique(cr[treat == 0L, buff_km])) && !is.null(crj$tag) && grepl("_ctrlPre2rR", crj$tag, fixed = TRUE),
+       if (is.null(cr)) "no sample" else sprintf("rings %s | evidence says %s | %s", paste(sort(unique(cr[treat == 0L, buff_km])), collapse = ","), paste(crx, collapse = ","), crj$tag))
+  nb_ <- rd("ndvi_base"); nbj <- tryCatch(fromJSON(file.path(od, "ndvi_base.json")), error = function(e) NULL)
+  pan_ <- tryCatch(as.data.table(arrow::read_parquet(panel_file(), col_select = c("pixel_id", "Year", "NDVI"))), error = function(e) NULL)
+  bm_ <- if (!is.null(pan_) && !is.null(nb_)) pan_[Year < 2022L & is.finite(NDVI) & pixel_id %in% unique(nb_$pixel_id), .(m = mean(NDVI)), by = pixel_id] else NULL
+  chkE("ndvi_base", "BASELINE_NDVI_MIN <- 0.30 (spec 1): every pixel of the sample has a pre-period mean NDVI above 0.30 (recomputed from the panel), fewer pixels than base, tagged _ndviPre0.3",
+       !is.null(nb_) && !is.null(bm_) && nrow(bm_) == uniqueN(nb_$pixel_id) && all(bm_$m > 0.30) && uniqueN(nb_$pixel_id) < uniqueN(b$pixel_id) && !is.null(nbj$tag) && grepl("_ndviPre0.3", nbj$tag, fixed = TRUE),
+       if (is.null(nb_) || is.null(bm_)) "no sample" else sprintf("%d pixels (base %d), min pre mean %.4f | %s", uniqueN(nb_$pixel_id), uniqueN(b$pixel_id), min(bm_$m), nbj$tag))
+  ns_ <- tryCatch(fromJSON(file.path(od, "no_single_off.json")), error = function(e) NULL); bj_ <- tryCatch(fromJSON(file.path(od, "base.json")), error = function(e) NULL)
+  chkE("no_single_off", "DROP_SINGLETONS <- FALSE (spec 1): the folder loses the _noSingle tag the default carries",
+       !is.null(ns_$tag) && !grepl("_noSingle", ns_$tag, fixed = TRUE) && !is.null(bj_$tag) && grepl("_noSingle", bj_$tag, fixed = TRUE), sprintf("%s vs base %s", ns_$tag, bj_$tag))
+  rc_ <- tryCatch(outcome_range_check_R(data.table(NDVI = c(0.2, 0.5, 1.7, -9999), pixel_id = 1:4), "NDVI", say = FALSE), error = function(e) NULL)
+  chkE("range", "outcome_range_check_R (spec 3): a value outside [-1, 1] and a no-data code are counted and the check fails", !is.null(rc_) && isFALSE(rc_$ok) && rc_$n_outside_bounds >= 1 && rc_$n_nodata_codes >= 1, if (is.null(rc_)) "no result" else sprintf("outside %d, nodata %d", rc_$n_outside_bounds, rc_$n_nodata_codes))
   pcx <- tryCatch(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")), error = function(e) NULL)
   chkE("panel", "R_P00 confirmed the pixel consistency (v20.59): panel_pixel_consistency_R.csv written with 0 offenders (one sub-watershed and one ring per pixel, once per year-season)",
        !is.null(pcx) && nrow(pcx) == 0, if (is.null(pcx)) "file missing" else sprintf("%d offenders", nrow(pcx)))

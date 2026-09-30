@@ -17,7 +17,7 @@ import surrogate_did_estimator as SD
 
 DEFAULTS = {"ANALYSIS_VARIABLE": "NDVI", "SEASON_FILTER": "Rabi", "DONUT_RINGS": [1], "CONTROL_RINGS": "data", "CONTROL_SELECTION_METHOD": "pre_bias_min", "CONTROL_SELECT_ON": "level",
             "PRECISION_TOLERANCE": 1e-6, "MIN_PIXEL_COVERAGE_PCT": 0.70, "CLUSTER_VAR": "subwshed_id", "ESTIMATOR": "SURROGATE_DID", "LANDUSE_KEEP": "all", "BASELINE_NDVI_MIN": None,
-            "SAME_PIXELS": "pre_post", "DROP_SINGLETONS": True, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022, "DESIGN_SOURCE": "model", "EXCLUDE_TRANSITION_YEAR": False,
+            "SAME_PIXELS": "pre_post", "DROP_SINGLETONS": True, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022, "PRE_YEARS": "data", "POST_YEARS": "data", "DESIGN_SOURCE": "model", "EXCLUDE_TRANSITION_YEAR": False,
             "OUTCOME_SCREEN": "drop", "EXCLUDE_GAPFILLED": True, "COVARIATES": ["Rain", "Tmax", "Tmean", "Tmin"], "SURROGATES": ["NDWI", "LSWI", "NDMI", "Rain"], "SURROGATE_SEASON": 1,
             "OUTCOME_SEASONS": [2, 3], "REPORT_SPECS": ["canonical", "donut", "matched", "synthetic_did", "surrogate_index"]}
 SEASONS = {"rabi": "Rabi", "kharif": "Kharif", "zaid": "Zaid", "yearly": "yearly", "all": "all"}
@@ -45,6 +45,9 @@ def validate_config(cfg):
     if str(cfg["SAME_PIXELS"]).lower() not in ("pre_post", "all", "off"): bad.append("SAME_PIXELS: pre_post | all | off")
     if str(cfg["TREATMENT_TIMING"]).lower() not in ("fund", "registry", "fixed"): bad.append("TREATMENT_TIMING: fund | registry | fixed")
     if str(cfg["DESIGN_SOURCE"]).lower() not in ("panel", "model"): bad.append("DESIGN_SOURCE: panel | model")
+    for k in ("PRE_YEARS", "POST_YEARS"):
+        v = cfg[k]
+        if not (v is None or (isinstance(v, str) and v.lower() in ("data", "all")) or (isinstance(v, (int, float)) and not isinstance(v, bool) and v >= 1)): bad.append(f"{k}: data | all | a count of years | a calendar year")
     unknown = [s for s in cfg["REPORT_SPECS"] if s not in ("canonical", "donut", "matched", "synthetic_did", "surrogate_index")]
     if unknown: bad.append(f"REPORT_SPECS unknown: {unknown}")
     if bad: raise C.InsufficientDataError("configuration refused: " + "; ".join(bad))
@@ -53,7 +56,8 @@ def validate_config(cfg):
 def scenario_kwargs(cfg, spec="config"):
     """The engine's set_scenario arguments for a spec of the report; 'config' = the configuration as it stands."""
     method, k = METHODS[str(cfg["CONTROL_SELECTION_METHOD"]).lower()]
-    kw = dict(timing=cfg["TREATMENT_TIMING"], treatment_year=int(cfg["TREATMENT_YEAR"]), design_source=cfg["DESIGN_SOURCE"], exclude_transition_year=bool(cfg["EXCLUDE_TRANSITION_YEAR"]),
+    yrs = lambda v: "all" if v is None else (v.lower() if isinstance(v, str) else int(v))
+    kw = dict(timing=cfg["TREATMENT_TIMING"], treatment_year=int(cfg["TREATMENT_YEAR"]), pre_years=yrs(cfg["PRE_YEARS"]), post_years=yrs(cfg["POST_YEARS"]), design_source=cfg["DESIGN_SOURCE"], exclude_transition_year=bool(cfg["EXCLUDE_TRANSITION_YEAR"]),
               outcome_screen=cfg["OUTCOME_SCREEN"], exclude_gapfilled=bool(cfg["EXCLUDE_GAPFILLED"]), covariates=(list(cfg["COVARIATES"]) if cfg["COVARIATES"] else "none"),
               control_zones=(cfg["CONTROL_RINGS"] if isinstance(cfg["CONTROL_RINGS"], str) else tuple(int(x) for x in cfg["CONTROL_RINGS"])),
               seasons=SEASONS[str(cfg["SEASON_FILTER"]).lower()], donut_rings=[int(x) for x in (cfg.get("DONUT_RINGS") or [])],
@@ -66,7 +70,7 @@ def scenario_kwargs(cfg, spec="config"):
     return kw
 
 def apply_config(cfg, spec="config"):
-    C.set_scenario(all_years=True, verbose=False); C.set_scenario(**scenario_kwargs(cfg, spec)); C._RESOLVED["key"] = None
+    C.set_scenario(**scenario_kwargs(cfg, spec)); C._RESOLVED["key"] = None
     C.resolve_design(verbose=False, force=True); return C.scenario_tag()
 
 # ---------------------------------------------------------------- the pre-flight checks

@@ -208,6 +208,30 @@ C.set_scenario(control_selection="rings", control_select_on="trend", verbose=Fal
 dr = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI")))
 check("SAME_PIXELS = 'pre_post' (the default): every pixel of this DGP is observed before and after treatment -> 0 pixels leave; the sample integrity confirms 'the same pixels in pre and post'",
       (C.LAST_DESIGN_INFO.get("same_pixels") or {}).get("pixels_left_out") == 0 and any(r["check"] == "the same pixels in pre and post" and r["ok"] for r in C.LAST_INTEGRITY), str(C.LAST_DESIGN_INFO.get("same_pixels")))
+# ---------------------------------------------------------------- 3b specs 1-3: the donut, the RMSE rule + select_optimal_control_rings, the surrogate / synthetic DiD module, range safety
+C.set_scenario(donut_rings=[1], verbose=False); C._RESOLVED["key"] = None
+ddn = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); sdn = ddn[ddn.in_analysis_sample == 1].copy()
+check("DONUT_RINGS [1]: ring 1 leaves the control pool, rings 2-5 stay, the folder tagged _donut1", set(sdn.loc[sdn.treatment == 0, "buff_km"].astype(int)) == {2, 3, 4, 5} and "_donut1" in C.scenario_tag(), f"rings {sorted(sdn.loc[sdn.treatment == 0, 'buff_km'].unique())}, tag {C.scenario_tag()}")
+bdn, sedn = C.estimate_twfe_did(sdn, "NDVI", "did_term", "pixel_id", "time_fe_yearseason", "subwshed_id")
+check("M01 on the donut sample = explicit-dummy OLS to 1e-8 and within 2 SE of the TRUE delta", abs(bdn - ols_on(sdn)) < 1e-8 and abs(bdn - DELTA) < 2 * max(sedn, 1e-6), f"{bdn:.8f} (se {sedn:.6f}) vs OLS {ols_on(sdn):.8f}, true {DELTA}")
+C.set_scenario(donut_rings=[], control_selection="pre_rings", control_select_k=2, control_select_on="rmse", verbose=False); C._RESOLVED["key"] = None
+drm = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); srm = drm[drm.in_analysis_sample == 1].copy(); rmse_ = {}
+for r_ in range(1, 6):
+    mc_ = pre_[pre_.buff_km == r_].groupby(["Year", "Season"]).NDVI.mean(); j_ = mc_.index.intersection(mt_.index); dif_ = (mc_[j_] - mt_[j_]).values; rmse_[r_] = float(np.sqrt(np.mean(dif_ ** 2)))
+exp_rm = sorted(sorted(rmse_, key=lambda r_: (rmse_[r_], r_))[:2]); got_rm = sorted(set(srm.loc[srm.treatment == 0, "buff_km"].astype(int)))
+check("CONTROL_SELECT_ON 'rmse' (spec 1): the engine's two rings = the two smallest pre-period RMSE gaps recomputed independently (rings 1 and 2 on this DGP), tagged _ctrlPre2rR", got_rm == exp_rm == [1, 2] and "_ctrlPre2rR" in C.scenario_tag(), f"engine {got_rm}, recomputed {exp_rm} from {dict((k_, round(v_, 6)) for k_, v_ in rmse_.items())}; tag {C.scenario_tag()}")
+C.set_scenario(control_selection="rings", control_select_on="trend", verbose=False); C._RESOLVED["key"] = None
+opt_ch, opt_tab = C.select_optimal_control_rings(dt_[dt_.in_analysis_sample == 1], "NDVI", treat_ring=0, candidate_rings=[1, 2, 3, 4, 5], pre_years=range(2016, 2022), top_k=2, on="level")
+check("select_optimal_control_rings (level, top 2): rings 1 and 2 (the DGP's ring levels are 0.30 + 0.02 x ring), every candidate in its table", sorted(int(x) for x in opt_ch) == [1, 2] and len(opt_tab) == 5, f"{opt_ch}, {len(opt_tab)} rows")
+import surrogate_did_estimator as SD
+sd_ = SD.synthetic_did_two_level(s, "NDVI", pixel_level=True, cluster_col="subwshed_id", verbose=False)
+check("two-level synthetic DiD (spec 2): the aggregated ATT within 0.01 of the TRUE delta (parallel trends hold by construction), a finite jackknife SE, the pixel-level WLS TWFE beside it",
+      abs(sd_["att"] - DELTA) < 0.01 and np.isfinite(sd_["se"]) and np.isfinite(sd_["pixel_wls"]["beta"]) and abs(sd_["pixel_wls"]["beta"] - DELTA) < 0.01, f"ATT {sd_['att']:.6f} (se {sd_['se']:.6f}), pixel WLS {sd_['pixel_wls']['beta']:.6f}, true {DELTA}")
+dsi = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI", ["Rain", "Tmax"]))); ssi = dsi[dsi.in_analysis_sample == 1]
+si_ = SD.surrogate_index_did(ssi, "NDVI", ["Rain", "Tmax"], outcome_seasons=(2, 3), surrogate_season=1, cluster_col="subwshed_id", verbose=False)
+check("surrogate-index DiD (spec 2) runs on the DGP: a finite ATT, jackknife SE and pre-RMSPE, the surrogates recorded", np.isfinite(si_["att"]) and np.isfinite(si_["se"]) and np.isfinite(si_["pre_rmspe"]) and si_["surrogates"] == ["Rain", "Tmax"], f"ATT {si_['att']:.6f} se {si_['se']:.6f} pre-RMSPE {si_['pre_rmspe']:.5f}")
+rc_ = C.outcome_range_check(s, "NDVI", say=False)
+check("range safety (spec 3) on the DGP: every NDVI within [-1, 1], no no-data code, no zero-padding", rc_ and rc_["ok"] and rc_["n_zero_padding"] == 0, str(rc_))
 # ---------------------------------------------------------------- 4 R on the same exports
 rroot = ROOT + "/R"; shutil.copytree(ROOT + "/data", rroot); RLIB = os.path.dirname(C.r_bridge_script())
 rs = f"""
@@ -234,6 +258,12 @@ sel_rings <- sort(unique(xs[treat == 0L, buff_km])); sel_fixed <- uniqueN(xs[tre
 CONTROL_SELECT_ON <- "level"; dcl <- model_design(verbose = FALSE, force = TRUE); xl <- load_panel_R("NDVI", dcl); sel_rings_level <- sort(unique(xl[treat == 0L, buff_km]))
 CONTROL_SELECTION <- "rings"; CONTROL_SELECT_ON <- "trend"
 same_out <- attr(x, "same_pixels")
+DONUT_RINGS <- 1L; ddn <- model_design(verbose = FALSE, force = TRUE); xdn <- load_panel_R("NDVI", ddn); dn_rings <- sort(unique(xdn[treat == 0L, buff_km])); fdn <- fe_fit(xdn, "NDVI", "did"); tag_dn <- scenario_tag(ddn); DONUT_RINGS <- integer(0)
+CONTROL_SELECTION <- "pre_rings"; CONTROL_SELECT_K <- 2L; CONTROL_SELECT_ON <- "rmse"; drm <- model_design(verbose = FALSE, force = TRUE); xrm <- load_panel_R("NDVI", drm); rmse_rings <- sort(unique(xrm[treat == 0L, buff_km])); tag_rm <- scenario_tag(drm)
+CONTROL_SELECTION <- "rings"; CONTROL_SELECT_ON <- "trend"; d <- model_design(verbose = FALSE, force = TRUE)
+sd_r <- synthetic_did_two_level_R(x, "NDVI", pixel_level = TRUE, cluster_col = "cluster_id", say = FALSE)
+xsi <- load_panel_R("NDVI", d, extra = c("Rain", "Tmax")); si_r <- surrogate_index_did_R(xsi, "NDVI", c("Rain", "Tmax"), outcome_seasons = c(2L, 3L), surrogate_season = 1L, cluster_col = "cluster_id", say = FALSE)
+opt_r <- select_optimal_control_rings_R(x, "NDVI", candidate_rings = 1:5, pre_years = 2016:2021, top_k = 2L, on = "level")
 HAS_FIXEST <<- FALSE; f2 <- fe_fit(x, "NDVI", "did")
 writeLines(jsonlite::toJSON(list(n = f1$n, G = f1$G, fixest_beta = unname(f1$coef["did"]), fixest_se = unname(f1$se["did"]), fixest_engine = f1$engine,
                                  builtin_beta = unname(f2$coef["did"]), builtin_se = unname(f2$se["did"]), builtin_engine = f2$engine,
@@ -246,6 +276,8 @@ writeLines(jsonlite::toJSON(list(n = f1$n, G = f1$G, fixest_beta = unname(f1$coe
                                  panel_has_treat = "Treat" %in% panel_names(),
                                  sel_rings = as.list(sel_rings), sel_beta = unname(fs$coef["did"]), sel_n = fs$n, sel_tag = tag_s, sel_fixed = sel_fixed, sel_rings_level = as.list(sel_rings_level),
                                  sel_file = file.exists(file.path(RESULTS_DIR, "CONTROL_SELECTION_NDVI_R.csv")),
+                                 donut_rings = as.list(dn_rings), donut_beta = unname(fdn$coef["did"]), donut_n = fdn$n, donut_tag = tag_dn, rmse_rings = as.list(rmse_rings), rmse_tag = tag_rm,
+                                 sdid_att = sd_r$att, sdid_se = sd_r$se, sdid_wls_beta = sd_r$pixel_wls$beta, si_att = si_r$att, si_se = si_r$se, opt_rings = as.list(opt_r$chosen),
                                  same_left = as.integer(same_out$pixels_left_out), same_rule = same_out$rule, same_conf = any(attr(x, "integrity")$check == "the same pixels in pre and post" & attr(x, "integrity")$ok),
                                  pixel_consistency_offenders = nrow(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")))), auto_unbox = TRUE, digits = NA), file.path(root, "r_m01.json"))
 cat("@@RDONE@@\\n")
@@ -285,6 +317,12 @@ else:
           f"R rings {rj.get('sel_rings')} beta {rj.get('sel_beta')} n {rj.get('sel_n')} vs Python {got2} {bt_:.10f} n {len(st)}; tag {rj.get('sel_tag')}")
     check("R 'level' K = 2: rings 1 and 2 (as Python)", sorted(int(v) for v in (rj.get("sel_rings_level") or [])) == [1, 2], str(rj.get("sel_rings_level")))
     check("R SAME_PIXELS 'pre_post' (the default): 0 pixels leave, the integrity confirms the same pixels in pre and post", rj.get("same_left") == 0 and rj.get("same_rule") == "pre_post" and rj.get("same_conf") is True, f"{rj.get('same_rule')} left {rj.get('same_left')} confirmed {rj.get('same_conf')}")
+    check("R DONUT_RINGS <- 1L: rings 2-5 as controls, _donut1 tag, the same beta as Python's donut estimate to 1e-8 on the same rows",
+          sorted(int(v) for v in (rj.get("donut_rings") or [])) == [2, 3, 4, 5] and "_donut1" in str(rj.get("donut_tag")) and abs(rj["donut_beta"] - bdn) < 1e-8 and rj.get("donut_n") == len(sdn), f"R {rj.get('donut_rings')} {rj.get('donut_beta')} n {rj.get('donut_n')} vs Python {bdn:.10f} n {len(sdn)}; tag {rj.get('donut_tag')}")
+    check("R CONTROL_SELECT_ON <- 'rmse': the same two rings as Python's, tagged _ctrlPre2rR", sorted(int(v) for v in (rj.get("rmse_rings") or [])) == got_rm and "_ctrlPre2rR" in str(rj.get("rmse_tag")), f"R {rj.get('rmse_rings')} vs Python {got_rm}; tag {rj.get('rmse_tag')}")
+    check("R two-level synthetic DiD = Python's ATT, SE and pixel-WLS beta to 1e-8", abs(rj["sdid_att"] - sd_["att"]) < 1e-8 and abs(rj["sdid_se"] - sd_["se"]) < 1e-8 and abs(rj["sdid_wls_beta"] - sd_["pixel_wls"]["beta"]) < 1e-8, f"R {rj.get('sdid_att')} / {rj.get('sdid_se')} / {rj.get('sdid_wls_beta')} vs Python {sd_['att']:.10f} / {sd_['se']:.10f} / {sd_['pixel_wls']['beta']:.10f}")
+    check("R surrogate-index DiD = Python's ATT and SE to 1e-8", abs(rj["si_att"] - si_["att"]) < 1e-8 and abs(rj["si_se"] - si_["se"]) < 1e-8, f"R {rj.get('si_att')} / {rj.get('si_se')} vs Python {si_['att']:.10f} / {si_['se']:.10f}")
+    check("R select_optimal_control_rings_R (level, top 2) = rings 1 and 2 (as Python)", sorted(int(v) for v in (rj.get("opt_rings") or [])) == [1, 2], str(rj.get("opt_rings")))
     st_r = rp.merge(STRAY[["latitude", "longitude"]].drop_duplicates(), on=["latitude", "longitude"])
     check("R_P00 panel: Treat used and not kept; the 5 pixels of the Beguru file once per year-season in sub-watershed 7 ring 0; panel_pixel_consistency_R.csv with 0 offenders",
           rj.get("panel_has_treat") is False and rj.get("pixel_consistency_offenders") == 0 and len(st_r) == 5 * len(years) * len(seasons)

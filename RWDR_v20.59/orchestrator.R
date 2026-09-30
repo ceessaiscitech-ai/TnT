@@ -10,7 +10,7 @@ ONLY <- { o <- grep("^only=", args, value = TRUE); if (length(o)) strsplit(sub("
 DRY <- "dry_run" %in% args
 CFG_DEFAULTS <- list(ANALYSIS_VARIABLE = "NDVI", SEASON_FILTER = "Rabi", DONUT_RINGS = 1L, CONTROL_RINGS = "data", CONTROL_SELECTION_METHOD = "pre_bias_min", CONTROL_SELECT_ON = "level",
                      PRECISION_TOLERANCE = 1e-6, MIN_PIXEL_COVERAGE_PCT = 0.70, CLUSTER_VAR = "subwshed_id", ESTIMATOR = "SURROGATE_DID", LANDUSE_KEEP = "all", BASELINE_NDVI_MIN = NA,
-                     SAME_PIXELS = "pre_post", DROP_SINGLETONS = TRUE, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022L, DESIGN_SOURCE = "model", EXCLUDE_TRANSITION_YEAR = FALSE,
+                     SAME_PIXELS = "pre_post", DROP_SINGLETONS = TRUE, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022L, PRE_YEARS = "data", POST_YEARS = "data", DESIGN_SOURCE = "model", EXCLUDE_TRANSITION_YEAR = FALSE,
                      OUTCOME_SCREEN = "drop", EXCLUDE_GAPFILLED = TRUE, COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SURROGATES = c("NDWI", "LSWI", "NDMI", "Rain"), SURROGATE_SEASON = 1L,
                      OUTCOME_SEASONS = c(2L, 3L), REPORT_SPECS = c("canonical", "donut", "matched", "synthetic_did", "surrogate_index"))
 SEASONS_MAP <- c(rabi = "Rabi", kharif = "Kharif", zaid = "Zaid", yearly = "yearly", all = "all")
@@ -32,19 +32,20 @@ validate_config_R <- function(cfg) {
   dn <- suppressWarnings(as.integer(unlist(cfg$DONUT_RINGS))); dn <- dn[is.finite(dn)]; if (length(dn) && any(!dn %in% 1:5)) bad <- c(bad, "DONUT_RINGS must name rings 1..5")
   if (!tolower(cfg$CONTROL_SELECT_ON) %in% c("level", "rmse", "trend", "both")) bad <- c(bad, "CONTROL_SELECT_ON: level | rmse | trend | both")
   if (!tolower(cfg$SAME_PIXELS) %in% c("pre_post", "all", "off")) bad <- c(bad, "SAME_PIXELS: pre_post | all | off")
+  for (k in c("PRE_YEARS", "POST_YEARS")) { v <- cfg[[k]]; if (!(is.null(v) || (length(v) == 1 && is.na(v)) || (is.character(v) && tolower(v) %in% c("data", "all")) || (is.numeric(v) && v >= 1))) bad <- c(bad, sprintf("%s: data | all | a count of years | a calendar year", k)) }
   unknown <- setdiff(cfg$REPORT_SPECS, c("canonical", "donut", "matched", "synthetic_did", "surrogate_index")); if (length(unknown)) bad <- c(bad, paste("REPORT_SPECS unknown:", paste(unknown, collapse = ",")))
   if (length(bad)) stop("configuration refused: ", paste(bad, collapse = "; "))
   cfg
 }
 apply_config_R <- function(cfg, spec = "config") {
   for (k in names(DESIGN_DEFAULTS)) assign(k, DESIGN_DEFAULTS[[k]], envir = globalenv())
-  m <- METHODS[[tolower(cfg$CONTROL_SELECTION_METHOD)]]
+  m <- METHODS[[tolower(cfg$CONTROL_SELECTION_METHOD)]]; yrs <- function(v) if (is.null(v) || (length(v) == 1 && is.na(v))) "all" else if (is.character(v)) tolower(v) else as.integer(v)
   g <- list(TREATMENT_TIMING = cfg$TREATMENT_TIMING, TREATMENT_YEAR = as.integer(cfg$TREATMENT_YEAR), DESIGN_SOURCE = cfg$DESIGN_SOURCE, EXCLUDE_TRANSITION_YEAR = isTRUE(cfg$EXCLUDE_TRANSITION_YEAR),
             OUTCOME_SCREEN = cfg$OUTCOME_SCREEN, EXCLUDE_GAPFILLED = isTRUE(cfg$EXCLUDE_GAPFILLED), COVARIATES = if (length(cfg$COVARIATES)) as.character(cfg$COVARIATES) else character(0),
             CONTROL_RINGS = if (is.character(cfg$CONTROL_RINGS)) cfg$CONTROL_RINGS else as.integer(unlist(cfg$CONTROL_RINGS)), SEASONS = SEASONS_MAP[[tolower(cfg$SEASON_FILTER)]],
             DONUT_RINGS = { dn <- suppressWarnings(as.integer(unlist(cfg$DONUT_RINGS))); dn[is.finite(dn)] }, CONTROL_SELECTION = m[[1]], CONTROL_SELECT_K = m[[2]], CONTROL_SELECT_ON = cfg$CONTROL_SELECT_ON,
             CLUSTER = CLUSTERS[[tolower(cfg$CLUSTER_VAR)]], LANDUSE_KEEP = cfg$LANDUSE_KEEP, BASELINE_NDVI_MIN = cfg$BASELINE_NDVI_MIN, MIN_PIXEL_COVERAGE_PCT = cfg$MIN_PIXEL_COVERAGE_PCT,
-            DROP_SINGLETONS = isTRUE(cfg$DROP_SINGLETONS), PRECISION_TOLERANCE = cfg$PRECISION_TOLERANCE, SAME_PIXELS = cfg$SAME_PIXELS, PRE_YEARS = "data", POST_YEARS = "data")
+            DROP_SINGLETONS = isTRUE(cfg$DROP_SINGLETONS), PRECISION_TOLERANCE = cfg$PRECISION_TOLERANCE, SAME_PIXELS = cfg$SAME_PIXELS, PRE_YEARS = yrs(cfg$PRE_YEARS), POST_YEARS = yrs(cfg$POST_YEARS))
   if (spec == "canonical") { g$SEASONS <- "all"; g$DONUT_RINGS <- integer(0); g$CONTROL_SELECTION <- "rings" }
   else if (spec == "donut") g$CONTROL_SELECTION <- "rings"
   else if (spec == "matched") g$CONTROL_SELECTION <- if (m[[1]] != "rings") m[[1]] else "pre_rings"

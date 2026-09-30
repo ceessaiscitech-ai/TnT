@@ -150,6 +150,13 @@ VARIANTS = {
     "cluster_block":          {"CLUSTER": "block"},                                                          # v20.59: ~1 km spatial blocks as clusters
     "same_pixels_all":        {"SAME_PIXELS": "all", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: a balanced pixel set
     "same_pixels_off":        {"SAME_PIXELS": "off", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: the v20.58 sample
+    "donut_ring1":            {"DONUT_RINGS": [1], "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},            # spec 1: ring 1 leaves the control pool
+    "donut_rings12_rabi":     {"DONUT_RINGS": [1, 2], "SEASONS": "Rabi", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # spec 1: the Rabi donut spec (rings 3-5)
+    "ctrl_pre_rmse":          {"CONTROL_SELECTION": "pre_rings", "CONTROL_SELECT_K": 2, "CONTROL_SELECT_ON": "rmse", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # spec 1: the pre-period RMSE rule
+    "landuse_keep_1":         {"LANDUSE_KEEP": [1], "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},              # spec 1: every pixel's baseline class is 1 -> nothing leaves, tagged
+    "baseline_ndvi_030":      {"BASELINE_NDVI_MIN": 0.30, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},        # spec 1: the pre-period mean NDVI mask
+    "coverage_pct_099":       {"MIN_PIXEL_COVERAGE_PCT": 0.99, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},    # spec 1: a strict coverage threshold, tagged
+    "singletons_kept":        {"DROP_SINGLETONS": False, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},         # spec 1: the singleton pre-flight off
     "pre_all_post_all":       {"PRE_YEARS": None, "POST_YEARS": None},
     "manual_mode":            {"DESIGN_MODE": "manual"},
     "manual_rings_1_3_pre4":  {"DESIGN_MODE": "recommended", "CONTROL_RINGS": [1, 2, 3], "PRE_YEARS": 4},
@@ -178,7 +185,9 @@ def py_kwargs(o):
                 exclude_gapfilled=bool(o["EXCLUDE_GAPFILLED"]), covariates=(list(o["COVARIATES"]) if o["COVARIATES"] else "none"),
                 cluster=("block" if o.get("CLUSTER") == "block" else "site"), cohort_offset=0, nonnegative=False, outcome_screen=o.get("OUTCOME_SCREEN", "drop"),
                 design_source=o.get("DESIGN_SOURCE", "model"), control_selection=o.get("CONTROL_SELECTION", "rings"), control_select_k=int(o.get("CONTROL_SELECT_K", 2)),
-                control_select_ratio=float(o.get("CONTROL_SELECT_RATIO", 3.0)), control_select_on=o.get("CONTROL_SELECT_ON", "trend"), same_pixels=o.get("SAME_PIXELS", "pre_post"))
+                control_select_ratio=float(o.get("CONTROL_SELECT_RATIO", 3.0)), control_select_on=o.get("CONTROL_SELECT_ON", "trend"), same_pixels=o.get("SAME_PIXELS", "pre_post"),
+                donut_rings=list(o.get("DONUT_RINGS", [])), landuse_keep=o.get("LANDUSE_KEEP", "all"), baseline_ndvi_min=o.get("BASELINE_NDVI_MIN"),
+                min_pixel_coverage_pct=float(o.get("MIN_PIXEL_COVERAGE_PCT", 0.05)), drop_singletons=bool(o.get("DROP_SINGLETONS", True)), precision_tolerance=float(o.get("PRECISION_TOLERANCE", 1e-6)))
 
 def py_sample(C, o):
     C.set_scenario(verbose=False, all_years=True)
@@ -204,9 +213,13 @@ def py_sample(C, o):
             mc_ = d0[d0.buff_km == r_].groupby(["Year", "Season"]).NDVI.mean(); j_ = mc_.index.intersection(mt_.index)
             if not len(j_): continue
             dif_ = (mc_[j_] - mt_[j_]).values; lev_ = float(dif_.mean()); tr_ = float(np.abs(dif_ - lev_).mean())
-            meta_ctrl[int(r_)] = {"trend": tr_, "level": abs(lev_), "both": tr_ + abs(lev_)}[on_]
+            meta_ctrl[int(r_)] = {"trend": tr_, "level": abs(lev_), "both": tr_ + abs(lev_), "rmse": float(np.sqrt(np.mean(dif_ ** 2)))}[on_]
         C.set_scenario(verbose=False, control_selection=o["CONTROL_SELECTION"])
-    meta = {"tag": C.scenario_tag(), "control_rings": list(C.ACTIVE["control_zones"]), "window": C.scenario_years(), "drop_years": list(C.ACTIVE.get("drop_years") or []), "ctrl_recomputed": meta_ctrl,
+    base_pixels = None
+    if o.get("LANDUSE_KEEP", "all") != "all":                                        # spec 1: the base sample's pixels (the mask off) for the expectation
+        C.set_scenario(verbose=False, landuse_keep="all"); dl = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); base_pixels = int(dl.loc[dl.in_analysis_sample == 1, "pixel_id"].nunique())
+        C.set_scenario(verbose=False, landuse_keep=o["LANDUSE_KEEP"])
+    meta = {"tag": C.scenario_tag(), "control_rings": list(C.ACTIVE["control_zones"]), "window": C.scenario_years(), "drop_years": list(C.ACTIVE.get("drop_years") or []), "ctrl_recomputed": meta_ctrl, "base_pixels": base_pixels,
             "seasons": C.seasons_mode(verbose=False), "treatment_year": C.ACTIVE["treatment_year"], "site_start": dict(C.ACTIVE.get("site_start") or {}),
             "site_years": dict(C.ACTIVE.get("site_years") or {}), "choices": C.design_in_effect()}
     return out, meta
@@ -281,11 +294,29 @@ def expect(panel, name, o, py, meta, full):
         rec(panel, name, "fragments kept (FRAGMENT_RULE keep)", has_frag, f"planted pixels in the sample: {sorted(pids & planted)}; sites {sorted(s)}")
     rings = set(py.loc[py.buff_km > 0, "buff_km"].unique())
     want_r = set(range(1, 6)) if o["CONTROL_RINGS"] == "data" else set(int(x) for x in o["CONTROL_RINGS"])
+    dn = set(int(x) for x in o.get("DONUT_RINGS", []))                                # spec 1: the donut rings never a control
+    if dn:
+        want_r -= dn
+        rec(panel, name, f"DONUT_RINGS {sorted(dn)}: no control row of these rings, the folder tagged _donut{'-'.join(str(x) for x in sorted(dn))}", not (rings & dn) and f"_donut{'-'.join(str(x) for x in sorted(dn))}" in meta["tag"], f"rings {sorted(rings)}; tag {meta['tag']}")
+    if o.get("LANDUSE_KEEP", "all") != "all":
+        rec(panel, name, f"LANDUSE_KEEP {o['LANDUSE_KEEP']}: every pixel's baseline class is 1 in this panel -> every pixel of the base sample stays, the folder tagged _lu1",
+            "_lu1" in meta["tag"] and py.pixel_id.nunique() == meta.get("base_pixels", py.pixel_id.nunique()), f"{py.pixel_id.nunique()} pixels; tag {meta['tag']}")
+    if o.get("BASELINE_NDVI_MIN") is not None:
+        th = float(o["BASELINE_NDVI_MIN"]); pre_ = full[(full.Year < 2022) & full.pixel_id.isin(pids) & np.isfinite(full.NDVI)]
+        bm = pre_.groupby("pixel_id").NDVI.mean()
+        rec(panel, name, f"BASELINE_NDVI_MIN {th}: every pixel of the sample has a pre-period mean NDVI above it (recomputed from the panel), the folder tagged _ndviPre{th:g}",
+            bool((bm.reindex(list(pids)).fillna(-9) > th).all()) and f"_ndviPre{th:g}" in meta["tag"], f"min pre mean {bm.reindex(list(pids)).min():.4f}; tag {meta['tag']}")
+    if float(o.get("MIN_PIXEL_COVERAGE_PCT", 0.05)) != 0.05:
+        rec(panel, name, f"MIN_PIXEL_COVERAGE_PCT {o['MIN_PIXEL_COVERAGE_PCT']}: the folder tagged _cov{int(round(float(o['MIN_PIXEL_COVERAGE_PCT']) * 100))}", f"_cov{int(round(float(o['MIN_PIXEL_COVERAGE_PCT']) * 100))}" in meta["tag"], meta["tag"])
+    if o.get("DROP_SINGLETONS", True) is False:
+        rec(panel, name, "DROP_SINGLETONS False: the folder is NOT tagged _noSingle", "_noSingle" not in meta["tag"], meta["tag"])
+    elif "_noSingle" in meta["tag"] or True:
+        rec(panel, name, "DROP_SINGLETONS True (the default): the folder tagged _noSingle", "_noSingle" in meta["tag"], meta["tag"])
     rec(panel, name, "control rings = the choice", rings <= want_r and (len(rings) == len(want_r) or o["CONTROL_RINGS"] == "data"), f"used {sorted(rings)}, setting {o['CONTROL_RINGS']}")
     cs = o.get("CONTROL_SELECTION", "rings")                                          # v20.59 (your fifth request): the control group chosen on the PRE period
     if cs != "rings":
         k = int(o.get("CONTROL_SELECT_K", 2)); on_ = o.get("CONTROL_SELECT_ON", "trend")
-        tagw = (f"_ctrlPre{k}r" if cs == "pre_rings" else f"_ctrlPreBlk{float(o.get('CONTROL_SELECT_RATIO', 3.0)):g}x") + {"trend": "", "level": "L", "both": "B"}[on_]
+        tagw = (f"_ctrlPre{k}r" if cs == "pre_rings" else f"_ctrlPreBlk{float(o.get('CONTROL_SELECT_RATIO', 3.0)):g}x") + {"trend": "", "level": "L", "both": "B", "rmse": "R"}[on_]
         rec(panel, name, "CONTROL_SELECTION: the results folder says so", tagw in meta["tag"], meta["tag"])
         if cs == "pre_rings": rec(panel, name, f"pre_rings: exactly {k} control ring(s) in the sample", len(rings) == k, f"rings {sorted(rings)}")
         unit_ = py.buff_km if cs == "pre_rings" else py.pixel_id.map(dict(zip(full.pixel_id, C_BLOCK(full))))   # the unit of every control row

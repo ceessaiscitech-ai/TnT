@@ -42,6 +42,7 @@ synthetic_did_two_level_R <- function(x, outcome, season = NULL, cell = c("site_
     gs <- g[Season == se_]; piv <- dcast(gs, cell ~ Year, value.var = "y"); full <- piv[complete.cases(piv)]
     cells <- full$cell; Y <- as.matrix(full[, -1]); yrs <- as.integer(colnames(Y))
     meta <- unique(gs, by = "cell"); meta <- meta[match(cells, meta$cell)]; treated <- meta$treated == 1L
+    meta[, n_pix := gs[, .(n_pix = max(n_pix)), by = cell][match(cells, cell), n_pix]]          # the cell's pixels = its largest year (row order plays no part: the same in Python)
     py <- gs[, .(post = max(post)), by = Year]; pre <- vapply(yrs, function(y) py[Year == y, post] == 0L, TRUE)
     if (sum(treated) == 0 || sum(!treated) < 2 || sum(pre) < 2 || sum(!pre) < 1) { rows[[length(rows) + 1]] <- data.table(Season = se_, status = sprintf("skipped: %d treated / %d donor cells, %d pre / %d post years", sum(treated), sum(!treated), sum(pre), sum(!pre))); next }
     r <- .sdid_on_matrix_R(Y, treated, pre, zeta); donors <- which(!treated); jk <- c()

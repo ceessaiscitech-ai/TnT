@@ -493,7 +493,7 @@ def check_zero_policy_and_readiness():
         for fn in ("_pa_worker", "prepare_pass_b_block"):
             if "apply_missing_policy(" not in _i.getsource(getattr(_P, fn)): bad(f"{fn} does not apply the NaN/zero policy")
         note("PASS A and PASS B set NaN/zero cells to missing before dedup and drop rows without an outcome")
-    if not hasattr(_C, "_usable") or "!= 0" not in _i.getsource(_C._usable): bad("_common._usable does not treat exact zeros as missing")
+    if not hasattr(_C, "_usable") or ("!= 0" not in _i.getsource(_C._usable) and "precision_tolerance" not in _i.getsource(_C._usable)): bad("_common._usable does not treat exact zeros as missing")   # spec 1: |v| <= PRECISION_TOLERANCE is the no-data zero
     if "_usable(" not in _i.getsource(_C._finite_rows): bad("estimators do not use the zero rule")
     if "_n_zero_dropped" not in _i.getsource(_C.load_panel): bad("load_panel does not apply/report the zero rule")
     if "policy_cols" not in _i.getsource(_C.estimate_twfe_did_streaming): bad("streaming estimator does not filter on the same policy columns as load_panel")
@@ -1750,7 +1750,7 @@ def check_v20_54():
     rl = os.path.dirname(_C.r_bridge_script())
     rp, rpr, rd = (open(os.path.join(rl, f_), encoding="utf-8").read() for f_ in ("reward_paths.R", "reward_prep.R", "reward_design.R"))
     if "ALLOW_NEGATIVE_COVARIATES <- FALSE" not in rp or "isTRUE(ALLOW_NEGATIVE_COVARIATES)" not in rpr: bad("R: no switch for the negative-covariate barrier")
-    elif "x[x == 0] <- NA" not in rpr.split("apply_missing_policy <- function")[1].split("\n}")[0]: bad("R: an exported 0 of a covariate is not missing (Python's zero rule)")   # v20.55: in apply_missing_policy, as Python
+    elif not any(k_ in rpr.split("apply_missing_policy <- function")[1].split("\n}")[0] for k_ in ("x[x == 0] <- NA", "PRECISION_TOLERANCE")): bad("R: an exported 0 of a covariate is not missing (Python's zero rule)")   # v20.55: in apply_missing_policy, as Python; spec 1: within the tolerance
     elif "return(sh)" not in rd.split("memory_share <- function")[1].split("\n}")[0]: bad("R: MEMORY_SHARE ignored")
     else: note("R: ALLOW_NEGATIVE_COVARIATES and the covariate zero rule as in Python; MEMORY_SHARE honoured")
     # 8. warnings you reported: pyfixest's raw singleton warning (pf_pipeline), R's coercion / qte notes
@@ -2639,6 +2639,98 @@ def check_v20_59():
         note("your rule: SAME_PIXELS 'pre_post' (default) | 'all' | 'off' -- the treated and control groups are the same pixels in pre and post (or every year-season), applied after the control choice in both languages, in memory and out of core, confirmed by the sample integrity")
         if "decide_controls_ooc(" not in _i.getsource(_OM2.prepare_sample) or "presel" not in _i.getsource(_OM2._t_presel): bad("the out-of-core path does not decide the control selection once in the parent")
         if "select_controls(out, in_grp, CURRENT_OUTCOME)" not in _i.getsource(_C.build_treatment_columns): bad("build_treatment_columns does not apply CONTROL_SELECTION")
+        # 10 specs 1-3 (your validation request): the donut, the RMSE rule + select_optimal_control_rings, the precision tolerance, the land-use / baseline masks, the
+        #    coverage threshold, the singleton pre-flight, range safety; the surrogate / synthetic DiD module; the configuration + orchestrators in both languages
+        for fn_ in ("donut_rule", "landuse_rule", "baseline_ndvi_rule", "select_optimal_control_rings", "outcome_range_check", "_pixel_baseline"):
+            if not callable(getattr(_C, fn_, None)): bad(f"_common lacks {fn_}")
+        src_b = _i.getsource(_C.build_treatment_columns)
+        for k_ in ("donut_rule(out, in_grp)", "landuse_rule(out, in_grp)", "baseline_ndvi_rule(out, in_grp)", "outcome_range_check(out, CURRENT_OUTCOME)"):
+            if k_ not in src_b: bad(f"build_treatment_columns does not call {k_}")
+        if src_b.index("donut_rule(") > src_b.index("select_controls(") or src_b.index("select_controls(") > src_b.index("same_pixels_rule("): bad("the rules run out of order (donut / masks -> control choice -> same pixels)")
+        if "drop_singletons" not in _i.getsource(_C.estimate_twfe_did): bad("estimate_twfe_did lacks the singleton pre-flight (DROP_SINGLETONS)")
+        if "PRECISION_TOLERANCE" not in open(os.path.join(HERE, "_prep_common.py"), encoding="utf-8").read(): bad("_prep_common lacks PRECISION_TOLERANCE (the zero rule of the panel)")
+        for k_, w_ in (("donut_rings", []), ("landuse_keep", "all"), ("baseline_ndvi_min", None), ("min_pixel_coverage_pct", 0.05), ("drop_singletons", True), ("precision_tolerance", 1e-6)):
+            if k_ not in _C.SCENARIO_KEYS: bad(f"{k_} is not part of the scenario the workers receive")
+        try: _C.set_scenario(donut_rings=[7], verbose=False); bad("DONUT_RINGS 7 (no such ring) is not refused")
+        except Exception: pass
+        try: _C.set_scenario(control_select_on="post_rmse", verbose=False); bad("CONTROL_SELECT_ON 'post_rmse' is not refused")
+        except Exception: pass
+        _C.set_scenario(control_select_on="rmse", verbose=False)
+        if _C.ACTIVE.get("control_select_on") != "rmse": bad("CONTROL_SELECT_ON 'rmse' (spec 1) is not accepted")
+        _C.set_scenario(control_select_on="trend", verbose=False)
+        _rows = []                                                                    # a frame: ring 1 far, rings 2 and 3 close to the treated core's pre level, ring 4 with a trend
+        for _p, _ring, _lvl, _sl in ((1, 0, 0.30, 0.0), (2, 0, 0.30, 0.0), (3, 1, 0.45, 0.0), (4, 1, 0.45, 0.0), (5, 2, 0.31, 0.0), (6, 2, 0.31, 0.0), (7, 3, 0.32, 0.0), (8, 3, 0.32, 0.0), (9, 4, 0.30, 0.02), (10, 4, 0.30, 0.02)):
+            for _y in range(2016, 2025):
+                _rows.append((_p * 10 ** 9 + 7, _ring, _y, 2, 7, "SW7", f"{_y}_2", _lvl + _sl * (_y - 2016) + 0.001 * (_p % 3) + 0.03 * (_ring == 0 and _y >= 2022), int(_y >= 2022), 15.0 + _p * 3e-4, 75.0, 1.0 if _ring < 4 else 2.0))
+        fs2 = _pd.DataFrame(_rows, columns=["pixel_id", "buff_km", "Year", "Season", "site_id", "subwshed_id", "time_fe_yearseason", "NDVI", "post", "latitude", "longitude", "LandUse"])
+        _co = _C.CURRENT_OUTCOME; _C.CURRENT_OUTCOME = "NDVI"
+        try:
+            _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", same_pixels="pre_post", control_selection="rings", verbose=False)
+            _C.set_scenario(donut_rings=[1], verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
+            if rg != [2, 3, 4] or "_donut1" not in _C.scenario_tag() or (_C.LAST_DESIGN_INFO.get("donut") or {}).get("pixels_left_out") != 2: bad(f"DONUT_RINGS [1] does not remove ring 1 from the control pool (rings {rg}; {_C.LAST_DESIGN_INFO.get('donut')}; tag {_C.scenario_tag()})")
+            _C.set_scenario(donut_rings=[], landuse_keep=[1], verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
+            if rg != [1, 2, 3] or "_lu1" not in _C.scenario_tag(): bad(f"LANDUSE_KEEP [1] does not keep the pixels of baseline class 1 only (rings {rg}; tag {_C.scenario_tag()})")
+            _C.set_scenario(landuse_keep="all", baseline_ndvi_min=0.305, verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
+            if rg != [1, 2, 3] or "_ndviPre0.305" not in _C.scenario_tag(): bad(f"BASELINE_NDVI_MIN 0.305 does not keep the pixels whose pre mean is above it (rings {rg}; tag {_C.scenario_tag()})")
+            _C.set_scenario(baseline_ndvi_min=None, control_selection="pre_rings", control_select_k=2, control_select_on="rmse", verbose=False); g = _C.build_treatment_columns(fs2.copy())
+            rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
+            if rg != [2, 3] or "_ctrlPre2rR" not in _C.scenario_tag(): bad(f"CONTROL_SELECT_ON 'rmse' does not choose the two rings with the smallest pre-period RMSE gap (rings {rg}; tag {_C.scenario_tag()})")
+            ch_, tab_ = _C.select_optimal_control_rings(fs2, "NDVI", treat_ring=0, candidate_rings=[1, 2, 3, 4], pre_years=range(2016, 2022), top_k=2, on="level")
+            if sorted(int(x) for x in ch_) != [2, 3] or len(tab_) != 4: bad(f"select_optimal_control_rings does not return the two closest rings on the pre period (got {ch_}, {len(tab_)} rows)")
+            _C.set_scenario(control_selection="rings", control_select_on="trend", verbose=False)
+            rc_ = _C.outcome_range_check(fs2.assign(NDVI=fs2.NDVI.where(fs2.index > 1, [1.7, -9999.0])), "NDVI", say=False)
+            if not rc_ or rc_.get("ok") is not False or rc_.get("n_outside_bounds", 0) < 1 or rc_.get("n_nodata_codes", 0) < 1: bad(f"outcome_range_check misses a value outside [-1, 1] or a no-data code ({rc_})")
+            _C.set_scenario(drop_singletons=True, verbose=False); g = _C.build_treatment_columns(fs2.copy()); s_ = g[g.in_analysis_sample == 1]
+            s1 = _pd.concat([s_, s_.iloc[[0]].assign(pixel_id=99 * 10 ** 9 + 7, Year=2016)], ignore_index=True)     # one series seen once
+            b1, _ = _C.estimate_twfe_did(s1, "NDVI", "did_term", "pixel_id", "time_fe_yearseason", "subwshed_id")
+            if (_C.LAST_FIT_INFO.get("singleton_rows_dropped") or 0) != 1 or "_noSingle" not in _C.scenario_tag(): bad(f"DROP_SINGLETONS does not drop the series seen once before the demeaning ({_C.LAST_FIT_INFO.get('singleton_rows_dropped')}; tag {_C.scenario_tag()})")
+            _C.set_scenario(drop_singletons=False, verbose=False)
+            if "_noSingle" in _C.scenario_tag(): bad("DROP_SINGLETONS False still tags _noSingle")
+            _C.set_scenario(drop_singletons=True, min_pixel_coverage_pct=0.70, verbose=False)
+            if "_cov70" not in _C.scenario_tag(): bad("MIN_PIXEL_COVERAGE_PCT 0.70 is not tagged _cov70")
+            _C.set_scenario(min_pixel_coverage_pct=0.05, verbose=False)
+        finally:
+            _C.CURRENT_OUTCOME = _co; _C.set_scenario(donut_rings=[], landuse_keep="all", baseline_ndvi_min=None, control_selection="rings", control_select_on="trend", drop_singletons=True, min_pixel_coverage_pct=0.05, verbose=False)
+        import surrogate_did_estimator as _SD
+        for fn_ in ("simplex_ridge_weights", "aggregate_cells", "synthetic_did_two_level", "surrogate_index_did", "standard_row", "save_outputs"):
+            if not callable(getattr(_SD, fn_, None)): bad(f"surrogate_did_estimator lacks {fn_}")
+        _w = _SD.simplex_ridge_weights(_np.array([[1.0, 2.0, 3.0], [2.0, 2.0, 2.0], [3.0, 2.0, 1.0]]), _np.array([2.0, 2.0, 2.0]), 1e-6)
+        if abs(_w.sum() - 1) > 1e-8 or (_w < -1e-12).any() or abs(_w[1] - 1) > 1e-3 and abs(_w[0] - _w[2]) > 1e-3: bad(f"simplex_ridge_weights is not a simplex fit ({_w})")
+        for f_ in ("orchestrator.py", os.path.join("config", "analysis_config.yaml"), os.path.join("config", "analysis_config.json"), "validate_orchestrator.py"):
+            if not os.path.exists(os.path.join(HERE, f_)): bad(f"missing {f_}")
+        import orchestrator as _O
+        _cfg = _O.load_config(os.path.join(HERE, "config", "analysis_config.yaml"))
+        for k_ in ("ANALYSIS_VARIABLE", "SEASON_FILTER", "DONUT_RINGS", "CONTROL_SELECTION_METHOD", "PRECISION_TOLERANCE", "MIN_PIXEL_COVERAGE_PCT", "CLUSTER_VAR", "ESTIMATOR", "SAME_PIXELS", "DROP_SINGLETONS"):
+            if k_ not in _cfg: bad(f"analysis_config.yaml lacks {k_}")
+        if _cfg["DONUT_RINGS"] != [1] or _cfg["SEASON_FILTER"] != "Rabi" or abs(float(_cfg["PRECISION_TOLERANCE"]) - 1e-6) > 1e-12: bad("analysis_config.yaml defaults are not the spec's (donut [1], Rabi, 1e-6)")
+        _kw = _O.scenario_kwargs(dict(_cfg, CONTROL_SELECTION_METHOD="closest_1"), "matched")
+        if _kw["control_selection"] != "pre_rings" or _kw["control_select_k"] != 1 or _kw["donut_rings"] != [1] or _kw["seasons"] != "Rabi": bad(f"CONTROL_SELECTION_METHOD closest_1 does not map to pre_rings K = 1 ({_kw})")
+        _kw = _O.scenario_kwargs(_cfg, "canonical")
+        if _kw["control_selection"] != "rings" or _kw["donut_rings"] != [] or _kw["seasons"] != "all": bad(f"the canonical spec is not every ring / every season ({_kw})")
+        for bad_cfg in (dict(_cfg, CONTROL_SELECTION_METHOD="post_means"), dict(_cfg, SEASON_FILTER="Monsoon"), dict(_cfg, DONUT_RINGS=[7]), dict(_cfg, ESTIMATOR="OLS"), dict(_cfg, MIN_PIXEL_COVERAGE_PCT=1.5)):
+            try: _O.validate_config(bad_cfg); bad(f"the orchestrator accepts a wrong configuration ({[k for k in bad_cfg if bad_cfg[k] != _cfg.get(k)]})")
+            except _C.InsufficientDataError: pass
+        for f_ in ("orchestrator.R", os.path.join("config", "analysis_config.yaml"), os.path.join("lib", "surrogate_did_estimator.R")):
+            if os.path.isdir(rl) and not os.path.exists(os.path.join(os.path.dirname(rl), f_)): bad(f"the R bundle lacks {f_}")
+        miss = [os.path.basename(p) for p in nbs + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) if not all(k in open(p, encoding="utf-8").read() for k in ("DONUT_RINGS", "donut_rings=DONUT_RINGS", "LANDUSE_KEEP", "BASELINE_NDVI_MIN", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS", "PRECISION_TOLERANCE"))]
+        if miss: bad(f"model notebooks without the spec-1 settings passed to set_scenario: {miss[:6]}")
+        if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("DONUT_RINGS", "PRECISION_TOLERANCE", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS")): bad("P00_Settings lacks the panel-level spec-1 defaults")
+        for nb_, key_ in (("M11_", "synthetic_did_two_level"), ("M07_", "surrogate_index_did")):
+            q_ = [p for p in nbs if os.path.basename(p).startswith(nb_)]
+            if not q_ or key_ not in open(q_[0], encoding="utf-8").read(): bad(f"{nb_} notebook lacks the {key_} cell")
+        if os.path.isdir(rl):
+            want = {"reward_design.R": ("donut_rule_R", "landuse_rule_R", "baseline_ndvi_rule_R", "select_optimal_control_rings_R", "outcome_range_check_R", "rmse_gap", "_donut", "_ndviPre", "_noSingle"),
+                    "reward_models_core.R": ("surrogate_did_estimator.R", "synthetic_did_two_level_R", "m07_surrogate_index", "DROP_SINGLETONS"),
+                    "reward_outofcore.R": ("donut_rule_R(x, ctx$d", "landuse_rule_R(x, ctx$d", "baseline_ndvi_rule_R(x, ctx$d"),
+                    "reward_paths.R": ("DONUT_RINGS", "LANDUSE_KEEP", "BASELINE_NDVI_MIN", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS", "PRECISION_TOLERANCE"),
+                    "reward_prep.R": ("PRECISION_TOLERANCE",), "surrogate_did_estimator.R": ("simplex_ridge_weights_R", "synthetic_did_two_level_R", "surrogate_index_did_R", "save_outputs_R")}
+            for fn, keys in want.items():
+                s_ = open(os.path.join(rl, fn), encoding="utf-8").read(); m_ = [k for k in keys if k not in s_]
+                if m_: bad(f"R {fn} lacks {m_}")
+            m_ = [os.path.basename(p) for p in rmd if not all(k in open(p, encoding="utf-8").read() for k in ("DONUT_RINGS", "LANDUSE_KEEP", "BASELINE_NDVI_MIN", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS", "PRECISION_TOLERANCE"))]
+            if m_: bad(f"R notebooks without the spec-1 settings: {m_[:6]}")
+        note("specs 1-3 (your validation request): DONUT_RINGS, LANDUSE_KEEP, BASELINE_NDVI_MIN, CONTROL_SELECT_ON 'rmse' + select_optimal_control_rings, PRECISION_TOLERANCE, MIN_PIXEL_COVERAGE_PCT, DROP_SINGLETONS, "
+             "outcome_range_check; the surrogate / synthetic DiD module (two-level SDiD, surrogate index); config/analysis_config.yaml + orchestrator.py / orchestrator.R -- present, refusing wrong settings, in both languages")
         miss = [os.path.basename(p) for p in nbs + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) if not all(k in open(p, encoding="utf-8").read() for k in ("CONTROL_SELECTION", "control_selection=CONTROL_SELECTION", "cluster=CLUSTER", "CONTROL_SELECT_ON"))]
         if miss: bad(f"model notebooks without CONTROL_SELECTION / CLUSTER passed to set_scenario: {miss[:6]}")
         if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("CONTROL_SELECTION", "control_selection=CONTROL_SELECTION", "cluster=CLUSTER", "CONTROL_SELECT_ON")): bad("P00_Settings lacks the panel-level CONTROL_SELECTION / CLUSTER defaults")

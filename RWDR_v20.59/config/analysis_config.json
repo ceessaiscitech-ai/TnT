@@ -17,6 +17,8 @@
   "DROP_SINGLETONS": true,
   "TREATMENT_TIMING": "fixed",
   "TREATMENT_YEAR": 2022,
+  "PRE_YEARS": "data",
+  "POST_YEARS": "data",
   "DESIGN_SOURCE": "model",
   "EXCLUDE_TRANSITION_YEAR": false,
   "OUTCOME_SCREEN": "drop",

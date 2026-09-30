@@ -30,3 +30,9 @@ evidence in `CONTROL_SELECTION_<outcome>.csv`; a post- or outcome-based rule is 
 blocks. `SAME_PIXELS` (`"pre_post"` default | `"all"` | `"off"`) keeps the treated and control groups the same pixels in pre and post
 (or in every year-season), confirmed on every sample. What to change when the estimate is not significant, and what never to change:
 `ECONOMETRIC_ADVICE_v20.59.md`.
+**The three specifications** (panel preparation, the surrogate / synthetic DiD engine, the configuration and orchestrator) are integrated in both
+languages: `DONUT_RINGS`, `CONTROL_SELECT_ON = "rmse"` + `select_optimal_control_rings`, `PRECISION_TOLERANCE`, `LANDUSE_KEEP`, `BASELINE_NDVI_MIN`,
+`MIN_PIXEL_COVERAGE_PCT`, `DROP_SINGLETONS`, the range-safety check; `surrogate_did_estimator.py` / `lib/surrogate_did_estimator.R` (the
+two-level synthetic DiD and the surrogate index, the same numbers to 1e-8); `config/analysis_config.yaml` read by `orchestrator.py` and
+`orchestrator.R`, which run the pre-execution checks and write `SPEC_COMPARISON_<outcome>.csv` (canonical, donut, matched, synthetic DiD,
+surrogate index -- beta, SE, p, pre-trend p, N). Section "Your validation request" of the changelog says what was already there and what was added.

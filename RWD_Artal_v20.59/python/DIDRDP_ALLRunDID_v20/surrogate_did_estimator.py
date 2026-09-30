@@ -84,6 +84,7 @@ def synthetic_did_two_level(df, outcome, season=None, cell=("site_id", "buff_km"
         yrs = sorted(gs["Year"].unique()); piv = gs.pivot(index="cell", columns="Year", values="y")
         full = piv.dropna(axis=0, how="any")                                       # the balanced block the solver needs
         meta = gs.drop_duplicates("cell").set_index("cell").loc[full.index]
+        meta["n_pix"] = gs.groupby("cell")["n_pix"].max().loc[full.index].values          # the cell's pixels = its largest year (row order plays no part: the same in R)
         treated = meta["treated"].values.astype(bool)
         post_year = gs.groupby("Year")["post"].max(); pre_mask = np.array([post_year.get(y, 0) == 0 for y in full.columns])
         if treated.sum() == 0 or (~treated).sum() < 2 or pre_mask.sum() < 2 or (~pre_mask).sum() < 1:
