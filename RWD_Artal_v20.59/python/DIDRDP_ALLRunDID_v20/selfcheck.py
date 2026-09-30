@@ -2847,7 +2847,7 @@ def check_v20_57():
     else:
         saved = {k: (list(v) if isinstance(v, (list, tuple)) else (dict(v) if isinstance(v, dict) else v)) for k, v in _C.ACTIVE.items()}
         try:
-            _C.set_scenario(verbose=False, timing="fund", site_start={1: [2024, 2]}, treatment_year=2024)
+            _C.set_scenario(verbose=False, timing="fund", site_start={1: [2024, 2]}, treatment_year=2024, same_pixels="off")   # v20.59: this two-pixel frame has one pixel per side by design
             f_ = _pd.DataFrame({"site_id": [1] * 8, "buff_km": [0] * 4 + [3] * 4, "Year": [2024] * 4 + [2025] * 4, "Season": [0, 3, 1, 2] * 2,
                                 "pixel_id": [1] * 4 + [2] * 4, "subwshed_id": "S1", "time_fe_yearseason": "x"})
             d_ = _C.build_treatment_columns(f_.copy())
