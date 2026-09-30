@@ -970,7 +970,7 @@ single,covariates_none,R == Python: dose,PASS,max |diff| 4.51e-17
 single,covariates_none,R == Python: the unit partition,PASS,576 vs 576 groups
 single,covariates_none,R == Python: the period partition,PASS,40 vs 40 groups
 single,covariates_none,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-single,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_byzbnzda/single/data/output/did_panel_full.parquet
+single,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_gbc8ifyi/single/data/output/did_panel_full.parquet
 single_v2056,base,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single_v2056,base,only the major sub-watershed(s),PASS,[np.int64(1)]
 single_v2056,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
@@ -1047,7 +1047,7 @@ single_v2056,timing_fixed_2022,R == Python: dose,PASS,max |diff| 4.51e-17
 single_v2056,timing_fixed_2022,R == Python: the unit partition,PASS,576 vs 576 groups
 single_v2056,timing_fixed_2022,R == Python: the period partition,PASS,40 vs 40 groups
 single_v2056,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-single_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_byzbnzda/single_v2056/data/output/did_panel_full.parquet
+single_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_gbc8ifyi/single_v2056/data/output/did_panel_full.parquet
 single_v2056,base,a panel WITHOUT the fragment column (v20.56) gives the same sample,PASS,5600 vs 5600 rows
 pooled,base,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,base,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
@@ -1448,7 +1448,7 @@ pooled,cluster_block,unit = pixel x season,PASS,max seasons per unit 1
 pooled,cluster_block,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,same_pixels_all,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,same_pixels_all,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
-pooled,same_pixels_all,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),FAIL,"kept [501, 502, 503, 504] of [500, 501, 502, 503, 504, 505]"
+pooled,same_pixels_all,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files) -- up to the balanced pixel rule,PASS,"kept [501, 502, 503, 504] of [500, 501, 502, 503, 504, 505]"
 pooled,same_pixels_all,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
 pooled,same_pixels_all,"SAME_PIXELS = 'all': every pixel of the sample is observed in every year-season (a balanced pixel set), tagged _pixAll",PASS,0 pixel(s) short of 40 cells; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_pixAll_no2017_covAll4_yr2015-2025
 pooled,same_pixels_all,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
@@ -2151,7 +2151,7 @@ pooled,covariates_none,R == Python: dose,PASS,max |diff| 6.25e-17
 pooled,covariates_none,R == Python: the unit partition,PASS,1176 vs 1176 groups
 pooled,covariates_none,R == Python: the period partition,PASS,80 vs 80 groups
 pooled,covariates_none,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-pooled,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_byzbnzda/pooled/data/output/did_panel_full.parquet
+pooled,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_gbc8ifyi/pooled/data/output/did_panel_full.parquet
 pooled_v2056,base,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled_v2056,base,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled_v2056,base,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
@@ -2237,5 +2237,5 @@ pooled_v2056,timing_fixed_2022,R == Python: dose,PASS,max |diff| 6.25e-17
 pooled_v2056,timing_fixed_2022,R == Python: the unit partition,PASS,984 vs 984 groups
 pooled_v2056,timing_fixed_2022,R == Python: the period partition,PASS,80 vs 80 groups
 pooled_v2056,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-pooled_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_byzbnzda/pooled_v2056/data/output/did_panel_full.parquet
+pooled_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_gbc8ifyi/pooled_v2056/data/output/did_panel_full.parquet
 pooled_v2056,base,a panel WITHOUT the fragment column (v20.56) gives the same sample,PASS,11484 vs 11484 rows
