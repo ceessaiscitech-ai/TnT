@@ -1504,7 +1504,8 @@ def check_v20_44():
     rows += [(9000 + p, 2025, 0, 0 if p % 2 == 0 else 1, "U1", 7, 1, 0.3) for p in range(20)]
     d = _pd.DataFrame(rows, columns=["pixel_id", "Year", "Season", "buff_km", "subwshed_id", "site_id", "LandUse", "NDVI"])
     d["time_fe_yearseason"] = d.Year.astype(str) + "_0"
-    _C.set_scenario(verbose=False, all_years=True, control_zones="1-5", treatment_year=2022, exclude_transition_year=False, seasons="all", covariates=[])
+    _C.set_scenario(verbose=False, all_years=True, control_zones="1-5", treatment_year=2022, exclude_transition_year=False, seasons="all", covariates=[],
+                    same_pixels="off")                     # v20.59: this frame's singleton series are pixels seen once -- SAME_PIXELS would (rightly) drop them
     d = _C.build_treatment_columns(d); d = d[d.in_analysis_sample == 1]
     try:
         b, _ = _C.estimate_twfe_did(d, "NDVI", "did_term", "pixel_id", "time_fe_yearseason", "subwshed_id", covariates=["LandUse"])
@@ -1512,6 +1513,7 @@ def check_v20_44():
     except Exception as e:
         bad(f"a LandUse request must be dropped, not fail ({type(e).__name__}: {str(e)[:80]})")
     if _C.LAST_FIT_INFO.get("n_singleton_series") != 20: bad(f"singleton series miscounted: {_C.LAST_FIT_INFO.get('n_singleton_series')} (want 20)")
+    _C.set_scenario(verbose=False, same_pixels="pre_post")
     _C._pf_quiet(lambda: _w.warn("123 singleton fixed effect(s) dropped from the model.", UserWarning))
     if _C.LAST_FIT_INFO.get("pyfixest_singletons_dropped") != 123: bad("pyfixest's singleton warning is not turned into a count")
     dd = open(os.path.join(HERE, "python_prebuilt", "dd_pipeline.py"), encoding="utf-8").read()
