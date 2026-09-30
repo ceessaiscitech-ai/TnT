@@ -389,9 +389,10 @@ if (!inherits(tE, "error")) {
   pxq <- data.table(pixel_id = c("a", "b"), latitude = c(15.1, 15.2), longitude = c(76.1, 76.2), sws_export = c(7L, NA_integer_))
   SITE_GEOMETRY_CHECK <- FALSE; oq <- overlay_or_trust(copy(pxq)); SITE_GEOMETRY_CHECK <- TRUE
   BUFF_FROM_GEOMETRY <- TRUE; rq <- ring_from_polygon_codes(); BUFF_FROM_GEOMETRY <- FALSE
-  chkE("panel", "SITE_GEOMETRY_CHECK <- FALSE trusts the file's id (site_check 4, no overlay); BUFF_FROM_GEOMETRY <- TRUE takes the polygon ring on confirmed rows too (v20.59)",
-       identical(oq$site_check, c(4L, 4L)) && identical(oq$site_id, c(7L, 0L)) && identical(rq, c(0L, 1L, 2L)) && identical(ring_from_polygon_codes(), c(1L, 2L)),
-       sprintf("checks %s | ids %s | codes %s", paste(oq$site_check, collapse = ","), paste(oq$site_id, collapse = ","), paste(rq, collapse = ",")))
+  PIXEL_ONE_SITE <- FALSE; rq0 <- ring_from_polygon_codes(); PIXEL_ONE_SITE <- TRUE          # v20.59: the v20.58 rule -- the corrected / assigned rows only
+  chkE("panel", "SITE_GEOMETRY_CHECK <- FALSE trusts the file's id (site_check 4, no overlay); BUFF_FROM_GEOMETRY <- TRUE takes the polygon ring on confirmed rows too; PIXEL_ONE_SITE (the default) on every row, FALSE on the corrected / assigned rows only (v20.59)",
+       identical(oq$site_check, c(4L, 4L)) && identical(oq$site_id, c(7L, 0L)) && identical(rq, c(0L, 1L, 2L)) && identical(ring_from_polygon_codes(), c(0L, 1L, 2L)) && identical(rq0, c(1L, 2L)),
+       sprintf("checks %s | ids %s | codes %s | one-site off %s", paste(oq$site_check, collapse = ","), paste(oq$site_id, collapse = ","), paste(rq, collapse = ","), paste(rq0, collapse = ",")))
   chkE("panel", "N_THREADS counts every logical processor (all_logical_cores_R >= detectCores) (v20.59)", all_logical_cores_R() >= parallel::detectCores(), sprintf("%d vs %d", all_logical_cores_R(), parallel::detectCores()))
   chkE("panel", "PERIOD_RULE 'treat' | 'year' | 'both' on a small frame: the flag / the rule / the disagreeing row leaves (v20.59)",
        identical(q_treat$post, c(0L, 0L, 0L, 1L, 1L)) && identical(q_year$post, c(0L, 1L, 0L, 1L, 1L)) && nrow(q_both) == 4L && identical(q_both$post, c(0L, 0L, 1L, 1L))
