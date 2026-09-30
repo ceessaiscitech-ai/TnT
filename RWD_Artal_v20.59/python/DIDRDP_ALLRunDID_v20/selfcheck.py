@@ -2577,6 +2577,8 @@ def check_v20_59():
                 bad(f"pre_rings on 'trend' does not pick the two rings that share the treated pre-trend (got {rg}; tag {_C.scenario_tag()}; {_C.LAST_DESIGN_INFO.get('control_selection')})")
             if sg[sg.treatment == 0].groupby(["Year", "Season"])["pixel_id"].apply(frozenset).nunique() != 1 or sg.loc[sg.treatment == 1, "pixel_id"].nunique() != 30: bad("the chosen control pixels are not the same in every year and season / treated pixels touched")
             if not os.path.exists(_C.control_selection_path("NDVI")): bad("CONTROL_SELECTION_NDVI.csv (the evidence) was not written")
+            _C.resolve_design(verbose=False)
+            if not (_C.ACTIVE.get("control_selected") or {}).get("units"): bad("the resolved-design cache wipes the control decision on a hit (the out-of-core workers would decide nothing)")
             _C.set_scenario(control_select_on="level", verbose=False); g = _C.build_treatment_columns(fr.copy()); sg = g[g.in_analysis_sample == 1]
             if sorted(set(sg.loc[sg.treatment == 0, "buff_km"].astype(int))) != [1, 2] or "_ctrlPre2rL" not in _C.scenario_tag(): bad("pre_rings on 'level' does not pick the two rings with the closest pre level")
             _mp = _C.CONTROL_BLOCK_MIN_PIXELS; _C.CONTROL_BLOCK_MIN_PIXELS = 5

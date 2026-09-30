@@ -1345,9 +1345,10 @@ def _control_selection_key():
 def record_control_selection(tab, chosen, outcome, say=True):
     """The decision of this run: kept in ACTIVE (the workers receive it), written beside the results, said once."""
     mode = ACTIVE.get("control_selection", "rings")
-    sel = {"outcome": outcome, "mode": mode, "key": _control_selection_key(), "units": [int(u) for u in chosen],
-           "table": tab.to_dict("records") if len(tab) <= 5000 else None}
+    sel = {"outcome": str(outcome), "mode": str(mode), "key": _control_selection_key(), "units": [int(u) for u in chosen],
+           "n_candidates": int(len(tab))}                      # plain Python values only: the out-of-core state snapshot sends ACTIVE to the workers
     ACTIVE["control_selected"] = sel
+    if isinstance(_RESOLVED.get("active"), dict): _RESOLVED["active"]["control_selected"] = dict(sel)   # the cache restores ACTIVE on a hit: it must carry the decision too
     try:
         os.makedirs(RESULTS_ROOT, exist_ok=True); tab.to_csv(control_selection_path(outcome), index=False)   # beside OUTCOME_SCREEN_<outcome>.csv
     except Exception as e: warn(f"CONTROL_SELECTION_{outcome}.csv could not be written: {type(e).__name__}: {str(e)[:80]}")

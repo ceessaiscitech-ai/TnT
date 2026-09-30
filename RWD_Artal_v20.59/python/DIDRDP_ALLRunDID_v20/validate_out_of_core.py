@@ -38,8 +38,9 @@ C.PREPARED_PANEL = panel; C.RESULTS_ROOT = results; C.ESTIMATOR_FILES_DIR = os.p
 C.SELECTED_OUTCOMES = ["NDVI"]; C.GROUND_LINKS_PATH = os.path.join(results, "P08", "ground_links.parquet"); C.clear_panel_cache()
 C.set_scenario(verbose=False, all_years=True)
 kw = dict(control_zones="1-5", treatment_year=2022, seasons="all", unit_fe="pixel_season", covariates="all", overlap_rows="drop"); kw.update(extra)
-if kind == "single": C.set_scenario(verbose=False, cluster="site", pooled_fe="period", use_site_years=False, **kw)
-else: C.set_scenario(verbose=False, cluster="site", pooled_fe="site_period", site_years={int(k): int(v) for k, v in coh.items()}, **kw)
+cl = kw.pop("cluster", "site")
+if kind == "single": C.set_scenario(verbose=False, cluster=cl, pooled_fe="period", use_site_years=False, **kw)
+else: C.set_scenario(verbose=False, cluster=cl, pooled_fe="site_period", site_years={int(k): int(v) for k, v in coh.items()}, **kw)
 C.save_scenario(verbose=False); C.PANEL_SCENARIO_OVERRIDES_CELL1 = True
 for mid in models:
     nb = glob.glob(os.path.join(eng, "0*", mid + "_*.ipynb"))[0]
