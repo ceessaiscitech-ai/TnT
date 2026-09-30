@@ -221,7 +221,7 @@ for r_ in range(1, 6):
 exp_rm = sorted(sorted(rmse_, key=lambda r_: (rmse_[r_], r_))[:2]); got_rm = sorted(set(srm.loc[srm.treatment == 0, "buff_km"].astype(int)))
 check("CONTROL_SELECT_ON 'rmse' (spec 1): the engine's two rings = the two smallest pre-period RMSE gaps recomputed independently (rings 1 and 2 on this DGP), tagged _ctrlPre2rR", got_rm == exp_rm == [1, 2] and "_ctrlPre2rR" in C.scenario_tag(), f"engine {got_rm}, recomputed {exp_rm} from {dict((k_, round(v_, 6)) for k_, v_ in rmse_.items())}; tag {C.scenario_tag()}")
 C.set_scenario(control_selection="rings", control_select_on="trend", verbose=False); C._RESOLVED["key"] = None
-opt_ch, opt_tab = C.select_optimal_control_rings(dt_[dt_.in_analysis_sample == 1], "NDVI", treat_ring=0, candidate_rings=[1, 2, 3, 4, 5], pre_years=range(2016, 2022), top_k=2, on="level")
+opt_ch, opt_tab = C.select_optimal_control_rings(s, "NDVI", treat_ring=0, candidate_rings=[1, 2, 3, 4, 5], pre_years=range(2016, 2022), top_k=2, on="level")
 check("select_optimal_control_rings (level, top 2): rings 1 and 2 (the DGP's ring levels are 0.30 + 0.02 x ring), every candidate in its table", sorted(int(x) for x in opt_ch) == [1, 2] and len(opt_tab) == 5, f"{opt_ch}, {len(opt_tab)} rows")
 import surrogate_did_estimator as SD
 sd_ = SD.synthetic_did_two_level(s, "NDVI", pixel_level=True, cluster_col="subwshed_id", verbose=False)

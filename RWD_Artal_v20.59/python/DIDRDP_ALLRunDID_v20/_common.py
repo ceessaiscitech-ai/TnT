@@ -4208,7 +4208,7 @@ def scenario_tag(scn=None):
     _cs = a.get("control_selection", "rings")                                                                   # v20.59: the pre period's control choice
     if _cs in ("pre_rings", "pre_blocks"):
         t += (f"_ctrlPre{int(a.get('control_select_k', 2))}r" if _cs == "pre_rings" else f"_ctrlPreBlk{float(a.get('control_select_ratio', 3.0)):g}x")
-        t += {"trend": "", "level": "L", "both": "B"}.get(a.get("control_select_on", "trend"), "")
+        t += {"trend": "", "level": "L", "both": "B", "rmse": "R"}.get(a.get("control_select_on", "trend"), "")     # spec 1: R = the pre-period RMSE rule
     if a.get("cluster", "subwshed") == "block": t += "_clBlock"                                                 # v20.59: ~1 km spatial blocks as clusters
     _spx = a.get("same_pixels", "pre_post")                                                                     # v20.59: the same pixels across the panel
     if _spx == "all": t += "_pixAll"

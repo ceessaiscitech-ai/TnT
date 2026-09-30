@@ -893,7 +893,7 @@ scenario_tag <- function(d) {
   if (identical(d$design_source, "panel")) t <- paste0(t, "_panelDesign")                       # v20.59: the panel's design estimated on (as Python)
   cs <- d$control_selection %||% "rings"                                                        # v20.59: the pre period's control choice (as Python)
   if (cs %in% c("pre_rings", "pre_blocks")) t <- paste0(t, if (identical(cs, "pre_rings")) sprintf("_ctrlPre%dr", as.integer(d$control_select_k %||% 2L)) else sprintf("_ctrlPreBlk%gx", as.numeric(d$control_select_ratio %||% 3)),
-                                                      c(trend = "", level = "L", both = "B")[[d$control_select_on %||% "trend"]])
+                                                      c(trend = "", level = "L", both = "B", rmse = "R")[[d$control_select_on %||% "trend"]])     # spec 1: R = the pre-period RMSE rule
   if (identical(d$cluster, "block")) t <- paste0(t, "_clBlock")                                  # v20.59: ~1 km spatial blocks as clusters (as Python)
   spx <- d$same_pixels %||% "pre_post"; if (identical(spx, "all")) t <- paste0(t, "_pixAll") else if (identical(spx, "off")) t <- paste0(t, "_pixAny")   # v20.59 (as Python)
   if (length(d$donut_rings %||% integer(0))) t <- paste0(t, "_donut", paste(d$donut_rings, collapse = "-"))                                          # spec 1 (as Python)
