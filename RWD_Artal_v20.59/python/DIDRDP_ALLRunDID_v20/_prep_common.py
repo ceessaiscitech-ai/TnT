@@ -1119,6 +1119,10 @@ def data_qc(df):
 
 
 # ====================== v20.28: WHICH SUB-WATERSHED EVERY PIXEL IS IN (shapefile SWSs20_KarnatakaAll5k) ======================
+PIXEL_ONE_SITE = True          # v20.59 -- YOUR RULE: ONE sub-watershed and ONE ring per pixel in the whole panel. Every row goes to the sub-watershed whose
+                               #   polygon holds its latitude / longitude (core first, then the lower id) and takes THAT polygon's ring, whatever id or ring
+                               #   the file carried; so the same pixel has the same site_id / buff_km in every year and season, and appears once per
+                               #   year-season. False = the v20.58 rule (a point in the zones of two sub-watersheds kept once per sub-watershed)
 SITE_GEOMETRY_CHECK = True     # verify / assign each row's SWS from its latitude-longitude and the 20-SWS shapefile
 BUFF_FROM_GEOMETRY = False     # True = buff_km always from the polygon ring; False = only where the SWS was corrected /
                                # assigned (the exported ring is kept where the SWS is confirmed; disagreements reported)
@@ -1270,11 +1274,19 @@ def tag_sites(df, path=None):
         df["sws_name"] = pd.Series(ind).map(names).fillna("").values
         stats.update({"not_checked": int(n), "reason": _LOCATOR.get("err") or ("SITE_GEOMETRY_CHECK = False" if not SITE_GEOMETRY_CHECK else "no coordinates")})
         return df, stats
-    site, buff, check = L.tag(pd.to_numeric(df["latitude"], errors="coerce").values,
-                              pd.to_numeric(df["longitude"], errors="coerce").values, ind)
+    _lat = pd.to_numeric(df["latitude"], errors="coerce").values; _lon = pd.to_numeric(df["longitude"], errors="coerce").values
+    site, buff, check = L.tag(_lat, _lon, ind)
+    stats["site_unified_by_one_site_rule"] = 0
+    if PIXEL_ONE_SITE:                                        # v20.59 -- YOUR RULE: the polygon that holds the point decides, whatever the file said
+        s1, b1, c1 = L.tag(_lat, _lon, None)                  # core first, then the lower id -- a pure function of the coordinates: the same
+        _inp = c1 != _G.OUTSIDE                               #   answer for every row of the pixel, in every file, year and season
+        _chg = _inp & (site != s1)
+        stats["site_unified_by_one_site_rule"] = int(_chg.sum())
+        check = np.where(_chg & (check == _G.CONFIRMED), _G.CORRECTED, check).astype(np.int8)
+        site = np.where(_inp, s1, site).astype(site.dtype); buff = np.where(_inp, b1, buff).astype(buff.dtype)
     bk = pd.to_numeric(df["buff_km"], errors="coerce").values if "buff_km" in df.columns else np.full(n, np.nan)
     moved = (check == _G.CORRECTED) | (check == _G.ASSIGNED)
-    take = (moved | ((check == _G.CONFIRMED) & bool(BUFF_FROM_GEOMETRY))) & (buff >= 0)
+    take = (moved | ((check == _G.CONFIRMED) & bool(BUFF_FROM_GEOMETRY or PIXEL_ONE_SITE))) & (buff >= 0)
     ring_disagree = (check == _G.CONFIRMED) & (buff >= 0) & (bk != buff)
     if "buff_km" in df.columns and take.any():
         newb = bk.copy(); newb[take] = buff[take]
@@ -2184,6 +2196,41 @@ def pixel_registry(shard_paths, verbose=True, n_threads=None):
     reg["completeness"] = reg["n_ok"] / reg["n_rows"].clip(lower=1)
     return reg
 
+def confirm_pixel_consistency(final_path, output_dir=None, verbose=True):
+    """v20.59 -- YOUR RULE, CONFIRMED on the finished panel: every pixel has ONE sub-watershed and ONE ring in the whole panel (the same site_id /
+    buff_km in every year and season) and appears ONCE per year-season. Pixels outside every polygon (site_check 3) are reported apart: they keep
+    their file's id and leave every estimate (the location rule). Offenders -> panel_pixel_consistency.csv; the verdict -> the run's log."""
+    import pyarrow.parquet as pq, pyarrow as pa, pyarrow.compute as pc
+    names = pq.ParquetFile(final_path).schema_arrow.names
+    cols = [c for c in ("pixel_id", "site_id", "buff_km", "Year", "Season", "site_check", "latitude", "longitude") if c in names]
+    t = pq.read_table(final_path, columns=cols)
+    if "site_check" in cols: t = t.filter(pc.not_equal(t["site_check"], 3)); n_out = int(pq.read_table(final_path, columns=["site_check"]).num_rows - t.num_rows)
+    else: n_out = 0
+    n = t.num_rows
+    rep = int(n - t.select(["pixel_id", "Year", "Season"]).group_by(["pixel_id", "Year", "Season"]).aggregate([([], "count_all")]).num_rows) if n else 0
+    aggs = [(c, "count_distinct") for c in ("site_id", "buff_km", "latitude", "longitude") if c in cols]
+    g = t.group_by("pixel_id").aggregate(aggs).to_pandas() if n else pd.DataFrame({"pixel_id": []})
+    bad_site = g[g.get("site_id_count_distinct", 0) > 1] if "site_id_count_distinct" in g.columns else g.iloc[0:0]
+    bad_ring = g[g.get("buff_km_count_distinct", 0) > 1] if "buff_km_count_distinct" in g.columns else g.iloc[0:0]
+    bad_ll = g[(g.get("latitude_count_distinct", 1) > 1) | (g.get("longitude_count_distinct", 1) > 1)] if "latitude_count_distinct" in g.columns else g.iloc[0:0]
+    n_bad = int(len(set(bad_site.pixel_id) | set(bad_ring.pixel_id) | set(bad_ll.pixel_id)))
+    res = {"rows": n, "pixels": int(len(g)), "pixels_outside_every_polygon_rows": n_out, "repeated_pixel_year_season": rep,
+           "pixels_with_two_sites": int(len(bad_site)), "pixels_with_two_rings": int(len(bad_ring)), "pixels_with_two_coordinates": int(len(bad_ll))}
+    if output_dir:
+        try:
+            off = g[g.pixel_id.isin(set(bad_site.pixel_id) | set(bad_ring.pixel_id) | set(bad_ll.pixel_id))]
+            off.to_csv(os.path.join(output_dir, "panel_pixel_consistency.csv"), index=False)
+        except Exception: pass
+    if not len(g) and n_out and not rep:
+        ok(f"pixel consistency: no pixel inside a polygon to check; {n_out:,} rows of pixels outside every polygon keep their file's id and leave every estimate (the location rule)")
+    elif not rep and not n_bad:
+        ok(f"pixel consistency CONFIRMED: {len(g):,} pixels, each with ONE sub-watershed and ONE ring in every year and season, every (pixel, year, season) once"
+           + (f"; {n_out:,} rows of pixels outside every polygon keep their file's id and leave every estimate (the location rule)" if n_out else ""))
+    else:
+        warn(f"pixel consistency NOT met: {rep:,} repeated (pixel, year, season) row(s); {len(bad_site):,} pixel(s) with two sub-watersheds, {len(bad_ring):,} with two rings, "
+             f"{len(bad_ll):,} with two coordinates -> panel_pixel_consistency.csv (PIXEL_ONE_SITE = {PIXEL_ONE_SITE}; the location rule of the models leaves such rows out)")
+    return res
+
 def confirm_panel_duplicates(final_path, verbose=True):
     """v20.58 -- YOUR RULE: repeated rows and pixels are dropped AND CONFIRMED on the finished panel (checked, never assumed; as R's R_P00):
     every (sub-watershed, pixel, year, season) once, a pixel outside every polygon once per year-season, and the near-duplicate pixels that
@@ -3020,6 +3067,7 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
     ok(f"missing-value policy over the panel: {policy_totals['zero_cells_set_missing']:,} NaN/zero cells set to missing "
        f"(zero = no-data in these exports), {policy_totals['rows_dropped_no_outcome']:,} rows with no usable outcome dropped")
     confirm_panel_duplicates(final_path)                          # v20.58: checked on the finished panel, never assumed
+    confirm_pixel_consistency(final_path, output_dir)             # v20.59: one sub-watershed and one ring per pixel, once per year-season
     print(f"Pass B done. Final file: {final_path} ({total_rows:,} rows)")
     print("Materialized columns for manual inspection: treatment, control, pre, post, did_term "
           f"(built with the scenario in force: control rings {tuple(DEFAULT_CONTROL_ZONES)}, "

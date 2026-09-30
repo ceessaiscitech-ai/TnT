@@ -17,3 +17,9 @@ remaining pipelines, and the validators that ran on it (`selfcheck.py`, `validat
 (`"treat"`, the default), from `Year >= TREATMENT_YEAR` (`"year"`) or from both, which must agree (`"both"`: a disagreeing row
 leaves, counted). `buff_km` / `distance` 0 = the treatment area (`treat` = 1), 1–5 = the control rings (`control` = 1); `did` = treat x post.
 P00 / R_P00 confirm this on every input file (`input_design_audit.csv` / `input_design_audit_R.csv`) before the panel is built.
+`Treat` itself is then dropped from the panel (both languages). **Every model estimates on the panel's design by default**
+(`DESIGN_SOURCE = "panel"` in every notebook; results tagged `_panelDesign`; the design in effect is compared with it, not estimated
+on) -- `"model"` is design-based modelling (the timing / `TREATMENT_YEAR` settings build `post` / `pre` / `did`). **One sub-watershed
+and one ring per pixel** (`PIXEL_ONE_SITE`, both languages): the polygon that holds a row's latitude / longitude decides its
+sub-watershed and ring, so the same pixel has the same `site_id` / `buff_km` in every year and season and appears once per
+year-season -- confirmed on the finished panel (`panel_pixel_consistency.csv` / `panel_pixel_consistency_R.csv`).

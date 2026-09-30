@@ -336,6 +336,7 @@ if (!inherits(tE, "error")) {
                pre_cal = list(TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022, PRE_YEARS = 2018, POST_YEARS = 2024),                    # v20.59: calendar years
                pre_at_start = list(TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022, PRE_YEARS = 2022),                                 # v20.59: no pre year -> said, every year before
                screen_keep = list(OUTCOME_SCREEN = "keep"),                                                                              # v20.59: the screen's cells kept
+               design_panel = list(DESIGN_SOURCE = "panel", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2023),                           # v20.59: the panel's post (2022) wins over 2023
                rabi = list(SEASONS = "Rabi"), manual = list(DESIGN_MODE = "manual"), transition = list(EXCLUDE_TRANSITION_YEAR = TRUE),
                gapfilled_kept = list(EXCLUDE_GAPFILLED = FALSE), dose_amount = list(DOSE_VARIABLE = "dose_amount_sws"))
   od <- file.path(TMP, "E_out"); design_variant_samples(vars, od)
@@ -356,10 +357,19 @@ if (!inherits(tE, "error")) {
   ps <- rd("pre_at_start"); chkE("pre_at_start", "PRE_YEARS 2022 = the start (v20.58: 'USED: from 0'): said, every year before the start used", !is.null(ps) && min(ps$Year) == 2016 && any(ps$post == 0L) && any(ps$post == 1L), if (is.null(ps)) "no sample" else paste(range(ps$Year), collapse = "-"))
   sk <- rd("screen_keep"); skj <- tryCatch(fromJSON(file.path(od, "screen_keep.json")), error = function(e) NULL)
   chkE("screen_keep", "OUTCOME_SCREEN = 'keep': the same rows as base here (no fill year in E), the results folder tagged _screenKept", !is.null(sk) && nrow(sk) == nrow(b) && !is.null(skj$tag) && grepl("_screenKept", skj$tag, fixed = TRUE), if (is.null(skj$tag)) "no tag" else skj$tag)
-  pp <- tryCatch(panel_read(c("Year", "Treat", "post", "pre", "did", "treat", "control", "buff_km")), error = function(e) NULL)
-  chkE("panel", "the panel carries treat / control / pre / post / did (v20.59): post = the exports' Treat flag, pre = 1 - post, did = treat x post",
-       !is.null(pp) && all(c("treat", "control", "pre", "post", "did") %in% names(pp)) && all(pp$post == as.integer(pp$Treat)) && all(pp$pre == 1L - pp$post) && all(pp$did == pp$treat * pp$post) && all(pp$treat == as.integer(pp$buff_km == 0L)) && all(pp$control == as.integer(pp$buff_km %in% 1:5)),
-       if (is.null(pp)) "panel not readable" else paste(intersect(c("treat", "control", "pre", "post", "did"), names(pp)), collapse = ","))
+  pp <- tryCatch(panel_read(c("Year", "post", "pre", "did", "treat", "control", "buff_km")), error = function(e) NULL)
+  pnames <- tryCatch(panel_names(), error = function(e) character(0))
+  chkE("panel", "the panel carries treat / control / pre / post / did (v20.59): post = the exports' Treat flag (the Year rule here: Year >= 2022), pre = 1 - post, did = treat x post; Treat itself used and NOT kept",
+       !is.null(pp) && all(c("treat", "control", "pre", "post", "did") %in% names(pp)) && all(pp$post == as.integer(pp$Year >= 2022L)) && all(pp$pre == 1L - pp$post) && all(pp$did == pp$treat * pp$post) && all(pp$treat == as.integer(pp$buff_km == 0L)) && all(pp$control == as.integer(pp$buff_km %in% 1:5))
+       && length(pnames) > 0 && !"Treat" %in% pnames,
+       if (is.null(pp)) "panel not readable" else paste0(paste(intersect(c("treat", "control", "pre", "post", "did", "Treat"), pnames), collapse = ","), " (", length(pnames), " columns)"))
+  dp <- rd("design_panel"); dpj <- tryCatch(fromJSON(file.path(od, "design_panel.json")), error = function(e) NULL)
+  chkE("design_panel", "DESIGN_SOURCE = 'panel' under TREATMENT_YEAR 2023: post = the panel's post (Year >= 2022) on every row, cohort 2022, the results folder tagged _panelDesign",
+       !is.null(dp) && all(dp$post == as.integer(dp$Year >= 2022L)) && all(dp[treat == 1L, cohort] == 2022) && !is.null(dpj$tag) && grepl("_panelDesign", dpj$tag, fixed = TRUE),
+       if (is.null(dpj$tag)) "no tag" else dpj$tag)
+  pcx <- tryCatch(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")), error = function(e) NULL)
+  chkE("panel", "R_P00 confirmed the pixel consistency (v20.59): panel_pixel_consistency_R.csv written with 0 offenders (one sub-watershed and one ring per pixel, once per year-season)",
+       !is.null(pcx) && nrow(pcx) == 0, if (is.null(pcx)) "file missing" else sprintf("%d offenders", nrow(pcx)))
   chkE("panel", "R_P00 wrote panel_design_check_R.csv and panel_variation_by_block.csv (v20.59)", file.exists(file.path(OUTPUT_DIR, "panel_design_check_R.csv")) && file.exists(file.path(OUTPUT_DIR, "panel_variation_by_block.csv")))
   # v20.59 -- YOUR RULE confirmed on the input files: input_design_audit_R.csv (Treat 1 = post / 0 = pre, buff_km 0 = treatment / 1-5 = control), PERIOD_RULE recorded
   ia <- tryCatch(fread(file.path(OUTPUT_DIR, "input_design_audit_R.csv")), error = function(e) NULL)

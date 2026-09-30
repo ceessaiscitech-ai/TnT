@@ -87,6 +87,8 @@ def make_panel(kind, seed=11, n=24):
     df["sws_export"] = df["sws_id_export"]                                           # the R panel's name for the same column
     df.loc[rng.random(len(df)) < 0.02, "NDVI"] = np.nan                              # an unbalanced panel
     df["GapFilled"] = 0.0; df["Coverage"] = 1.0
+    df["treat"] = (df.buff_km == 0).astype("int8"); df["control"] = df.buff_km.between(1, 5).astype("int8")      # v20.59: the panel's own design
+    df["post"] = (df.Year >= 2022).astype("int8"); df["pre"] = (1 - df["post"]).astype("int8"); df["did"] = (df["treat"] * df["post"]).astype("int8")
     m = (df.Year == 2025) & (df.Season == 1) & (df.site_id == 1); idx = df.index[m]
     df.loc[idx[rng.random(len(idx)) < 0.2], "GapFilled"] = 1.0                        # history-filled rows
     m = (df.Year == 2025) & (df.Season == 2) & (df.site_id == 1); idx = df.index[m]
@@ -140,6 +142,8 @@ VARIANTS = {
     "pre2018_post2024":       {"PRE_YEARS": 2018, "POST_YEARS": 2024},                                     # v20.59: calendar years
     "pre_at_start_2022":      {"TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022, "PRE_YEARS": 2022},   # v20.59: no pre year -> every year before the start, said
     "screen_keep":            {"OUTCOME_SCREEN": "keep"},                                                  # v20.59: the fill year kept, tagged _screenKept
+    "design_panel":           {"DESIGN_SOURCE": "panel"},                                                  # v20.59: the PANEL's post (2022) estimated on, not the fund timing
+    "design_panel_fixed_2023": {"DESIGN_SOURCE": "panel", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2023},   # v20.59: the panel's 2022 wins over TREATMENT_YEAR 2023
     "pre_all_post_all":       {"PRE_YEARS": None, "POST_YEARS": None},
     "manual_mode":            {"DESIGN_MODE": "manual"},
     "manual_rings_1_3_pre4":  {"DESIGN_MODE": "recommended", "CONTROL_RINGS": [1, 2, 3], "PRE_YEARS": 4},
@@ -166,7 +170,8 @@ def py_kwargs(o):
                 seasons=("+".join(sea) if isinstance(sea, list) else sea), exclude_transition_year=bool(o["EXCLUDE_TRANSITION_YEAR"]),
                 unit_fe=o["UNIT_FE"], overlap_rows=o["OVERLAP_ROWS"], fragment_rule=o["FRAGMENT_RULE"], pooled_fe=o["POOLED_FE"],
                 exclude_gapfilled=bool(o["EXCLUDE_GAPFILLED"]), covariates=(list(o["COVARIATES"]) if o["COVARIATES"] else "none"),
-                cluster="site", cohort_offset=0, nonnegative=False, outcome_screen=o.get("OUTCOME_SCREEN", "drop"))
+                cluster="site", cohort_offset=0, nonnegative=False, outcome_screen=o.get("OUTCOME_SCREEN", "drop"),
+                design_source=o.get("DESIGN_SOURCE", "model"))
 
 def py_sample(C, o):
     C.set_scenario(verbose=False, all_years=True)
@@ -278,7 +283,11 @@ def expect(panel, name, o, py, meta, full):
         rec(panel, name, "years: every year (the fill year's annual rows out by the screen)", yrs[0] == 2015 and yrs[-1] == 2025 and not ((py.Year == 2017) & (py.Season == 0)).any(), f"{yrs}")
     # timing: the cohort of every treated row = the hand-derived first treated season (fund) / the registry / the fixed year
     t = py[py.treat == 1]
-    if o["TREATMENT_TIMING"] == "fund":
+    if o.get("DESIGN_SOURCE") == "panel":                                             # v20.59: the PANEL's post (Year >= 2022 in these exports) is estimated on
+        exp = np.full(len(t), 2022.0)                                                  #   whatever the timing setting; its cohort = the panel's first post year
+        rec(panel, name, "DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",
+            bool(np.all(py.post.values == (py.Year.values >= 2022).astype(int))) and "_panelDesign" in meta["tag"], f"tag {meta['tag']}")
+    elif o["TREATMENT_TIMING"] == "fund":
         st = EXPECT_START[o["FUND_START_RULE"]]
         exp = np.array([cohort_of(si, se, st[si]) for si, se in zip(t.site_id, t.Season)], float)
     elif o["TREATMENT_TIMING"] == "registry":

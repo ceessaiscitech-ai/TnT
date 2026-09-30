@@ -1217,6 +1217,13 @@ def _screen_rule_of(v):
     if v in ("off", "false", "none", "0", "no"): return "off"
     raise InsufficientDataError(f"OUTCOME_SCREEN must be 'drop', 'keep' or 'off' (got {v!r})")
 
+DESIGN_SOURCES = ("panel", "model")
+def _design_source_of(v):
+    """v20.59: DESIGN_SOURCE -- 'panel' (the panel's design columns are estimated on) | 'model' (the design in effect is)."""
+    s = str(v).strip().lower()
+    if s not in DESIGN_SOURCES: raise InsufficientDataError(f"DESIGN_SOURCE must be 'panel' or 'model' (got {v!r})")
+    return s
+
 def screen_rule(scn=None):
     """v20.59: the screen's rule in force -- 'drop' | 'keep' | 'off' (the design's outcome_screen, else the constant OUTCOME_SCREEN)."""
     a = scn if scn is not None else globals().get("ACTIVE")
@@ -3256,6 +3263,8 @@ ACTIVE = {"control_zones": tuple(DEFAULT_CONTROL_ZONES), "treatment_year": TREAT
           "fund_rate_months": 12, "fund_dose_before_file": "backcast", "exclude_gapfilled": True,
           # v20.59: the outcome screen's rule -- "drop" (a fill-value / collapsed year-season leaves the model) | "keep" | "off" (OUTCOME_SCREEN)
           "outcome_screen": "drop",
+          "design_source": "model",          # v20.59: "panel" = the PANEL's post / pre / did (the exports' Treat flag, PERIOD_RULE) are the design the model estimates
+                                             #   on (the notebooks' default); "model" = the design in effect (timing, TREATMENT_YEAR ...) -- the design-based option
           # v20.12: which rows enter the estimation. "seasonal" = Kharif/Rabi/Zaid (Season 1-3, the default);
           # "yearly" = the annual composite rows (Season 0) -- the only place ESI / RUSLE / WSI / WSSI have values;
           # "all" = both (rarely appropriate: mixes two temporal resolutions).
@@ -3316,7 +3325,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                  nonnegative=None, nonnegative_mode=None, nonnegative_scope=None, overlap_rows=None, timing=None, site_start=None,
                  design_mode=None, fragment_rule=None, fragment_min_share=None, dose_variable=None, fund_start_rule=None,
                  fund_start_share=None, fund_rate_months=None, fund_dose_before_file=None, exclude_gapfilled=None, sub_watersheds=None,
-                 outcome_screen=None, persist=False, verbose=True):
+                 outcome_screen=None, design_source=None, persist=False, verbose=True):
     """Set the run's control rings and treatment timing. Call it in CELL 1, BEFORE loading the panel.
     post_cutoff defaults to treatment_year (shifting the timing shifts the pre/post split with it).
 
@@ -3343,7 +3352,8 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                    ("fragment_min_share", fragment_min_share), ("dose_variable", dose_variable), ("fund_start_rule", fund_start_rule),
                    ("fund_start_share", fund_start_share), ("fund_rate_months", fund_rate_months),
                    ("fund_dose_before_file", fund_dose_before_file), ("exclude_gapfilled", exclude_gapfilled),
-                   ("overlap_rows", overlap_rows), ("sub_watersheds", sub_watersheds), ("outcome_screen", outcome_screen)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule
+                   ("overlap_rows", overlap_rows), ("sub_watersheds", sub_watersheds), ("outcome_screen", outcome_screen),
+                   ("design_source", design_source)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule, the design's source
         if _v is not None: _EXPLICIT_KEYS.add(_k)
     # v20.57: which keys the notebook set, in the form load_scenario() respects (a "data" option is explicit too)
     for _k, _v in (("treatment_year_setting", treatment_year), ("post_cutoff_setting", post_cutoff), ("seasons_setting", seasons),
@@ -3414,6 +3424,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
         if _b not in ("backcast", "missing"): raise InsufficientDataError(f"fund_dose_before_file must be 'backcast' or 'missing' (got {fund_dose_before_file!r})")
         ACTIVE["fund_dose_before_file"] = _b
     if outcome_screen is not None: ACTIVE["outcome_screen"] = _screen_rule_of(outcome_screen)     # v20.59: drop | keep | off
+    if design_source is not None: ACTIVE["design_source"] = _design_source_of(design_source)     # v20.59: panel | model
     if treatment_year is not None: _EXPLICIT_KEYS.add("post_cutoff")
     if all_years: _EXPLICIT_KEYS.update({"pre_years", "post_years", "year_min", "year_max"})
     if control_zones is not None: ACTIVE["control_zones"] = parse_control_zones(control_zones)
@@ -3819,6 +3830,7 @@ def scenario_tag(scn=None):
     if a.get("fund_dose_before_file", "backcast") == "missing": t += "_doseObsOnly"
     if a.get("exclude_gapfilled", True) is False: t += "_withGapFilled"                                          # v20.57
     if screen_rule(a) == "keep": t += "_screenKept"                                                           # v20.59: the screen's cells kept
+    if a.get("design_source", "model") == "panel": t += "_panelDesign"                                        # v20.59: the panel's design estimated on
     if a.get("drop_years"): t += "_no" + "-".join(str(int(y)) for y in a["drop_years"])
     _sync_negative_switch()                                                               # v20.33: one suffix only
     _cv = list(a.get("covariates", STANDARD_COVARIATES))
@@ -3843,7 +3855,8 @@ SCENARIO_KEYS = ("control_zones", "treatment_year", "post_cutoff", "exclude_tran
                  "timing", "site_start",                                                     # v20.57: the fund / registry / fixed timing
                  "design_mode", "data_keys", "treatment_year_setting", "post_cutoff_setting", "seasons_setting",
                  "site_years_setting", "site_start_setting", "drop_years", "fragment_rule", "fragment_min_share", "sub_watersheds", "dose_variable",
-                 "fund_start_rule", "fund_start_share", "fund_rate_months", "fund_dose_before_file", "exclude_gapfilled", "outcome_screen")   # v20.59
+                 "fund_start_rule", "fund_start_share", "fund_rate_months", "fund_dose_before_file", "exclude_gapfilled", "outcome_screen",
+                 "design_source")   # v20.59
 def scenario_file(path=None):
     """Where a scenario chosen during panel preparation is stored: next to the prepared panel."""
     return path or os.path.join(os.path.dirname(PREPARED_PANEL), "did_scenario.json")
@@ -4443,6 +4456,9 @@ def resolve_design(verbose=True, force=False, frame=None):
     ch("OUTCOME_SCREEN", ACTIVE.get("outcome_screen", OUTCOME_SCREEN), screen_rule(),
        "your setting" + {"drop": " (a year-season constant across pixels -- a fill value -- or with collapsed coverage leaves the model; evidence: OUTCOME_SCREEN_<outcome>.csv)",
                          "keep": " (such year-seasons are reported and KEPT; results tagged _screenKept)", "off": " (no screen)"}[screen_rule()])
+    ch("DESIGN_SOURCE", ACTIVE.get("design_source", "model"), ACTIVE.get("design_source", "model"),
+       "your setting" + {"panel": " (the PANEL's treat / control / pre / post / did -- the exports' Treat flag, PERIOD_RULE -- are estimated on; the design in effect above is compared with them)",
+                         "model": " (the design in effect above is estimated on -- design-based modelling; DESIGN_SOURCE = 'panel' estimates on the panel's columns)"}[ACTIVE.get("design_source", "model")])
     ch("COVARIATES", ",".join(ACTIVE.get("covariates") or []) or "none", ",".join(ACTIVE.get("covariates") or []) or "none", "your setting")
     import copy as _cp
     ACTIVE["n_sites"] = len(real)
@@ -4643,17 +4659,23 @@ def say_design_vs_panel(n_differ, n_rows):
     R_P00): the same on every row, or on how many rows (and why) they differ. The DESIGN's columns are what the model estimates on."""
     LAST_DESIGN_INFO["post_rows_differ_from_panel"] = int(n_differ); LAST_DESIGN_INFO["post_rows_compared"] = int(n_rows)
     if not n_rows: return
+    _src = ACTIVE.get("design_source", "model")
     if n_differ == 0:
         info(f"DESIGN vs PANEL: the design in effect ({_design_timing_text()}) gives the same post period as the panel's post column "
-             f"(the exports' Treat flag) on every one of {n_rows:,} rows")
+             f"(the exports' Treat flag) on every one of {n_rows:,} rows" + (" -- DESIGN_SOURCE = 'panel': the panel's columns are estimated on" if _src == "panel" else ""))
+    elif _src == "panel":
+        info(f"DESIGN vs PANEL: DESIGN_SOURCE = 'panel' -- this model estimates on the PANEL's post / pre / did (the exports' Treat flag, PERIOD_RULE); "
+             f"the design in effect ({_design_timing_text()}) would differ on {n_differ:,} of {n_rows:,} rows ({n_differ / n_rows:.1%}) -- set DESIGN_SOURCE = 'model' "
+             f"to estimate on it (your settings: TREATMENT_TIMING / TREATMENT_YEAR / EXCLUDE_TRANSITION_YEAR)")
     else:
         info(f"DESIGN vs PANEL: the design in effect ({_design_timing_text()}) differs from the panel's post column (the exports' Treat flag, P00) "
-             f"on {n_differ:,} of {n_rows:,} rows ({n_differ / n_rows:.1%}) -- the DESIGN's columns are what this model estimates on (your settings: "
-             f"TREATMENT_TIMING / TREATMENT_YEAR / EXCLUDE_TRANSITION_YEAR); the panel's are the exporter's default")
+             f"on {n_differ:,} of {n_rows:,} rows ({n_differ / n_rows:.1%}) -- DESIGN_SOURCE = 'model': the DESIGN's columns are what this model estimates on "
+             f"(your settings: TREATMENT_TIMING / TREATMENT_YEAR / EXCLUDE_TRANSITION_YEAR); DESIGN_SOURCE = 'panel' estimates on the panel's")
 
-def design_vs_panel(out, post_panel):
+def design_vs_panel(out, post_panel, post_design=None):
     """v20.59: compare the design's post with the panel's (None: the frame carried none -- a panel built before v20.59, or a synthetic
-    frame); inside an out-of-core worker the counts are recorded and the parent says them once."""
+    frame); inside an out-of-core worker the counts are recorded and the parent says them once. post_design: the design in effect's post
+    when out['post'] already holds the panel's (DESIGN_SOURCE = 'panel')."""
     if post_panel is None:
         LAST_DESIGN_INFO["post_rows_differ_from_panel"] = None; LAST_DESIGN_INFO["post_rows_compared"] = 0
         if not _OOC_WORKER and "no_post" not in _DESIGN_VS_PANEL_SAID and not getattr(out, "attrs", {}).get("synthetic"):
@@ -4661,7 +4683,8 @@ def design_vs_panel(out, post_panel):
             info("this frame carries no post column of the panel (built before v20.59, or not read): the design in effect is used as it is -- "
                  "re-run P00 to get the exports' design columns (treat, control, pre, post, did) into the panel")
         return
-    n = int(len(out)); k = int((out["post"].values.astype(np.int8) != post_panel).sum()) if n else 0
+    _pd_ = out["post"].values.astype(np.int8) if post_design is None else np.asarray(post_design, dtype=np.int8)
+    n = int(len(out)); k = int((_pd_ != post_panel).sum()) if n else 0
     if _OOC_WORKER:
         LAST_DESIGN_INFO["post_rows_differ_from_panel"] = k; LAST_DESIGN_INFO["post_rows_compared"] = n
     else:
@@ -4732,6 +4755,20 @@ def build_treatment_columns(df, control_zones=None, treatment_year=None,
         out["post"] = (_yr >= _pc).astype("int8")
         out["pre"] = (_yr < _pc).astype("int8")
     out["transition_year"] = _trans.astype("int8")
+    # v20.59 -- DESIGN_SOURCE = "panel" (the notebooks' default): the PANEL's post (the exports' Treat flag, P00's PERIOD_RULE) is the design
+    # the model estimates on; the design in effect (timing, TREATMENT_YEAR, the transition year) is computed above only to be COMPARED with
+    # it (DESIGN vs PANEL). "model": the design in effect is estimated on (design-based modelling).
+    _post_design = out["post"].values.astype(np.int8).copy() if _post_panel is not None else None
+    _panel_src = ACTIVE.get("design_source", "model") == "panel" and _post_panel is not None
+    if _panel_src:
+        _pp = np.where(_post_panel >= 0, _post_panel, out["post"].values).astype(np.int8)
+        out["post"] = _pp; out["pre"] = (1 - _pp).astype("int8")
+        _trans = np.zeros(len(out), dtype=bool); out["transition_year"] = np.zeros(len(out), dtype=np.int8)
+        # each series' cohort: the first post year of its sub-watershed in the panel's own columns (the exporter's timing)
+        _sid_c = pd.to_numeric(out["site_id"], errors="coerce").fillna(0).astype(np.int64).values if "site_id" in out.columns else np.zeros(len(out), np.int64)
+        _is_post = _pp == 1
+        _first = pd.Series(_yr[_is_post]).groupby(_sid_c[_is_post]).min() if _is_post.any() else pd.Series(dtype="float64")
+        post_cutoff_row = pd.Series(_sid_c).map(_first).fillna(post_cutoff).astype(np.int64).values
     # v20.29: the unit that carries the unit fixed effect. With annual AND seasonal rows, each pixel's annual,
     # Kharif, Rabi and Zaid series is its own unit (unit_fe = "pixel_season"): a pixel's level differs by season, and
     # one fixed effect per pixel would let the seasonal mix of its rows move the estimate. unit_fe = "pixel": the pixel.
@@ -4786,12 +4823,13 @@ def build_treatment_columns(df, control_zones=None, treatment_year=None,
     LAST_DESIGN_INFO.update({"contaminated_control_rows": int(sum(v for k, v in _lr.items() if str(k).startswith("3|0|"))),
                              "duplicate_rows_across_sites": int(sum(v for k, v in _lr.items() if str(k).startswith("3|1|"))),
                              "location_rows": dict(_lr)})
-    design_vs_panel(out, _post_panel)                                    # v20.59: the design in effect against the panel's post column, said (after the
+    design_vs_panel(out, _post_panel, _post_design)                      # v20.59: the design in effect against the panel's post column, said (after the
                                                                          #   info above is reset, so the count stays in LAST_DESIGN_INFO)
     out["in_analysis_sample"] = np.asarray(in_grp).astype("int8")
     _sample_integrity_once(out, control_zones)                      # v20.58: the post-conditions, CONFIRMED on the estimation sample
     if not df.attrs.get("synthetic"): _cache_design_se(out)          # v20.58: the design-based check of THIS sample, for the headline
-    out["event_time"] = (out[year_col].values - (post_cutoff_row - (post_cutoff - treatment_year))) if post_cutoff_row is not None else (out[year_col] - treatment_year)
+    out["event_time"] = (out[year_col].values - post_cutoff_row) if _panel_src else \
+        (out[year_col].values - (post_cutoff_row - (post_cutoff - treatment_year))) if post_cutoff_row is not None else (out[year_col] - treatment_year)   # v20.59: panel source = the panel's first post year
     attach_fund_dose(out)                                        # v20.57: the fund file's dose under the timing in force
     if "season_sort_rank" in out.columns:
         out["period_index"] = out[year_col].astype(int) * 10 + out["season_sort_rank"].astype(int)

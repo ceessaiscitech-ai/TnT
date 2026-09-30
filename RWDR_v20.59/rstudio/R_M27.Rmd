@@ -49,6 +49,9 @@ EXCLUDE_GAPFILLED <- TRUE           # rows the exporter filled from history (Gap
 OUTCOME_SCREEN    <- "drop"         # v20.59: "drop" (a year-season constant across pixels -- a fill value -- or with collapsed coverage leaves the
                                     #   model; its evidence: OUTCOME_SCREEN_<outcome>.csv beside the results) | "keep" (reported and KEPT; results tagged
                                     #   _screenKept) | "off". Your v20.58 log stopped here ("41 year-seasons are NOT pixel data ... Re-export it")
+DESIGN_SOURCE     <- "panel"        # v20.59 -- YOUR RULE: the PANEL's treat / control / pre / post / did (the exports' Treat flag, PERIOD_RULE) are
+                                    #   what this model estimates on (results tagged _panelDesign; the design in effect above is COMPARED with them) | "model" =
+                                    #   design-based modelling: the timing / TREATMENT_YEAR / transition-year settings above build post / pre / did
 COVARIATES       <- c("Rain", "Tmax", "Tmean", "Tmin")   # the weather covariates of this model | character(0) = none
 ```
 

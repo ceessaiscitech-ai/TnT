@@ -2500,6 +2500,51 @@ def check_v20_59():
             m_ = [os.path.basename(p) for p in rmd if "OUTCOME_SCREEN" not in open(p, encoding="utf-8").read() or "calendar year" not in open(p, encoding="utf-8").read()]
             if m_: bad(f"R notebooks without OUTCOME_SCREEN / the calendar-year note: {m_[:6]}")
             note("R: the same rules (year_bounds_R, panel_design_columns_R, screen_rule_R + the evidence file, DESIGN vs PANEL, the variation report) and the same notebook options")
+        # 7 v20.59 -- YOUR RULES: the PANEL's design is what the notebooks estimate on by default (DESIGN_SOURCE "panel" | "model"); Treat is
+        #   used and not kept; one sub-watershed and one ring per pixel in the whole panel (PIXEL_ONE_SITE), confirmed on the finished panel
+        for v, w in (("panel", "panel"), ("MODEL", "model"), (" Panel ", "panel")):
+            if _C._design_source_of(v) != w: bad(f"DESIGN_SOURCE {v!r} -> {_C._design_source_of(v)!r} (want {w!r})")
+        try: _C._design_source_of("exports"); bad("an unknown DESIGN_SOURCE is not refused")
+        except Exception: pass
+        if "design_source" not in _C.SCENARIO_KEYS: bad("design_source is not a scenario key (the out-of-core workers would not receive it)")
+        _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", design_source="panel", verbose=False)
+        if _C.ACTIVE.get("design_source") != "panel" or "_panelDesign" not in _C.scenario_tag(): bad("DESIGN_SOURCE = 'panel' is not in force / not in the results tag")
+        f = _pd.DataFrame({"pixel_id": _np.arange(6, dtype="int64"), "buff_km": [0, 0, 0, 2, 2, 2], "Year": [2021, 2022, 2023] * 2, "Season": [1] * 6,
+                           "post": [0, 0, 1, 0, 0, 1], "subwshed_id": ["SW1"] * 6, "site_id": [3] * 6, "time_fe_yearseason": ["2021_K", "2022_K", "2023_K"] * 2, "NDVI": 0.3})
+        g = _C.build_treatment_columns(f)
+        if list(g["post"]) != [0, 0, 1, 0, 0, 1] or list(g["pre"]) != [1, 1, 0, 1, 1, 0] or list(g["did"]) != [0, 0, 1, 0, 0, 0] or list(g["treat"]) != [1, 1, 1, 0, 0, 0]:
+            bad("under DESIGN_SOURCE = 'panel' the model's post / pre / did do not follow the PANEL's post column")
+        if _C.LAST_DESIGN_INFO.get("post_rows_differ_from_panel") != 2 or _C.LAST_DESIGN_INFO.get("post_rows_compared") != 6: bad(f"DESIGN vs PANEL under the panel source counts the design's differing rows wrongly: {_C.LAST_DESIGN_INFO}")
+        if list(g.loc[g["treat"] == 1, "first_treat_agri_year"]) != [2023.0] * 3 or list(g.loc[g["treat"] == 1, "event_time"]) != [-2, -1, 0] or int(g["transition_year"].sum()) != 0:
+            bad(f"under the panel source the cohort / event time do not follow the panel's first post year: {list(g.loc[g['treat'] == 1, 'first_treat_agri_year'])}, {list(g.loc[g['treat'] == 1, 'event_time'])}")
+        _C.set_scenario(design_source="model", verbose=False)
+        g = _C.build_treatment_columns(f.copy())
+        if list(g["post"]) != [0, 1, 1, 0, 1, 1] or "_panelDesign" in _C.scenario_tag(): bad("DESIGN_SOURCE = 'model' does not return to design-based modelling / the tag stays")
+        if "DESIGN_SOURCE" not in _i.getsource(_C.resolve_design) or "_post_design" not in _i.getsource(_C.build_treatment_columns): bad("the design report does not carry DESIGN_SOURCE / the comparison does not keep the design's post")
+        miss = [os.path.basename(p) for p in nbs + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) if not all(k in open(p, encoding="utf-8").read() for k in ("DESIGN_SOURCE     = ", "design_source=DESIGN_SOURCE"))]
+        if miss: bad(f"model notebooks without DESIGN_SOURCE = 'panel' passed to set_scenario: {miss[:6]}")
+        if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("DESIGN_SOURCE     = ", "design_source=DESIGN_SOURCE", "P.PIXEL_ONE_SITE      = ")): bad("P00_Settings lacks DESIGN_SOURCE / P.PIXEL_ONE_SITE")
+        for q in rp00:
+            t_ = open(q, encoding="utf-8").read()
+            if 'DESIGN_SOURCE     <- "panel"' not in t_ or "PIXEL_ONE_SITE      <- " not in t_: bad(f"{os.path.basename(q)} lacks DESIGN_SOURCE / PIXEL_ONE_SITE")
+        if not _P.PIXEL_ONE_SITE: bad("PIXEL_ONE_SITE is not the default")
+        ts_ = _i.getsource(_P.tag_sites)
+        if "L.tag(_lat, _lon, None)" not in ts_ or "site_unified_by_one_site_rule" not in ts_ or "BUFF_FROM_GEOMETRY or PIXEL_ONE_SITE" not in ts_: bad("tag_sites does not apply the one-site rule (the polygon that holds the point decides, its ring taken)")
+        if "confirm_pixel_consistency(final_path, output_dir)" not in _i.getsource(_P.run_pass_b): bad("P00 does not confirm the pixel consistency on the finished panel")
+        if "Treat" in getattr(_P, "FINAL_PANEL_SCHEMA", {}) : bad("Treat is still a column of the final panel")
+        if os.path.isdir(rl):
+            want = {"reward_design.R": ('design_source = .one_of("DESIGN_SOURCE"', "_panelDesign", "panel_src", "copy(x$post)", 'DESIGN_SOURCE = "model"'),
+                    "reward_prep.R": ("panel_pixel_consistency_R", "PIXEL_ONE_SITE", "one <- pr[order(i, ring, sid)]"),
+                    "reward_prep_ooc.R": ("panel_pixel_consistency_R", "n_rep_in", "pix = unique("),
+                    "reward_paths.R": ("PIXEL_ONE_SITE      <- TRUE", 'DESIGN_SOURCE       <- "model"')}
+            for fn, keys in want.items():
+                s_ = open(os.path.join(rl, fn), encoding="utf-8").read(); m_ = [k for k in keys if k not in s_]
+                if m_: bad(f"R {fn} lacks {m_}")
+                if fn.startswith("reward_prep") and '"SubwshedID", "Treat"' in s_: bad(f"R {fn} still keeps Treat in the panel")
+            m_ = [os.path.basename(p) for p in rmd if 'DESIGN_SOURCE     <- "panel"' not in open(p, encoding="utf-8").read()]
+            if m_: bad(f"R notebooks without DESIGN_SOURCE <- 'panel': {m_[:6]}")
+        note("YOUR RULES: DESIGN_SOURCE 'panel' in every notebook (the panel's treat / control / pre / post / did estimated on; 'model' = design-based modelling; tag _panelDesign; "
+             "cohort = the panel's first post year); Treat used and not kept in either language; PIXEL_ONE_SITE (one sub-watershed and one ring per pixel, the polygon decides) confirmed on the finished panel in both languages")
     finally:
         _C.ACTIVE.clear(); _C.ACTIVE.update(saved); _C._RESOLVED["key"] = None
 

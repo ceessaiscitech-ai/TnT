@@ -436,7 +436,8 @@ design_settings <- function() {
             pooled_fe = .one_of("POOLED_FE", .opt("POOLED_FE", "site_period"), c("site_period", "period")),
             exclude_gapfilled = isTRUE(.opt("EXCLUDE_GAPFILLED", TRUE)), covariates = as.character(.opt("COVARIATES", c("Rain", "Tmax", "Tmean", "Tmin"))),
             sub_watersheds = .opt("SUB_WATERSHEDS", "data"),                    # v20.58: the processing set (the location rule)
-            outcome_screen = screen_rule_R(.opt("OUTCOME_SCREEN", "drop")))    # v20.59: the outcome screen's rule -- drop | keep | off
+            outcome_screen = screen_rule_R(.opt("OUTCOME_SCREEN", "drop")),    # v20.59: the outcome screen's rule -- drop | keep | off
+            design_source = .one_of("DESIGN_SOURCE", .opt("DESIGN_SOURCE", "model"), c("panel", "model")))   # v20.59: "panel" = the panel's columns are estimated on (the notebooks' default) | "model" = the design in effect
   sw <- unlist(s$sub_watersheds); if (!length(sw) || all(is.na(sw))) sw <- "data"
   s$sub_watersheds <- if (length(sw) == 1 && is.character(sw) && tolower(trimws(sw)) %in% c("data", "recommended", "auto", "major")) (if (tolower(trimws(sw)) == "major") "major" else "data") else as.character(sw)
   if (!is.finite(s$treatment_year)) stop("TREATMENT_YEAR must be a year (got ", .opt("TREATMENT_YEAR", NA), ")")
@@ -806,6 +807,8 @@ model_design <- function(verbose = TRUE, force = FALSE) {
   add_ch("EXCLUDE_GAPFILLED", s$exclude_gapfilled, s$exclude_gapfilled, "your setting")
   add_ch("OUTCOME_SCREEN", s$outcome_screen, s$outcome_screen, paste0("your setting", c(drop = " (a year-season constant across pixels -- a fill value -- or with collapsed coverage leaves the model; evidence: OUTCOME_SCREEN_<outcome>.csv)",
                                                                              keep = " (such year-seasons are reported and KEPT; results tagged _screenKept)", off = " (no screen)")[[s$outcome_screen]]))
+  add_ch("DESIGN_SOURCE", s$design_source, s$design_source, paste0("your setting", c(panel = " (the PANEL's treat / control / pre / post / did -- the exports' Treat flag, PERIOD_RULE -- are estimated on; the design in effect above is compared with them)",
+                                                                       model = " (the design in effect above is estimated on -- design-based modelling; DESIGN_SOURCE <- \"panel\" estimates on the panel's columns)")[[s$design_source]]))
   add_ch("COVARIATES", if (length(s$covariates)) s$covariates else "none", if (length(s$covariates)) s$covariates else "none", "your setting")
   d <- list(design_mode = s$design_mode, timing = s$timing, treatment_year = as.integer(base), treatment_year_setting = s$treatment_year,
             site_start = ss, site_years = sy, control_rings = as.integer(rings), year_min = year_min, year_max = year_max, drop_years = drop_years,
@@ -813,7 +816,7 @@ model_design <- function(verbose = TRUE, force = FALSE) {
             seasons = seas, seasons_setting = s$seasons_setting, exclude_transition_year = s$exclude_transition_year, unit_fe = s$unit_fe,
             cohort_offset = s$cohort_offset, overlap_rows = s$overlap_rows, fragment_rule = s$fragment_rule, fragment_min_share = s$fragment_min_share,
             pooled_fe = s$pooled_fe, dose_variable = s$dose_variable, exclude_gapfilled = s$exclude_gapfilled, covariates = s$covariates,
-            outcome_screen = s$outcome_screen,                                                   # v20.59
+            outcome_screen = s$outcome_screen, design_source = s$design_source,                  # v20.59
             fund = list(start_rule = s$fund_start_rule, start_share = s$fund_start_share, rate_months = s$fund_rate_months, before_file = s$fund_dose_before_file),
             n_sites = length(real), sites = as.integer(real), n_fund_dated = as.integer(n_fund), data_keys = dk, choices = rbindlist(ch), notes = notes,
             sub_watersheds = s$sub_watersheds, processed = as.integer(ps$sites), processed_how = ps$how)
@@ -853,6 +856,7 @@ scenario_tag <- function(d) {
   if (identical(fr$before_file, "missing")) t <- paste0(t, "_doseObsOnly")
   if (isFALSE(d$exclude_gapfilled)) t <- paste0(t, "_withGapFilled")
   if (identical(d$outcome_screen, "keep")) t <- paste0(t, "_screenKept")                        # v20.59: the screen's cells kept (as Python)
+  if (identical(d$design_source, "panel")) t <- paste0(t, "_panelDesign")                       # v20.59: the panel's design estimated on (as Python)
   t <- paste0(t, "_", cov_tag(d$covariates %||% COVARIATES))
   if (is.finite(d$year_min %||% NA) || is.finite(d$year_max %||% NA))
     t <- paste0(t, sprintf("_yr%s-%s", if (is.finite(d$year_min %||% NA)) d$year_min else "start", if (is.finite(d$year_max %||% NA)) d$year_max else "end"))
@@ -875,7 +879,11 @@ design_vs_panel_say_R <- function(cmp, d) {
     return(invisible(NULL))
   }
   n <- as.numeric(cmp[1]); k <- as.numeric(cmp[2]); if (!is.finite(n) || n <= 0) return(invisible(NULL))
-  if (k == 0) info(sprintf("DESIGN vs PANEL: the design in effect (%s) gives the same post period as the panel's post column (the exports' Treat flag) on every one of %s rows", design_timing_text_R(d), format(n, big.mark = ",")))
+  src <- d$design_source %||% "model"
+  if (k == 0) info(sprintf("DESIGN vs PANEL: the design in effect (%s) gives the same post period as the panel's post column (the exports' Treat flag) on every one of %s rows%s", design_timing_text_R(d), format(n, big.mark = ","),
+                           if (identical(src, "panel")) " -- DESIGN_SOURCE = \"panel\": the panel's columns are estimated on" else ""))
+  else if (identical(src, "panel")) info(sprintf("DESIGN vs PANEL: DESIGN_SOURCE = \"panel\" -- this model estimates on the PANEL's post / pre / did (the exports' Treat flag, PERIOD_RULE); the design in effect (%s) would differ on %s of %s rows (%.1f %%) -- set DESIGN_SOURCE <- \"model\" to estimate on it (your settings: TREATMENT_TIMING / TREATMENT_YEAR / EXCLUDE_TRANSITION_YEAR)",
+                                                 design_timing_text_R(d), format(k, big.mark = ","), format(n, big.mark = ","), 100 * k / n))
   else info(sprintf("DESIGN vs PANEL: the design in effect (%s) differs from the panel's post column (the exports' Treat flag, R_P00) on %s of %s rows (%.1f %%) -- the DESIGN's columns are what this model estimates on (your settings: TREATMENT_TIMING / TREATMENT_YEAR / EXCLUDE_TRANSITION_YEAR); the panel's are the exporter's default",
                     design_timing_text_R(d), format(k, big.mark = ","), format(n, big.mark = ","), 100 * k / n))
   invisible(NULL)
@@ -891,9 +899,16 @@ design_columns <- function(x, d, site_period = NULL, say = TRUE) {   # v20.58: s
     x[, cohort_row := { y <- sy$year[match(as.integer(site_id), sy$site_id)]; fifelse(is.na(y), base, as.integer(y)) }]
   } else x[, cohort_row := base]
   x[, post := as.integer(Year >= cohort_row)]
-  if (isTRUE(d$exclude_transition_year)) { n0 <- nrow(x); x <- x[Year != cohort_row]; x[, post := as.integer(Year > cohort_row)]
+  panel_src <- identical(d$design_source, "panel") && ".post_panel" %in% names(x)   # v20.59: the panel's design is estimated on
+  if (isTRUE(d$exclude_transition_year) && !panel_src) { n0 <- nrow(x); x <- x[Year != cohort_row]; x[, post := as.integer(Year > cohort_row)]
     setattr(x, "n_transition_left_out", n0 - nrow(x))
     if (say) info(sprintf("EXCLUDE_TRANSITION_YEAR: %s rows of each series' first treated year left out", format(n0 - nrow(x), big.mark = ","))) }
+  post_design <- if (".post_panel" %in% names(x)) copy(x$post) else NULL           # the design in effect's post, compared with the panel's below
+  if (panel_src) {                                                                  # v20.59 -- DESIGN_SOURCE "panel" (the notebooks' default): the PANEL's post
+    x[, post := fifelse(is.na(.post_panel), post, as.integer(.post_panel))]        #   (the exports' Treat flag, PERIOD_RULE) is estimated on; each series' cohort =
+    first <- x[post == 1L, .(first_post = min(Year)), by = site_id]                #   the first post year of its sub-watershed in the panel's own columns
+    x[first, on = "site_id", cohort_row := i.first_post]; x[is.na(cohort_row), cohort_row := base]
+  }
   x[, did := treat * post]
   x[, cohort := fifelse(treat == 1L, as.numeric(cohort_row + as.integer(d$cohort_offset %||% 0L)), Inf)]
   x[, event_time := fifelse(treat == 1L, Year - cohort_row, NA_integer_)]
@@ -902,7 +917,7 @@ design_columns <- function(x, d, site_period = NULL, say = TRUE) {   # v20.58: s
   x[, period := if (site_period) paste(site_id, Year, Season, sep = "_") else paste(Year, Season, sep = "_")]
   x[, cohort_row := NULL]
   cmp <- NULL
-  if (".post_panel" %in% names(x)) { cmp <- c(nrow(x), sum(x$.post_panel != x$post, na.rm = TRUE)); x[, .post_panel := NULL] }
+  if (".post_panel" %in% names(x)) { cmp <- c(nrow(x), sum(x$.post_panel != post_design, na.rm = TRUE)); x[, .post_panel := NULL] }
   setattr(x, "post_vs_panel", cmp)                                     # v20.59: (rows compared, rows that differ); NULL = no post column in the panel
   if (say) design_vs_panel_say_R(cmp, d)
   x
@@ -1217,7 +1232,7 @@ DESIGN_DEFAULTS <- list(DESIGN_MODE = "recommended", TREATMENT_TIMING = "fund", 
                         FUND_RATE_MONTHS = 12L, FUND_DOSE_BEFORE_FILE = "backcast", DOSE_VARIABLE = "dose_intensity_per_ha", CONTROL_RINGS = "data",
                         PRE_YEARS = "data", POST_YEARS = "data", SEASONS = "all", EXCLUDE_TRANSITION_YEAR = FALSE, UNIT_FE = "pixel_season", COHORT_OFFSET = 0L,
                         OVERLAP_ROWS = "drop", FRAGMENT_RULE = "drop", FRAGMENT_MIN_SHARE = 0.05, POOLED_FE = "site_period", EXCLUDE_GAPFILLED = TRUE,
-                        COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SUB_WATERSHEDS = "data", OUTCOME_SCREEN = "drop")   # v20.59: + the screen's rule
+                        COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SUB_WATERSHEDS = "data", OUTCOME_SCREEN = "drop", DESIGN_SOURCE = "model")   # v20.59: + the screen's rule, the design's source
 design_variant_samples <- function(variants, out_dir, outcome = "NDVI") {
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
   for (nm in names(variants)) {

@@ -46,6 +46,8 @@ COVARIATES        <- c("Rain", "Tmax", "Tmean", "Tmin")
 SUB_WATERSHEDS      <- "data"        # "data" | "all" | 11 | c(7, 11)
 SITE_GEOMETRY_CHECK <- TRUE          # every row located in the shapefile: confirmed / corrected / assigned | FALSE = trust the id in the file
 BUFF_FROM_GEOMETRY  <- FALSE         # TRUE = buff_km always from the polygon ring | FALSE = only where the sub-watershed was corrected / assigned
+PIXEL_ONE_SITE      <- TRUE          # v20.59 -- YOUR RULE: one sub-watershed and one ring per pixel in the whole panel (the polygon that holds the point decides;
+                                     #   confirmed: panel_pixel_consistency_R.csv) | FALSE = the v20.58 rule (a point in two zones kept once per sub-watershed)
 # v20.59 -- YOUR RULE: the panel KEEPS every row and every value. Fill values (a year-season with ONE value for every pixel) and gap-filled
 # rows (GapFilled = 1 / Coverage 0) stay IN the panel; whether a MODEL estimates on them is decided by the two options below -- the DEFAULTS
 # here (the design report and the screen table of this notebook use them) and, for each model, ITS OWN setting in its notebook (as Python's
@@ -54,7 +56,9 @@ BUFF_FROM_GEOMETRY  <- FALSE         # TRUE = buff_km always from the polygon ri
 OUTCOME_SCREEN    <- "drop"   # "drop" = a year-season constant across pixels (a fill value) or with collapsed coverage leaves the model (evidence:
                               #   OUTCOME_SCREEN_<outcome>.csv) | "keep" = reported and KEPT (results tagged _screenKept) | "off" = no screen
 EXCLUDE_GAPFILLED <- TRUE     # TRUE = rows the exporter filled from history (GapFilled = 1 / Coverage 0) are not observations | FALSE keeps them
-cat("design defaults (a model notebook overrides each):", DESIGN_MODE, "| timing", TREATMENT_TIMING, "| period rule (R_P00)", PERIOD_RULE, "| outcome screen", OUTCOME_SCREEN, "| gap-filled rows", if (isTRUE(EXCLUDE_GAPFILLED)) "left out" else "kept", "| rings", paste(CONTROL_RINGS, collapse = ","),
+DESIGN_SOURCE     <- "panel"  # v20.59 -- YOUR RULE: the PANEL's treat / control / pre / post / did (the exports' Treat flag, PERIOD_RULE) are what every
+                              #   model estimates on by default (results tagged _panelDesign; a notebook's CELL 1 overrides it) | "model" = design-based
+cat("design defaults (a model notebook overrides each):", DESIGN_MODE, "| timing", TREATMENT_TIMING, "| period rule (R_P00)", PERIOD_RULE, "| outcome screen", OUTCOME_SCREEN, "| design source", DESIGN_SOURCE, "| gap-filled rows", if (isTRUE(EXCLUDE_GAPFILLED)) "left out" else "kept", "| rings", paste(CONTROL_RINGS, collapse = ","),
     "| seasons", paste(SEASONS, collapse = ","), "| fragments", FRAGMENT_RULE, "| overlap", OVERLAP_ROWS, "| pooled FE", POOLED_FE, "\n")
 ```
 

@@ -214,7 +214,21 @@ overlay_or_trust <- function(px) {
   info("overlay: SITE_GEOMETRY_CHECK = FALSE -- the sub-watershed id of the input files is trusted (", format(nrow(out), big.mark = ","), " pixels not checked)")
   out
 }
-ring_from_polygon_codes <- function() if (isTRUE(.opt("BUFF_FROM_GEOMETRY", FALSE))) c(0L, 1L, 2L) else c(1L, 2L)   # BUFF_FROM_GEOMETRY: confirmed rows too
+ring_from_polygon_codes <- function() if (isTRUE(.opt("BUFF_FROM_GEOMETRY", FALSE)) || isTRUE(.opt("PIXEL_ONE_SITE", TRUE))) c(0L, 1L, 2L) else c(1L, 2L)   # BUFF_FROM_GEOMETRY / PIXEL_ONE_SITE: confirmed rows too
+# v20.59 -- YOUR RULE, CONFIRMED on the finished panel: every pixel has ONE sub-watershed and ONE ring in the whole panel and appears ONCE per
+# year-season. Pixels outside every polygon (site_check 3) are reported apart (they keep the file's id and leave every estimate). pix = one
+# row per (pixel_id, site_id, buff_km, latitude, longitude) seen -- the whole panel in memory, or the blocks' unique rows merged out of core.
+panel_pixel_consistency_R <- function(pix, n_rep, n_rows, write = TRUE) {
+  g <- pix[, .(sites = uniqueN(site_id), rings = uniqueN(buff_km), coords = uniqueN(paste(latitude, longitude))), by = pixel_id]
+  bad <- g[sites > 1 | rings > 1 | coords > 1]
+  if (write) fwrite(bad, file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv"))
+  if (!nrow(g) && n_rep == 0) ok(sprintf("pixel consistency: no pixel inside a polygon to check (%s rows, every pixel outside every polygon keeps its file's id and leaves every estimate -- the location rule)", format(n_rows, big.mark = ",")))
+  else if (!nrow(bad) && n_rep == 0)
+    ok(sprintf("pixel consistency CONFIRMED: %s pixels, each with ONE sub-watershed and ONE ring in every year and season, every (pixel, year, season) once", format(nrow(g), big.mark = ",")))
+  else warn(sprintf("pixel consistency NOT met: %s repeated (pixel, year, season) row(s); %s pixel(s) with two sub-watersheds, %s with two rings, %s with two coordinates -> panel_pixel_consistency_R.csv (PIXEL_ONE_SITE = %s; the location rule of the models leaves such rows out)",
+                    format(n_rep, big.mark = ","), format(sum(g$sites > 1), big.mark = ","), format(sum(g$rings > 1), big.mark = ","), format(sum(g$coords > 1), big.mark = ","), isTRUE(.opt("PIXEL_ONE_SITE", TRUE))))
+  invisible(list(pixels = nrow(g), two_sites = sum(g$sites > 1), two_rings = sum(g$rings > 1), repeated = n_rep))
+}
 working_sws_line <- function(dt) {
   # ONE sub-watershed processed = the one holding the majority of the rows (SUB_WATERSHEDS = "data": every sub-watershed with >= FRAGMENT_MIN_SHARE of
   # the largest one's own rows; the rest are fragments); SEVERAL = every row in the sub-watershed its coordinates put it in.
@@ -234,6 +248,12 @@ overlay_sws <- function(px) {                                                   
   conf <- pr[!is.na(ind) & sid == ind][order(i, ring)][!duplicated(i)][, .(i, site_id = sid, ring_poly = ring, site_check = 0L)]
   rest <- pr[!i %in% conf$i][order(i, ring, sid)][!duplicated(i)][, .(i, site_id = sid, ring_poly = ring, site_check = fifelse(is.na(ind) | ind <= 0L, 2L, 1L))]   # core first, then the lower id
   res <- rbind(conf, rest)
+  if (isTRUE(.opt("PIXEL_ONE_SITE", TRUE))) {                                        # v20.59 -- YOUR RULE: the polygon that holds the point decides (core first,
+    one <- pr[order(i, ring, sid)][!duplicated(i)][, .(i, s1 = sid, r1 = ring)]      #   then the lower id), whatever id the file carried -- one site, one ring per pixel
+    res <- merge(res, one, by = "i"); n_uni <- sum(res$site_id != res$s1)
+    res[site_id != s1 & site_check == 0L, site_check := 1L]; res[, `:=`(site_id = s1, ring_poly = r1)]; res[, c("s1", "r1") := NULL]
+    if (n_uni) info(sprintf("one sub-watershed per pixel (PIXEL_ONE_SITE): %s pixel location(s) in the zones of two sub-watersheds go to the one whose polygon holds them (core first, then the lower id)", format(n_uni, big.mark = ",")))
+  }
   ind0 <- fifelse(is.na(px$sws_export), 0L, as.integer(px$sws_export))
   out <- cbind(px, data.table(site_id = ind0, ring_poly = NA_integer_, site_check = 3L))      # in no polygon: the indicated site kept, flagged (as Python)
   out[res$i, `:=`(site_id = res$site_id, ring_poly = res$ring_poly, site_check = res$site_check)]
@@ -656,6 +676,8 @@ run_prep <- function() {
   if (no) stop("duplicate removal FAILED: a pixel outside every polygon is still repeated in a year-season -- please report this")
   n2 <- nrow(dt) - uniqueN(dt, by = c("pixel_id", "Year", "Season"))
   if (n2) info(sprintf("%s pixel-year-season(s) lie in the polygons of TWO sub-watersheds (their zones overlap): kept once per sub-watershed -- the location rule of the models keeps each in its own sub-watershed only", format(n2, big.mark = ",")))
+  panel_pixel_consistency_R(unique(dt[is.na(site_check) | site_check != 3L, .(pixel_id, site_id, buff_km, latitude, longitude)]),           # v20.59: your rule, confirmed
+                            nrow(dt[is.na(site_check) | site_check != 3L]) - uniqueN(dt[is.na(site_check) | site_check != 3L], by = c("pixel_id", "Year", "Season")), nrow(dt))
   if (isTRUE(NEAR_DUPLICATE_PIXELS)) {
     reg2 <- pixel_registry(dt); left <- nrow(near_duplicate_pairs(reg2))
     (if (left) warn else ok)(sprintf("near-duplicate pixels CONFIRMED: %s pixel(s) remain whose footprints overlap >= %.0f %% among %s pixels%s", format(left, big.mark = ","),
@@ -666,7 +688,7 @@ run_prep <- function() {
   vt <- panel_variation_report_R(panel_variation_R(dt))                                             # v20.59: pixel variation per outcome x year-season
   panel_kept_report_R(vt, if ("GapFilled" %in% names(dt)) sum(dt$GapFilled > 0, na.rm = TRUE) else 0L)   # v20.59: the panel KEEPS every row and value
   keep_cols <- intersect(c("pixel_id", "site_id", "Year", "Season", "latitude", "longitude", "buff_km", "sws_export", "site_check", "sws_name",
-                           "fragment", "SubwshedID", "Treat", PANEL_DESIGN_COLS, OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), names(dt))
+                           "fragment", "SubwshedID", PANEL_DESIGN_COLS, OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), names(dt))   # v20.59: Treat used, not kept
   keep_cols <- setdiff(keep_cols, panel_columns_left_out_R())                                    # v20.58: the project's models' columns
   dt <- dt[, ..keep_cols]
   # v20.57: NOTHING of the design a MODEL chooses is baked into the panel -- the timing (fund / registry / fixed), the unit and period fixed

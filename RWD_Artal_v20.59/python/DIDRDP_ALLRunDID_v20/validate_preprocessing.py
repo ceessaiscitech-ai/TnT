@@ -624,6 +624,10 @@ def main():
         o_ = os.path.join(tmp, "sws_out"); td_ = os.path.join(o_, "TEMP"); os.makedirs(td_, exist_ok=True)
         _r, _u, _e, _d, sh_ = P.run_pass_a(root_, td_, o_, n_workers=1); P.run_pass_b(sh_, o_, n_workers=1)
         pan_ = P.pq.read_table(os.path.join(o_, "did_panel_full.parquet")).to_pandas()
+        pc_ = P.confirm_pixel_consistency(os.path.join(o_, "did_panel_full.parquet"), verbose=False)          # v20.59: your rule, confirmed
+        (ok if pc_["repeated_pixel_year_season"] == 0 and pc_["pixels_with_two_sites"] == 0 and pc_["pixels_with_two_rings"] == 0 and pc_["pixels"] > 0 else bad)(
+            f"pixel consistency on the shapefile case (one sub-watershed and one ring per pixel, once per year-season): {pc_}")
+        if "Treat" in pan_.columns: bad("Treat is still a column of the final panel")
         rep_ = pd.read_csv(os.path.join(o_, "site_tagging_report.csv"))
         px = pan_.groupby("site_id").pixel_id.nunique().to_dict()
         corrected = int(rep_["corrected"].sum()); outside = int(rep_["outside_all_polygons"].sum())

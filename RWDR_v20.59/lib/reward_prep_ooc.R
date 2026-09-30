@@ -98,7 +98,9 @@ ooc_task_p00_block <- function(ctx, k) {
   out <- file.path(ctx$run_dir, sprintf("out_%06d.rds", k)); saveRDS(dt, out, compress = FALSE)
   list(rows = nrow(dt), dedup = dd, n_no = n_no, n2 = n2, reg2 = reg2, sites0 = sites0, sites = sort(unique(dt$site_id)), pixels = unique(dt$pixel_id),
        block = job$block, j = j, file = out, design = dchk, variation = vpart,
-       gapfilled = if ("GapFilled" %in% names(dt)) sum(dt$GapFilled > 0, na.rm = TRUE) else 0L)          # v20.59: kept in the panel, counted
+       gapfilled = if ("GapFilled" %in% names(dt)) sum(dt$GapFilled > 0, na.rm = TRUE) else 0L,          # v20.59: kept in the panel, counted
+       pix = unique(dt[is.na(site_check) | site_check != 3L, .(pixel_id, site_id, buff_km, latitude, longitude)]),   # v20.59: the pixel consistency, merged by the parent
+       n_rep_in = nrow(dt[is.na(site_check) | site_check != 3L]) - uniqueN(dt[is.na(site_check) | site_check != 3L], by = c("pixel_id", "Year", "Season")))
 }
 
 # ---------------------------------------------------------------- the pipeline block by block (run_prep's twin)
@@ -152,7 +154,7 @@ run_prep_ooc <- function(files, t0 = Sys.time(), why = "") {
   tys <- list(); for (p in good) for (c_ in names(p$types)) tys[[c_]] <- max(tys[[c_]] %||% 0L, p$types[[c_]])
   all_cols <- unique(c(unlist(lapply(good, function(p) names(p$types))), "site_id", "ring_poly", "site_check", "sws_name", "fragment", PANEL_DESIGN_COLS))
   keep <- intersect(c("pixel_id", "site_id", "Year", "Season", "latitude", "longitude", "buff_km", "sws_export", "site_check", "sws_name",
-                      "fragment", "SubwshedID", "Treat", PANEL_DESIGN_COLS, OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), all_cols)
+                      "fragment", "SubwshedID", PANEL_DESIGN_COLS, OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), all_cols)   # v20.59: Treat used, not kept
   keep <- setdiff(keep, panel_columns_left_out_R())
   # PASS 2: the blocks (a block larger than one task's share of the RAM: in pixel groups)
   bl <- rbindlist(lapply(good, `[[`, "blocks"))[, .(N = sum(N)), by = .(Year, Season)][order(Year, Season)]
@@ -186,6 +188,7 @@ run_prep_ooc <- function(files, t0 = Sys.time(), why = "") {
   }
   ok(sprintf("duplicates CONFIRMED removed: %s rows, every (sub-watershed, pixel, year, season) exactly once", format(rows, big.mark = ",")))
   panel_design_report_R(panel_design_merge_R(lapply(p2, `[[`, "design")))                       # v20.59: the blocks' design checks, said once
+  panel_pixel_consistency_R(unique(rbindlist(lapply(p2, `[[`, "pix"))), sum(vapply(p2, function(p) as.numeric(p$n_rep_in %||% 0), 0)), rows)   # v20.59: your rule, confirmed
   vt <- panel_variation_report_R(lapply(p2, `[[`, "variation"))                                  # v20.59: the blocks' moments merged exactly
   panel_kept_report_R(vt, sum(vapply(p2, function(p) as.numeric(p$gapfilled %||% 0), 0)))          # v20.59: the panel KEEPS every row and value
   n_sites <- length(unique(unlist(lapply(p2, `[[`, "sites0"))))

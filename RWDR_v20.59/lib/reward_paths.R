@@ -103,6 +103,12 @@ SITE_GEOMETRY_CHECK <- TRUE                                     # v20.59 (as Pyt
 BUFF_FROM_GEOMETRY  <- FALSE                                    # v20.59 (as Python): TRUE = buff_km always from the polygon ring | FALSE = only where the
                                                                 #   sub-watershed was corrected or assigned (a confirmed row keeps the exported ring, reported)
 EXCLUDE_GAPFILLED   <- TRUE                                     # v20.52: rows filled from history are not estimated on (as Python)
+DESIGN_SOURCE       <- "model"                                 # v20.59: the library's default for the validators and the bridge; EVERY model notebook and R_P00
+                                                               #   set DESIGN_SOURCE <- "panel" (the panel's treat / control / pre / post / did -- the exports' Treat
+                                                               #   flag, PERIOD_RULE -- are estimated on); "model" = the design in effect (design-based modelling)
+PIXEL_ONE_SITE      <- TRUE                                    # v20.59 (YOUR RULE): ONE sub-watershed and ONE ring per pixel in the whole panel -- the polygon that
+                                                               #   holds the point (core first, then the lower id) decides, whatever the file carried; a pixel appears
+                                                               #   once per year-season. FALSE = the v20.58 rule (a point in two zones kept once per sub-watershed)
 OUTCOME_SCREEN      <- "drop"                                  # v20.59: the outcome screen -- "drop": a year-season constant across pixels (a fill value)
                                                                #   or with collapsed coverage leaves every model, its evidence in OUTCOME_SCREEN_<outcome>.csv |
                                                                #   "keep": reported and KEPT (results tagged _screenKept) | "off". Set per model in its notebook

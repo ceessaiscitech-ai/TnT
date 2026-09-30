@@ -44,6 +44,12 @@ for y in years:
                          "GapFilled": int((y, s) == GAP_CELL), "Coverage": 1.0})       # gap-filled rows: the exporter's flag on one year-season
         pd.DataFrame(rows).to_csv(f"{ROOT}/data/Haligeri/CSV_{y}_{['Yearly','Kharif','Rabi','Zaid'][s]}_tile0.csv", index=False); raw += rows
 raw = pd.DataFrame(raw); print(f"exports: {len(raw):,} rows, {len(pts)} pixels, {len(years)} years x {len(seasons)} seasons; true delta {DELTA}")
+# v20.59 -- YOUR RULE (one sub-watershed and one ring per pixel): five treatment-area pixels ALSO exported in a file of another sub-watershed
+# (Beguru, id 2) with ring 3 for one year-season -- the same coordinates, the same values. The panel must hold them ONCE per year-season, in
+# sub-watershed 7 with ring 0 (the polygon that holds the point decides), and Treat itself must not be a column of the panel.
+STRAY = raw[(raw.Year == 2020) & (raw.Season == 1) & (raw.buff_km == 0)].head(5).copy()
+STRAY["SubwshedID"] = "U2"; STRAY["SWSiD_All"] = 2; STRAY["buff_km"] = 3
+os.makedirs(f"{ROOT}/data/Beguru", exist_ok=True); STRAY.to_csv(f"{ROOT}/data/Beguru/CSV_2020_Kharif_tile1.csv", index=False)
 # ---------------------------------------------------------------- 2 P00 and the panel vs the inputs
 import _paths as PP
 paths = PP.derive(); P._apply_paths(paths); C._apply_paths(paths)
@@ -63,6 +69,14 @@ check("pre = 1 - post", (m["pre"] == 1 - m["post"]).all())
 check("did = treat x post", (m["did"] == m["treat"] * m["post"]).all())
 check("aliases treatment / did_term / pre_period / post_period agree", (m["treatment"] == m["treat"]).all() and (m["did_term"] == m["did"]).all())
 check("no NaN in any design column", pan[["treat", "control", "pre", "post", "did"]].isna().sum().sum() == 0)
+check("Treat is used, not kept: the panel carries no Treat column (treat / control / pre / post / did carry its information)", "Treat" not in pan.columns, str([c for c in pan.columns if "reat" in c]))
+st = pan.merge(STRAY[["latitude", "longitude"]].drop_duplicates(), on=["latitude", "longitude"])
+check("one sub-watershed and one ring per pixel: the 5 pixels also exported in a Beguru file (id 2, ring 3) are in the panel once per year-season, in sub-watershed 7 with ring 0 in every year and season",
+      len(st) == 5 * len(years) * len(seasons) and st.groupby(["latitude", "longitude", "Year", "Season"]).size().max() == 1 and set(st.site_id.astype(int)) == {7} and set(st.buff_km.astype(int)) == {0},
+      f"{len(st)} rows, sites {sorted(st.site_id.unique())}, rings {sorted(st.buff_km.unique())}")
+pc = P.confirm_pixel_consistency(P.FINAL_PANEL, verbose=False)
+check("panel_pixel_consistency (P00's own confirmation): 0 repeated (pixel, year, season), 0 pixels with two sub-watersheds or two rings, every pixel counted",
+      pc["repeated_pixel_year_season"] == 0 and pc["pixels_with_two_sites"] == 0 and pc["pixels_with_two_rings"] == 0 and pc["pixels"] == len(pts), str(pc))
 n_fill_rows = int(((pan.Year == FILL_CELL[0]) & (pan.Season == FILL_CELL[1])).sum()); n_gap_rows = int((pd.to_numeric(pan["GapFilled"], errors="coerce").fillna(0) > 0).sum())
 check("the PANEL KEEPS the fill year-season (every pixel, the one value) and the gap-filled rows (GapFilled = 1)",
       n_fill_rows == len(pts) and float(pan.loc[(pan.Year == FILL_CELL[0]) & (pan.Season == FILL_CELL[1]), "NDVI"].nunique()) == 1 and n_gap_rows == len(pts),
@@ -147,6 +161,25 @@ print(f"keep vs drop: beta_keep {bk:.6f} - beta_drop {b_drop:.6f} = {bk - b_drop
       f"-> predicted dilution {predicted:+.6f}; true effect {DELTA}")
 check("keeping the fill year-season is NOT neutral: the estimate moves by the predicted dilution g / (n + 1) x 1 / seasons (to 1e-3), away from the truth",
       abs((bk - b_drop) - predicted) < 1e-3 and abs(bk - DELTA) > abs(b_drop - DELTA), f"shift {bk - b_drop:+.6f} vs predicted {predicted:+.6f}")
+# v20.59 -- YOUR RULE: the PANEL's design is what the notebooks estimate on by default (DESIGN_SOURCE = "panel"); design-based modelling stays an option
+C.set_scenario(timing="fixed", treatment_year=2023, design_source="panel", verbose=False); C._RESOLVED["key"] = None
+dp = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); sp = dp[dp.in_analysis_sample == 1].copy()
+check("DESIGN_SOURCE = 'panel' (the notebooks' default): post / pre / did = the PANEL's columns (the exports' Treat) on every row although TREATMENT_YEAR = 2023; the results folder tagged _panelDesign",
+      (sp["post"].values == (sp["Year"].values >= T0).astype(int)).all() and (sp["pre"].values == 1 - sp["post"].values).all()
+      and (sp["did_term"].values == sp["treatment"].values * sp["post"].values).all() and "_panelDesign" in C.scenario_tag(), C.scenario_tag())
+check("DESIGN vs PANEL under the panel source: the design in effect (2023) is COMPARED, not estimated on -- it differs on exactly the 2022 rows, said",
+      C.LAST_DESIGN_INFO.get("post_rows_differ_from_panel") == int((dp.Year == 2022).sum()) > 0, str(C.LAST_DESIGN_INFO.get("post_rows_differ_from_panel")))
+check("the cohort under the panel source = the panel's first post year (2022) on every treated row, the event time counted from it",
+      (sp.loc[sp.treatment == 1, "first_treat_agri_year"] == T0).all() and (sp.loc[sp.treatment == 1, "event_time"] == sp.loc[sp.treatment == 1, "Year"] - T0).all())
+bp, sep = C.estimate_twfe_did(sp, "NDVI", "did_term", "pixel_id", "time_fe_yearseason", "subwshed_id")
+check("M01 under DESIGN_SOURCE = 'panel' = M01 under the design fixed 2022 (the panel's own period): beta and SE to 1e-12, the same rows",
+      abs(bp - b) < 1e-12 and abs(sep - se) < 1e-12 and len(sp) == len(s), f"{bp:.12f} vs {b:.12f}, {len(sp)} vs {len(s)} rows")
+C.set_scenario(design_source="model", verbose=False); C._RESOLVED["key"] = None
+dm = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); sm = dm[dm.in_analysis_sample == 1]
+bm, _sem = C.estimate_twfe_did(sm, "NDVI", "did_term", "pixel_id", "time_fe_yearseason", "subwshed_id")
+check("DESIGN_SOURCE = 'model' (design-based modelling): post = Year >= 2023 (the setting), no _panelDesign tag, a different estimate",
+      (dm["post"].values == (dm["Year"].values >= 2023).astype(int)).all() and "_panelDesign" not in C.scenario_tag() and abs(bm - b) > 1e-6, f"{bm:.8f} vs {b:.8f}")
+C.set_scenario(timing="fixed", treatment_year=T0, design_source="model", verbose=False); C._RESOLVED["key"] = None
 # ---------------------------------------------------------------- 4 R on the same exports
 rroot = ROOT + "/R"; shutil.copytree(ROOT + "/data", rroot); RLIB = os.path.dirname(C.r_bridge_script())
 rs = f"""
@@ -157,7 +190,7 @@ Sys.setenv(REWARD_R_ROOT = root, REWARD_SITES_CSV = sites, REWARD_SHAPEFILE = sh
 for (f in c("reward_paths.R", "reward_design.R", "reward_prep.R", "reward_models_core.R")) source(file.path(rlib, f))
 suppressPackageStartupMessages(library(data.table))
 run_prep()
-pp <- panel_read(c("latitude", "longitude", "Year", "Season", "buff_km", "NDVI", "treat", "control", "pre", "post", "did"))
+pp <- panel_read(c("latitude", "longitude", "Year", "Season", "site_id", "buff_km", "NDVI", "treat", "control", "pre", "post", "did"))
 fwrite(pp, file.path(root, "r_panel_cols.csv"))
 TREATMENT_TIMING <- "fixed"; TREATMENT_YEAR <- {T0}; CONTROL_RINGS <- 1:5; PRE_YEARS <- "all"; POST_YEARS <- "all"; SEASONS <- "all"; DESIGN_MODE <- "manual"
 d <- model_design(verbose = FALSE, force = TRUE); x <- load_panel_R("NDVI", d)
@@ -165,12 +198,20 @@ f1 <- fe_fit(x, "NDVI", "did")
 OUTCOME_SCREEN <- "keep"; dk <- model_design(verbose = FALSE, force = TRUE); xk <- load_panel_R("NDVI", dk); fk <- fe_fit(xk, "NDVI", "did"); tag_k <- scenario_tag(dk)
 OUTCOME_SCREEN <- "drop"; EXCLUDE_GAPFILLED <- FALSE; dg <- model_design(verbose = FALSE, force = TRUE); xg <- load_panel_R("NDVI", dg); fg <- fe_fit(xg, "NDVI", "did"); tag_g <- scenario_tag(dg)
 EXCLUDE_GAPFILLED <- TRUE
+DESIGN_SOURCE <- "panel"; TREATMENT_YEAR <- 2023; dpn <- model_design(verbose = FALSE, force = TRUE); xp <- load_panel_R("NDVI", dpn); fp <- fe_fit(xp, "NDVI", "did"); tag_p <- scenario_tag(dpn); pvp <- attr(xp, "post_vs_panel")
+DESIGN_SOURCE <- "model"; dmn <- model_design(verbose = FALSE, force = TRUE); xm <- load_panel_R("NDVI", dmn); fm <- fe_fit(xm, "NDVI", "did"); tag_m <- scenario_tag(dmn)
+TREATMENT_YEAR <- {T0}
 HAS_FIXEST <<- FALSE; f2 <- fe_fit(x, "NDVI", "did")
 writeLines(jsonlite::toJSON(list(n = f1$n, G = f1$G, fixest_beta = unname(f1$coef["did"]), fixest_se = unname(f1$se["did"]), fixest_engine = f1$engine,
                                  builtin_beta = unname(f2$coef["did"]), builtin_se = unname(f2$se["did"]), builtin_engine = f2$engine,
                                  keep_beta = unname(fk$coef["did"]), keep_n = fk$n, keep_tag = tag_k, keep_fill_in = any(xk$Year == {FILL_CELL[0]} & xk$Season == {FILL_CELL[1]}),
                                  gap_beta = unname(fg$coef["did"]), gap_n = fg$n, gap_tag = tag_g, gap_in = any(xg$Year == {GAP_CELL[0]} & xg$Season == {GAP_CELL[1]}),
-                                 post_vs_panel = as.list(attr(x, "post_vs_panel"))), auto_unbox = TRUE, digits = NA), file.path(root, "r_m01.json"))
+                                 post_vs_panel = as.list(attr(x, "post_vs_panel")),
+                                 panel_beta = unname(fp$coef["did"]), panel_se = unname(fp$se["did"]), panel_tag = tag_p, panel_pvp = as.list(pvp),
+                                 panel_post_ok = all(xp$post == as.integer(xp$Year >= {T0})) && all(xp$did == xp$treat * xp$post) && all(xp[treat == 1L, cohort] == {T0}),
+                                 model_beta = unname(fm$coef["did"]), model_post_ok = all(xm$post == as.integer(xm$Year >= 2023)), model_tag = tag_m,
+                                 panel_has_treat = "Treat" %in% panel_names(),
+                                 pixel_consistency_offenders = nrow(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")))), auto_unbox = TRUE, digits = NA), file.path(root, "r_m01.json"))
 cat("@@RDONE@@\\n")
 """
 open(ROOT + "/audit.R", "w").write(rs)
@@ -197,6 +238,17 @@ else:
     check("R fixest SE = Python's M01 SE to 1e-6 relative (fixest's CR1 small-sample factor is the reference)", abs(rj["fixest_se"] - se) <= 1e-6 * se, f"R {rj['fixest_se']:.10f} vs Python {se:.10f}")
     check("R built-in SE = fixest SE to 1e-6 relative", abs(rj["builtin_se"] - rj["fixest_se"]) <= 1e-6 * max(1, rj["fixest_se"]), f"{rj['builtin_se']:.10f}")
     check("R DESIGN vs PANEL: 0 rows differ", rj.get("post_vs_panel", [None, None])[1] == 0, str(rj.get("post_vs_panel")))
+    check("R DESIGN_SOURCE <- 'panel' under TREATMENT_YEAR 2023: post / did = the panel's, cohort 2022, _panelDesign tag, the same beta and SE as fixest under 2022 to 1e-8",
+          bool(rj.get("panel_post_ok")) and "_panelDesign" in str(rj.get("panel_tag")) and abs(rj["panel_beta"] - rj["fixest_beta"]) < 1e-8 and abs(rj["panel_se"] - rj["fixest_se"]) < 1e-8,
+          f"R {rj.get('panel_beta')} vs {rj.get('fixest_beta')}, tag {rj.get('panel_tag')}")
+    check("R DESIGN vs PANEL under the panel source: the design in effect (2023) differs on the 2022 rows, said (as Python)", (rj.get("panel_pvp") or [0, 0])[1] == 4 * len(pts), str(rj.get("panel_pvp")))
+    check("R DESIGN_SOURCE <- 'model': post = Year >= 2023, no _panelDesign tag, the same beta as Python's design-based estimate to 1e-8",
+          bool(rj.get("model_post_ok")) and "_panelDesign" not in str(rj.get("model_tag")) and abs(rj["model_beta"] - bm) < 1e-8, f"R {rj.get('model_beta')} vs Python {bm:.10f}")
+    st_r = rp.merge(STRAY[["latitude", "longitude"]].drop_duplicates(), on=["latitude", "longitude"])
+    check("R_P00 panel: Treat used and not kept; the 5 pixels of the Beguru file once per year-season in sub-watershed 7 ring 0; panel_pixel_consistency_R.csv with 0 offenders",
+          rj.get("panel_has_treat") is False and rj.get("pixel_consistency_offenders") == 0 and len(st_r) == 5 * len(years) * len(seasons)
+          and st_r.groupby(["latitude", "longitude", "Year", "Season"]).size().max() == 1 and set(st_r.site_id.astype(int)) == {7} and set(st_r.buff_km.astype(int)) == {0},
+          f"Treat in panel {rj.get('panel_has_treat')}, offenders {rj.get('pixel_consistency_offenders')}, {len(st_r)} stray rows, sites {sorted(st_r.site_id.unique())}, rings {sorted(st_r.buff_km.unique())}")
     check("R OUTCOME_SCREEN <- 'keep': the fill year-season in the sample, _screenKept tag, the same beta as Python's keep to 1e-8",
           rj.get("keep_fill_in") and "_screenKept" in str(rj.get("keep_tag")) and rj.get("keep_n") == nk and abs(rj["keep_beta"] - bk) < 1e-8, f"R {rj.get('keep_beta')} vs Python {bk:.10f}, {rj.get('keep_n')} rows")
     check("R EXCLUDE_GAPFILLED <- FALSE: the gap-filled rows in the sample, _withGapFilled tag, the same beta as Python's to 1e-8",
