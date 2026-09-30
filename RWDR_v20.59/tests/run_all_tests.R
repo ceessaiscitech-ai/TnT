@@ -337,13 +337,13 @@ if (!inherits(tE, "error")) {
                pre_at_start = list(TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022, PRE_YEARS = 2022),                                 # v20.59: no pre year -> said, every year before
                screen_keep = list(OUTCOME_SCREEN = "keep"),                                                                              # v20.59: the screen's cells kept
                design_panel = list(DESIGN_SOURCE = "panel", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2023),                           # v20.59: the panel's post (2022) wins over 2023
-               ctrl_pre2 = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # v20.59: the pre period picks 2 rings
+               ctrl_pre2 = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # v20.59: the pre period picks 2 of the 5 rings
                cluster_block = list(CLUSTER = "block", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                  # v20.59: ~1 km blocks as clusters
                pix_all = list(SAME_PIXELS = "all", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                    # v20.59: a balanced pixel set
-               donut1 = list(DONUT_RINGS = 1L, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                       # spec 1: ring 1 leaves the control pool
+               donut1 = list(DONUT_RINGS = 1L, CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                   # spec 1: ring 1 leaves the control pool (of rings 1-5)
                ctrl_rmse = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_ON = "rmse", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # spec 1: the RMSE rule
                ndvi_base = list(BASELINE_NDVI_MIN = 0.30, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                              # spec 1: the pre-period mean NDVI mask
-               no_single_off = list(DROP_SINGLETONS = FALSE, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                           # spec 1: the singleton pre-flight off
+               no_single_on = list(DROP_SINGLETONS = TRUE, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                             # spec 1: the singleton pre-flight (the notebooks' default; the library's own default is off)
                rabi = list(SEASONS = "Rabi"), manual = list(DESIGN_MODE = "manual"), transition = list(EXCLUDE_TRANSITION_YEAR = TRUE),
                gapfilled_kept = list(EXCLUDE_GAPFILLED = FALSE), dose_amount = list(DOSE_VARIABLE = "dose_amount_sws"))
   od <- file.path(TMP, "E_out"); design_variant_samples(vars, od)
@@ -405,9 +405,9 @@ if (!inherits(tE, "error")) {
   chkE("ndvi_base", "BASELINE_NDVI_MIN <- 0.30 (spec 1): every pixel of the sample has a pre-period mean NDVI above 0.30 (recomputed from the panel), fewer pixels than base, tagged _ndviPre0.3",
        !is.null(nb_) && !is.null(bm_) && nrow(bm_) == uniqueN(nb_$pixel_id) && all(bm_$m > 0.30) && uniqueN(nb_$pixel_id) < uniqueN(b$pixel_id) && !is.null(nbj$tag) && grepl("_ndviPre0.3", nbj$tag, fixed = TRUE),
        if (is.null(nb_) || is.null(bm_)) "no sample" else sprintf("%d pixels (base %d), min pre mean %.4f | %s", uniqueN(nb_$pixel_id), uniqueN(b$pixel_id), min(bm_$m), nbj$tag))
-  ns_ <- tryCatch(fromJSON(file.path(od, "no_single_off.json")), error = function(e) NULL); bj_ <- tryCatch(fromJSON(file.path(od, "base.json")), error = function(e) NULL)
-  chkE("no_single_off", "DROP_SINGLETONS <- FALSE (spec 1): the folder loses the _noSingle tag the default carries",
-       !is.null(ns_$tag) && !grepl("_noSingle", ns_$tag, fixed = TRUE) && !is.null(bj_$tag) && grepl("_noSingle", bj_$tag, fixed = TRUE), sprintf("%s vs base %s", ns_$tag, bj_$tag))
+  ns_ <- tryCatch(fromJSON(file.path(od, "no_single_on.json")), error = function(e) NULL); bj_ <- tryCatch(fromJSON(file.path(od, "base.json")), error = function(e) NULL)
+  chkE("no_single_on", "DROP_SINGLETONS <- TRUE (spec 1, the notebooks' default): the folder tagged _noSingle; the library's default (FALSE) is not",
+       !is.null(ns_$tag) && grepl("_noSingle", ns_$tag, fixed = TRUE) && !is.null(bj_$tag) && !grepl("_noSingle", bj_$tag, fixed = TRUE), sprintf("%s vs base %s", ns_$tag, bj_$tag))
   rc_ <- tryCatch(outcome_range_check_R(data.table(NDVI = c(0.2, 0.5, 1.7, -9999), pixel_id = 1:4), "NDVI", say = FALSE), error = function(e) NULL)
   chkE("range", "outcome_range_check_R (spec 3): a value outside [-1, 1] and a no-data code are counted and the check fails", !is.null(rc_) && isFALSE(rc_$ok) && rc_$n_outside_bounds >= 1 && rc_$n_nodata_codes >= 1, if (is.null(rc_)) "no result" else sprintf("outside %d, nodata %d", rc_$n_outside_bounds, rc_$n_nodata_codes))
   pcx <- tryCatch(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")), error = function(e) NULL)

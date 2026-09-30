@@ -225,8 +225,8 @@ P00 / R_P00, the R library, in memory and out of core):
   baseline). Both decide per pixel on the pre period and apply to the whole panel (tags `_lu2`, `_ndviPre0.25`).
 - `MIN_PIXEL_COVERAGE_PCT` (default 0.05 = the v20.58 screen; the spec's 0.70 in the configuration file): a year-season whose treated or
   control coverage falls below this share of the typical one is screened out (tag `_cov70`).
-- `DROP_SINGLETONS` (True in every notebook): series seen once leave BEFORE the demeaning (`estimate_twfe_did`, R `fe_fit`), counted and
-  said; tag `_noSingle`.
+- `DROP_SINGLETONS` (True in every notebook; the engines' own default is False, so an old notebook without the line runs as before): series
+  seen once leave BEFORE the demeaning (`estimate_twfe_did`, R `fe_fit`), counted and said; tag `_noSingle`.
 
 **Specification 2 — the surrogate / synthetic DiD engine** (`surrogate_did_estimator.py`, `lib/surrogate_did_estimator.R`; the same
 numbers to 1e-8):
@@ -341,7 +341,7 @@ engines (R's tag lookup stopped on it).
   engine); `validate_orchestrator.py` (NEW: six wrong configurations refused in Python and one in R; the five specs estimated in both
   languages on a synthetic panel; the pre-flight refuses control pixels that differ between pre and post and a no-data code; Python ==
   R on beta, SE, p, the pre-trend p, N and clusters to 1e-6 for every spec); `tests/run_all_tests.R` E (`donut1`, `ctrl_rmse`,
-  `ndvi_base`, `no_single_off`, `outcome_range_check_R`).
+  `ndvi_base`, `no_single_on`, `outcome_range_check_R`).
 
 What ran on the delivered code, and what could not run here, is in `VALIDATION_v20.59.md`.
 
