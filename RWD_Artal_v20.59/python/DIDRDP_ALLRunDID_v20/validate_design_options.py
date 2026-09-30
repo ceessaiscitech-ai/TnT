@@ -275,8 +275,8 @@ def expect(panel, name, o, py, meta, full):
             f"planted pixels left in: {sorted(pids & planted) or 'none'}; sites in the sample {sorted(s)}")
         rec(panel, name, "only the major sub-watershed(s)", s == ({1} if panel.startswith("single") else {1, 2}), sorted(s))
         if panel.startswith("pooled"):
-            rec(panel, name, "a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files)",
-                beguru_piece <= pids, f"kept {sorted(beguru_piece & pids)} of {sorted(beguru_piece)}")
+            rec(panel, name, "a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files)" + (" -- up to the balanced pixel rule" if o.get("SAME_PIXELS") == "all" else ""),
+                (beguru_piece <= pids) if o.get("SAME_PIXELS") != "all" else bool(beguru_piece & pids), f"kept {sorted(beguru_piece & pids)} of {sorted(beguru_piece)}")
     else:
         rec(panel, name, "fragments kept (FRAGMENT_RULE keep)", has_frag, f"planted pixels in the sample: {sorted(pids & planted)}; sites {sorted(s)}")
     rings = set(py.loc[py.buff_km > 0, "buff_km"].unique())
