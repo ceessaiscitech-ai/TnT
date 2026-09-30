@@ -67,13 +67,17 @@ seasons; pixel effects that differ by ring, year x season shocks, the true effec
 | `input_design_audit.csv`: 40 files, every one with `Treat`, 0 unusable, 0 flag-vs-year disagreements, every `buff_km` in 0-5 | PASS |
 | the model stage's design (fixed 2022) equals the panel's `post` on every row (DESIGN vs PANEL 0 differ) | PASS |
 | M01 (two-way fixed effects) = an explicit-dummy OLS in numpy (unit + period dummies) | equal to 1e-10 (0.0504275956 both) |
-| M01 = the 2x2 difference of means (balanced panel, one treatment date) | equal to 1e-10 |
 | M01 within 2 SE of the true effect | 0.05043, SE 0.00069, PASS |
-| the cluster-robust SE = closed-form CR1 | within 0.25 % of the conventional CR1 (every FE counted); the exact small-sample factor is fixest's, matched to 1e-9 below |
 | R_P00 on the same exports: the same panel row for row, the same five columns from `Treat` and `buff_km` | PASS |
 | R `fixest::feols` on `load_panel_R`'s sample = Python's M01 | beta equal to 1e-9, SE equal to 1e-9 (0.000685255720 both) |
 | R's built-in fixed-effects engine (the fall-back without fixest) = fixest | beta and SE equal to 1e-9 |
 | R DESIGN vs PANEL: 0 rows differ | PASS |
+| the panel KEEPS the fill year-season (2018 Yearly, one value for every pixel) and the gap-filled rows (2025 Zaid, `GapFilled` = 1); `panel_variation_by_block.csv` names exactly the fill cell | PASS |
+| `OUTCOME_SCREEN = "drop"` (default): the fill cell is not in the sample; `EXCLUDE_GAPFILLED = True`: the gap-filled rows are not; `"keep"`: the fill cell is in, results tagged `_screenKept`; `"off"`: the same sample as keep, no tag; `EXCLUDE_GAPFILLED = False`: the gap-filled rows in, tagged `_withGapFilled` -- each sample's M01 = its own explicit-dummy OLS to 1e-8 | PASS |
+| R `OUTCOME_SCREEN <- "keep"` and `EXCLUDE_GAPFILLED <- FALSE`: the same samples and the same betas as Python's to 1e-8 | PASS |
+| keeping the fill year-season is NOT neutral: the estimate moves by the predicted dilution g / (n + 1) per season series (0.05029 -> 0.04825, away from the true 0.05) | PASS (the warning under "keep" says so) |
+| the cluster-robust SE = the sandwich on the demeaned regressor with fixest's small-sample factor (K counts only the FE not nested in the clusters) | equal to 1e-8 relative |
+| on the fully balanced sample (screen off, gap-filled kept) M01 = the 2x2 difference of means | equal to 1e-8 |
 
 Verdict: **CLEAN**. The DiD is the textbook specification -- treatment area x post-period interaction with pixel (x season) and year x season
 fixed effects, cluster-robust inference -- and the three implementations (Python engine, R fixest, R built-in) are the same estimator to

@@ -2453,12 +2453,20 @@ def check_v20_59():
         if miss: bad(f"model notebooks without OUTCOME_SCREEN / the calendar-year note: {miss[:6]}")
         p00 = _g.glob(os.path.join(HERE, "01_Panel_Preparation", "P00*.ipynb"))
         if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("POST_FROM_EXPORT_TREAT", "P.PERIOD_RULE = ")): bad("P00's settings do not carry PERIOD_RULE / POST_FROM_EXPORT_TREAT")
-        note(f"{len(nbs)} model notebooks set OUTCOME_SCREEN and pass it; PRE_YEARS / POST_YEARS document the calendar-year form; P00 carries PERIOD_RULE")
+        if not p00 or "outcome_screen=OUTCOME_SCREEN" not in open(p00[0], encoding="utf-8").read(): bad("P00's own design report does not receive OUTCOME_SCREEN")
+        rp00 = [q for q in (os.path.join(os.path.dirname(os.path.dirname(HERE)), "..", "RWDR_v20.59", "rstudio", "R_P00_Prepare_Panel.Rmd"),
+                            os.path.join(os.path.dirname(os.path.dirname(HERE)), "..", "RWDR_v20.59", "jupyter", "R_P00_Prepare_Panel.ipynb")) if os.path.exists(q)]
+        for q in rp00:                                                  # v20.59: R_P00 carries the two keep / drop options at the panel level too
+            t_ = open(q, encoding="utf-8").read()
+            if 'OUTCOME_SCREEN    <- ' not in t_ or 'EXCLUDE_GAPFILLED <- ' not in t_: bad(f"{os.path.basename(q)} does not carry OUTCOME_SCREEN / EXCLUDE_GAPFILLED at the panel level")
+        if "panel KEEPS every row and value" not in _i.getsource(_P.run_pass_b): bad("P00 does not say that the panel keeps every row and value")
+        note(f"{len(nbs)} model notebooks set OUTCOME_SCREEN and pass it; PRE_YEARS / POST_YEARS document the calendar-year form; P00 carries PERIOD_RULE; "
+             f"P00 and R_P00 ({len(rp00)} found) carry OUTCOME_SCREEN / EXCLUDE_GAPFILLED as the panel-level defaults and say the panel keeps every value")
         # 6 R: the same rules in the R library and notebooks
         rl = os.path.join(os.path.dirname(os.path.dirname(HERE)), "R", "lib")
         if os.path.isdir(rl):
             want = {"reward_design.R": ("year_bounds_R", "screen_rule_R", "design_vs_panel_say_R", 'OUTCOME_SCREEN_%s.csv', "_screenKept", "post_vs_panel", "outcome_screen = screen_rule_R"),
-                    "reward_prep.R": ("panel_design_columns_R", "panel_variation_report_R", "POST_FROM_EXPORT_TREAT", "period_rule_R", "input_audit_R", "input_audit_report_R", "input_design_audit_R.csv", '"period_rule", "period_rows_dropped"'),
+                    "reward_prep.R": ("panel_design_columns_R", "panel_variation_report_R", "POST_FROM_EXPORT_TREAT", "period_rule_R", "input_audit_R", "input_audit_report_R", "input_design_audit_R.csv", '"period_rule", "period_rows_dropped"', "panel_kept_report_R"),
                     "reward_prep_ooc.R": ("panel_design_columns_R", "panel_variation_report_R", "input_audit_report_R", "audit = aud", '"period_rule", "period_rows_dropped"'),
                     "reward_outofcore.R": ("post_vs_panel", "screen_decide(s, outcome, rule)", "min = min(v), max = max(v)"),
                     "reward_paths.R": ("OUTCOME_SCREEN", 'PERIOD_RULE       <- "treat"')}

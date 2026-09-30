@@ -97,7 +97,8 @@ ooc_task_p00_block <- function(ctx, k) {
   setorder(dt, Year, Season, site_id, pixel_id)
   out <- file.path(ctx$run_dir, sprintf("out_%06d.rds", k)); saveRDS(dt, out, compress = FALSE)
   list(rows = nrow(dt), dedup = dd, n_no = n_no, n2 = n2, reg2 = reg2, sites0 = sites0, sites = sort(unique(dt$site_id)), pixels = unique(dt$pixel_id),
-       block = job$block, j = j, file = out, design = dchk, variation = vpart)
+       block = job$block, j = j, file = out, design = dchk, variation = vpart,
+       gapfilled = if ("GapFilled" %in% names(dt)) sum(dt$GapFilled > 0, na.rm = TRUE) else 0L)          # v20.59: kept in the panel, counted
 }
 
 # ---------------------------------------------------------------- the pipeline block by block (run_prep's twin)
@@ -184,7 +185,8 @@ run_prep_ooc <- function(files, t0 = Sys.time(), why = "") {
   }
   ok(sprintf("duplicates CONFIRMED removed: %s rows, every (sub-watershed, pixel, year, season) exactly once", format(rows, big.mark = ",")))
   panel_design_report_R(panel_design_merge_R(lapply(p2, `[[`, "design")))                       # v20.59: the blocks' design checks, said once
-  panel_variation_report_R(lapply(p2, `[[`, "variation"))                                        # v20.59: the blocks' moments merged exactly
+  vt <- panel_variation_report_R(lapply(p2, `[[`, "variation"))                                  # v20.59: the blocks' moments merged exactly
+  panel_kept_report_R(vt, sum(vapply(p2, function(p) as.numeric(p$gapfilled %||% 0), 0)))          # v20.59: the panel KEEPS every row and value
   n_sites <- length(unique(unlist(lapply(p2, `[[`, "sites0"))))
   info(sprintf("%d sub-watershed(s) in the panel after the fragment rule (the pooled design, POOLED_FE and the clusters are set by each model)", n_sites))
   ftab <- tryCatch(build_fund_tables(sort(unique(bl$Year)), out_dir = file.path(RESULTS_DIR, "FUND")), error = function(e) { warn("fund tables: ", conditionMessage(e)); NULL })

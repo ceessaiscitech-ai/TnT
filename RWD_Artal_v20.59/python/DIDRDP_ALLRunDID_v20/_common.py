@@ -1276,7 +1276,7 @@ def screen_report(g, outcome, rule=None, verbose=True):
     except Exception: path = "(the evidence file could not be written)"
     if rep_rows and verbose:
         warn(f"{outcome}: {len(rep_rows)} of {len(g)} year-season(s) are NOT pixel data"
-             + (" and are left out" if rule == "drop" else " -- KEPT (OUTCOME_SCREEN = 'keep': the model runs on them; read its result with that in mind)")
+             + (" and are left out" if rule == "drop" else " -- KEPT (OUTCOME_SCREEN = 'keep': the model runs on them" + " -- NOTE: in a fill year-season every pixel holds ONE value, so the treated-control difference there is exactly 0; kept, it dilutes the gap the DiD compares (a pre gap g over n real pre periods becomes g x n / (n + 1)) and the estimate moves by that dilution. Use 'keep' only if these ARE pixel data)")
              + " -- " + "; ".join(f"{r['Year']} {r['Season']}: {r['why']}" for r in rep_rows[:6]) + ("; ..." if len(rep_rows) > 6 else "")
              + f" -> the evidence of every year-season (rows, pixels, mean, SD, min, max): {path}")
     drop = set((int(a), int(b)) for a, b in bad.index) if rule == "drop" else set()

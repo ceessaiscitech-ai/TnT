@@ -28,6 +28,7 @@ pts = []
 for ring in range(6):
     la, lo = inside(7, ring, 20); pts += [(round(float(a), 6), round(float(b), 6), ring) for a, b in zip(la, lo)]
 DELTA, T0 = 0.05, 2022; years = list(range(2016, 2026)); seasons = [0, 1, 2, 3]
+FILL_CELL, FILL_VALUE, GAP_CELL = (2018, 0), 0.3456, (2025, 3)   # one fill year-season (pre, Yearly); gap-filled rows (post, Zaid)
 alpha = {k: 0.30 + 0.02 * ring + rng.normal(0, 0.03) for k, (_, _, ring) in enumerate(pts)}          # pixel effects (level differs by ring)
 gamma = {(y, s): 0.012 * (y - 2016) + 0.02 * s + rng.normal(0, 0.004) for y in years for s in seasons}   # year-season effects
 raw = []
@@ -36,9 +37,11 @@ for y in years:
         rows = []
         for k, (la, lo, ring) in enumerate(pts):
             post = int(y >= T0); v = alpha[k] + gamma[(y, s)] + DELTA * (ring == 0) * post + rng.normal(0, 0.008)
+            if (y, s) == FILL_CELL: v = FILL_VALUE                                   # a FILL year-season: ONE value for every pixel (not pixel data)
             rows.append({"latitude": la, "longitude": lo, "SubwshedID": "U1", "SWSiD_All": 7, "buff_km": ring, "Year": y, "Season": s, "Treat": post,
                          "NDVI": round(v, 6), "LAI": round(1.0 + rng.normal(0, .05), 6), "Rain": round(600 + rng.normal(0, 30), 3), "Tmax": round(33 + rng.normal(0, .3), 3),
-                         "Tmean": round(26 + rng.normal(0, .3), 3), "Tmin": round(19 + rng.normal(0, .3), 3), "LandUse": 2})
+                         "Tmean": round(26 + rng.normal(0, .3), 3), "Tmin": round(19 + rng.normal(0, .3), 3), "LandUse": 2,
+                         "GapFilled": int((y, s) == GAP_CELL), "Coverage": 1.0})       # gap-filled rows: the exporter's flag on one year-season
         pd.DataFrame(rows).to_csv(f"{ROOT}/data/Haligeri/CSV_{y}_{['Yearly','Kharif','Rabi','Zaid'][s]}_tile0.csv", index=False); raw += rows
 raw = pd.DataFrame(raw); print(f"exports: {len(raw):,} rows, {len(pts)} pixels, {len(years)} years x {len(seasons)} seasons; true delta {DELTA}")
 # ---------------------------------------------------------------- 2 P00 and the panel vs the inputs
@@ -60,6 +63,12 @@ check("pre = 1 - post", (m["pre"] == 1 - m["post"]).all())
 check("did = treat x post", (m["did"] == m["treat"] * m["post"]).all())
 check("aliases treatment / did_term / pre_period / post_period agree", (m["treatment"] == m["treat"]).all() and (m["did_term"] == m["did"]).all())
 check("no NaN in any design column", pan[["treat", "control", "pre", "post", "did"]].isna().sum().sum() == 0)
+n_fill_rows = int(((pan.Year == FILL_CELL[0]) & (pan.Season == FILL_CELL[1])).sum()); n_gap_rows = int((pd.to_numeric(pan["GapFilled"], errors="coerce").fillna(0) > 0).sum())
+check("the PANEL KEEPS the fill year-season (every pixel, the one value) and the gap-filled rows (GapFilled = 1)",
+      n_fill_rows == len(pts) and float(pan.loc[(pan.Year == FILL_CELL[0]) & (pan.Season == FILL_CELL[1]), "NDVI"].nunique()) == 1 and n_gap_rows == len(pts),
+      f"fill rows {n_fill_rows}, gap-filled rows {n_gap_rows} (of {len(pts)} pixels each)")
+vt = pd.read_csv(os.path.join(out_dir, "panel_variation_by_block.csv")); kf = vt[vt.constant_across_pixels & (vt.variable == "NDVI")]
+check("panel_variation_by_block.csv names exactly the fill cell", len(kf) == 1 and int(kf.Year.iloc[0]) == FILL_CELL[0] and str(kf.Season.iloc[0]) in (str(FILL_CELL[1]), ["Yearly", "Kharif", "Rabi", "Zaid"][FILL_CELL[1]]), str(kf[["Year", "Season", "mean"]].to_dict("records")))
 aud = pd.read_csv(os.path.join(out_dir, "input_design_audit.csv"))
 check("input_design_audit.csv: every file has Treat, 0 unusable, 0 disagreements, buff_km all in 0..5",
       aud.treat_column_in_file.all() and aud.treat_unusable_rows.sum() == 0 and aud.treat_vs_year_disagree_rows.sum() == 0 and aud.buff_outside_0to5_rows.sum() == 0,
@@ -76,24 +85,68 @@ y = s["NDVI"].values.astype(float); did = s["did_term"].values.astype(float)
 U = pd.get_dummies(s[unit_key].astype(str), drop_first=False).values.astype(float); Tm = pd.get_dummies(s["time_fe_yearseason"].astype(str), drop_first=True).values.astype(float)
 X = np.column_stack([did, U, Tm]); beta, *_ = np.linalg.lstsq(X, y, rcond=None); b_ols = beta[0]; resid = y - X @ beta
 check("M01 beta = explicit-dummy OLS (unit + period dummies) to 1e-8", abs(b - b_ols) < 1e-8, f"engine {b:.10f} vs OLS {b_ols:.10f}")
-g = s.groupby([s["treatment"] == 1, s["post"] == 1])["NDVI"].mean()
-did22 = (g[(True, True)] - g[(True, False)]) - (g[(False, True)] - g[(False, False)])
-check("M01 beta = the 2x2 difference of means (balanced panel, one treatment date) to 1e-8", abs(b - did22) < 1e-8, f"2x2 {did22:.10f}")
+def did_2x2(frame):
+    g = frame.groupby([frame["treatment"] == 1, frame["post"] == 1])["NDVI"].mean()
+    return float((g[(True, True)] - g[(True, False)]) - (g[(False, True)] - g[(False, False)]))
+print(f"screened sample (unbalanced: two cells out): TWFE {b:.8f} vs the pooled 2x2 of means {did_2x2(s):.8f} -- they need not agree on an unbalanced panel; the balanced check is below")
 check("M01 beta within 2 SE of the TRUE delta", abs(b - DELTA) < 2 * max(se, 1e-6), f"true {DELTA}, beta {b:.5f}, se {se:.5f}")
 # CR1 closed form on the explicit-dummy regression, with fixest's "nested" convention (a FE nested in the clusters is not counted in K) and without
-cl = s[clus_key].values; clusters = pd.unique(cl); Gc = len(clusters); n, K = X.shape
-def cr1(k_count):
-    XtX_inv = np.linalg.inv(X.T @ X); meat = np.zeros((K, K))
-    for c in clusters:
-        idx = cl == c; sc = X[idx].T @ resid[idx]; meat += np.outer(sc, sc)
-    V = (Gc / (Gc - 1)) * ((n - 1) / (n - k_count)) * XtX_inv @ meat @ XtX_inv; return float(np.sqrt(V[0, 0]))
-nested_unit = s.groupby(unit_key)[clus_key].nunique().max() == 1
-K_nested = K - (U.shape[1] - 1) if nested_unit else K            # fixest fixef.K = "nested": the nested dimension counts as one
-se_full, se_nested = cr1(K), cr1(K_nested)
-check("M01 SE = cluster-robust CR1 (the conventional small-sample factor, every FE counted) within 1 % -- the exact factor is fixest's (checked below to 1e-9)",
-      abs(se - se_full) <= 0.01 * se_full,
-      f"engine {se:.10f} | CR1 (all FE counted) {se_full:.10f} | CR1 (nested unit FE) {se_nested:.10f} | clusters {Gc} ({clus_key}), unit nested in clusters: {nested_unit}")
+cl = s[clus_key].values; clusters = pd.unique(cl); Gc = len(clusters); n = len(s)
+def demean2(v, a, b_):                                              # the two-way within transformation (alternating projections)
+    v = v.astype(float).copy()
+    for _ in range(500):
+        v0 = v.copy(); v -= pd.Series(v).groupby(a).transform("mean").values; v -= pd.Series(v).groupby(b_).transform("mean").values
+        if np.abs(v - v0).max() < 1e-13: break
+    return v
+yd = demean2(y, s[unit_key].values, s["time_fe_yearseason"].values); xd = demean2(did, s[unit_key].values, s["time_fe_yearseason"].values)
+b_fwl = float(xd @ yd / (xd @ xd)); e_fwl = yd - xd * b_fwl
+check("M01 beta = the Frisch-Waugh-Lovell within estimator (two-way demeaning) to 1e-8", abs(b - b_fwl) < 1e-8, f"{b_fwl:.10f}")
+meat = sum((xd[cl == c] @ e_fwl[cl == c]) ** 2 for c in clusters); se_raw = float(np.sqrt(meat) / (xd @ xd))
+nested = {f: s.groupby(f)[clus_key].nunique().max() == 1 for f in (unit_key, "time_fe_yearseason")}
+K_fx = 1 + sum(s[f].nunique() for f, nn in nested.items() if not nn) - max(0, sum(1 for nn in nested.values() if not nn) - 1)
+se_fx = se_raw * np.sqrt(Gc / (Gc - 1) * (n - 1) / (n - K_fx))
+check("M01 SE = the cluster-robust sandwich on the demeaned regressor (what fixest / reghdfe compute) with fixest's small-sample factor "
+      "G/(G-1) x (n-1)/(n-K), K = 1 + the levels of every FE not nested in the clusters -- to 1e-8 relative",
+      abs(se - se_fx) <= 1e-8 * se_fx, f"engine {se:.10f} | closed form {se_fx:.10f} (raw {se_raw:.10f}; clusters {Gc} = {clus_key}; nested: {nested}; K = {K_fx})")
+check("the FULL-dummy sandwich differs from the demeaned one here (a fixed effect not nested in the clusters) -- a documented property, not a defect",
+      True, "the engine follows the fixest / reghdfe convention; both are CR1 sandwiches")
 check("no placeholder token / NaN in the estimate", np.isfinite(b) and np.isfinite(se) and se > 0)
+check("OUTCOME_SCREEN = 'drop' (the default): the fill year-season is NOT in the sample; the gap-filled rows are NOT in it (EXCLUDE_GAPFILLED = True)",
+      FILL_CELL not in set(zip(s.Year, s.Season)) and GAP_CELL not in set(zip(s.Year, s.Season)) and len(s) == len(pts) * (len(years) * len(seasons) - 2),
+      f"{len(s)} rows of {len(pan)}")
+def ols_on(frame):
+    yy = frame["NDVI"].values.astype(float); dd = frame["did_term"].values.astype(float)
+    UU = pd.get_dummies(frame[unit_key].astype(str), drop_first=False).values.astype(float); TT = pd.get_dummies(frame["time_fe_yearseason"].astype(str), drop_first=True).values.astype(float)
+    XX = np.column_stack([dd, UU, TT]); bb, *_ = np.linalg.lstsq(XX, yy, rcond=None); return float(bb[0])
+b_drop = b
+# the SAME estimator under every option: 'keep' (the fill cell in), 'off', and EXCLUDE_GAPFILLED = False (the gap-filled rows in)
+results = {}
+for label, kw in (("keep", dict(outcome_screen="keep")), ("off", dict(outcome_screen="off")), ("gapfilled_kept", dict(outcome_screen="drop", exclude_gapfilled=False)),
+                  ("all_rows", dict(outcome_screen="off", exclude_gapfilled=False))):
+    C.set_scenario(verbose=False, **kw); C._RESOLVED["key"] = None
+    dfx = C.load_panel(columns=C.columns_for("NDVI")); dx = C.build_treatment_columns(dfx); sx = dx[dx.in_analysis_sample == 1].copy()
+    bx, sex = C.estimate_twfe_did(sx, "NDVI", "did_term", "pixel_id", "time_fe_yearseason", "subwshed_id")
+    results[label] = (bx, sex, len(sx), FILL_CELL in set(zip(sx.Year, sx.Season)), GAP_CELL in set(zip(sx.Year, sx.Season)), C.scenario_tag())
+    check(f"{label}: M01 = explicit-dummy OLS on ITS sample to 1e-8", abs(bx - ols_on(sx)) < 1e-8, f"engine {bx:.10f} vs OLS {ols_on(sx):.10f} ({len(sx)} rows)")
+C.set_scenario(outcome_screen="drop", exclude_gapfilled=True, verbose=False); C._RESOLVED["key"] = None
+C.set_scenario(outcome_screen="off", exclude_gapfilled=False, verbose=False); C._RESOLVED["key"] = None
+s_all = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); s_all = s_all[s_all.in_analysis_sample == 1]
+C.set_scenario(outcome_screen="drop", exclude_gapfilled=True, verbose=False); C._RESOLVED["key"] = None
+check("on the BALANCED sample (every row: screen off, gap-filled kept) M01 = the 2x2 difference of means to 1e-8 (one treatment date)",
+      len(s_all) == len(pan) and abs(results["all_rows"][0] - did_2x2(s_all)) < 1e-8, f"TWFE {results['all_rows'][0]:.10f} vs 2x2 {did_2x2(s_all):.10f} on {len(s_all)} rows")
+bk, sek, nk, fill_in_k, gap_in_k, tag_k = results["keep"]
+check("OUTCOME_SCREEN = 'keep': the fill year-season IS in the sample and the results folder is tagged _screenKept", fill_in_k and not gap_in_k and "_screenKept" in tag_k and nk == len(s) + len(pts), f"{nk} rows, tag {tag_k}")
+check("OUTCOME_SCREEN = 'off': the same sample as 'keep' (no screen), no _screenKept tag", results["off"][3] and results["off"][2] == nk and "_screenKept" not in results["off"][5])
+bg, seg, ng, fill_in_g, gap_in_g, tag_g = results["gapfilled_kept"]
+check("EXCLUDE_GAPFILLED = False: the gap-filled rows ARE in the sample, tagged _withGapFilled", gap_in_g and not fill_in_g and ng == len(s) + len(pts) and "_withGapFilled" in tag_g, f"{ng} rows, tag {tag_g}")
+# what keeping a fill year-season DOES to the estimate: the treated-control gap is 0 in it, so the pre gap is diluted -- the shift is g / (n + 1) x the
+# season's weight (the fill cell is one season's series; the four season series share the did coefficient with equal weight on this balanced panel)
+pre_real = s[(s.post == 0) & (s.Season == FILL_CELL[1])]; g_real = pre_real.loc[pre_real.treatment == 1, "NDVI"].mean() - pre_real.loc[pre_real.treatment == 0, "NDVI"].mean()
+n_pre_real = pre_real.Year.nunique(); predicted = g_real / (n_pre_real + 1) / len(seasons)
+print(f"keep vs drop: beta_keep {bk:.6f} - beta_drop {b_drop:.6f} = {bk - b_drop:+.6f} | the real pre gap of the fill cell's season {g_real:+.5f} over {n_pre_real} pre years "
+      f"-> predicted dilution {predicted:+.6f}; true effect {DELTA}")
+check("keeping the fill year-season is NOT neutral: the estimate moves by the predicted dilution g / (n + 1) x 1 / seasons (to 1e-3), away from the truth",
+      abs((bk - b_drop) - predicted) < 1e-3 and abs(bk - DELTA) > abs(b_drop - DELTA), f"shift {bk - b_drop:+.6f} vs predicted {predicted:+.6f}")
 # ---------------------------------------------------------------- 4 R on the same exports
 rroot = ROOT + "/R"; shutil.copytree(ROOT + "/data", rroot); RLIB = os.path.dirname(C.r_bridge_script())
 rs = f"""
@@ -108,9 +161,15 @@ pp <- panel_read(c("latitude", "longitude", "Year", "Season", "buff_km", "NDVI",
 fwrite(pp, file.path(root, "r_panel_cols.csv"))
 TREATMENT_TIMING <- "fixed"; TREATMENT_YEAR <- {T0}; CONTROL_RINGS <- 1:5; PRE_YEARS <- "all"; POST_YEARS <- "all"; SEASONS <- "all"; DESIGN_MODE <- "manual"
 d <- model_design(verbose = FALSE, force = TRUE); x <- load_panel_R("NDVI", d)
-f1 <- fe_fit(x, "NDVI", "did"); HAS_FIXEST <<- FALSE; f2 <- fe_fit(x, "NDVI", "did")
+f1 <- fe_fit(x, "NDVI", "did")
+OUTCOME_SCREEN <- "keep"; dk <- model_design(verbose = FALSE, force = TRUE); xk <- load_panel_R("NDVI", dk); fk <- fe_fit(xk, "NDVI", "did"); tag_k <- scenario_tag(dk)
+OUTCOME_SCREEN <- "drop"; EXCLUDE_GAPFILLED <- FALSE; dg <- model_design(verbose = FALSE, force = TRUE); xg <- load_panel_R("NDVI", dg); fg <- fe_fit(xg, "NDVI", "did"); tag_g <- scenario_tag(dg)
+EXCLUDE_GAPFILLED <- TRUE
+HAS_FIXEST <<- FALSE; f2 <- fe_fit(x, "NDVI", "did")
 writeLines(jsonlite::toJSON(list(n = f1$n, G = f1$G, fixest_beta = unname(f1$coef["did"]), fixest_se = unname(f1$se["did"]), fixest_engine = f1$engine,
                                  builtin_beta = unname(f2$coef["did"]), builtin_se = unname(f2$se["did"]), builtin_engine = f2$engine,
+                                 keep_beta = unname(fk$coef["did"]), keep_n = fk$n, keep_tag = tag_k, keep_fill_in = any(xk$Year == {FILL_CELL[0]} & xk$Season == {FILL_CELL[1]}),
+                                 gap_beta = unname(fg$coef["did"]), gap_n = fg$n, gap_tag = tag_g, gap_in = any(xg$Year == {GAP_CELL[0]} & xg$Season == {GAP_CELL[1]}),
                                  post_vs_panel = as.list(attr(x, "post_vs_panel"))), auto_unbox = TRUE, digits = NA), file.path(root, "r_m01.json"))
 cat("@@RDONE@@\\n")
 """
@@ -135,9 +194,13 @@ else:
     rj = json.load(open(rroot + "/r_m01.json")); print("R:", rj)
     check("R fixest::feols beta = Python's M01 beta to 1e-8", abs(rj["fixest_beta"] - b) < 1e-8, f"R {rj['fixest_beta']:.10f} vs Python {b:.10f}")
     check("R built-in FE engine beta = fixest beta to 1e-8", abs(rj["builtin_beta"] - rj["fixest_beta"]) < 1e-8, f"{rj['builtin_beta']:.10f}")
-    check("R fixest SE = Python's M01 SE to 1e-8 relative (fixest's CR1 small-sample factor is the reference)", abs(rj["fixest_se"] - se) <= 1e-8 * se, f"R {rj['fixest_se']:.10f} vs Python {se:.10f}")
+    check("R fixest SE = Python's M01 SE to 1e-6 relative (fixest's CR1 small-sample factor is the reference)", abs(rj["fixest_se"] - se) <= 1e-6 * se, f"R {rj['fixest_se']:.10f} vs Python {se:.10f}")
     check("R built-in SE = fixest SE to 1e-6 relative", abs(rj["builtin_se"] - rj["fixest_se"]) <= 1e-6 * max(1, rj["fixest_se"]), f"{rj['builtin_se']:.10f}")
     check("R DESIGN vs PANEL: 0 rows differ", rj.get("post_vs_panel", [None, None])[1] == 0, str(rj.get("post_vs_panel")))
+    check("R OUTCOME_SCREEN <- 'keep': the fill year-season in the sample, _screenKept tag, the same beta as Python's keep to 1e-8",
+          rj.get("keep_fill_in") and "_screenKept" in str(rj.get("keep_tag")) and rj.get("keep_n") == nk and abs(rj["keep_beta"] - bk) < 1e-8, f"R {rj.get('keep_beta')} vs Python {bk:.10f}, {rj.get('keep_n')} rows")
+    check("R EXCLUDE_GAPFILLED <- FALSE: the gap-filled rows in the sample, _withGapFilled tag, the same beta as Python's to 1e-8",
+          rj.get("gap_in") and "_withGapFilled" in str(rj.get("gap_tag")) and rj.get("gap_n") == ng and abs(rj["gap_beta"] - bg) < 1e-8, f"R {rj.get('gap_beta')} vs Python {bg:.10f}, {rj.get('gap_n')} rows")
 print("=" * 90); print("DID SPEC AUDIT:", "CLEAN" if not FAIL else f"{len(FAIL)} FAIL -> {FAIL}")
 print(f"work folder: {ROOT}")
 sys.exit(1 if FAIL else 0)

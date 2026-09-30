@@ -466,6 +466,14 @@ panel_variation_R <- function(dt, vars = OUTCOME_VARS) {
     x <- dt[is.finite(get(v)), { z <- as.numeric(get(v)); mu <- mean(z); .(finite = .N, mean = mu, m2 = sum((z - mu)^2), min = min(z), max = max(z)) }, by = .(Year, Season)]
     x[, variable := rep(v, nrow(x))]; x }), use.names = TRUE, fill = TRUE)      # an outcome with no finite value: an empty part with the same columns
 }
+# v20.59 -- YOUR RULE: the panel KEEPS every row and value. Fill cells (one value for every pixel) and gap-filled rows stay IN the panel; what a
+# MODEL estimates on is ITS decision (OUTCOME_SCREEN, EXCLUDE_GAPFILLED in its notebook), never R_P00's. Said once, with the counts.
+panel_kept_report_R <- function(vt, n_gapfilled = 0L) {
+  n_fill <- if (is.null(vt) || !nrow(vt)) 0L else sum(vt$constant_across_pixels, na.rm = TRUE)
+  ok(sprintf("the panel KEEPS every row and value: %s outcome x year-season fill cell(s) and %s gap-filled row(s) (GapFilled = 1) are IN the panel -- each model decides with OUTCOME_SCREEN (\"drop\" | \"keep\" | \"off\") and EXCLUDE_GAPFILLED (TRUE | FALSE) in its own notebook; the defaults of this run: OUTCOME_SCREEN \"%s\", EXCLUDE_GAPFILLED %s",
+             format(n_fill, big.mark = ","), format(n_gapfilled, big.mark = ","), screen_rule_R(), isTRUE(.opt("EXCLUDE_GAPFILLED", TRUE))))
+  invisible(list(fill_cells = n_fill, gapfilled_rows = n_gapfilled))
+}
 panel_variation_report_R <- function(parts, write = TRUE) {
   vt <- rbindlist(Filter(Negate(is.null), if (is.data.frame(parts)) list(parts) else parts), use.names = TRUE)
   if (!nrow(vt)) return(invisible(NULL))
@@ -636,7 +644,8 @@ run_prep <- function() {
   }
   ok(sprintf("duplicates CONFIRMED removed: %s rows, every (sub-watershed, pixel, year, season) exactly once", format(nrow(dt), big.mark = ",")))
   dt <- panel_design_columns_R(dt)                                                                  # v20.59: treat / control / pre / post / did in the panel
-  panel_variation_report_R(panel_variation_R(dt))                                                   # v20.59: pixel variation per outcome x year-season
+  vt <- panel_variation_report_R(panel_variation_R(dt))                                             # v20.59: pixel variation per outcome x year-season
+  panel_kept_report_R(vt, if ("GapFilled" %in% names(dt)) sum(dt$GapFilled > 0, na.rm = TRUE) else 0L)   # v20.59: the panel KEEPS every row and value
   keep_cols <- intersect(c("pixel_id", "site_id", "Year", "Season", "latitude", "longitude", "buff_km", "sws_export", "site_check", "sws_name",
                            "fragment", "SubwshedID", "Treat", PANEL_DESIGN_COLS, OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), names(dt))
   keep_cols <- setdiff(keep_cols, panel_columns_left_out_R())                                    # v20.58: the project's models' columns

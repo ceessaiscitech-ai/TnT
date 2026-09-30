@@ -164,7 +164,7 @@ screen_decide <- function(s, outcome, rule = screen_rule_R()) {
                      treated_rows = n_treated, control_rows = n_control, constant, collapse, usable, rule, left_out, why)], path) }, silent = TRUE)
   bad <- s[constant | collapse]
   if (nrow(bad)) {
-    warn(outcome, ": ", nrow(bad), " of ", nrow(s), " year-season(s) are NOT pixel data", if (rule == "drop") " and are left out" else " -- KEPT (OUTCOME_SCREEN = \"keep\": the model runs on them; read its result with that in mind)", " -- ",
+    warn(outcome, ": ", nrow(bad), " of ", nrow(s), " year-season(s) are NOT pixel data", if (rule == "drop") " and are left out" else " -- KEPT (OUTCOME_SCREEN = \"keep\": the model runs on them -- NOTE: in a fill year-season every pixel holds ONE value, so the treated-control difference there is exactly 0; kept, it dilutes the gap the DiD compares (a pre gap g over n real pre periods becomes g x n / (n + 1)) and the estimate moves by that dilution. Use \"keep\" only if these ARE pixel data)", " -- ",
          paste(sprintf("%s %s: %s", bad$Year, SEASON_LABEL[as.character(bad$Season)], bad$why), collapse = "; "),
          " -> the evidence of every year-season (rows, pixels, mean, SD, min, max): ", path)
   }

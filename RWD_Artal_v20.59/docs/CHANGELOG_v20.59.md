@@ -86,6 +86,27 @@ anything. Three things in it, and what each was:
      default`. The count is in every result row (`post_rows_differ_from_panel`). A panel built before v20.59 (no `post` column) is said
      once; the models run on their own design as before.
 
+## Your fill-value question — keep or drop, at both levels, in both languages
+
+Your R_P00 run (71,141,565 rows, 68 min) built the panel and said `410 of 731 outcome x year-season cells hold ONE value for every pixel`;
+the screen then left 41 of 44 year-seasons out of every model. Two things were missing and are now in place:
+
+- **The panel keeps everything, and says so.** P00 and R_P00 never drop a fill value or a gap-filled row; both now print
+  `the panel KEEPS every row and value: N outcome x year-season fill cell(s) and G gap-filled row(s) (GapFilled = 1) are IN the panel -- each
+  model decides with OUTCOME_SCREEN ('drop' | 'keep' | 'off') and EXCLUDE_GAPFILLED (True | False) in its own CELL 1`. In memory and out of core.
+- **The two options at the panel level in R too.** R_P00 (`R_P00_Prepare_Panel.Rmd` / `.ipynb`) now carries `OUTCOME_SCREEN <- "drop"` and
+  `EXCLUDE_GAPFILLED <- TRUE` beside the design defaults, exactly as Python's P00_Settings does; they are the defaults of the design report and
+  the screen table of that notebook. Python's P00 now also passes `outcome_screen=OUTCOME_SCREEN` to its own design report (it passed
+  `exclude_gapfilled` only). Every model notebook, Python and R, has had both options in its first cell since v20.59; each model overrides
+  the panel-level default for itself.
+- **What "keep" does to the estimate — said in the log, proved in `validate_did_spec.py`.** A fill year-season holds one value for every
+  pixel, so the treated-control difference in it is exactly 0. Kept, it dilutes the gap the DiD compares: a pre gap g over n real pre periods
+  becomes g x n / (n + 1), and the estimate moves by g / (n + 1) (per season series). On the audit's synthetic panel (true effect +0.05) the
+  estimate under "drop" is 0.05029 and under "keep" 0.04825; the shift equals the predicted dilution. The screen's warning under "keep" now
+  says this in both languages. With 41 of 44 year-seasons being fill values in your NDVI / EVI / SAVI exports, "keep" would compute a DiD
+  dominated by artificial zero gaps: the estimate on the 3 real year-seasons ("drop") is the honest one, and the real fix is an export that
+  carries pixel values in every year-season. Both options remain yours; the run never stops blind either way.
+
 ## Found by running R here (v20.59, after the first delivery)
 
 - **R_P00 stopped before writing the panel** when an outcome column had no finite value at all (`panel_variation_R`: the empty part

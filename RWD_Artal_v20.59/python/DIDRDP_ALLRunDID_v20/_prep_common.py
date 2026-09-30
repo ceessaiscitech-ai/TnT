@@ -2505,6 +2505,7 @@ def prepare_pass_b_block(yr, se, shard_path, dose_table=None, crosswalk=None):
                           "post_flag_vs_rule_differ": int(block.attrs.get("post_flag_vs_rule_differ", 0)),
                           "period_rule": str(block.attrs.get("period_rule", period_rule())),
                           "period_rows_dropped": int(block.attrs.get("period_rows_dropped", 0)),
+                          "gapfilled_rows": int((pd.to_numeric(block["GapFilled"], errors="coerce").fillna(0) > 0).sum()) if "GapFilled" in block.columns else 0,   # v20.59: kept in the panel
                           "export_treat_mismatch_rows": int(pd.to_numeric(block.get("treat_period_mismatch_flag", pd.Series(0, index=block.index)), errors="coerce").fillna(0).sum()),
                           "buff_km_recoded": dict(block.attrs.get("buff_km_recoded", {}))}
     # v20.6: treatment_group / control_group / pre_period / post_period / row_id are in DROPPED_FROM_PANEL, so
@@ -2729,7 +2730,8 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
     missing_rows = []                                        # v20.17: per block x variable
     variation_rows = []                                      # v20.59: per block x variable -- rows, mean, SD across pixels, min, max (pixel variation, or a fill value)
     design_rows, design_viol, design_notes = [], {}, {"invalid_buffer_rows": 0, "export_treat_mismatch_rows": 0,   # v20.27
-                                                      "post_from_export_flag": 0, "post_from_rule": 0, "post_flag_vs_rule_differ": 0}   # v20.59
+                                                      "post_from_export_flag": 0, "post_from_rule": 0, "post_flag_vs_rule_differ": 0,   # v20.59
+                                                      "gapfilled_rows": 0}                                                             # v20.59: kept in the panel
     neg_rows = []                                                                                                   # v20.30
     def _emit(r):
         key, path, nrows, dlog, removed, kinds, filled, n_pix, mp = r
@@ -2889,6 +2891,10 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
                      + " -> panel_variation_by_block.csv")
             else:
                 ok(f"pixel variation CONFIRMED in every outcome x year-season cell ({len(vt):,} cells, no fill value) -> panel_variation_by_block.csv")
+            # v20.59 -- YOUR RULE: the panel KEEPS every row and value; what a MODEL estimates on is ITS decision (its CELL 1), never P00's
+            ok(f"the panel KEEPS every row and value: {len(_k):,} outcome x year-season fill cell(s) and {design_notes.get('gapfilled_rows', 0):,} gap-filled row(s) "
+               f"(GapFilled = 1) are IN the panel -- each model decides with OUTCOME_SCREEN ('drop' | 'keep' | 'off') and EXCLUDE_GAPFILLED (True | False) in its "
+               f"own CELL 1; P00_Settings only sets the defaults of this report")
     except Exception as _e:
         warn(f"variation report skipped ({_e})")
     # v20.27: the DiD design, as built -- rows per buffer x group x period, with the rules it was checked against

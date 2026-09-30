@@ -21,7 +21,15 @@ invisible(confirm_packages())   # v20.55: are ALL R packages installed? (pre-bui
 # "year" = Year >= TREATMENT_YEAR, "both" = the two must agree (a disagreeing row leaves). buff_km 0 = the treatment area, 1-5 = the control
 # rings. R_P00 confirms both on every input file -> input_design_audit_R.csv.
 # The panel-building rules (pixel linkage, duplicates, masked zeros, negative covariates) stay in lib/reward_paths.R / reward_prep.R.
-cat("design defaults (a model notebook overrides each):", DESIGN_MODE, "| timing", TREATMENT_TIMING, "| period rule (R_P00)", PERIOD_RULE, "| rings", paste(CONTROL_RINGS, collapse = ","),
+# v20.59 -- YOUR RULE: the panel KEEPS every row and every value. Fill values (a year-season with ONE value for every pixel) and gap-filled
+# rows (GapFilled = 1 / Coverage 0) stay IN the panel; whether a MODEL estimates on them is decided by the two options below -- the DEFAULTS
+# here (the design report and the screen table of this notebook use them) and, for each model, ITS OWN setting in its notebook (as Python's
+# P00_Settings and every model's CELL 1). Keeping a fill year-season is not neutral: in it the treated-control difference is exactly 0,
+# which dilutes the pre (or post) gap the DiD compares -- the screen's report says so when "keep" is in force.
+OUTCOME_SCREEN    <- "drop"   # "drop" = a year-season constant across pixels (a fill value) or with collapsed coverage leaves the model (evidence:
+                              #   OUTCOME_SCREEN_<outcome>.csv) | "keep" = reported and KEPT (results tagged _screenKept) | "off" = no screen
+EXCLUDE_GAPFILLED <- TRUE     # TRUE = rows the exporter filled from history (GapFilled = 1 / Coverage 0) are not observations | FALSE keeps them
+cat("design defaults (a model notebook overrides each):", DESIGN_MODE, "| timing", TREATMENT_TIMING, "| period rule (R_P00)", PERIOD_RULE, "| outcome screen", OUTCOME_SCREEN, "| gap-filled rows", if (isTRUE(EXCLUDE_GAPFILLED)) "left out" else "kept", "| rings", paste(CONTROL_RINGS, collapse = ","),
     "| seasons", paste(SEASONS, collapse = ","), "| fragments", FRAGMENT_RULE, "| overlap", OVERLAP_ROWS, "| pooled FE", POOLED_FE, "\n")
 ```
 
