@@ -2603,20 +2603,21 @@ def check_v20_59():
         try: _C._same_pixels_of("post_only"); bad("an unknown SAME_PIXELS is not refused")
         except Exception: pass
         _rows = []
-        for _p, _ring, _cells in ((1, 0, [(y, 1) for y in range(2019, 2025)]), (2, 0, [(y, 1) for y in range(2019, 2022)]), (3, 2, [(y, 1) for y in range(2022, 2025)]), (4, 2, [(y, 1) for y in range(2019, 2025) if y != 2020])):
+        for _p, _ring, _cells in ((1, 0, [(y, 1) for y in range(2019, 2025)]), (2, 0, [(y, 1) for y in range(2019, 2022)]), (3, 2, [(y, 1) for y in range(2022, 2025)]),
+                                  (4, 2, [(y, 1) for y in range(2019, 2025)]), (5, 2, [(y, 1) for y in range(2019, 2025) if y != 2020])):   # 2 pre only, 3 post only, 5 misses one cell
             for _y, _s in _cells: _rows.append((_p * 10 ** 9 + 7, _ring, _y, _s, 7, "SW7", f"{_y}_{_s}", 0.3 + 0.01 * (_y - 2019), int(_y >= 2022)))
         fs_ = _pd.DataFrame(_rows, columns=["pixel_id", "buff_km", "Year", "Season", "site_id", "subwshed_id", "time_fe_yearseason", "NDVI", "post"])
         _co = _C.CURRENT_OUTCOME; _C.CURRENT_OUTCOME = "NDVI"
         try:
             _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", same_pixels="pre_post", verbose=False)
             g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
-            if kept != [1, 4] or (_C.LAST_DESIGN_INFO.get("same_pixels") or {}).get("pixels_left_out") != 2 or "_pix" in _C.scenario_tag():
+            if kept != [1, 4, 5] or (_C.LAST_DESIGN_INFO.get("same_pixels") or {}).get("pixels_left_out") != 2 or "_pix" in _C.scenario_tag():
                 bad(f"SAME_PIXELS = 'pre_post' does not keep exactly the pixels observed in pre and post (kept {kept}; {_C.LAST_DESIGN_INFO.get('same_pixels')}; tag {_C.scenario_tag()})")
             if not any(r["check"] == "the same pixels in pre and post" and r["ok"] for r in _C.LAST_INTEGRITY): bad("the sample integrity does not confirm the same pixels in pre and post")
             _C.set_scenario(same_pixels="all", verbose=False); g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
-            if kept != [1] or "_pixAll" not in _C.scenario_tag(): bad(f"SAME_PIXELS = 'all' does not keep exactly the pixels observed in every year-season (kept {kept}; tag {_C.scenario_tag()})")
+            if kept != [1, 4] or "_pixAll" not in _C.scenario_tag(): bad(f"SAME_PIXELS = 'all' does not keep exactly the pixels observed in every year-season (kept {kept}; tag {_C.scenario_tag()})")
             _C.set_scenario(same_pixels="off", verbose=False); g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
-            if kept != [1, 2, 3, 4] or "_pixAny" not in _C.scenario_tag(): bad(f"SAME_PIXELS = 'off' does not keep every pixel (kept {kept}; tag {_C.scenario_tag()})")
+            if kept != [1, 2, 3, 4, 5] or "_pixAny" not in _C.scenario_tag(): bad(f"SAME_PIXELS = 'off' does not keep every pixel (kept {kept}; tag {_C.scenario_tag()})")
         finally:
             _C.CURRENT_OUTCOME = _co; _C.set_scenario(same_pixels="pre_post", verbose=False)
         if "same_pixels_rule(out, in_grp, CURRENT_OUTCOME)" not in _i.getsource(_C.build_treatment_columns) or "the same pixels in pre and post" not in _i.getsource(_C.sample_integrity): bad("build_treatment_columns / sample_integrity do not apply and confirm SAME_PIXELS")
