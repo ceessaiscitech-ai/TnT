@@ -206,6 +206,24 @@ match_one_sws <- function(x) {
 }
 match_sws_name <- function(x) vapply(as.character(x), match_one_sws, character(1), USE.NAMES = FALSE)
 
+# v20.59 -- YOUR RULE (as Python's tag_sites): the sub-watershed of every row is where its latitude / longitude falls (the core or a control
+# ring of the shapefile) -- the file's id only labels. SITE_GEOMETRY_CHECK <- FALSE trusts the file's id instead (site_check 4 = not checked).
+overlay_or_trust <- function(px) {
+  if (isTRUE(.opt("SITE_GEOMETRY_CHECK", TRUE))) return(overlay_sws(px))
+  out <- cbind(px, data.table(site_id = fifelse(is.na(px$sws_export), 0L, as.integer(px$sws_export)), ring_poly = NA_integer_, site_check = 4L))
+  info("overlay: SITE_GEOMETRY_CHECK = FALSE -- the sub-watershed id of the input files is trusted (", format(nrow(out), big.mark = ","), " pixels not checked)")
+  out
+}
+ring_from_polygon_codes <- function() if (isTRUE(.opt("BUFF_FROM_GEOMETRY", FALSE))) c(0L, 1L, 2L) else c(1L, 2L)   # BUFF_FROM_GEOMETRY: confirmed rows too
+working_sws_line <- function(dt) {
+  # ONE sub-watershed processed = the one holding the majority of the rows (SUB_WATERSHEDS = "data": every sub-watershed with >= FRAGMENT_MIN_SHARE of
+  # the largest one's own rows; the rest are fragments); SEVERAL = every row in the sub-watershed its coordinates put it in.
+  tb <- dt[!is.na(site_id) & site_id > 0, .N, by = site_id][order(-N)]; if (!nrow(tb)) return(invisible(NULL))
+  nm <- tryCatch(sws_names(), error = function(e) NULL); top <- tb[1]
+  info(sprintf("working sub-watershed rule (v20.59): every row belongs to the sub-watershed its latitude / longitude falls in (core or control ring); the largest here is %s with %s rows (%.1f %%) -- a single-sub-watershed run processes it and codes the rest as fragments (SUB_WATERSHEDS = \"data\", FRAGMENT_RULE); a pooled run keeps every row in its own sub-watershed",
+               if (!is.null(nm)) nm[as.character(top$site_id)] else top$site_id, format(top$N, big.mark = ","), 100 * top$N / sum(tb$N)))
+  invisible(tb)
+}
 overlay_sws <- function(px) {                                                        # _sws_geometry.SWSLocator.tag
   suppressPackageStartupMessages(library(sf))
   poly <- st_read(SHAPEFILE, quiet = TRUE)[, c("SWSiD_All", "SUBWSHED", "buff_km")]
@@ -605,10 +623,11 @@ run_prep <- function() {
   info("sub-watershed named by the export files (>= 80 % rule): ", paste(sprintf("%s %d file(s)", fifelse(is.na(nm_tab$sws_file), "none", ids[as.character(nm_tab$sws_file)]), nm_tab$files), collapse = " | "))
   px <- unique(dt[, .(pixel_id, latitude, longitude, sws_export)], by = c("pixel_id", "sws_export"))
   info("overlaying ", format(nrow(px), big.mark = ","), " pixel locations on the 20 sub-watersheds x rings")
-  px <- overlay_sws(px)
+  px <- overlay_or_trust(px)                                                                        # v20.59: SITE_GEOMETRY_CHECK
   fwrite(px[, .N, by = .(site_id, site_check)][order(site_id)], file.path(OUTPUT_DIR, "site_tagging_by_sws.csv"))
   dt <- merge(dt, px[, .(pixel_id, sws_export, site_id, ring_poly, site_check)], by = c("pixel_id", "sws_export"), all.x = TRUE)
-  dt[site_check %in% c(1L, 2L) & !is.na(ring_poly), buff_km := ring_poly]                           # corrected / assigned: the ring of that SWS
+  dt[site_check %in% ring_from_polygon_codes() & !is.na(ring_poly), buff_km := ring_poly]           # corrected / assigned: the ring of that SWS (BUFF_FROM_GEOMETRY: confirmed too)
+  working_sws_line(dt)                                                                              # v20.59: your rule, said with the numbers
   dt[, sws_name := ids[as.character(site_id)]]
   # v20.57 -- YOUR RULE: the major sub-watershed data are processed, smaller fragments of other sub-watersheds are dropped. Every row
   # is coded per export file (reward_design.R file_codes, as python/_fragments.py): 0 its file's own sub-watershed, 1 inside another

@@ -75,7 +75,7 @@ ooc_task_p00_block <- function(ctx, k) {
   for (c_ in names(ctx$types)) if (.rank_type(dt[[c_]]) != ctx$types[[c_]]) set(dt, j = c_, value = .as_type(dt[[c_]], ctx$types[[c_]]))
   # the overlay's sub-watershed and ring (on the exports' own pixel ids, as in memory), the name, the fragment code of each row's file
   dt <- merge(dt, ctx$px, by = c("pixel_id", "sws_export"), all.x = TRUE)
-  dt[site_check %in% c(1L, 2L) & !is.na(ring_poly), buff_km := ring_poly]
+  dt[site_check %in% ring_from_polygon_codes() & !is.na(ring_poly), buff_km := ring_poly]           # v20.59: BUFF_FROM_GEOMETRY
   dt[, sws_name := ctx$ids[as.character(site_id)]]
   sid <- as.integer(fifelse(is.na(dt$site_id), 0L, as.integer(dt$site_id))); chk <- as.integer(fifelse(is.na(dt$site_check), 4L, as.integer(dt$site_check)))
   m <- unname(ctx$major[dt$src_file]); inp <- chk %in% IN_POLYGON; code <- integer(nrow(dt)); hm <- !is.na(m)
@@ -126,7 +126,8 @@ run_prep_ooc <- function(files, t0 = Sys.time(), why = "") {
   info("sub-watershed named by the export files (>= 80 % rule): ", paste(sprintf("%s %d file(s)", fifelse(is.na(nm_tab$sws_file), "none", ids[as.character(nm_tab$sws_file)]), nm_tab$files), collapse = " | "))
   px <- unique(rbindlist(lapply(good, `[[`, "px")), by = c("pixel_id", "sws_export"))
   info("overlaying ", format(nrow(px), big.mark = ","), " pixel locations on the 20 sub-watersheds x rings")
-  px <- overlay_sws(px)
+  px <- overlay_or_trust(px)                                                                        # v20.59: SITE_GEOMETRY_CHECK
+  working_sws_line(px[, .(site_id)])                                                               # v20.59: your rule, said with the pixel numbers
   fwrite(px[, .N, by = .(site_id, site_check)][order(site_id)], file.path(OUTPUT_DIR, "site_tagging_by_sws.csv"))
   # the fragment codes of every file (file_codes: the file's majority sub-watershed), from its rows per pixel x file id
   pr <- rbindlist(lapply(good, function(p) p$pairs[, src_file := p$src_file]))

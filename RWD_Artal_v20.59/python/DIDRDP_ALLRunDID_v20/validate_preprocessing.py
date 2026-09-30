@@ -578,6 +578,18 @@ def main():
             (ok if bool((pan2_.post == (pan2_.Year >= 2022).astype(int)).all() and len(pan2_) == len(pan_)) else bad)("POST_FROM_EXPORT_TREAT = False (PERIOD_RULE 'year'): post = the rule Year >= 2022 on every row (the v20.58 panel), rebuilt when the setting changed")
         finally:
             P.POST_FROM_EXPORT_TREAT = True
+        # v20.59: the PARALLEL path (make_pool -- every logical core of every processor group, no 61-worker limit) gives the sequential panel row for row
+        try:
+            P.PERIOD_RULE = "treat"; P.POST_FROM_EXPORT_TREAT = True
+            _r, _u, _e, _d, shp_ = P.run_pass_a(inp_, td_, o_, n_workers=2); P.run_pass_b(shp_, o_, n_workers=2)
+            keys_ = ["pixel_id", "Year", "Season"]
+            panp_ = P.pq.read_table(os.path.join(o_, "did_panel_full.parquet")).to_pandas().sort_values(keys_).reset_index(drop=True)
+            base_ = pan_.sort_values(keys_).reset_index(drop=True)
+            cols_ = [c for c in ("pixel_id", "Year", "Season", "buff_km", "treat", "control", "pre", "post", "did", "NDVI", "Rain") if c in base_.columns and c in panp_.columns]
+            same_ = len(panp_) == len(base_) and all(np.array_equal(panp_[c].values, base_[c].values) if panp_[c].dtype.kind in "iub" else np.allclose(panp_[c].astype(float).values, base_[c].astype(float).values, equal_nan=True) for c in cols_)
+            (ok if same_ else bad)(f"PASS A / PASS B on 2 worker processes (make_pool, spawn start method) give the sequential panel row for row ({len(panp_)} rows, {len(cols_)} columns compared)")
+        except Exception as e:
+            bad(f"the parallel PASS A / PASS B raised {type(e).__name__}: {e}"); traceback.print_exc(limit=2)
     except Exception as e:
         bad(f"design check raised {type(e).__name__}: {e}"); traceback.print_exc(limit=2)
 

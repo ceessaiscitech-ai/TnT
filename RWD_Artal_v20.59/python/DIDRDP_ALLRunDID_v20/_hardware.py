@@ -17,8 +17,32 @@ Windows note: concurrent.futures.ProcessPoolExecutor cannot exceed 61 workers on
 """
 import os, sys, math
 
-WINDOWS_POOL_LIMIT = 60          # 61 is the hard limit; leave one slot of headroom
+WINDOWS_POOL_LIMIT = 60          # 61 is the hard limit of concurrent.futures on Windows; v20.59: the pools below use multiprocessing.Pool,
+                                 # which has no such limit -- every logical core of every processor group works
 RESERVE_CORES = 0                # v20.57 (your 98 % rule): no core is held back -- every logical core works
+
+def logical_cores_all():
+    """v20.59: EVERY logical processor of the machine. On Windows a box with more than 64 logical processors (your 2 x EPYC) is split
+    into PROCESSOR GROUPS and os.cpu_count() / R's detectCores() may report ONE group (64); GetActiveProcessorCount(ALL_PROCESSOR_GROUPS)
+    reports them all. Worker PROCESSES are placed across the groups by Windows, so a pool this size uses the whole machine."""
+    n = os.cpu_count() or 1
+    if os.name == "nt":
+        try:
+            import ctypes
+            m = int(ctypes.windll.kernel32.GetActiveProcessorCount(ctypes.c_ushort(0xFFFF)))     # ALL_PROCESSOR_GROUPS
+            if m > n: n = m
+        except Exception:
+            pass
+    return max(1, int(n))
+
+def processor_groups():
+    """v20.59: the number of Windows processor groups (1 elsewhere, and on a box of <= 64 logical processors)."""
+    if os.name != "nt": return 1
+    try:
+        import ctypes
+        return max(1, int(ctypes.windll.kernel32.GetActiveProcessorGroupCount()))
+    except Exception:
+        return 1
 
 def _psutil():
     try:
@@ -28,7 +52,7 @@ def _psutil():
 
 def machine_profile():
     ps = _psutil()
-    logical = os.cpu_count() or 1
+    logical = logical_cores_all()                                   # v20.59: every processor group (Windows > 64 logical processors)
     physical = None
     try:
         physical = ps.cpu_count(logical=False) if ps else None
@@ -42,8 +66,8 @@ def machine_profile():
             pass
     return {"logical_cores": logical, "physical_cores": physical or logical,
             "smt": bool(physical and logical > physical),
-            "ram_total": total, "ram_free": free, "windows": os.name == "nt",
-            "pool_limit": WINDOWS_POOL_LIMIT if os.name == "nt" else max(1, logical)}
+            "ram_total": total, "ram_free": free, "windows": os.name == "nt", "processor_groups": processor_groups(),
+            "pool_limit": max(1, logical)}                          # v20.59: make_pool() has no 61-worker limit on Windows
 
 def _memory_share():                        # v20.45: _paths.MEMORY_SHARE (0.45 each when two pipelines run at once)
     try:
@@ -146,7 +170,7 @@ def memory_share():
 
 def cpu_budget():
     """Cores this pipeline may use: all of them alone, half of them when two data folders are processed at once."""
-    return max(1, int((os.cpu_count() or 2) * memory_share()))
+    return max(1, int(logical_cores_all() * memory_share()))
 
 register_instance(); _atexit.register(_unregister_instance)
 MEMORY_CEILING = 0.98   # v20.57 -- YOUR RULE: no limit on loading data until the RAM / GPU memory reaches 98 % of its TOTAL
@@ -251,13 +275,48 @@ def worker_init_threads():
     """Worker process: exactly one BLAS thread, so N workers do not start N x cores threads."""
     set_blas_threads(1)
 
+class _PoolAdapter:
+    """v20.59: multiprocessing.Pool behind the two calls the preparation makes (map, shutdown) -- the same interface as the
+    ProcessPoolExecutor it replaces, without concurrent.futures' 61-worker limit on Windows."""
+    def __init__(self, pool): self._p = pool
+    def map(self, fn, it): return self._p.map(fn, list(it))
+    def shutdown(self, wait=True):
+        self._p.close()
+        if wait: self._p.join()
+        else: self._p.terminate()
+
+def make_pool(n_workers, initializer=None, initargs=()):
+    """v20.59: a pool of `n_workers` worker PROCESSES (spawn start method: Windows / Jupyter safe) -- multiprocessing.Pool first
+    (every logical core of every processor group), concurrent.futures as the fall-back (<= 61 workers on Windows)."""
+    import multiprocessing as _mp
+    n = max(1, int(n_workers))
+    try:
+        return _PoolAdapter(_mp.get_context("spawn").Pool(processes=n, initializer=initializer, initargs=tuple(initargs)))
+    except Exception:
+        from concurrent.futures import ProcessPoolExecutor
+        if os.name == "nt": n = min(n, WINDOWS_POOL_LIMIT)
+        return ProcessPoolExecutor(max_workers=n, mp_context=_mp.get_context("spawn"), initializer=initializer, initargs=tuple(initargs))
+
+def gpu_line():
+    """v20.59: one line on the GPU -- present (name, memory) or how to enable it. The GPU serves the MODEL stage (fixed-effects demeaning,
+    k-NN / spatial weights: torch / cupy); P00 parses files and builds the panel on every CPU core."""
+    try:
+        import torch
+        if torch.cuda.is_available():
+            free, total = torch.cuda.mem_get_info()
+            return f"GPU {torch.cuda.get_device_name(0)}: {total / 1e9:.0f} GB ({free / 1e9:.0f} GB free) -- used by the models (demeaning; k-NN with cupy)"
+        return "GPU: torch is installed WITHOUT CUDA -- pip install torch --index-url https://download.pytorch.org/whl/cu124 (the models then demean on the A40)"
+    except Exception:
+        return "GPU: torch not installed -- pip install torch --index-url https://download.pytorch.org/whl/cu124 (the models then demean on the GPU; CPU path meanwhile)"
+
 def describe_plan(n_files=None, n_blocks=None, block_rows=None, block_bytes_per_row=220.0):
     """Human-readable plan for the preparation stage, printed before the long passes."""
     p = machine_profile()
     a = worker_cap(n_tasks=n_files)
     b = worker_cap(n_tasks=n_blocks, bytes_per_worker=(block_rows * block_bytes_per_row) if block_rows else None)
-    lines = [f"cores {p['logical_cores']} (all used; v20.52), free RAM "          # v20.54: said "reserve 1", none is kept
+    lines = [f"cores {p['logical_cores']} (all used; v20.52" + (f", {p['processor_groups']} processor groups" if p.get("processor_groups", 1) > 1 else "") + "), free RAM "
              f"{p['ram_free']/1e9:.0f} GB" if p["ram_free"] else f"cores {p['logical_cores']}"]
+    lines.append(gpu_line())
     if n_files: lines.append(f"PASS A: {n_files} files on {a} worker processes (1 BLAS thread each)")
     if n_blocks: lines.append(f"PASS B: {n_blocks} blocks on {b} worker processes"
                               + (f", ~{block_rows*block_bytes_per_row/1e9:.1f} GB each" if block_rows else ""))

@@ -375,6 +375,14 @@ if (!inherits(tE, "error")) {
   PERIOD_RULE <- "year"; q_year <- panel_design_columns_R(copy(dq), say = FALSE)
   PERIOD_RULE <- "both"; q_both <- panel_design_columns_R(copy(dq), say = FALSE); ab <- input_audit_R(copy(dq), "q.csv")
   PERIOD_RULE <- "treat"
+  # v20.59: the overlay options at the panel level -- SITE_GEOMETRY_CHECK (trust the file's id) and BUFF_FROM_GEOMETRY (confirmed rows take the polygon ring too)
+  pxq <- data.table(pixel_id = c("a", "b"), latitude = c(15.1, 15.2), longitude = c(76.1, 76.2), sws_export = c(7L, NA_integer_))
+  SITE_GEOMETRY_CHECK <- FALSE; oq <- overlay_or_trust(copy(pxq)); SITE_GEOMETRY_CHECK <- TRUE
+  BUFF_FROM_GEOMETRY <- TRUE; rq <- ring_from_polygon_codes(); BUFF_FROM_GEOMETRY <- FALSE
+  chkE("panel", "SITE_GEOMETRY_CHECK <- FALSE trusts the file's id (site_check 4, no overlay); BUFF_FROM_GEOMETRY <- TRUE takes the polygon ring on confirmed rows too (v20.59)",
+       identical(oq$site_check, c(4L, 4L)) && identical(oq$site_id, c(7L, 0L)) && identical(rq, c(0L, 1L, 2L)) && identical(ring_from_polygon_codes(), c(1L, 2L)),
+       sprintf("checks %s | ids %s | codes %s", paste(oq$site_check, collapse = ","), paste(oq$site_id, collapse = ","), paste(rq, collapse = ",")))
+  chkE("panel", "N_THREADS counts every logical processor (all_logical_cores_R >= detectCores) (v20.59)", all_logical_cores_R() >= parallel::detectCores(), sprintf("%d vs %d", all_logical_cores_R(), parallel::detectCores()))
   chkE("panel", "PERIOD_RULE 'treat' | 'year' | 'both' on a small frame: the flag / the rule / the disagreeing row leaves (v20.59)",
        identical(q_treat$post, c(0L, 0L, 0L, 1L, 1L)) && identical(q_year$post, c(0L, 1L, 0L, 1L, 1L)) && nrow(q_both) == 4L && identical(q_both$post, c(0L, 0L, 1L, 1L))
        && identical(attr(q_both, "design_check")$rows_dropped, 1L) && ab$treat_vs_year_disagree_rows == 1L && ab$buff_outside_0to5_rows == 1L && ab$buff0_treatment_rows == 2L,

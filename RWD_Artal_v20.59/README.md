@@ -8,6 +8,10 @@
 >   The panel KEEPS every fill value and gap-filled row (P00 / R_P00 say so with the counts); `OUTCOME_SCREEN` (drop | keep | off) and
 >   `EXCLUDE_GAPFILLED` decide what a MODEL estimates on — set as defaults in P00_Settings / R_P00 and, for each model, in its own first cell.
 >   Keeping a fill year-season dilutes the DiD (the treated-control gap in it is 0); the screen's warning says so under keep.
+>   Every logical processor of every Windows processor group works (P00 pools without the 61-worker limit; R's `N_THREADS` likewise);
+>   blocks above 256 MB go to shard files at once instead of holding RAM; the GPU line is printed at PASS A. The working sub-watershed
+>   rule (every row by its latitude / longitude; one run = the majority sub-watershed, pooled = each row in its own) is printed with the
+>   run's numbers, and its switches (`SUB_WATERSHEDS`, `SITE_GEOMETRY_CHECK`, `BUFF_FROM_GEOMETRY`) sit in P00_Settings and R_P00.
 >   `panel_design_check(_R).csv` and `panel_variation_by_block.csv` (which year-seasons hold one value for every pixel).
 >   Every model still applies ITS OWN design when it runs and prints **`DESIGN vs PANEL`**: on how many rows your settings
 >   (the fund timing, `TREATMENT_YEAR`, the transition year) change the period split against the panel's columns.

@@ -1889,7 +1889,7 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
             import _hardware as _H
             n_workers = _H.worker_cap(n_tasks=len(files_sorted))
         except Exception:
-            n_workers = max(1, min(60, os.cpu_count() or 1))                  # v20.57: every core (the fall-back too)
+            n_workers = max(1, os.cpu_count() or 1)                           # v20.57: every core (the fall-back too)
     def _sequential(f):
         u, e, d = [], [], []
         df = load_and_harmonize(f, unresolved_log=u, parse_errors_log=e)
@@ -1917,11 +1917,11 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
             # which spawned children DO inherit. (Verified under an explicit spawn context.)
             _mdir = os.path.dirname(os.path.abspath(__file__))
             os.environ["PYTHONPATH"] = _mdir + os.pathsep + os.environ.get("PYTHONPATH", "")
-            import multiprocessing as _mp
-            pool = ProcessPoolExecutor(max_workers=n_workers, mp_context=_mp.get_context("spawn"),
-                                       initializer=_pa_worker_init,
-                                       initargs=(_mdir, KNOWN_SUBWSHED_NAMES, cfg))
-            print(f"[INFO]    PASS A running on {n_workers} worker processes")
+            import multiprocessing as _mp, _hardware as _H
+            pool = _H.make_pool(n_workers, initializer=_pa_worker_init, initargs=(_mdir, KNOWN_SUBWSHED_NAMES, cfg))   # v20.59: every core of every processor group
+            _p = _H.machine_profile()
+            print(f"[INFO]    PASS A running on {n_workers} worker processes ({_p['logical_cores']} logical cores"
+                  + (f" in {_p['processor_groups']} processor groups" if _p.get("processor_groups", 1) > 1 else "") + f"; 1 BLAS thread each) | {_H.gpu_line()}")
         except Exception as e:
             print(f"[WARNING] could not start the process pool ({type(e).__name__}: {e}) -- running sequentially")
             pool = None
@@ -1955,12 +1955,20 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
             if _mem_on[0]:                                        # v20.30: keep the block in RAM while it fits
                 import _hardware as _H
                 _gb = int(group.memory_usage(deep=True).sum())
-                if _H.fits((_mem_bytes[0] + _gb) * MEM_BLOCK_COPIES):
+                _cur = _mem_blocks.get(key); _blk = (_cur.nbytes if _cur is not None else 0) + _gb
+                if _blk > PICKLE_SAFE_BYTES:                          # v20.59: a block this large is handed to PASS B as a FILE anyway (Windows pipes):
+                    info(f"PASS A: the {SEASON_LABEL[se]} {yr} block passes {PICKLE_SAFE_BYTES / 2**20:.0f} MB -- blocks of this size are handed to PASS B "
+                         f"as files in any case, so every block goes to shard files from here and the RAM stays free for the workers (nothing is lost: "
+                         f"{len(_mem_blocks)} blocks, {_mem_bytes[0] / 1e9:.1f} GB, written now). {_H.memory_report()}")
+                    _mem_on[0] = False
+                elif _H.fits((_mem_bytes[0] + _gb) * MEM_BLOCK_COPIES):
                     _mem_blocks.setdefault(key, MemBlock()).add(group.reset_index(drop=True)); _mem_bytes[0] += _gb
                     continue
-                info(f"RAM ceiling ({int(_H.MEMORY_CEILING * 100)} %) reached after {_mem_bytes[0] / 1e9:.1f} GB of blocks -- "
-                     f"spilling them to shard files and continuing on disk (the previous path). {_H.memory_report()}")
-                _mem_on[0] = False
+                else:
+                    info(f"RAM ceiling ({int(_H.MEMORY_CEILING * 100)} %) reached after {_mem_bytes[0] / 1e9:.1f} GB of blocks -- spilling them to shard files and "
+                         f"continuing on disk (the previous path; PASS B processes every block at once and holds up to MEM_BLOCK_COPIES = {MEM_BLOCK_COPIES:g} copies of "
+                         f"each, so the in-RAM path needs that multiple of the panel's size). {_H.memory_report()}")
+                    _mem_on[0] = False
                 for _k2 in sorted(_mem_blocks):
                     for _f2 in _mem_blocks[_k2].frames: _write_group(_k2, _f2)
                 _mem_blocks.clear(); gc.collect()
@@ -2009,6 +2017,20 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
                 _bys.to_csv(os.path.join(_out, "site_tagging_by_sws.csv"), index=False)
                 info("rows per sub-watershed (shapefile overlay) and how the file's id compared -> site_tagging_by_sws.csv")
                 print(_bys.to_string(index=False))
+                # v20.59 -- YOUR RULE, said with the numbers: the sub-watershed of every row is where its latitude / longitude falls (the core or a
+                # control ring of the shapefile) -- the file's id only labels. ONE sub-watershed processed = the one holding the majority of the rows
+                # (SUB_WATERSHEDS = "data": every sub-watershed with >= FRAGMENT_MIN_SHARE of the largest one's own rows; the rest are fragments);
+                # SEVERAL = every row in the sub-watershed its coordinates put it in.
+                try:
+                    _rc = next((c for c in ("rows", "n_rows", "rows_total") if c in _bys.columns), None)
+                    _nc = next((c for c in ("sws_name", "name", "sub_watershed") if c in _bys.columns), None)
+                    if _rc and _nc:
+                        _tot_r = float(_bys[_rc].sum()); _top = _bys.sort_values(_rc, ascending=False).iloc[0]
+                        info(f"working sub-watershed rule (v20.59): every row belongs to the sub-watershed its latitude / longitude falls in (core or control ring); "
+                             f"the largest here is {_top[_nc]} with {float(_top[_rc]):,.0f} rows ({float(_top[_rc]) / max(1.0, _tot_r):.1%}) -- a single-sub-watershed "
+                             f"run processes it and codes the rest as fragments (SUB_WATERSHEDS = 'data', FRAGMENT_RULE); a pooled run keeps every row in its own sub-watershed")
+                except Exception:
+                    pass
         except Exception as _e:
             info(f"per-sub-watershed tagging summary skipped ({_e})")
         if tot.get("corrected"):
@@ -2069,7 +2091,7 @@ def pass_b_worker_count(n_blocks, rows_per_block=2_000_000, verbose=True):
         return n
     except Exception:
         import multiprocessing as _mp
-        return max(1, min((_mp.cpu_count() or 1), n_blocks, 60))
+        return max(1, min((_mp.cpu_count() or 1), n_blocks))
 
 def _pb_worker(args):
     """One (Year, Season) block, end to end, into its own part file. Returns (key, path, rows, dup_log)."""
@@ -2718,8 +2740,8 @@ def run_pass_b(shard_paths, output_dir, dose_table=None, crosswalk=None, n_worke
             cfg = _settings_snapshot()                               # v20.58: every setting (was: a list of 14 -- the negative-covariate rule missing)
             _mdir = os.path.dirname(os.path.abspath(__file__))
             os.environ["PYTHONPATH"] = _mdir + os.pathsep + os.environ.get("PYTHONPATH", "")
-            pool = ProcessPoolExecutor(max_workers=n_workers, mp_context=_mp.get_context("spawn"),
-                                       initializer=_pa_worker_init, initargs=(_mdir, KNOWN_SUBWSHED_NAMES, cfg))
+            import _hardware as _H
+            pool = _H.make_pool(n_workers, initializer=_pa_worker_init, initargs=(_mdir, KNOWN_SUBWSHED_NAMES, cfg))   # v20.59: every core of every processor group
             print(f"[INFO]    PASS B running {len(jobs)} blocks on {n_workers} worker processes")
         except Exception as e:
             print(f"[WARNING] could not start the PASS B pool ({type(e).__name__}: {e}) -- running sequentially")

@@ -234,7 +234,7 @@ def check_full_machine():
         os.cpu_count = lambda: 64; H.os.name = "nt"
         a = H.worker_cap(n_tasks=1449); b = H.worker_cap(n_tasks=44, bytes_per_worker=1_710_519 * 220)
         if a < 32: bad(f"PASS A would use only {a} workers on a 64-core box")
-        elif a > 61: bad(f"PASS A would ask for {a} workers -- Windows pools fail above 61")
+        elif a != 64: bad(f"PASS A would ask for {a} workers on a 64-core box -- v20.59: every logical core (make_pool has no 61-worker limit on Windows)")
         else: note(f"simulated 64-core Windows box: PASS A {a} workers, PASS B {b} workers")
         if b != 44: bad(f"PASS B would use {b} workers for 44 blocks with 480 GB free (expected 44)")
     finally:
@@ -2460,6 +2460,28 @@ def check_v20_59():
             t_ = open(q, encoding="utf-8").read()
             if 'OUTCOME_SCREEN    <- ' not in t_ or 'EXCLUDE_GAPFILLED <- ' not in t_: bad(f"{os.path.basename(q)} does not carry OUTCOME_SCREEN / EXCLUDE_GAPFILLED at the panel level")
         if "panel KEEPS every row and value" not in _i.getsource(_P.run_pass_b): bad("P00 does not say that the panel keeps every row and value")
+        for q in rp00:                                                  # v20.59: R_P00 carries EVERY design default (as P00_Settings) and the overlay options
+            t_ = open(q, encoding="utf-8").read()
+            miss_ = [k for k in ("DESIGN_MODE", "TREATMENT_TIMING", "CONTROL_RINGS", "PRE_YEARS", "POST_YEARS", "SEASONS", "SUB_WATERSHEDS", "SITE_GEOMETRY_CHECK", "BUFF_FROM_GEOMETRY", "FRAGMENT_RULE") if f"{k} " not in t_ and f"{k}<-" not in t_]
+            if miss_: bad(f"{os.path.basename(q)} lacks the panel-level defaults {miss_}")
+        if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("SUB_WATERSHEDS = ", "P.SITE_GEOMETRY_CHECK = ", "P.BUFF_FROM_GEOMETRY  = ", "sub_watersheds=SUB_WATERSHEDS")):
+            bad("P00_Settings lacks SUB_WATERSHEDS / the overlay options, or does not pass sub_watersheds to its design report")
+        # v20.59: the machine -- every processor group, pools without the 61-worker limit, the GPU line
+        import _hardware as _HW
+        if not all(hasattr(_HW, k) for k in ("logical_cores_all", "processor_groups", "make_pool", "gpu_line")): bad("_hardware lacks logical_cores_all / processor_groups / make_pool / gpu_line")
+        if _HW.logical_cores_all() < (os.cpu_count() or 1) or _HW.machine_profile().get("pool_limit", 0) < _HW.logical_cores_all(): bad("the worker pool is still capped below the machine's logical cores")
+        _pl = _HW.make_pool(2); _r = _pl.map(abs, [-1, -2]); _pl.shutdown(wait=True)
+        if list(_r) != [1, 2]: bad("make_pool does not run tasks")
+        pa_ = _i.getsource(_P.run_pass_a)
+        if "make_pool(" not in pa_ or "make_pool(" not in _i.getsource(_P.run_pass_b) or "PICKLE_SAFE_BYTES:" not in pa_: bad("PASS A / PASS B do not use make_pool or the early shard switch")
+        rl_ = os.path.join(os.path.dirname(os.path.dirname(HERE)), "R", "lib")
+        for fn_, keys_ in (("reward_paths.R", ("all_logical_cores_R", "SITE_GEOMETRY_CHECK", "BUFF_FROM_GEOMETRY")), ("reward_prep.R", ("overlay_or_trust", "ring_from_polygon_codes", "working_sws_line")), ("reward_prep_ooc.R", ("overlay_or_trust", "ring_from_polygon_codes"))):
+            pth_ = os.path.join(rl_, fn_)
+            if os.path.exists(pth_):
+                t_ = open(pth_, encoding="utf-8").read(); mk = [k for k in keys_ if k not in t_]
+                if mk: bad(f"R {fn_} lacks {mk}")
+        note("the machine: every logical processor of every processor group (Python ctypes / R CIM), worker pools without the 61 limit, blocks above the pipe size go to shards at once, "
+             "the GPU said; the overlay options and the working-sub-watershed rule at both levels in both languages")
         note(f"{len(nbs)} model notebooks set OUTCOME_SCREEN and pass it; PRE_YEARS / POST_YEARS document the calendar-year form; P00 carries PERIOD_RULE; "
              f"P00 and R_P00 ({len(rp00)} found) carry OUTCOME_SCREEN / EXCLUDE_GAPFILLED as the panel-level defaults and say the panel keeps every value")
         # 6 R: the same rules in the R library and notebooks

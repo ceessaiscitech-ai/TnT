@@ -85,7 +85,23 @@ SCREEN_MIN_COVERAGE <- 0.05             # a year-season with < 5 % of the typica
 N_MAX_UNITS         <- NULL; N_MAX_PIXELS_MIXED <- NULL; N_MAX_ML <- NULL; N_MAX_SPATIAL <- NULL   # v20.57 YOUR 98 % RULE: NULL = no fixed sample size -- a model
                                                                           #   samples ONLY what would not fit below 98 % of the RAM (units_that_fit);
                                                                           #   a number caps it by hand. v20.55: 2 M / 400 k / 4 M (fixed)
-N_THREADS           <- max(1L, parallel::detectCores())         # v20.52: EVERY core (no reserve, no split)
+# v20.59: EVERY logical processor of the machine. On Windows a box with more than 64 logical processors (your 2 x EPYC) is split into
+# PROCESSOR GROUPS and detectCores() reports ONE group (64); the CIM / WMI count covers them all (as Python's _hardware.logical_cores_all).
+all_logical_cores_R <- function() {
+  n <- suppressWarnings(as.integer(parallel::detectCores())); if (!isTRUE(n >= 1L)) n <- 1L
+  if (.Platform$OS.type == "windows") {
+    m <- tryCatch(suppressWarnings(as.integer(system2("powershell", c("-NoProfile", "-Command",
+           "(Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors"), stdout = TRUE, stderr = FALSE)[1])), error = function(e) NA_integer_)
+    if (!isTRUE(m >= 1L)) m <- tryCatch(suppressWarnings(as.integer(Sys.getenv("NUMBER_OF_PROCESSORS"))), error = function(e) NA_integer_)
+    if (isTRUE(m > n)) n <- m
+  }
+  n
+}
+N_THREADS           <- max(1L, all_logical_cores_R())           # v20.52: EVERY core (no reserve, no split); v20.59: every processor group
+SITE_GEOMETRY_CHECK <- TRUE                                     # v20.59 (as Python): every row's sub-watershed from its latitude / longitude in the shapefile
+                                                                #   (confirmed / corrected / assigned; the file's id only labels) | FALSE = trust the file's id
+BUFF_FROM_GEOMETRY  <- FALSE                                    # v20.59 (as Python): TRUE = buff_km always from the polygon ring | FALSE = only where the
+                                                                #   sub-watershed was corrected or assigned (a confirmed row keeps the exported ring, reported)
 EXCLUDE_GAPFILLED   <- TRUE                                     # v20.52: rows filled from history are not estimated on (as Python)
 OUTCOME_SCREEN      <- "drop"                                  # v20.59: the outcome screen -- "drop": a year-season constant across pixels (a fill value)
                                                                #   or with collapsed coverage leaves every model, its evidence in OUTCOME_SCREEN_<outcome>.csv |

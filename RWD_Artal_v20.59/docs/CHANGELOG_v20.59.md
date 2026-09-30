@@ -107,6 +107,37 @@ the screen then left 41 of 44 year-seasons out of every model. Two things were m
   dominated by artificial zero gaps: the estimate on the 3 real year-seasons ("drop") is the honest one, and the real fix is an export that
   carries pixel values in every year-season. Both options remain yours; the run never stops blind either way.
 
+## Your machine (2 x AMD EPYC, 512 GB, NVIDIA A40, Windows Server 2022) — what was idle and why, and what changed
+
+- **Half the cores were idle on Windows.** Windows splits a box with more than 64 logical processors into PROCESSOR GROUPS;
+  `os.cpu_count()` and R's `detectCores()` report one group (64), and `concurrent.futures` refuses more than 61 worker processes. Now
+  `_hardware.logical_cores_all()` (GetActiveProcessorCount over ALL groups) and R's `all_logical_cores_R()` (the CIM count) give every
+  logical processor, and PASS A / PASS B run on `multiprocessing.Pool` (`_hardware.make_pool`), which has no 61-worker limit: one worker
+  per logical core of every group. `N_THREADS` in R follows the same count.
+- **"RAM ceiling (98 %) reached after 97.6 GB" with 292 GB usable.** PASS B processes every Year x Season block at once and holds up to
+  `MEM_BLOCK_COPIES` (3) copies of each, so the in-RAM hand-over needs that multiple of the panel's size; and a block above 256 MB is handed
+  to a worker as a FILE in any case (a pickled block that size breaks the Windows process pool). Your blocks are ~2 GB each, so the in-RAM
+  path could never have been used for them: PASS A now switches to shard files as soon as a block passes 256 MB, says why, and stops
+  holding ~100 GB for nothing. Nothing is slower: PASS B read those blocks from files before as well. The message now explains the rule and
+  names `P.MEM_BLOCK_COPIES` (P00_Settings) for a machine where it should be lowered.
+- **The GPU during P00.** P00 parses files and builds the panel on the CPU cores; the A40 serves the MODEL stage (fixed-effects demeaning
+  with `torch`, k-NN / spatial weights with `cupy`). P00 now prints the GPU line at the start of PASS A: the device and its memory when
+  `torch` with CUDA is installed, else the pip command that enables it (`pip install torch --index-url https://download.pytorch.org/whl/cu124`).
+- **The working sub-watershed rule, made explicit at both levels.** The sub-watershed of every row is where its latitude / longitude falls in
+  the shapefile (the core or a control ring): the file's id only labels (confirmed / corrected / assigned; your run: 3,286,494 confirmed,
+  3,287,173 assigned, 102 outside). ONE sub-watershed processed = the one holding the majority of the rows (`SUB_WATERSHEDS = "data"`: every
+  sub-watershed with >= 5 % of the largest one's own rows; the rest are fragments, `FRAGMENT_RULE`); SEVERAL = every row in the
+  sub-watershed its coordinates put it in. P00_Settings now carries `SUB_WATERSHEDS`, `P.SITE_GEOMETRY_CHECK` and `P.BUFF_FROM_GEOMETRY`
+  (the overlay comparison options: verify every row, or trust the file's id; the ring from the polygon on corrected / assigned rows, or on
+  every row), R_P00 and `lib/reward_paths.R` carry `SITE_GEOMETRY_CHECK` / `BUFF_FROM_GEOMETRY` for the first time (R always overlaid; now
+  the same two switches as Python, in memory and out of core), and both P00s print the rule with the numbers of the run.
+- **Every customisation at the panel level in R too.** R_P00 now carries the full design-defaults block Python's P00_Settings has
+  (DESIGN_MODE, TREATMENT_TIMING, TREATMENT_YEAR, FUND_START_RULE, DOSE_VARIABLE, CONTROL_RINGS, PRE_YEARS, POST_YEARS, SEASONS,
+  EXCLUDE_TRANSITION_YEAR, UNIT_FE, COHORT_OFFSET, POOLED_FE, OVERLAP_ROWS, FRAGMENT_RULE, COVARIATES, SUB_WATERSHEDS, OUTCOME_SCREEN,
+  EXCLUDE_GAPFILLED, PERIOD_RULE) -- the defaults of the design report and the screen table; every model notebook keeps its own first cell,
+  which wins for that model. `validate_design_options.py` (1,728 checks, R == Python) is the proof that each option does what it says at the
+  model stage; the R suite's scenario E checks the panel-level ones.
+
 ## Found by running R here (v20.59, after the first delivery)
 
 - **R_P00 stopped before writing the panel** when an outcome column had no finite value at all (`panel_variation_R`: the empty part
