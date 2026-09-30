@@ -148,8 +148,9 @@ screen_decide <- function(s, outcome, rule = screen_rule_R()) {
   s <- copy(s); s[is.na(sd), sd := 0]
   for (k in c("min", "max", "n_pixels")) if (!k %in% names(s)) set(s, j = k, value = NA_real_)
   mt <- median(s$n_treated); mc <- median(s$n_control)
-  s[, constant := sd <= 1e-9 * pmax(1, abs(mean))]
-  s[, collapse := n_treated < SCREEN_MIN_COVERAGE * mt | n_control < SCREEN_MIN_COVERAGE * mc]
+  tol <- .opt("PRECISION_TOLERANCE", 1e-6); cov_ <- .opt("MIN_PIXEL_COVERAGE_PCT", SCREEN_MIN_COVERAGE)                  # spec 1 / 3 (as Python)
+  s[, constant := sd <= pmax(tol, 1e-9 * pmax(1, abs(mean)))]
+  s[, collapse := n_treated < cov_ * mt | n_control < cov_ * mc]
   s[, why := paste0(ifelse(constant, sprintf("constant across pixels (a fill value: %s rows%s, every value %s%s)", formatC(n, big.mark = ",", format = "d"),
                                              ifelse(is.finite(n_pixels), sprintf(" of %s pixels", formatC(n_pixels, big.mark = ",", format = "d")), ""),
                                              formatC(min, digits = 6, format = "g"), ifelse(is.finite(max) & max != min, paste0("..", formatC(max, digits = 6, format = "g")), "")), ""),
@@ -440,10 +441,17 @@ design_settings <- function() {
             design_source = .one_of("DESIGN_SOURCE", .opt("DESIGN_SOURCE", "model"), c("panel", "model")),   # v20.59: "panel" = the panel's columns are estimated on (the notebooks' default) | "model" = the design in effect
             control_selection = control_selection_R(.opt("CONTROL_SELECTION", "rings")),                    # v20.59 (your fifth request): rings | pre_rings | pre_blocks
             control_select_k = as.integer(.opt("CONTROL_SELECT_K", 2L)), control_select_ratio = as.numeric(.opt("CONTROL_SELECT_RATIO", 3)),
-            control_select_on = .one_of("CONTROL_SELECT_ON", .opt("CONTROL_SELECT_ON", "trend"), c("trend", "level", "both")),
+            control_select_on = .one_of("CONTROL_SELECT_ON", .opt("CONTROL_SELECT_ON", "trend"), c("trend", "level", "both", "rmse")),
             control_block_deg = as.numeric(.opt("CONTROL_BLOCK_DEG", 0.01)),
             cluster = .one_of("CLUSTER", .opt("CLUSTER", "auto"), c("auto", "block")),                     # v20.59: ~1 km spatial blocks as clusters
-            same_pixels = .one_of("SAME_PIXELS", .opt("SAME_PIXELS", "pre_post"), c("pre_post", "all", "off")))   # v20.59: the same pixels across the panel
+            same_pixels = .one_of("SAME_PIXELS", .opt("SAME_PIXELS", "pre_post"), c("pre_post", "all", "off")),   # v20.59: the same pixels across the panel
+            donut_rings = { v <- .opt("DONUT_RINGS", integer(0)); v <- suppressWarnings(as.integer(unlist(v))); v <- sort(unique(v[is.finite(v)])); if (length(v) && any(!v %in% 1:5)) stop("DONUT_RINGS must name rings 1..5"); v },   # spec 1
+            landuse_keep = { v <- .opt("LANDUSE_KEEP", "all"); if (is.character(v) && length(v) == 1 && tolower(v) %in% c("all", "none", "off", "")) "all" else sort(unique(as.integer(unlist(v)))) },
+            baseline_ndvi_min = { v <- .opt("BASELINE_NDVI_MIN", NA); v <- suppressWarnings(as.numeric(v[1])); if (is.finite(v) && (v < -1 || v > 1)) stop("BASELINE_NDVI_MIN must be an NDVI value in [-1, 1] or NA"); if (is.finite(v)) v else NA_real_ },
+            min_pixel_coverage_pct = as.numeric(.opt("MIN_PIXEL_COVERAGE_PCT", SCREEN_MIN_COVERAGE)), drop_singletons = isTRUE(.opt("DROP_SINGLETONS", FALSE)),
+            precision_tolerance = as.numeric(.opt("PRECISION_TOLERANCE", 1e-6)))
+  if (!(is.finite(s$min_pixel_coverage_pct) && s$min_pixel_coverage_pct >= 0 && s$min_pixel_coverage_pct < 1)) stop("MIN_PIXEL_COVERAGE_PCT must be in [0, 1)")
+  if (!(is.finite(s$precision_tolerance) && s$precision_tolerance >= 0 && s$precision_tolerance <= 1e-2)) stop("PRECISION_TOLERANCE must be in [0, 1e-2]")
   if (!(is.finite(s$control_select_k) && s$control_select_k >= 1L && s$control_select_k <= 5L)) stop("CONTROL_SELECT_K must be 1..5")
   if (!(is.finite(s$control_select_ratio) && s$control_select_ratio > 0)) stop("CONTROL_SELECT_RATIO must be > 0")
   if (!(is.finite(s$control_block_deg) && s$control_block_deg >= 0.001 && s$control_block_deg <= 1)) stop("CONTROL_BLOCK_DEG must be between 0.001 and 1 degree")
@@ -822,6 +830,12 @@ model_design <- function(verbose = TRUE, force = FALSE) {
          rings = " (every ring of CONTROL_RINGS is the control group)",
          pre_rings = sprintf(" (per outcome, the %d ring(s) whose PRE-period series is closest to the treatment area's -- '%s'; decided on the pre period only, the same pixels in every year and season; CONTROL_SELECTION_<outcome>_R.csv)", s$control_select_k, s$control_select_on),
          pre_blocks = sprintf(" (per outcome, ~%.1f km blocks of control pixels closest to the treatment area's PRE-period series -- '%s' -- until %g x the treated pixels; the same pixels in every year and season; CONTROL_SELECTION_<outcome>_R.csv)", s$control_block_deg * 111, s$control_select_on, s$control_select_ratio))))
+  add_ch("DONUT_RINGS", if (length(s$donut_rings)) paste(s$donut_rings, collapse = ",") else "none", if (length(s$donut_rings)) paste(s$donut_rings, collapse = ",") else "none", "your setting (rings left out of the control pool -- the spillover buffer next to the core)")
+  add_ch("LANDUSE_KEEP", paste(s$landuse_keep, collapse = ","), paste(s$landuse_keep, collapse = ","), "your setting (a pixel is kept by its PRE-period land-use class)")
+  add_ch("BASELINE_NDVI_MIN", s$baseline_ndvi_min, s$baseline_ndvi_min, "your setting (a pixel's pre-period mean NDVI must exceed it)")
+  add_ch("MIN_PIXEL_COVERAGE_PCT", s$min_pixel_coverage_pct, s$min_pixel_coverage_pct, "your setting (a year-season below this share of the typical coverage is screened out)")
+  add_ch("DROP_SINGLETONS", s$drop_singletons, s$drop_singletons, "your setting (series seen once leave before the demeaning)")
+  add_ch("PRECISION_TOLERANCE", s$precision_tolerance, s$precision_tolerance, "your setting (|value| <= tolerance is the no-data zero; a year-season is constant within it)")
   add_ch("SAME_PIXELS", s$same_pixels, s$same_pixels, paste0("your setting", c(pre_post = " (every treated and control pixel is observed in pre AND post; a pixel seen on one side only leaves -- the groups are the same pixels across the panel)",
                                                                    all = " (every pixel is observed in every year-season of the sample: a balanced pixel set)", off = " (a pixel may contribute to one side only -- the v20.58 sample)")[[s$same_pixels]]))
   add_ch("CLUSTER", s$cluster, s$cluster, paste0("your setting", if (identical(s$cluster, "block")) " (~1 km spatial blocks of pixels -- many clusters, the spatial correlation of neighbouring pixels absorbed)" else sprintf(" (the sub-watershed; fewer than %d sub-watersheds -> the years)", MIN_SWS_CLUSTERS)))
@@ -835,6 +849,8 @@ model_design <- function(verbose = TRUE, force = FALSE) {
             outcome_screen = s$outcome_screen, design_source = s$design_source,                  # v20.59
             control_selection = s$control_selection, control_select_k = s$control_select_k, control_select_ratio = s$control_select_ratio,   # v20.59 (your fifth request)
             control_select_on = s$control_select_on, control_block_deg = s$control_block_deg, cluster = s$cluster, same_pixels = s$same_pixels,
+            donut_rings = s$donut_rings, landuse_keep = s$landuse_keep, baseline_ndvi_min = s$baseline_ndvi_min, min_pixel_coverage_pct = s$min_pixel_coverage_pct,   # spec 1 / 3
+            drop_singletons = s$drop_singletons, precision_tolerance = s$precision_tolerance,
             fund = list(start_rule = s$fund_start_rule, start_share = s$fund_start_share, rate_months = s$fund_rate_months, before_file = s$fund_dose_before_file),
             n_sites = length(real), sites = as.integer(real), n_fund_dated = as.integer(n_fund), data_keys = dk, choices = rbindlist(ch), notes = notes,
             sub_watersheds = s$sub_watersheds, processed = as.integer(ps$sites), processed_how = ps$how)
@@ -880,6 +896,11 @@ scenario_tag <- function(d) {
                                                       c(trend = "", level = "L", both = "B")[[d$control_select_on %||% "trend"]])
   if (identical(d$cluster, "block")) t <- paste0(t, "_clBlock")                                  # v20.59: ~1 km spatial blocks as clusters (as Python)
   spx <- d$same_pixels %||% "pre_post"; if (identical(spx, "all")) t <- paste0(t, "_pixAll") else if (identical(spx, "off")) t <- paste0(t, "_pixAny")   # v20.59 (as Python)
+  if (length(d$donut_rings %||% integer(0))) t <- paste0(t, "_donut", paste(d$donut_rings, collapse = "-"))                                          # spec 1 (as Python)
+  if (!identical(d$landuse_keep %||% "all", "all")) t <- paste0(t, "_lu", paste(d$landuse_keep, collapse = "-"))
+  if (is.finite(d$baseline_ndvi_min %||% NA)) t <- paste0(t, sprintf("_ndviPre%g", d$baseline_ndvi_min))
+  if (abs((d$min_pixel_coverage_pct %||% 0.05) - 0.05) > 1e-12) t <- paste0(t, sprintf("_cov%d", as.integer(round(100 * d$min_pixel_coverage_pct))))
+  if (isTRUE(d$drop_singletons)) t <- paste0(t, "_noSingle")
   t <- paste0(t, "_", cov_tag(d$covariates %||% COVARIATES))
   if (is.finite(d$year_min %||% NA) || is.finite(d$year_max %||% NA))
     t <- paste0(t, sprintf("_yr%s-%s", if (is.finite(d$year_min %||% NA)) d$year_min else "start", if (is.finite(d$year_max %||% NA)) d$year_max else "end"))
@@ -961,9 +982,9 @@ control_selection_decide_R <- function(facts, o, d) {
   if (!nrow(g)) stop(sprintf("CONTROL_SELECTION: no control unit shares a pre-period cell with the treatment area (%s)", o))
   tab <- g[, { lev <- mean(dif); xx <- ti - mean(ti); sxx <- sum(xx^2)
                .(pre_cells = .N, pre_rows = sum(n), pre_mean_control = sum(s) / sum(n), pre_mean_treated = mt_all, level_gap = lev, trend_distance = mean(abs(dif - lev)),
-                 slope_difference_per_period = if (sxx > 0) sum(xx * (dif - lev)) / sxx else 0) }, by = unit]
+                 slope_difference_per_period = if (sxx > 0) sum(xx * (dif - lev)) / sxx else 0, rmse_gap = sqrt(mean(dif^2))) }, by = unit]
   tab <- merge(tab, pix_c, by = "unit", all.x = TRUE); tab[is.na(pixels), pixels := 0L]; setnames(tab, "pixels", "pre_pixels")
-  tab[, score := switch(on, trend = trend_distance, level = abs(level_gap), both = trend_distance + abs(level_gap))]
+  tab[, score := switch(on, trend = trend_distance, level = abs(level_gap), both = trend_distance + abs(level_gap), rmse = rmse_gap)]
   tab[, candidate := pre_cells >= max(1, ceiling(0.5 * nrow(agg_t)))]
   if (identical(mode, "pre_blocks")) tab[, candidate := candidate & pre_pixels >= .opt("CONTROL_BLOCK_MIN_PIXELS", 30L)]
   tab[, cand_i := as.integer(candidate)]; setorder(tab, -cand_i, score, unit); tab[, cand_i := NULL]; tab[, rank := .I]
@@ -973,7 +994,7 @@ control_selection_decide_R <- function(facts, o, d) {
     ch }
   tab[, selected := unit %in% chosen]; tab[, `:=`(outcome = o, kind = if (identical(mode, "pre_rings")) "ring" else "block", rule = on)]
   setcolorder(tab, c("outcome", "kind", "unit", "pre_cells", "pre_rows", "pre_pixels", "pre_mean_control", "pre_mean_treated", "level_gap", "trend_distance",
-                     "slope_difference_per_period", "score", "candidate", "rank", "selected", "rule"))
+                     "slope_difference_per_period", "rmse_gap", "score", "candidate", "rank", "selected", "rule"))
   list(tab = tab, chosen = as.numeric(chosen))
 }
 record_control_selection_R <- function(tab, chosen, o, d, say = TRUE) {
@@ -1011,6 +1032,59 @@ same_pixels_R <- function(x, o, d, say = TRUE) {
   ats <- attributes(x); y <- x[keep]
   for (a in setdiff(names(ats), c("names", "row.names", "class", ".internal.selfref"))) setattr(y, a, ats[[a]])
   setattr(y, "same_pixels", res); y
+}
+# spec 1: the top_k candidate rings whose PRE-treatment series is closest to the treatment ring's (as Python's select_optimal_control_rings)
+select_optimal_control_rings_R <- function(x, outcome_var, treat_ring = 0L, candidate_rings = 2:5, pre_years = 2015:2021, top_k = 2L, on = "level") {
+  m <- x[buff_km %in% c(treat_ring, candidate_rings) & Year %in% pre_years & is.finite(get(outcome_var)), c("pixel_id", "buff_km", "Year", "Season", outcome_var), with = FALSE]
+  m[, `:=`(unit = as.numeric(buff_km), tr = buff_km == treat_ring)]; tt <- m[tr == TRUE]; cc <- m[tr == FALSE]
+  facts <- list(agg_t = tt[, .(s = sum(get(outcome_var)), n = .N), by = .(Year, Season)], t_pixels = uniqueN(tt$pixel_id),
+                agg_c = cc[, .(s = sum(get(outcome_var)), n = .N), by = .(unit, Year, Season)], pix_c = cc[, .(pixels = uniqueN(pixel_id)), by = unit], mode = "pre_rings")
+  dec <- control_selection_decide_R(facts, outcome_var, list(control_select_k = as.integer(top_k), control_select_on = on))
+  list(chosen = dec$chosen, table = dec$tab)
+}
+.keep_attrs <- function(x, y) { ats <- attributes(x); for (a in setdiff(names(ats), c("names", "row.names", "class", ".internal.selfref"))) setattr(y, a, ats[[a]]); y }
+donut_rule_R <- function(x, d, say = TRUE) {                                   # spec 1: DONUT_RINGS leave the control pool
+  dn <- d$donut_rings %||% integer(0); if (!length(dn)) return(x)
+  hit <- x$treat == 0L & x$buff_km %in% dn; n <- sum(hit)
+  if (say && n) info(sprintf("DONUT_RINGS = %s: %s control rows of ring(s) %s leave the control pool (the spillover buffer next to the treated core)", paste(dn, collapse = ","), format(n, big.mark = ","), paste(dn, collapse = ",")))
+  y <- .keep_attrs(x, x[!hit]); setattr(y, "donut", list(rings = dn, rows_left_out = n)); y
+}
+.pixel_baseline_R <- function(x, col, how) {
+  pre <- if ("post" %in% names(x)) x$post == 0L else rep(TRUE, nrow(x)); if (!any(pre)) pre <- rep(TRUE, nrow(x))
+  v <- suppressWarnings(as.numeric(x[[col]])); ok_ <- pre & is.finite(v)
+  s <- data.table(p = x$pixel_id[ok_], v = v[ok_])
+  if (identical(how, "mode")) s[, .(b = as.numeric(names(which.max(table(v))))), by = p] else s[, .(b = mean(v)), by = p]
+}
+landuse_rule_R <- function(x, d, say = TRUE) {                                 # spec 1: LANDUSE_KEEP on the pixel's baseline class
+  keep <- d$landuse_keep %||% "all"; if (identical(keep, "all") || !length(keep) || !"LandUse" %in% names(x)) return(x)
+  b <- .pixel_baseline_R(x, "LandUse", "mode"); if (!nrow(b)) return(x)
+  kp <- b[round(b) %in% as.integer(keep), p]
+  if (!length(kp)) stop(sprintf("LANDUSE_KEEP %s keeps no pixel: the baseline classes present are %s", paste(keep, collapse = ","), paste(sprintf("%d: %d", as.integer(names(table(round(b$b)))), as.integer(table(round(b$b)))), collapse = ", ")))
+  kr <- x$pixel_id %in% kp; res <- list(classes = as.integer(keep), pixels_left_out = nrow(b) - length(kp), rows_left_out = sum(!kr), pixels_kept = length(kp))
+  if (say) info(sprintf("LANDUSE_KEEP = %s: %s pixels kept by their pre-period (baseline) class, %s pixels / %s rows leave", paste(keep, collapse = ","), format(length(kp), big.mark = ","), format(res$pixels_left_out, big.mark = ","), format(res$rows_left_out, big.mark = ",")))
+  y <- .keep_attrs(x, x[kr]); setattr(y, "landuse", res); y
+}
+baseline_ndvi_rule_R <- function(x, d, say = TRUE) {                           # spec 1: BASELINE_NDVI_MIN on the pixel's pre-period mean NDVI
+  th <- d$baseline_ndvi_min %||% NA; if (!is.finite(th) || !"NDVI" %in% names(x)) return(x)
+  b <- .pixel_baseline_R(x, "NDVI", "mean"); if (!nrow(b)) return(x)
+  kp <- b[b > th, p]; if (!length(kp)) stop(sprintf("BASELINE_NDVI_MIN %g keeps no pixel: the pre-period mean NDVI ranges %.3f..%.3f", th, min(b$b), max(b$b)))
+  kr <- x$pixel_id %in% kp; res <- list(threshold = th, pixels_left_out = nrow(b) - length(kp), rows_left_out = sum(!kr), pixels_kept = length(kp))
+  if (say) info(sprintf("BASELINE_NDVI_MIN = %g: %s pixels kept (pre-period mean NDVI above it), %s pixels / %s rows leave", th, format(length(kp), big.mark = ","), format(res$pixels_left_out, big.mark = ","), format(res$rows_left_out, big.mark = ",")))
+  y <- .keep_attrs(x, x[kr]); setattr(y, "baseline_ndvi", res); y
+}
+OUTCOME_BOUNDS_R <- list(NDVI = c(-1, 1), EVI = c(-1, 1), SAVI = c(-1.5, 1.5), NDWI = c(-1, 1), NDMI = c(-1, 1), NDRE = c(-1, 1), LSWI = c(-1, 1), VCI = c(0, 100), TCI = c(0, 100), VHI = c(0, 100), LAI = c(0, 12), SMDI = c(-4, 4))
+NODATA_VALUES_R <- c(-9999, -999, -10, 9999)
+outcome_range_check_R <- function(x, outcome, say = TRUE) {                    # spec 3: range safety (as Python's outcome_range_check)
+  if (!outcome %in% names(x)) return(NULL)
+  v <- suppressWarnings(as.numeric(x[[outcome]])); fin <- is.finite(v); n <- sum(fin); bd <- OUTCOME_BOUNDS_R[[outcome]]; tol <- .opt("PRECISION_TOLERANCE", 1e-6)
+  res <- list(outcome = outcome, n_finite = n, n_nan = sum(!fin), bounds = bd, n_outside_bounds = if (!is.null(bd) && n) sum(v[fin] < bd[1] | v[fin] > bd[2]) else 0L,
+              n_nodata_codes = if (n) sum(v[fin] %in% NODATA_VALUES_R) else 0L, n_zero_padding = if (n) sum(abs(v[fin]) <= tol) else 0L,
+              vmin = if (n) min(v[fin]) else NA, vmax = if (n) max(v[fin]) else NA)
+  res$ok <- res$n_outside_bounds == 0 && res$n_nodata_codes == 0
+  if (say) (if (res$ok) ok else warn)(sprintf("range safety (%s): %s finite values in [%.6g, %.6g]%s; %s outside, %s no-data codes, %s within %g of zero%s", outcome, format(n, big.mark = ","), res$vmin, res$vmax,
+                                              if (!is.null(bd)) sprintf(" against the bounds [%g, %g]", bd[1], bd[2]) else "", format(res$n_outside_bounds, big.mark = ","), format(res$n_nodata_codes, big.mark = ","), format(res$n_zero_padding, big.mark = ","), tol,
+                                              if (res$ok) "" else " -- CHECK THE EXPORTS (a no-data code or an out-of-range value entered as data)"))
+  res
 }
 select_controls_R <- function(x, o, d, sel = NULL, say = TRUE) {
   mode <- d$control_selection %||% "rings"
@@ -1104,6 +1178,8 @@ load_panel_R <- function(outcome, d = load_design(), extra = character(0), integ
   x <- r$x; loc_rep <- r$loc_rep; n_gf <- r$n_gf
   x <- screen_outcome(x, outcome, as.integer(d$treatment_year), rule = d$outcome_screen %||% screen_rule_R())$dt   # v20.59: the rule of the design
   x <- design_columns(x, d)                                                   # v20.57: the timing in force (fund / registry / fixed)
+  rng <- outcome_range_check_R(x, outcome); setattr(x, "range_check", rng)   # spec 3: range safety
+  x <- donut_rule_R(x, d); x <- landuse_rule_R(x, d); x <- baseline_ndvi_rule_R(x, d)   # spec 1: the spillover buffer, the land-use / baseline masks
   x <- select_controls_R(x, outcome, d)                                       # v20.59: CONTROL_SELECTION -- the pre period's choice, fixed for the panel
   x <- same_pixels_R(x, outcome, d)                                           # v20.59: SAME_PIXELS -- the same pixels in pre and post (or every year-season)
   if (identical(d$cluster, "block")) { x[, block_id := block_ids_R(x, d$control_block_deg %||% 0.01)]; x[, cluster_id := as.character(block_id)] }   # v20.59
@@ -1118,7 +1194,7 @@ load_panel_R <- function(outcome, d = load_design(), extra = character(0), integ
 # v20.58: the pieces of load_panel_R, shared with the OUT-OF-CORE path (reward_outofcore.R) -- every pixel partition runs this same code
 load_columns_R <- function(outcome, d, extra = character(0), cols = panel_names()) {   # the columns a model's sample is built from
   covs <- intersect(d$covariates %||% COVARIATES, cols)
-  need <- intersect(unique(c("pixel_id", "site_id", "sws_name", "Year", "Season", "buff_km", "latitude", "longitude", "LandUse",
+  need <- intersect(unique(c("pixel_id", "site_id", "sws_name", "Year", "Season", "buff_km", "latitude", "longitude", "LandUse", if (is.finite(d$baseline_ndvi_min %||% NA)) "NDVI",   # spec 1
                              covs, outcome, extra, "site_check", "sws_export", "GapFilled", "Coverage", "post",   # v20.59: the panel's post, compared with the design
                              if (is.null(fund_tables_R(list(fund_start_rule = d$fund$start_rule, fund_start_share = d$fund$start_share, fund_rate_months = d$fund$rate_months,
                                                             fund_dose_before_file = d$fund$before_file)))) d$dose_variable)), cols)
@@ -1377,7 +1453,8 @@ DESIGN_DEFAULTS <- list(DESIGN_MODE = "recommended", TREATMENT_TIMING = "fund", 
                         OVERLAP_ROWS = "drop", FRAGMENT_RULE = "drop", FRAGMENT_MIN_SHARE = 0.05, POOLED_FE = "site_period", EXCLUDE_GAPFILLED = TRUE,
                         COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SUB_WATERSHEDS = "data", OUTCOME_SCREEN = "drop", DESIGN_SOURCE = "model",   # v20.59: + the screen's rule, the design's source
                         CONTROL_SELECTION = "rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_RATIO = 3, CONTROL_SELECT_ON = "trend", CONTROL_BLOCK_DEG = 0.01, CLUSTER = "auto",   # v20.59: the control selection, the cluster
-                        SAME_PIXELS = "pre_post")
+                        SAME_PIXELS = "pre_post", DONUT_RINGS = integer(0), LANDUSE_KEEP = "all", BASELINE_NDVI_MIN = NA, MIN_PIXEL_COVERAGE_PCT = 0.05,
+                        DROP_SINGLETONS = FALSE, PRECISION_TOLERANCE = 1e-6)   # spec 1 / 3
 design_variant_samples <- function(variants, out_dir, outcome = "NDVI") {
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
   for (nm in names(variants)) {

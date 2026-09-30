@@ -1,0 +1,48 @@
+{
+  "ANALYSIS_VARIABLE": "NDVI",
+  "SEASON_FILTER": "Rabi",
+  "DONUT_RINGS": [
+    1
+  ],
+  "CONTROL_RINGS": "data",
+  "CONTROL_SELECTION_METHOD": "pre_bias_min",
+  "CONTROL_SELECT_ON": "level",
+  "PRECISION_TOLERANCE": 1e-06,
+  "MIN_PIXEL_COVERAGE_PCT": 0.7,
+  "CLUSTER_VAR": "subwshed_id",
+  "ESTIMATOR": "SURROGATE_DID",
+  "LANDUSE_KEEP": "all",
+  "BASELINE_NDVI_MIN": null,
+  "SAME_PIXELS": "pre_post",
+  "DROP_SINGLETONS": true,
+  "TREATMENT_TIMING": "fixed",
+  "TREATMENT_YEAR": 2022,
+  "DESIGN_SOURCE": "model",
+  "EXCLUDE_TRANSITION_YEAR": false,
+  "OUTCOME_SCREEN": "drop",
+  "EXCLUDE_GAPFILLED": true,
+  "COVARIATES": [
+    "Rain",
+    "Tmax",
+    "Tmean",
+    "Tmin"
+  ],
+  "SURROGATES": [
+    "NDWI",
+    "LSWI",
+    "NDMI",
+    "Rain"
+  ],
+  "SURROGATE_SEASON": 1,
+  "OUTCOME_SEASONS": [
+    2,
+    3
+  ],
+  "REPORT_SPECS": [
+    "canonical",
+    "donut",
+    "matched",
+    "synthetic_did",
+    "surrogate_index"
+  ]
+}

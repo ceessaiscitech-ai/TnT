@@ -113,6 +113,12 @@ CONTROL_SELECT_ON   <- "trend"                                 #   treated pixel
 CONTROL_BLOCK_DEG   <- 0.01                                    #   period only, the same pixels in every year and season; evidence CONTROL_SELECTION_<outcome>_R.csv
 CONTROL_BLOCK_MIN_PIXELS <- 30L                                #   a block with fewer control pixels in the pre period is not a candidate
 CLUSTER             <- "auto"                                  # v20.59: "auto" (the sub-watersheds; fewer than MIN_SWS_CLUSTERS -> the years) | "block" (~1 km blocks)
+DONUT_RINGS         <- integer(0)                              # spec 1: rings left OUT of the control pool (the spillover buffer next to the core); the notebooks set 1L
+LANDUSE_KEEP        <- "all"                                   # spec 1: "all" | the LandUse class codes a pixel's PRE-period (baseline) class must be in
+BASELINE_NDVI_MIN   <- NA                                      # spec 1: a pixel's pre-period mean NDVI must exceed this (an agricultural mask), e.g. 0.25 | NA
+MIN_PIXEL_COVERAGE_PCT <- 0.05                                 # spec 1 / 3: a year-season below this share of the typical coverage is screened out (SCREEN_MIN_COVERAGE)
+DROP_SINGLETONS     <- FALSE                                   # spec 3: series seen once leave before the demeaning
+PRECISION_TOLERANCE <- 1e-6                                    # spec 1: |value| <= tolerance is the no-data zero (R_P00 and every model); never exact equality
 SAME_PIXELS         <- "pre_post"                              # v20.59 (your rule): every treated and control pixel is observed in pre AND post ("pre_post"), or in
                                                                #   every year-season ("all"), else it leaves -- the groups are the same pixels across the panel | "off"
 PIXEL_ONE_SITE      <- TRUE                                    # v20.59 (YOUR RULE): ONE sub-watershed and ONE ring per pixel in the whole panel -- the polygon that

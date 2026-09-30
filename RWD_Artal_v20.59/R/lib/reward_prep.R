@@ -119,7 +119,7 @@ apply_missing_policy <- function(dt, drop_empty = TRUE) {                       
   # v20.58 (second pass, the poison test with cloud gaps): drop_empty = FALSE keeps the rows with no usable outcome -- run_prep drops them only
   # AFTER resolve_duplicates. Dropped per file (before it), a newer export's row that a cloud left empty was gone before the duplicates were
   # compared, and the OLDER repeated row of that pixel-year-season took its place (a repeated row reached every model)
-  for (v in intersect(ZERO_RULE_VARS, names(dt))) if (!v %in% ZERO_RULE_EXCEPT) { x <- suppressWarnings(as.numeric(dt[[v]])); x[x == 0] <- NA; set(dt, j = v, value = x) }
+  for (v in intersect(ZERO_RULE_VARS, names(dt))) if (!v %in% ZERO_RULE_EXCEPT) { x <- suppressWarnings(as.numeric(dt[[v]])); x[is.finite(x) & abs(x) <= .opt("PRECISION_TOLERANCE", 1e-6)] <- NA; set(dt, j = v, value = x) }   # spec 1: the tolerance, never exact equality
   if (DROP_ROWS_WITHOUT_OUTCOME && isTRUE(drop_empty)) dt <- drop_rows_without_outcome(dt)
   for (v in intersect(WEATHER_VARS, names(dt))) {                                    # the negative-covariate barrier, no-data first
     x <- as.numeric(dt[[v]])

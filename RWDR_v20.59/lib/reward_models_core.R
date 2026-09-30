@@ -11,6 +11,7 @@ if (HAS_FIXEST) { suppressPackageStartupMessages(library(fixest)); setFixest_nth
 DEFAULT_COVS <- COVARIATES                                       # the four weather covariates; LandUse is never one
 out_dir <- function(model, tag) { d <- file.path(RESULTS_DIR, "package_tables", model, tag %||% "run"); dir.create(d, recursive = TRUE, showWarnings = FALSE); d }
 source(file.path(R_HOME_DIR, "lib", "models_prebuilt.R"), local = environment())
+source(file.path(R_HOME_DIR, "lib", "surrogate_did_estimator.R"), local = environment())   # spec 2: the two-level synthetic DiD and the surrogate-index DiD
 covs_in <- function(dt) {                                         # v20.57: the covariates of the DESIGN IN EFFECT (COVARIATES <- "all"
   cv <- attr(dt, "covariates_used")                               #   gave none before: intersect("all", names) was empty)
   if (is.null(cv)) cv <- tryCatch(load_design()$covariates, error = function(e) NULL)
@@ -33,6 +34,10 @@ fe_demean <- function(X, f1, f2 = NULL, tol = 1e-10, maxit = 5000) {
 }
 fe_fit <- function(dt, y, x, fe = c("unit", "period"), cluster = "cluster_id") {
   x <- unique(x[x %in% names(dt)])
+  if (isTRUE(.opt("DROP_SINGLETONS", FALSE)) && fe[1] %in% names(dt)) {                       # spec 3: the singleton pre-flight (as Python's DROP_SINGLETONS)
+    n1 <- dt[, .N, by = c(fe[1])]; one <- n1[N == 1L][[fe[1]]]
+    if (length(one)) { info(sprintf("DROP_SINGLETONS: %s row(s) of %s series seen once left out before the demeaning", format(length(one), big.mark = ","), fe[1])); dt <- dt[!get(fe[1]) %in% one] }
+  }
   if (HAS_FIXEST) {
     f <- as.formula(paste0("`", y, "` ~ ", paste(sprintf("`%s`", x), collapse = " + "), " | ", paste(fe, collapse = " + ")))
     fit <- fixest::feols(f, data = dt, cluster = as.formula(paste0("~", cluster)), notes = FALSE, warn = FALSE)
@@ -188,7 +193,7 @@ m06_dose <- function(dt, outcome) {
 }
 m07_surrogate <- function(dt, outcome) {
   pn <- panel_names(); bm <- grep("^BM_", pn, value = TRUE)
-  if (!length(bm)) stop("no BM (benchmark-site) sub-watershed means in the panel -- the BM table was not found")
+  if (!length(bm)) return(m07_surrogate_index(outcome))                                  # spec 2: no BM means -> the in-panel surrogate index
   need("glmnet")
   sat <- intersect(c("NDVI", "EVI", "SAVI", "LAI", "SMDI", "VCI", "TCI", "VHI"), pn)
   core <- panel_read(intersect(c("pixel_id", "site_id", "site_check", "Year", "Season", "buff_km", sat, bm), pn))[buff_km == 0]
@@ -220,9 +225,22 @@ m07_surrogate <- function(dt, outcome) {
 }
 m08_iv <- function(dt, outcome) stop("IV-DiD needs an instrument (a variable that shifts treatment but not the outcome) -- none exists in the data")
 m11_sdid <- function(dt, outcome) {
+  # spec 2 (v20.59): the two-level synthetic DiD of the bundle's own module first -- aggregated cells (sub-watershed x ring x season) with regularised
+  # simplex unit and time weights, the jackknife SE, and the pixel-level weighted TWFE clustered on the design's cluster; its files beside the
+  # results (synthetic_did_two_level_<outcome>_R.csv, the weights per cell and year)
+  d2 <- tryCatch({ r2 <- synthetic_did_two_level_R(dt, outcome, pixel_level = TRUE, cluster_col = "cluster_id"); save_outputs_R(r2, RESULTS_DIR, outcome); r2 }, error = function(e) { info(paste("two-level synthetic DiD not fitted:", conditionMessage(e))); NULL })
   need("synthdid", "GitHub synth-inference/synthdid, or the skranz r-universe mirror")
   r <- by_cohort_season(season_series(dt, outcome), sdid_fit, "synthetic DiD")               # v20.58: series of ONE season, one fit per cohort x season
+  if (!is.null(d2)) r$two_level <- data.table(att = d2$att, se = d2$se, p_value = d2$p_value, pre_rmspe = d2$pre_rmspe, pixel_wls_beta = d2$pixel_wls$beta, pixel_wls_se = d2$pixel_wls$se)
   c(r, engine = "synthdid (sub-watershed x ring x season series; one fit per cohort x season)")
+}
+m07_surrogate_index <- function(outcome) {
+  # spec 2 (v20.59): the in-panel surrogate index -- the Kharif proxies (SURROGATES) predict the dry-season outcome (OUTCOME_SEASONS); no ground data needed
+  sur <- .opt("SURROGATES", c("NDWI", "LSWI", "NDMI", "Rain")); d <- load_design()
+  x <- load_panel_R(outcome, d, extra = intersect(sur, panel_names()))
+  r <- surrogate_index_did_R(x, outcome, sur, outcome_seasons = as.integer(.opt("OUTCOME_SEASONS", c(2L, 3L))), surrogate_season = as.integer(.opt("SURROGATE_SEASON", 1L)), cluster_col = "cluster_id")
+  save_outputs_R(r, RESULTS_DIR, outcome)
+  list(estimate = r$att, se = r$se, table = standard_row_R(r), engine = sprintf("surrogate index (%s of season %d -> %s of seasons %s; ridge; leave-one-cluster-out jackknife)", paste(r$surrogates, collapse = "+"), r$surrogate_season, outcome, paste(r$outcome_seasons, collapse = ",")))
 }
 m16_pretrends <- function(dt, outcome, pre_window = c(-4L, -2L), ref = -1L) {
   # v20.49 (found by the first real run: v20.47 reported F = 2.8e8 and "REJECT" on data WITHOUT a pre-trend). The rules

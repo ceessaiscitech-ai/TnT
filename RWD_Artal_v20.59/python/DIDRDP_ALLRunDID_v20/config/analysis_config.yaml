@@ -1,0 +1,27 @@
+# REWARD DiD -- the centralised configuration of a run (spec 3). The SAME file drives orchestrator.py and orchestrator.R (the parameter names
+# are those of every notebook's CELL 1 / R_Mxx). Values here are the run's defaults; a notebook's own CELL 1 still decides for that notebook.
+ANALYSIS_VARIABLE: NDVI          # the outcome (any of the panel's indices)
+SEASON_FILTER: Rabi              # Rabi | Kharif | Zaid | Yearly | All      (the dry season isolates the irrigation effect the works aim at)
+DONUT_RINGS: [1]                 # rings left OUT of the control pool (the spillover buffer next to the treated core); [] = none
+CONTROL_RINGS: data              # data (every ring the panel has, 1-5) | [2, 3, 4, 5] ...
+CONTROL_SELECTION_METHOD: pre_bias_min   # all | pre_bias_min (the 2 rings with the smallest pre-treatment mean bias) | closest_1 | closest_2
+CONTROL_SELECT_ON: level         # level (mean absolute pre bias) | rmse | trend (the parallel-trend distance) | both
+PRECISION_TOLERANCE: 1.0e-6      # |value| <= tolerance is the no-data zero; a year-season is "constant" within it (indices in [-1, 1])
+MIN_PIXEL_COVERAGE_PCT: 0.70     # a year-season whose treated or control coverage is below this share of the typical one is screened out
+CLUSTER_VAR: subwshed_id         # subwshed_id (the sub-watershed; fewer than 6 -> the years) | year | block (~1 km spatial blocks of pixels)
+ESTIMATOR: SURROGATE_DID         # TWFE_CANONICAL | SYNTHETIC_DID | SURROGATE_INDEX | SURROGATE_DID (= synthetic DiD and the surrogate index)
+LANDUSE_KEEP: all                # all | the LandUse class codes a pixel's PRE-period class must be in, e.g. [2]
+BASELINE_NDVI_MIN: null          # e.g. 0.25 -- a pixel's pre-period mean NDVI must exceed it (an agricultural mask) | null
+SAME_PIXELS: pre_post            # pre_post | all | off  -- the treated and control groups are the same pixels in pre and post (or every year-season)
+DROP_SINGLETONS: true            # series seen once leave before the demeaning (the pre-flight)
+TREATMENT_TIMING: fixed          # fund | registry | fixed
+TREATMENT_YEAR: 2022
+DESIGN_SOURCE: model             # panel (the panel's post / pre / did are estimated on) | model (the timing above builds them)
+EXCLUDE_TRANSITION_YEAR: false
+OUTCOME_SCREEN: drop             # drop | keep | off
+EXCLUDE_GAPFILLED: true
+COVARIATES: [Rain, Tmax, Tmean, Tmin]
+SURROGATES: [NDWI, LSWI, NDMI, Rain]   # the surrogate index's proxies (those the panel carries are used)
+SURROGATE_SEASON: 1              # 1 = Kharif
+OUTCOME_SEASONS: [2, 3]          # the dry seasons the surrogate index predicts (2 = Rabi, 3 = Zaid)
+REPORT_SPECS: [canonical, donut, matched, synthetic_did, surrogate_index]   # the rows of the comparison report (SPEC_COMPARISON_<outcome>.csv)

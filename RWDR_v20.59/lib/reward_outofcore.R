@@ -331,12 +331,14 @@ ooc_task_presel <- function(ctx, k) {                                    # v20.5
   a <- file.path(ctx$run_dir, sprintf("a_%04d.rds", k)); x <- readRDS(a)
   if (nrow(ctx$bad)) x <- x[!ctx$bad, on = .(Year, Season)]
   x <- design_columns(x, ctx$d, site_period = ctx$site_period, say = FALSE)
+  x <- donut_rule_R(x, ctx$d, say = FALSE); x <- landuse_rule_R(x, ctx$d, say = FALSE); x <- baseline_ndvi_rule_R(x, ctx$d, say = FALSE)   # spec 1
   control_selection_facts_R(x, ctx$outcome, ctx$d)
 }
 ooc_task_sample <- function(ctx, k) {
   a <- file.path(ctx$run_dir, sprintf("a_%04d.rds", k)); x <- readRDS(a); o <- ctx$outcome
   if (nrow(ctx$bad)) x <- x[!ctx$bad, on = .(Year, Season)]
   x <- design_columns(x, ctx$d, site_period = ctx$site_period, say = FALSE)
+  x <- donut_rule_R(x, ctx$d, say = FALSE); x <- landuse_rule_R(x, ctx$d, say = FALSE); x <- baseline_ndvi_rule_R(x, ctx$d, say = FALSE)   # spec 1
   x <- select_controls_R(x, o, ctx$d, sel = ctx$ctrl_sel, say = FALSE)     # v20.59: the parent's decision applied (the same pixels in every partition)
   x <- same_pixels_R(x, o, ctx$d, say = FALSE); spo <- attr(x, "same_pixels")   # v20.59: SAME_PIXELS per partition (a pixel's rows are all here), summed by the parent
   if (identical(ctx$d$cluster, "block")) x[, block_id := block_ids_R(x, ctx$d$control_block_deg %||% 0.01)]   # v20.59
