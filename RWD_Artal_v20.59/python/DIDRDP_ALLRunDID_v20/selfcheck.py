@@ -1112,8 +1112,10 @@ def check_v20_35():
     df = _pd.DataFrame(rows, columns=["pixel_id", "Year", "Season", "buff_km", "subwshed_id", "NDVI"]); df["time_fe_yearseason"] = df.Year.astype(str) + "_0"
     saved = dict(_C.ACTIVE)
     try:
-        _C.set_scenario(verbose=False, all_years=True, control_zones="1-5", treatment_year=2022, seasons="all", covariates=[], nonnegative=False)
+        _C.set_scenario(verbose=False, all_years=True, control_zones="1-5", treatment_year=2022, seasons="all", covariates=[], nonnegative=False,
+                        same_pixels="off")             # v20.59: a shifted grid IS pixels seen on one side only -- the diagnostic must see them, SAME_PIXELS would drop them
         S, _ = _C.diagnose_effect_size("NDVI", df=df, save=False, verbose=False)
+        _C.set_scenario(verbose=False, same_pixels="pre_post")
         if "SHIFTED pixel grid" not in S["verdicts"] or "PIXEL_OVERLAP_MIN" not in S["verdicts"]:
             bad(f"the diagnostic missed a shifted pixel grid: {S['verdicts'][:120]}")
         else: note("small-effect diagnostic finds a shifted later grid and names the P00 fix (P13 runs it for every outcome)")
