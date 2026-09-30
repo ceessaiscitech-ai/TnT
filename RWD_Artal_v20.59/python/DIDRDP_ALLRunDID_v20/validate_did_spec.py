@@ -204,6 +204,10 @@ try:
 except Exception as e_:
     check("a post-period / outcome-mean rule is refused (it selects on the outcome)", "selects on the outcome" in str(e_), str(e_)[:120])
 C.set_scenario(control_selection="rings", control_select_on="trend", verbose=False); C._RESOLVED["key"] = None
+# v20.59 (your rule): the same pixels in pre and post -- on this balanced DGP nothing leaves under the default, and the integrity line confirms it
+dr = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI")))
+check("SAME_PIXELS = 'pre_post' (the default): every pixel of this DGP is observed before and after treatment -> 0 pixels leave; the sample integrity confirms 'the same pixels in pre and post'",
+      (C.LAST_DESIGN_INFO.get("same_pixels") or {}).get("pixels_left_out") == 0 and any(r["check"] == "the same pixels in pre and post" and r["ok"] for r in C.LAST_INTEGRITY), str(C.LAST_DESIGN_INFO.get("same_pixels")))
 # ---------------------------------------------------------------- 4 R on the same exports
 rroot = ROOT + "/R"; shutil.copytree(ROOT + "/data", rroot); RLIB = os.path.dirname(C.r_bridge_script())
 rs = f"""
@@ -229,6 +233,7 @@ CONTROL_SELECTION <- "pre_rings"; CONTROL_SELECT_K <- 2L; CONTROL_SELECT_ON <- "
 sel_rings <- sort(unique(xs[treat == 0L, buff_km])); sel_fixed <- uniqueN(xs[treat == 0L, .(k = paste(sort(pixel_id), collapse = ",")), by = .(Year, Season)]$k)
 CONTROL_SELECT_ON <- "level"; dcl <- model_design(verbose = FALSE, force = TRUE); xl <- load_panel_R("NDVI", dcl); sel_rings_level <- sort(unique(xl[treat == 0L, buff_km]))
 CONTROL_SELECTION <- "rings"; CONTROL_SELECT_ON <- "trend"
+same_out <- attr(x, "same_pixels")
 HAS_FIXEST <<- FALSE; f2 <- fe_fit(x, "NDVI", "did")
 writeLines(jsonlite::toJSON(list(n = f1$n, G = f1$G, fixest_beta = unname(f1$coef["did"]), fixest_se = unname(f1$se["did"]), fixest_engine = f1$engine,
                                  builtin_beta = unname(f2$coef["did"]), builtin_se = unname(f2$se["did"]), builtin_engine = f2$engine,
@@ -241,6 +246,7 @@ writeLines(jsonlite::toJSON(list(n = f1$n, G = f1$G, fixest_beta = unname(f1$coe
                                  panel_has_treat = "Treat" %in% panel_names(),
                                  sel_rings = as.list(sel_rings), sel_beta = unname(fs$coef["did"]), sel_n = fs$n, sel_tag = tag_s, sel_fixed = sel_fixed, sel_rings_level = as.list(sel_rings_level),
                                  sel_file = file.exists(file.path(RESULTS_DIR, "CONTROL_SELECTION_NDVI_R.csv")),
+                                 same_left = as.integer(same_out$pixels_left_out), same_rule = same_out$rule, same_conf = any(attr(x, "integrity")$check == "the same pixels in pre and post" & attr(x, "integrity")$ok),
                                  pixel_consistency_offenders = nrow(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")))), auto_unbox = TRUE, digits = NA), file.path(root, "r_m01.json"))
 cat("@@RDONE@@\\n")
 """
@@ -278,6 +284,7 @@ else:
           sorted(int(v) for v in (rj.get("sel_rings") or [])) == got2 and rj.get("sel_fixed") == 1 and abs(rj["sel_beta"] - bt_) < 1e-8 and rj.get("sel_n") == len(st) and "_ctrlPre2r" in str(rj.get("sel_tag")) and rj.get("sel_file") is True,
           f"R rings {rj.get('sel_rings')} beta {rj.get('sel_beta')} n {rj.get('sel_n')} vs Python {got2} {bt_:.10f} n {len(st)}; tag {rj.get('sel_tag')}")
     check("R 'level' K = 2: rings 1 and 2 (as Python)", sorted(int(v) for v in (rj.get("sel_rings_level") or [])) == [1, 2], str(rj.get("sel_rings_level")))
+    check("R SAME_PIXELS 'pre_post' (the default): 0 pixels leave, the integrity confirms the same pixels in pre and post", rj.get("same_left") == 0 and rj.get("same_rule") == "pre_post" and rj.get("same_conf") is True, f"{rj.get('same_rule')} left {rj.get('same_left')} confirmed {rj.get('same_conf')}")
     st_r = rp.merge(STRAY[["latitude", "longitude"]].drop_duplicates(), on=["latitude", "longitude"])
     check("R_P00 panel: Treat used and not kept; the 5 pixels of the Beguru file once per year-season in sub-watershed 7 ring 0; panel_pixel_consistency_R.csv with 0 offenders",
           rj.get("panel_has_treat") is False and rj.get("pixel_consistency_offenders") == 0 and len(st_r) == 5 * len(years) * len(seasons)

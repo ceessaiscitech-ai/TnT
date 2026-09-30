@@ -339,6 +339,7 @@ if (!inherits(tE, "error")) {
                design_panel = list(DESIGN_SOURCE = "panel", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2023),                           # v20.59: the panel's post (2022) wins over 2023
                ctrl_pre2 = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # v20.59: the pre period picks 2 rings
                cluster_block = list(CLUSTER = "block", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                  # v20.59: ~1 km blocks as clusters
+               pix_all = list(SAME_PIXELS = "all", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                    # v20.59: a balanced pixel set
                rabi = list(SEASONS = "Rabi"), manual = list(DESIGN_MODE = "manual"), transition = list(EXCLUDE_TRANSITION_YEAR = TRUE),
                gapfilled_kept = list(EXCLUDE_GAPFILLED = FALSE), dose_amount = list(DOSE_VARIABLE = "dose_amount_sws"))
   od <- file.path(TMP, "E_out"); design_variant_samples(vars, od)
@@ -378,6 +379,12 @@ if (!inherits(tE, "error")) {
   cb <- rd("cluster_block"); cbj <- tryCatch(fromJSON(file.path(od, "cluster_block.json")), error = function(e) NULL)
   chkE("cluster_block", "CLUSTER = 'block' (v20.59): ~1 km blocks as the clusters (many), the folder tagged _clBlock", !is.null(cb) && uniqueN(cb$cluster_id) > 20 && !is.null(cbj$tag) && grepl("_clBlock", cbj$tag, fixed = TRUE),
        if (is.null(cb)) "no sample" else sprintf("%d clusters | %s", uniqueN(cb$cluster_id), cbj$tag))
+  gb <- if (!is.null(b)) b[, .(mn = min(post), mx = max(post)), by = pixel_id] else NULL
+  chkE("base", "SAME_PIXELS = 'pre_post' (v20.59, the default): every pixel of the base sample is observed in pre and post", !is.null(gb) && all(gb$mn == 0L & gb$mx == 1L), if (is.null(gb)) "no sample" else sprintf("%d pixel(s) on one side only", sum(gb$mn != 0L | gb$mx != 1L)))
+  pa <- rd("pix_all"); paj <- tryCatch(fromJSON(file.path(od, "pix_all.json")), error = function(e) NULL)
+  pc_ <- if (!is.null(pa)) pa[, .(k = uniqueN(paste(Year, Season))), by = pixel_id] else NULL
+  chkE("pix_all", "SAME_PIXELS = 'all' (v20.59): every pixel of the sample in every year-season (a balanced pixel set), the folder tagged _pixAll",
+       !is.null(pa) && all(pc_$k == uniqueN(paste(pa$Year, pa$Season))) && !is.null(paj$tag) && grepl("_pixAll", paj$tag, fixed = TRUE), if (is.null(pa)) "no sample" else sprintf("%d pixel(s) short | %s", sum(pc_$k < uniqueN(paste(pa$Year, pa$Season))), paj$tag))
   pcx <- tryCatch(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")), error = function(e) NULL)
   chkE("panel", "R_P00 confirmed the pixel consistency (v20.59): panel_pixel_consistency_R.csv written with 0 offenders (one sub-watershed and one ring per pixel, once per year-season)",
        !is.null(pcx) && nrow(pcx) == 0, if (is.null(pcx)) "file missing" else sprintf("%d offenders", nrow(pcx)))

@@ -186,6 +186,12 @@ pre-period rows, pixels, level gap, trend distance, slope difference, score, ran
 post period, the outcome's mean or the result is refused with the reason. Out of core the parent decides once on the merged
 pre-period facts of every partition (`_ooc_models.decide_controls_ooc`, R `ooc_task_presel`) and every worker applies the same set.
 
+**`SAME_PIXELS`** (both languages; every notebook, P00 / R_P00): your rule that the treated and control groups are the SAME pixels across
+the panel. `"pre_post"` (the default): a pixel with an outcome only before or only after treatment leaves the sample (it identifies no
+within-pixel change); `"all"`: a pixel missing any year-season of the sample leaves (a balanced pixel set; tag `_pixAll`); `"off"`:
+the v20.58 sample (tag `_pixAny`). Applied after the location rule, the seasons, the years and the control choice, in memory and out
+of core (pixel partitions), counted and said, and CONFIRMED by the sample-integrity line ("the same pixels in pre and post").
+
 **`CLUSTER = "block"`** (both languages): ~1 km spatial blocks of pixels (`CONTROL_BLOCK_DEG`, 0.01 deg) as the clusters of the
 cluster-robust SE -- hundreds to thousands of clusters instead of 2 sub-watersheds or 10 years; tag `_clBlock`. The block of a pixel
 comes from its id (a pure function of the rounded coordinate since v14), or from the frame's latitude / longitude when the ids are

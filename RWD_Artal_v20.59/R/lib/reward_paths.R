@@ -113,6 +113,8 @@ CONTROL_SELECT_ON   <- "trend"                                 #   treated pixel
 CONTROL_BLOCK_DEG   <- 0.01                                    #   period only, the same pixels in every year and season; evidence CONTROL_SELECTION_<outcome>_R.csv
 CONTROL_BLOCK_MIN_PIXELS <- 30L                                #   a block with fewer control pixels in the pre period is not a candidate
 CLUSTER             <- "auto"                                  # v20.59: "auto" (the sub-watersheds; fewer than MIN_SWS_CLUSTERS -> the years) | "block" (~1 km blocks)
+SAME_PIXELS         <- "pre_post"                              # v20.59 (your rule): every treated and control pixel is observed in pre AND post ("pre_post"), or in
+                                                               #   every year-season ("all"), else it leaves -- the groups are the same pixels across the panel | "off"
 PIXEL_ONE_SITE      <- TRUE                                    # v20.59 (YOUR RULE): ONE sub-watershed and ONE ring per pixel in the whole panel -- the polygon that
                                                                #   holds the point (core first, then the lower id) decides, whatever the file carried; a pixel appears
                                                                #   once per year-season. FALSE = the v20.58 rule (a point in two zones kept once per sub-watershed)

@@ -1224,6 +1224,58 @@ def _design_source_of(v):
     if s not in DESIGN_SOURCES: raise InsufficientDataError(f"DESIGN_SOURCE must be 'panel' or 'model' (got {v!r})")
     return s
 
+SAME_PIXELS_RULES = ("pre_post", "all", "off")
+def _same_pixels_of(v):
+    """v20.59 (your rule): SAME_PIXELS -- 'pre_post' (every treated and control pixel observed in pre AND post) | 'all' (in every year-season: a
+    balanced pixel set) | 'off' (v20.58: a pixel may contribute to one side only)."""
+    if v is True: return "pre_post"
+    if v is False or v is None: return "off"
+    s = str(v).strip().lower().replace("-", "_").replace(" ", "_")
+    s = {"prepost": "pre_post", "both": "pre_post", "balanced": "all", "every": "all", "none": "off", "false": "off", "true": "pre_post"}.get(s, s)
+    if s not in SAME_PIXELS_RULES: raise InsufficientDataError(f"SAME_PIXELS must be 'pre_post', 'all' or 'off' (got {v!r})")
+    return s
+
+def _cells_of(frame):
+    return (pd.to_numeric(frame["Year"], errors="coerce").fillna(0).astype(np.int64) * 10 + pd.to_numeric(frame["Season"], errors="coerce").fillna(0).astype(np.int64)).values
+
+def _pixels_one_side(frame, rule):
+    """How many pixels of the frame break the SAME_PIXELS rule (observed on one side only / not in every year-season)."""
+    if rule == "off" or not len(frame) or "pixel_id" not in frame.columns: return 0
+    if rule == "pre_post":
+        if "post" not in frame.columns: return 0
+        g = pd.DataFrame({"p": frame["pixel_id"].values, "post": frame["post"].values.astype(np.int8)}).groupby("p")["post"].agg(["min", "max"])
+        return int(((g["min"] != 0) | (g["max"] != 1)).sum())
+    c = _cells_of(frame); g = pd.DataFrame({"p": frame["pixel_id"].values, "c": c}).groupby("p")["c"].nunique()
+    return int((g < len(np.unique(c))).sum())
+
+def same_pixels_rule(out, in_grp, outcome=None):
+    """v20.59 (your rule): the treated and control groups are the SAME pixels across the panel. 'pre_post': a pixel with an outcome only before
+    or only after treatment leaves (it identifies no within-pixel change); 'all': a pixel missing any year-season of the sample leaves (a balanced
+    pixel set); 'off': the v20.58 sample. Applied after the location rule, the seasons, the years and the control choice, in memory and out of
+    core (pixel partitions: a pixel's rows are all in one partition); confirmed by the sample integrity."""
+    rule = ACTIVE.get("same_pixels", "pre_post")
+    m = np.asarray(in_grp).copy()
+    if rule == "off" or "pixel_id" not in out.columns or "post" not in out.columns: return m, None
+    o = outcome or CURRENT_OUTCOME
+    fin = np.isfinite(pd.to_numeric(out[o], errors="coerce").values) if o and o in out.columns else np.ones(len(out), bool)
+    mm = m & fin
+    if not mm.any(): return m, {"rule": rule, "pixels_left_out": 0, "rows_left_out": 0, "pixels_kept": 0}
+    pid = out["pixel_id"].values
+    if rule == "pre_post":
+        g = pd.DataFrame({"p": pid[mm], "post": out["post"].values[mm].astype(np.int8)}).groupby("p")["post"].agg(["min", "max"])
+        keep_p = g.index[(g["min"] == 0) & (g["max"] == 1)]
+    else:
+        c = _cells_of(out)[mm]; g = pd.DataFrame({"p": pid[mm], "c": c}).groupby("p")["c"].nunique(); keep_p = g.index[g >= len(np.unique(c))]
+    keep_row = np.isin(pid, np.asarray(keep_p))
+    n_pix = int(len(g) - len(keep_p)); n_rows = int((m & ~keep_row).sum())
+    m &= keep_row
+    res = {"rule": rule, "pixels_left_out": n_pix, "rows_left_out": n_rows, "pixels_kept": int(len(keep_p))}
+    if n_pix and not _OOC_WORKER:
+        info(f"SAME_PIXELS = '{rule}' ({o}): {n_pix:,} pixel(s) / {n_rows:,} rows leave -- observed "
+             + ("only before or only after treatment" if rule == "pre_post" else "in some year-seasons only")
+             + f"; the treated and control groups are the same {len(keep_p):,} pixels " + ("in pre and post" if rule == "pre_post" else "in every year and season"))
+    return m, res
+
 CONTROL_SELECTIONS = ("rings", "pre_rings", "pre_blocks")
 CONTROL_BLOCK_MIN_PIXELS = 30      # v20.59: a block with fewer control pixels in the pre period is not a candidate (its mean is noise)
 def _control_selection_of(v):
@@ -2124,6 +2176,12 @@ def sample_integrity(frame, control_zones=None, label=None, verbose=True):
     if {"treatment", "pixel_id"} <= set(d.columns):
         tp = set(d.loc[d["treatment"].values == 1, "pixel_id"].tolist()); cp = set(d.loc[d["treatment"].values == 0, "pixel_id"].tolist())
         add("no pixel both treated and a control", not (tp & cp), f"{len(tp & cp)} pixel(s) on both sides", strict_o)
+    _spx = ACTIVE.get("same_pixels", "pre_post")                                                             # v20.59: your rule, confirmed on the sample
+    if _spx != "off" and {"pixel_id", "post"} <= set(d.columns):
+        _fin = np.isfinite(pd.to_numeric(d[CURRENT_OUTCOME], errors="coerce").values) if CURRENT_OUTCOME and CURRENT_OUTCOME in d.columns else np.ones(len(d), bool)
+        _one = _pixels_one_side(d[_fin], _spx)
+        add("the same pixels in pre and post" if _spx == "pre_post" else "the same pixels in every year-season", _one == 0,
+            f"{_one} pixel(s) observed " + ("on one side only" if _spx == "pre_post" else "in some year-seasons only"), True)
     cz = tuple(control_zones) if control_zones is not None else tuple(ACTIVE["control_zones"])
     rg = sorted(int(x) for x in pd.unique(pd.to_numeric(d["buff_km"], errors="coerce").dropna())) if "buff_km" in d.columns else []
     add("the rings of the design", set(rg) <= ({0} | set(int(x) for x in cz)) and 0 in rg and any(r > 0 for r in rg), f"rings in the sample {rg} | design {[0] + sorted(int(x) for x in cz)}")
@@ -2145,7 +2203,8 @@ def sample_integrity(frame, control_zones=None, label=None, verbose=True):
         ok(f"sample integrity ({label or CURRENT_OUTCOME}): {len(d):,} rows, {int(tab.pixels.iloc[0]):,} pixels | sub-watershed(s) {st} | rings {rg} | "
            + (f"years {int(pd.to_numeric(d['Year']).min())}-{int(pd.to_numeric(d['Year']).max())} | " if "Year" in d.columns and len(d) else "")
            + (f"seasons {[SEASON_LABEL.get(int(x), x) for x in sorted(pd.unique(d['Season']))]} | " if "Season" in d.columns and len(d) else "")
-           + "CONFIRMED: every (pixel, year, season) once, one ring per pixel, no pixel both treated and a control, nothing outside the processed sub-watershed(s)")
+           + "CONFIRMED: every (pixel, year, season) once, one ring per pixel, no pixel both treated and a control, nothing outside the processed sub-watershed(s)"
+           + {"pre_post": ", the same pixels in pre and post", "all": ", the same pixels in every year-season"}.get(ACTIVE.get("same_pixels", "pre_post"), ""))
     return tab
 
 FORCE_BATCH_UNITS = None      # v20.58 (tests only): a batch size that forces the batch path of a model, to prove it gives the all-at-once answer
@@ -3433,6 +3492,8 @@ ACTIVE = {"control_zones": tuple(DEFAULT_CONTROL_ZONES), "treatment_year": TREAT
           "control_select_on": "trend",      #   only ("trend" = the demeaned pre series' distance, what DiD needs | "level" | "both"); the same pixels in every year
           "control_block_deg": 0.01,         #   and season; control_selected = the decision of this run (per outcome), sent to the out-of-core workers
           "control_selected": None,
+          "same_pixels": "pre_post",         # v20.59 (your rule): every treated and control pixel is observed in pre AND post ("pre_post"), or in every
+                                             #   year-season ("all"), else it leaves the sample -- the groups are the same pixels across the panel | "off"
           "design_source": "model",          # v20.59: "panel" = the PANEL's post / pre / did (the exports' Treat flag, PERIOD_RULE) are the design the model estimates
                                              #   on (the notebooks' default); "model" = the design in effect (timing, TREATMENT_YEAR ...) -- the design-based option
           # v20.12: which rows enter the estimation. "seasonal" = Kharif/Rabi/Zaid (Season 1-3, the default);
@@ -3496,7 +3557,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                  design_mode=None, fragment_rule=None, fragment_min_share=None, dose_variable=None, fund_start_rule=None,
                  fund_start_share=None, fund_rate_months=None, fund_dose_before_file=None, exclude_gapfilled=None, sub_watersheds=None,
                  outcome_screen=None, design_source=None, control_selection=None, control_select_k=None, control_select_ratio=None,
-                 control_select_on=None, control_block_deg=None, persist=False, verbose=True):
+                 control_select_on=None, control_block_deg=None, same_pixels=None, persist=False, verbose=True):
     """Set the run's control rings and treatment timing. Call it in CELL 1, BEFORE loading the panel.
     post_cutoff defaults to treatment_year (shifting the timing shifts the pre/post split with it).
 
@@ -3525,7 +3586,8 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                    ("fund_dose_before_file", fund_dose_before_file), ("exclude_gapfilled", exclude_gapfilled),
                    ("overlap_rows", overlap_rows), ("sub_watersheds", sub_watersheds), ("outcome_screen", outcome_screen),
                    ("design_source", design_source), ("control_selection", control_selection), ("control_select_k", control_select_k),
-                   ("control_select_ratio", control_select_ratio), ("control_select_on", control_select_on), ("control_block_deg", control_block_deg)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule, the design's source, the control selection
+                   ("control_select_ratio", control_select_ratio), ("control_select_on", control_select_on), ("control_block_deg", control_block_deg),
+                   ("same_pixels", same_pixels)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule, the design's source, the control selection
         if _v is not None: _EXPLICIT_KEYS.add(_k)
     # v20.57: which keys the notebook set, in the form load_scenario() respects (a "data" option is explicit too)
     for _k, _v in (("treatment_year_setting", treatment_year), ("post_cutoff_setting", post_cutoff), ("seasons_setting", seasons),
@@ -3610,6 +3672,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
     if control_block_deg is not None:
         if not (0.001 <= float(control_block_deg) <= 1.0): raise InsufficientDataError("CONTROL_BLOCK_DEG must be between 0.001 and 1 degree")
         ACTIVE["control_block_deg"] = float(control_block_deg)
+    if same_pixels is not None: ACTIVE["same_pixels"] = _same_pixels_of(same_pixels)                # v20.59: pre_post | all | off
     if any(v is not None for v in (control_selection, control_select_k, control_select_ratio, control_select_on, control_block_deg, control_zones, treatment_year,
                                    post_cutoff, timing, seasons, pre_years, post_years, year_min, year_max)) or all_years:
         ACTIVE["control_selected"] = None                                                         # the decision is made again for the new settings
@@ -4024,6 +4087,9 @@ def scenario_tag(scn=None):
         t += (f"_ctrlPre{int(a.get('control_select_k', 2))}r" if _cs == "pre_rings" else f"_ctrlPreBlk{float(a.get('control_select_ratio', 3.0)):g}x")
         t += {"trend": "", "level": "L", "both": "B"}.get(a.get("control_select_on", "trend"), "")
     if a.get("cluster", "subwshed") == "block": t += "_clBlock"                                                 # v20.59: ~1 km spatial blocks as clusters
+    _spx = a.get("same_pixels", "pre_post")                                                                     # v20.59: the same pixels across the panel
+    if _spx == "all": t += "_pixAll"
+    elif _spx == "off": t += "_pixAny"
     if a.get("drop_years"): t += "_no" + "-".join(str(int(y)) for y in a["drop_years"])
     _sync_negative_switch()                                                               # v20.33: one suffix only
     _cv = list(a.get("covariates", STANDARD_COVARIATES))
@@ -4050,7 +4116,7 @@ SCENARIO_KEYS = ("control_zones", "treatment_year", "post_cutoff", "exclude_tran
                  "site_years_setting", "site_start_setting", "drop_years", "fragment_rule", "fragment_min_share", "sub_watersheds", "dose_variable",
                  "fund_start_rule", "fund_start_share", "fund_rate_months", "fund_dose_before_file", "exclude_gapfilled", "outcome_screen",
                  "design_source", "control_selection", "control_select_k", "control_select_ratio", "control_select_on", "control_block_deg",
-                 "control_selected")   # v20.59
+                 "control_selected", "same_pixels")   # v20.59
 def scenario_file(path=None):
     """Where a scenario chosen during panel preparation is stored: next to the prepared panel."""
     return path or os.path.join(os.path.dirname(PREPARED_PANEL), "did_scenario.json")
@@ -4489,7 +4555,7 @@ def _design_key(frame_sites=None):
             # part of the key -- before, CELL 1 re-run in the same kernel with another OUTCOME_SCREEN / EXCLUDE_GAPFILLED / COVARIATES / DESIGN_SOURCE
             # kept the OLD value silently (the design key had not changed)
             "design_source", "outcome_screen", "exclude_gapfilled", "covariates", "cluster", "pooled_fe", "unit_fe", "cohort_offset", "nonnegative",
-            "control_selection", "control_select_k", "control_select_ratio", "control_select_on", "control_block_deg")
+            "control_selection", "control_select_k", "control_select_ratio", "control_select_on", "control_block_deg", "same_pixels")
     k = {x: ACTIVE.get(x) for x in keys}
     dk = set(ACTIVE.get("data_keys") or [])
     if "control_zones" not in dk: k["control_zones"] = list(ACTIVE["control_zones"])
@@ -4662,6 +4728,9 @@ def resolve_design(verbose=True, force=False, frame=None):
     ch("CONTROL_SELECTION", _cs_, _cs_, "your setting" + {"rings": " (every ring of CONTROL_RINGS is the control group)",
         "pre_rings": f" (per outcome, the {ACTIVE.get('control_select_k', 2)} ring(s) whose PRE-period series is closest to the treatment area's -- '{ACTIVE.get('control_select_on', 'trend')}'; decided on the pre period only, the same pixels in every year and season; CONTROL_SELECTION_<outcome>.csv)",
         "pre_blocks": f" (per outcome, ~{float(ACTIVE.get('control_block_deg', 0.01)) * 111:.1f} km blocks of control pixels closest to the treatment area's PRE-period series -- '{ACTIVE.get('control_select_on', 'trend')}' -- until {ACTIVE.get('control_select_ratio', 3.0):g} x the treated pixels; the same pixels in every year and season; CONTROL_SELECTION_<outcome>.csv)"}[_cs_])
+    _spx_ = ACTIVE.get("same_pixels", "pre_post")
+    ch("SAME_PIXELS", _spx_, _spx_, "your setting" + {"pre_post": " (every treated and control pixel is observed in pre AND post; a pixel seen on one side only leaves -- the groups are the same pixels across the panel)",
+                                                       "all": " (every pixel is observed in every year-season of the sample: a balanced pixel set)", "off": " (a pixel may contribute to one side only -- the v20.58 sample)"}[_spx_])
     ch("CLUSTER", ACTIVE.get("cluster", "site"), ACTIVE.get("cluster", "site"), "your setting" + (" (~1 km spatial blocks of pixels -- many clusters, the spatial correlation of neighbouring pixels absorbed)" if ACTIVE.get("cluster") == "block" else " (the sub-watershed; fewer than %d sub-watersheds -> the years)" % MIN_SWS_CLUSTERS))
     ch("COVARIATES", ",".join(ACTIVE.get("covariates") or []) or "none", ",".join(ACTIVE.get("covariates") or []) or "none", "your setting")
     import copy as _cp
@@ -5020,6 +5089,7 @@ def build_treatment_columns(df, control_zones=None, treatment_year=None,
         in_grp &= season_rows(out["Season"].values)
     if has_year_window(): in_grp &= year_mask(out[year_col].values)     # v20.2
     in_grp, _csel = select_controls(out, in_grp, CURRENT_OUTCOME)         # v20.59: CONTROL_SELECTION -- the pre period's choice, fixed for the panel
+    in_grp, _same = same_pixels_rule(out, in_grp, CURRENT_OUTCOME)        # v20.59: SAME_PIXELS -- the same pixels in pre and post (or every year-season)
     LAST_DESIGN_INFO.clear()
     _site_col = "site_id" if "site_id" in out.columns else None
     # v20.58: the pooled overlap (a pixel TREATED in one processed sub-watershed is never a control of another; a pixel-year-season enters
@@ -5028,7 +5098,8 @@ def build_treatment_columns(df, control_zones=None, treatment_year=None,
     LAST_DESIGN_INFO.update({"contaminated_control_rows": int(sum(v for k, v in _lr.items() if str(k).startswith("3|0|"))),
                              "duplicate_rows_across_sites": int(sum(v for k, v in _lr.items() if str(k).startswith("3|1|"))),
                              "location_rows": dict(_lr),
-                             "control_selection": ({"mode": _csel["mode"], "units": list(_csel["units"])} if _csel else None)})
+                             "control_selection": ({"mode": _csel["mode"], "units": list(_csel["units"])} if _csel else None),
+                             "same_pixels": _same})
     design_vs_panel(out, _post_panel, _post_design)                      # v20.59: the design in effect against the panel's post column, said (after the
                                                                          #   info above is reset, so the count stays in LAST_DESIGN_INFO)
     out["in_analysis_sample"] = np.asarray(in_grp).astype("int8")

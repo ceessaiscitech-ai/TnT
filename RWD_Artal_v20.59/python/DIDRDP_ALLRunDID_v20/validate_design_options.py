@@ -148,6 +148,8 @@ VARIANTS = {
     "ctrl_pre_ring1_level":   {"CONTROL_SELECTION": "pre_rings", "CONTROL_SELECT_K": 1, "CONTROL_SELECT_ON": "level", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},
     "ctrl_pre_blocks":        {"CONTROL_SELECTION": "pre_blocks", "CONTROL_SELECT_RATIO": 1.0, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # ~1 km blocks until 1 x the treated pixels
     "cluster_block":          {"CLUSTER": "block"},                                                          # v20.59: ~1 km spatial blocks as clusters
+    "same_pixels_all":        {"SAME_PIXELS": "all", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: a balanced pixel set
+    "same_pixels_off":        {"SAME_PIXELS": "off", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: the v20.58 sample
     "pre_all_post_all":       {"PRE_YEARS": None, "POST_YEARS": None},
     "manual_mode":            {"DESIGN_MODE": "manual"},
     "manual_rings_1_3_pre4":  {"DESIGN_MODE": "recommended", "CONTROL_RINGS": [1, 2, 3], "PRE_YEARS": 4},
@@ -176,7 +178,7 @@ def py_kwargs(o):
                 exclude_gapfilled=bool(o["EXCLUDE_GAPFILLED"]), covariates=(list(o["COVARIATES"]) if o["COVARIATES"] else "none"),
                 cluster=("block" if o.get("CLUSTER") == "block" else "site"), cohort_offset=0, nonnegative=False, outcome_screen=o.get("OUTCOME_SCREEN", "drop"),
                 design_source=o.get("DESIGN_SOURCE", "model"), control_selection=o.get("CONTROL_SELECTION", "rings"), control_select_k=int(o.get("CONTROL_SELECT_K", 2)),
-                control_select_ratio=float(o.get("CONTROL_SELECT_RATIO", 3.0)), control_select_on=o.get("CONTROL_SELECT_ON", "trend"))
+                control_select_ratio=float(o.get("CONTROL_SELECT_RATIO", 3.0)), control_select_on=o.get("CONTROL_SELECT_ON", "trend"), same_pixels=o.get("SAME_PIXELS", "pre_post"))
 
 def py_sample(C, o):
     C.set_scenario(verbose=False, all_years=True)
@@ -294,6 +296,15 @@ def expect(panel, name, o, py, meta, full):
         if cs == "pre_rings" and meta.get("ctrl_recomputed"):                             # an independent recomputation on the rows the rule saw (every ring)
             dist = meta["ctrl_recomputed"]; exp_r = sorted(sorted(dist, key=lambda r_: (dist[r_], r_))[:k])
             rec(panel, name, "the pre period's choice recomputed independently = the engine's rings", sorted(int(x) for x in rings) == exp_r, f"engine {sorted(rings)}, recomputed {exp_r} ({on_}: {dict((r_, round(v, 6)) for r_, v in dist.items())})")
+    spx = o.get("SAME_PIXELS", "pre_post")                                            # v20.59 (your rule): the same pixels in pre and post
+    gp_ = py.groupby("pixel_id")["post"].agg(["min", "max"]); one_side = int(((gp_["min"] != 0) | (gp_["max"] != 1)).sum())
+    if spx == "pre_post":
+        rec(panel, name, "SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post", one_side == 0 and "_pix" not in meta["tag"], f"{one_side} pixel(s) on one side only; tag {meta['tag']}")
+    elif spx == "all":
+        cells_ = py.groupby("pixel_id").apply(lambda g_: len(set(zip(g_.Year, g_.Season))), include_groups=False); n_cells_ = len(set(zip(py.Year, py.Season)))
+        rec(panel, name, "SAME_PIXELS = 'all': every pixel of the sample is observed in every year-season (a balanced pixel set), tagged _pixAll", bool((cells_ == n_cells_).all()) and "_pixAll" in meta["tag"], f"{int((cells_ < n_cells_).sum())} pixel(s) short of {n_cells_} cells; tag {meta['tag']}")
+    else:
+        rec(panel, name, "SAME_PIXELS = 'off': the v20.58 sample (a pixel may sit on one side), tagged _pixAny", "_pixAny" in meta["tag"], f"{one_side} pixel(s) on one side only; tag {meta['tag']}")
     if o.get("CLUSTER") == "block":
         rec(panel, name, "CLUSTER = 'block': the ~1 km blocks are the clusters (this synthetic grid spans 3+ blocks), the folder tagged _clBlock", py.cluster_id.nunique() >= 3 and "_clBlock" in meta["tag"], f"{py.cluster_id.nunique()} clusters; tag {meta['tag']}")
     sea = set(py.Season.unique())

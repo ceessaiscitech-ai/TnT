@@ -27,4 +27,6 @@ year-season -- confirmed on the finished panel (`panel_pixel_consistency.csv` / 
 the 1 or 2 buffers whose pre-period series is closest to the treatment area's; `"pre_blocks"` = control clusters (~1 km blocks) from
 any part of the buffers; `"trend"` / `"level"` / `"both"` as the closeness; the same control pixels in every year and season; the
 evidence in `CONTROL_SELECTION_<outcome>.csv`; a post- or outcome-based rule is refused. `CLUSTER = "block"` clusters the SE on ~1 km
-blocks. What to change when the estimate is not significant, and what never to change: `ECONOMETRIC_ADVICE_v20.59.md`.
+blocks. `SAME_PIXELS` (`"pre_post"` default | `"all"` | `"off"`) keeps the treated and control groups the same pixels in pre and post
+(or in every year-season), confirmed on every sample. What to change when the estimate is not significant, and what never to change:
+`ECONOMETRIC_ADVICE_v20.59.md`.

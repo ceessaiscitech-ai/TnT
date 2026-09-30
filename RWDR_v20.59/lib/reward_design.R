@@ -442,7 +442,8 @@ design_settings <- function() {
             control_select_k = as.integer(.opt("CONTROL_SELECT_K", 2L)), control_select_ratio = as.numeric(.opt("CONTROL_SELECT_RATIO", 3)),
             control_select_on = .one_of("CONTROL_SELECT_ON", .opt("CONTROL_SELECT_ON", "trend"), c("trend", "level", "both")),
             control_block_deg = as.numeric(.opt("CONTROL_BLOCK_DEG", 0.01)),
-            cluster = .one_of("CLUSTER", .opt("CLUSTER", "auto"), c("auto", "block")))                     # v20.59: ~1 km spatial blocks as clusters
+            cluster = .one_of("CLUSTER", .opt("CLUSTER", "auto"), c("auto", "block")),                     # v20.59: ~1 km spatial blocks as clusters
+            same_pixels = .one_of("SAME_PIXELS", .opt("SAME_PIXELS", "pre_post"), c("pre_post", "all", "off")))   # v20.59: the same pixels across the panel
   if (!(is.finite(s$control_select_k) && s$control_select_k >= 1L && s$control_select_k <= 5L)) stop("CONTROL_SELECT_K must be 1..5")
   if (!(is.finite(s$control_select_ratio) && s$control_select_ratio > 0)) stop("CONTROL_SELECT_RATIO must be > 0")
   if (!(is.finite(s$control_block_deg) && s$control_block_deg >= 0.001 && s$control_block_deg <= 1)) stop("CONTROL_BLOCK_DEG must be between 0.001 and 1 degree")
@@ -821,6 +822,8 @@ model_design <- function(verbose = TRUE, force = FALSE) {
          rings = " (every ring of CONTROL_RINGS is the control group)",
          pre_rings = sprintf(" (per outcome, the %d ring(s) whose PRE-period series is closest to the treatment area's -- '%s'; decided on the pre period only, the same pixels in every year and season; CONTROL_SELECTION_<outcome>_R.csv)", s$control_select_k, s$control_select_on),
          pre_blocks = sprintf(" (per outcome, ~%.1f km blocks of control pixels closest to the treatment area's PRE-period series -- '%s' -- until %g x the treated pixels; the same pixels in every year and season; CONTROL_SELECTION_<outcome>_R.csv)", s$control_block_deg * 111, s$control_select_on, s$control_select_ratio))))
+  add_ch("SAME_PIXELS", s$same_pixels, s$same_pixels, paste0("your setting", c(pre_post = " (every treated and control pixel is observed in pre AND post; a pixel seen on one side only leaves -- the groups are the same pixels across the panel)",
+                                                                   all = " (every pixel is observed in every year-season of the sample: a balanced pixel set)", off = " (a pixel may contribute to one side only -- the v20.58 sample)")[[s$same_pixels]]))
   add_ch("CLUSTER", s$cluster, s$cluster, paste0("your setting", if (identical(s$cluster, "block")) " (~1 km spatial blocks of pixels -- many clusters, the spatial correlation of neighbouring pixels absorbed)" else sprintf(" (the sub-watershed; fewer than %d sub-watersheds -> the years)", MIN_SWS_CLUSTERS)))
   add_ch("COVARIATES", if (length(s$covariates)) s$covariates else "none", if (length(s$covariates)) s$covariates else "none", "your setting")
   d <- list(design_mode = s$design_mode, timing = s$timing, treatment_year = as.integer(base), treatment_year_setting = s$treatment_year,
@@ -831,7 +834,7 @@ model_design <- function(verbose = TRUE, force = FALSE) {
             pooled_fe = s$pooled_fe, dose_variable = s$dose_variable, exclude_gapfilled = s$exclude_gapfilled, covariates = s$covariates,
             outcome_screen = s$outcome_screen, design_source = s$design_source,                  # v20.59
             control_selection = s$control_selection, control_select_k = s$control_select_k, control_select_ratio = s$control_select_ratio,   # v20.59 (your fifth request)
-            control_select_on = s$control_select_on, control_block_deg = s$control_block_deg, cluster = s$cluster,
+            control_select_on = s$control_select_on, control_block_deg = s$control_block_deg, cluster = s$cluster, same_pixels = s$same_pixels,
             fund = list(start_rule = s$fund_start_rule, start_share = s$fund_start_share, rate_months = s$fund_rate_months, before_file = s$fund_dose_before_file),
             n_sites = length(real), sites = as.integer(real), n_fund_dated = as.integer(n_fund), data_keys = dk, choices = rbindlist(ch), notes = notes,
             sub_watersheds = s$sub_watersheds, processed = as.integer(ps$sites), processed_how = ps$how)
@@ -876,6 +879,7 @@ scenario_tag <- function(d) {
   if (cs %in% c("pre_rings", "pre_blocks")) t <- paste0(t, if (identical(cs, "pre_rings")) sprintf("_ctrlPre%dr", as.integer(d$control_select_k %||% 2L)) else sprintf("_ctrlPreBlk%gx", as.numeric(d$control_select_ratio %||% 3)),
                                                       c(trend = "", level = "L", both = "B")[[d$control_select_on %||% "trend"]])
   if (identical(d$cluster, "block")) t <- paste0(t, "_clBlock")                                  # v20.59: ~1 km spatial blocks as clusters (as Python)
+  spx <- d$same_pixels %||% "pre_post"; if (identical(spx, "all")) t <- paste0(t, "_pixAll") else if (identical(spx, "off")) t <- paste0(t, "_pixAny")   # v20.59 (as Python)
   t <- paste0(t, "_", cov_tag(d$covariates %||% COVARIATES))
   if (is.finite(d$year_min %||% NA) || is.finite(d$year_max %||% NA))
     t <- paste0(t, sprintf("_yr%s-%s", if (is.finite(d$year_min %||% NA)) d$year_min else "start", if (is.finite(d$year_max %||% NA)) d$year_max else "end"))
@@ -983,6 +987,31 @@ record_control_selection_R <- function(tab, chosen, o, d, say = TRUE) {
     if (is.finite(w) && b > w) warn(sprintf("CONTROL_SELECTION (%s): the rule '%s' kept a ring whose pre-trend distance (%.4g) is larger than a left-out ring's (%.4g) -- 'trend' is what the parallel-trends assumption asks for", o, d$control_select_on, b, w)) }
   list(outcome = o, mode = mode, units = as.numeric(chosen))
 }
+# v20.59 (your rule): the treated and control groups are the SAME pixels across the panel -- "pre_post": a pixel with an outcome only before or only
+# after treatment leaves; "all": a pixel missing any year-season of the sample leaves (a balanced pixel set); "off": the v20.58 sample. As Python's
+# same_pixels_rule, in memory and out of core (pixel partitions); confirmed by the sample integrity.
+pixels_one_side_R <- function(x, rule) {
+  if (identical(rule, "off") || !nrow(x) || !"pixel_id" %in% names(x)) return(0L)
+  if (identical(rule, "pre_post")) { if (!"post" %in% names(x)) return(0L); g <- x[, .(mn = min(post), mx = max(post)), by = pixel_id]; return(sum(g$mn != 0L | g$mx != 1L)) }
+  cells <- as.integer(x$Year) * 10L + as.integer(x$Season); g <- data.table(pixel_id = x$pixel_id, c = cells)[, .(k = uniqueN(c)), by = pixel_id]
+  sum(g$k < uniqueN(cells))
+}
+same_pixels_R <- function(x, o, d, say = TRUE) {
+  rule <- d$same_pixels %||% "pre_post"
+  if (identical(rule, "off") || !all(c("pixel_id", "post") %in% names(x))) return(x)
+  fin <- is.finite(x[[o]])
+  keep_p <- if (identical(rule, "pre_post")) { g <- x[fin, .(mn = min(post), mx = max(post)), by = pixel_id]; g[mn == 0L & mx == 1L, pixel_id] }
+            else { cells <- as.integer(x$Year) * 10L + as.integer(x$Season); g <- data.table(pixel_id = x$pixel_id[fin], c = cells[fin])[, .(k = uniqueN(c)), by = pixel_id]; g[k >= uniqueN(cells[fin]), pixel_id] }
+  n_all <- uniqueN(x$pixel_id[fin]); keep <- x$pixel_id %in% keep_p
+  res <- list(rule = rule, pixels_left_out = n_all - length(keep_p), rows_left_out = sum(!keep), pixels_kept = length(keep_p))
+  if (say && res$pixels_left_out > 0)
+    info(sprintf("SAME_PIXELS = \"%s\" (%s): %s pixel(s) / %s rows leave -- observed %s; the treated and control groups are the same %s pixels %s", rule, o,
+                 format(res$pixels_left_out, big.mark = ","), format(res$rows_left_out, big.mark = ","), if (identical(rule, "pre_post")) "only before or only after treatment" else "in some year-seasons only",
+                 format(res$pixels_kept, big.mark = ","), if (identical(rule, "pre_post")) "in pre and post" else "in every year and season"))
+  ats <- attributes(x); y <- x[keep]
+  for (a in setdiff(names(ats), c("names", "row.names", "class", ".internal.selfref"))) setattr(y, a, ats[[a]])
+  setattr(y, "same_pixels", res); y
+}
 select_controls_R <- function(x, o, d, sel = NULL, say = TRUE) {
   mode <- d$control_selection %||% "rings"
   if (identical(mode, "rings")) return(x)
@@ -1076,6 +1105,7 @@ load_panel_R <- function(outcome, d = load_design(), extra = character(0), integ
   x <- screen_outcome(x, outcome, as.integer(d$treatment_year), rule = d$outcome_screen %||% screen_rule_R())$dt   # v20.59: the rule of the design
   x <- design_columns(x, d)                                                   # v20.57: the timing in force (fund / registry / fixed)
   x <- select_controls_R(x, outcome, d)                                       # v20.59: CONTROL_SELECTION -- the pre period's choice, fixed for the panel
+  x <- same_pixels_R(x, outcome, d)                                           # v20.59: SAME_PIXELS -- the same pixels in pre and post (or every year-season)
   if (identical(d$cluster, "block")) { x[, block_id := block_ids_R(x, d$control_block_deg %||% 0.01)]; x[, cluster_id := as.character(block_id)] }   # v20.59
   else x[, cluster_id := as.character(get(cluster_col_for(x)))]
   x <- attach_dose_R(x, d)                                                    # v20.57: the fund file's dose under the timing in force
@@ -1178,6 +1208,7 @@ integrity_parts_R <- function(x) {
        dup = if (nd == 0L) "" else paste(x[nd, .(pixel_id, Year, Season)], collapse = " "),
        n_ring_multi = nrow(x[, .(nr = uniqueN(buff_km)), by = .(site_id, pixel_id)][nr > 1L]),
        n_both = length(intersect(x[treat == 1L, unique(pixel_id)], x[treat == 0L, unique(pixel_id)])),
+       n_one_side = pixels_one_side_R(x, .opt("SAME_PIXELS", "pre_post")),                                    # v20.59: your rule (the rows here are finite)
        rings = sort(unique(x$buff_km)), years = if (nrow(x)) range(x$Year) else c(NA_integer_, NA_integer_),
        years_set = sort(unique(x$Year)), seasons = sort(unique(x$Season)),
        rows = nrow(x), pixels = uniqueN(x$pixel_id))
@@ -1191,6 +1222,10 @@ integrity_decide_R <- function(p, d, outcome = "", S = d$processed) {
   add("no repeated pixel-year-season", !nzchar(p$dup), if (!nzchar(p$dup)) sprintf("%s rows, every (pixel, year, season) once", format(p$rows, big.mark = ",")) else sprintf("repeated: %s", p$dup), strict_o)
   add("one ring per pixel", p$n_ring_multi == 0L, sprintf("%d pixel(s) with more than one ring", p$n_ring_multi), strict_o)
   add("no pixel both treated and a control", p$n_both == 0L, sprintf("%d pixel(s) on both sides", p$n_both), strict_o)
+  spx <- d$same_pixels %||% "pre_post"                                                                       # v20.59: your rule, confirmed on the sample
+  if (!identical(spx, "off") && !is.null(p$n_one_side))
+    add(if (identical(spx, "pre_post")) "the same pixels in pre and post" else "the same pixels in every year-season", p$n_one_side == 0,
+        sprintf("%d pixel(s) observed %s", as.integer(p$n_one_side), if (identical(spx, "pre_post")) "on one side only" else "in some year-seasons only"))
   rg <- p$rings; want_r <- c(0L, as.integer(d$control_rings))
   add("the rings of the design", all(rg %in% want_r) && any(rg == 0L) && any(rg > 0L), sprintf("rings in the sample %s | design %s", paste(rg, collapse = ","), paste(want_r, collapse = ",")))
   yr <- p$years; y_ok <- (!is.finite(d$year_min %||% NA) || yr[1] >= d$year_min) && (!is.finite(d$year_max %||% NA) || yr[2] <= d$year_max) && !any(p$years_set %in% (d$drop_years %||% integer(0)))
@@ -1341,7 +1376,8 @@ DESIGN_DEFAULTS <- list(DESIGN_MODE = "recommended", TREATMENT_TIMING = "fund", 
                         PRE_YEARS = "data", POST_YEARS = "data", SEASONS = "all", EXCLUDE_TRANSITION_YEAR = FALSE, UNIT_FE = "pixel_season", COHORT_OFFSET = 0L,
                         OVERLAP_ROWS = "drop", FRAGMENT_RULE = "drop", FRAGMENT_MIN_SHARE = 0.05, POOLED_FE = "site_period", EXCLUDE_GAPFILLED = TRUE,
                         COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SUB_WATERSHEDS = "data", OUTCOME_SCREEN = "drop", DESIGN_SOURCE = "model",   # v20.59: + the screen's rule, the design's source
-                        CONTROL_SELECTION = "rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_RATIO = 3, CONTROL_SELECT_ON = "trend", CONTROL_BLOCK_DEG = 0.01, CLUSTER = "auto")   # v20.59: the control selection, the cluster
+                        CONTROL_SELECTION = "rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_RATIO = 3, CONTROL_SELECT_ON = "trend", CONTROL_BLOCK_DEG = 0.01, CLUSTER = "auto",   # v20.59: the control selection, the cluster
+                        SAME_PIXELS = "pre_post")
 design_variant_samples <- function(variants, out_dir, outcome = "NDVI") {
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
   for (nm in names(variants)) {

@@ -159,7 +159,7 @@ def check_ctrl(base, engines, rows):
     df, coh = KA.make_panel("single")
     for label, extra in (("pre_rings", {"control_selection": "pre_rings", "control_select_k": 2, "control_select_on": "trend"}),
                          ("pre_blocks", {"control_selection": "pre_blocks", "control_select_ratio": 2.0}),
-                         ("cluster_block", {"cluster": "block"})):
+                         ("cluster_block", {"cluster": "block"}), ("same_pixels_all", {"same_pixels": "all"})):
         d = os.path.join(base, f"ctrl_{label}"); os.makedirs(d, exist_ok=True)
         panel = os.path.join(d, "panel.parquet"); pq.write_table(pa.Table.from_pandas(df, preserve_index=False), panel)
         mem = os.path.join(d, "memory"); models = ["M01", "M02"]
@@ -168,7 +168,7 @@ def check_ctrl(base, engines, rows):
         sm = _status(r)
         if "@@DONE@@" not in r.stdout or any(s["status"] != "ok" or s["error"] for s in sm):
             rows.append({"check": f"control selection: {label}", "engine": "memory", "files": 0, "differences": 1, "verdict": "FAILED", "detail": (r.stdout + r.stderr)[-300:]}); continue
-        ev = glob.glob(os.path.join(mem, "CONTROL_SELECTION_NDVI.csv")) if label != "cluster_block" else ["-"]
+        ev = glob.glob(os.path.join(mem, "CONTROL_SELECTION_NDVI.csv")) if label not in ("cluster_block", "same_pixels_all") else ["-"]
         if not ev: rows.append({"check": f"control selection: {label}", "engine": "memory", "files": 0, "differences": 1, "verdict": "FAILED", "detail": "no CONTROL_SELECTION_NDVI.csv beside the results"}); continue
         for e in engines:
             out = os.path.join(d, f"ooc_{e}"); t0 = time.time()
@@ -177,7 +177,7 @@ def check_ctrl(base, engines, rows):
             st = _status(r)
             ran = "@@DONE@@" in r.stdout and all(s["status"] == "ok" and not s["error"] and s["out_of_core"] for s in st) and len(st) == len(models)
             n, diffs = compare(mem, out, models=models) if ran else (0, [f"the out-of-core run failed: {(r.stdout + r.stderr)[-300:]}"])
-            if ran and label != "cluster_block":
+            if ran and label not in ("cluster_block", "same_pixels_all"):
                 a_ = pd.read_csv(os.path.join(mem, "CONTROL_SELECTION_NDVI.csv")); b_ = glob.glob(os.path.join(out, "CONTROL_SELECTION_NDVI.csv"))
                 b_ = pd.read_csv(b_[0]) if b_ else None
                 if b_ is None or sorted(a_.loc[a_.selected, "unit"]) != sorted(b_.loc[b_.selected, "unit"]) or not np.allclose(a_.sort_values("unit").trend_distance.values, b_.sort_values("unit").trend_distance.values, atol=1e-9):

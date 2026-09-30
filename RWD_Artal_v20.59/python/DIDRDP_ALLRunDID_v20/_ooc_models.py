@@ -75,6 +75,10 @@ def _integrity_part(d):
         r["ydrop"] = bool(np.isin(yr, C.ACTIVE.get("drop_years") or []).any())
     if "Season" in d.columns and len(d): r["ss"] = sorted(int(x) for x in pd.unique(d["Season"]))
     r["pixels"] = int(d["pixel_id"].nunique()) if "pixel_id" in d.columns else 0
+    _spx = C.ACTIVE.get("same_pixels", "pre_post")                                                        # v20.59: pixel partitions -- a pixel's rows are
+    if _spx != "off" and {"pixel_id", "post"} <= set(d.columns):                                          #   all here, so the count adds exactly
+        _o = C.CURRENT_OUTCOME; _fin = np.isfinite(_num(d[_o]).values) if _o and _o in d.columns else np.ones(len(d), bool)
+        r["one_side"] = int(C._pixels_one_side(d[_fin], _spx))
     return r
 
 
@@ -101,6 +105,11 @@ def integrity_final(parts, control_zones=None, label=None, verbose=True):
         nr = int(sum(p.get("nr", 0) for p in parts)); add("one ring per pixel", nr == 0, f"{nr} pixel(s) with more than one ring", strict_o)
     if {"treatment", "pixel_id"} <= cols:
         nb = int(sum(p.get("nboth", 0) for p in parts)); add("no pixel both treated and a control", not nb, f"{nb} pixel(s) on both sides", strict_o)
+    _spx = C.ACTIVE.get("same_pixels", "pre_post")
+    if _spx != "off" and any("one_side" in p for p in parts):
+        _one = int(sum(p.get("one_side", 0) for p in parts))
+        add("the same pixels in pre and post" if _spx == "pre_post" else "the same pixels in every year-season", _one == 0,
+            f"{_one} pixel(s) observed " + ("on one side only" if _spx == "pre_post" else "in some year-seasons only"), True)
     cz = tuple(control_zones) if control_zones is not None else tuple(C.ACTIVE["control_zones"])
     rg = sorted(set().union(*[set(p["rg"]) for p in parts])) if parts else []
     add("the rings of the design", set(rg) <= ({0} | set(int(x) for x in cz)) and 0 in rg and any(r > 0 for r in rg),
@@ -224,6 +233,7 @@ def _t_prep(p):
     if not len(d): return res
     d = C.build_treatment_columns(d, control_zones=p["control_zones"])
     res["post_diff"] = C.LAST_DESIGN_INFO.get("post_rows_differ_from_panel"); res["post_n"] = int(C.LAST_DESIGN_INFO.get("post_rows_compared", 0) or 0)   # v20.59
+    res["same_out"] = C.LAST_DESIGN_INFO.get("same_pixels")                                                                                                # v20.59
     if C.ACTIVE.get("cluster") == "block" and "pixel_id" in d.columns: d["block_id"] = C.block_ids(d)   # v20.59
     d = d[d["in_analysis_sample"] == 1]
     if p.get("dropna") and p["outcome"] in d.columns: d = d.dropna(subset=[p["outcome"]])
@@ -343,6 +353,10 @@ def prepare_sample(panel, model, control_zones=None, ref=-1, pre_window=(-4, -2)
                                "location_rows": dict(lr)})
     _pv = [r for r in [g["result"] for g in got] if r.get("post_diff") is not None]     # v20.59: the design-vs-panel counts of every partition, said once
     if _pv: C.say_design_vs_panel(sum(int(r["post_diff"]) for r in _pv), sum(int(r["post_n"]) for r in _pv))
+    _sp = [r["same_out"] for r in [g["result"] for g in got] if r.get("same_out")]                        # v20.59: SAME_PIXELS, summed over the partitions
+    if _sp and sum(int(r["pixels_left_out"]) for r in _sp):
+        C.info(f"SAME_PIXELS = '{_sp[0]['rule']}' ({o}): {sum(int(r['pixels_left_out']) for r in _sp):,} pixel(s) / {sum(int(r['rows_left_out']) for r in _sp):,} rows leave -- observed "
+               + ("only before or only after treatment" if _sp[0]["rule"] == "pre_post" else "in some year-seasons only") + f"; the treated and control groups are the same {sum(int(r['pixels_kept']) for r in _sp):,} pixels")
     cols = res[0]["cols"] if res else list(panel.cols)
     sites = sorted(set().union(*[set(r["sites"]) for r in res])) if res and res[0]["sites"] is not None else None
     rows = int(sum(r["rows"] for r in res))
@@ -669,7 +683,7 @@ def _unit_col(sample):
 
 
 def _clusters(sample):
-    return [c for c in ("site_id", "Year", "subwshed_id") if c in sample.cols]
+    return [c for c in ("site_id", "Year", "subwshed_id", "block_id") if c in sample.cols]     # v20.59: the ~1 km blocks (CLUSTER = 'block')
 
 
 # ============================================================ the two-way FE DiD (estimate_twfe_did, the engine path)

@@ -2595,7 +2595,43 @@ def check_v20_59():
             if not all(_C.ACTIVE.get(k) is not None for k in ("control_selection", "control_select_k", "control_select_ratio", "control_select_on")) or "control_selected" not in _C.SCENARIO_KEYS: bad("the control selection is not part of the scenario the workers receive")
         finally:
             _C.CURRENT_OUTCOME = _co; _C.set_scenario(control_selection="rings", cluster="site", verbose=False)
+        # 9 v20.59 (your rule): SAME_PIXELS -- the treated and control groups are the same pixels in pre and post (or in every year-season)
+        for v, w in (("pre_post", "pre_post"), (True, "pre_post"), ("balanced", "all"), ("off", "off"), (False, "off")):
+            if _C._same_pixels_of(v) != w: bad(f"SAME_PIXELS {v!r} -> {_C._same_pixels_of(v)!r} (want {w!r})")
+        try: _C._same_pixels_of("post_only"); bad("an unknown SAME_PIXELS is not refused")
+        except Exception: pass
+        _rows = []
+        for _p, _ring, _cells in ((1, 0, [(y, 1) for y in range(2019, 2025)]), (2, 0, [(y, 1) for y in range(2019, 2022)]), (3, 2, [(y, 1) for y in range(2022, 2025)]), (4, 2, [(y, 1) for y in range(2019, 2025) if y != 2020])):
+            for _y, _s in _cells: _rows.append((_p * 10 ** 9 + 7, _ring, _y, _s, 7, "SW7", f"{_y}_{_s}", 0.3 + 0.01 * (_y - 2019), int(_y >= 2022)))
+        fs_ = _pd.DataFrame(_rows, columns=["pixel_id", "buff_km", "Year", "Season", "site_id", "subwshed_id", "time_fe_yearseason", "NDVI", "post"])
+        _co = _C.CURRENT_OUTCOME; _C.CURRENT_OUTCOME = "NDVI"
+        try:
+            _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", same_pixels="pre_post", verbose=False)
+            g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
+            if kept != [1, 4] or (_C.LAST_DESIGN_INFO.get("same_pixels") or {}).get("pixels_left_out") != 2 or "_pix" in _C.scenario_tag():
+                bad(f"SAME_PIXELS = 'pre_post' does not keep exactly the pixels observed in pre and post (kept {kept}; {_C.LAST_DESIGN_INFO.get('same_pixels')}; tag {_C.scenario_tag()})")
+            if not any(r["check"] == "the same pixels in pre and post" and r["ok"] for r in _C.LAST_INTEGRITY): bad("the sample integrity does not confirm the same pixels in pre and post")
+            _C.set_scenario(same_pixels="all", verbose=False); g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
+            if kept != [1] or "_pixAll" not in _C.scenario_tag(): bad(f"SAME_PIXELS = 'all' does not keep exactly the pixels observed in every year-season (kept {kept}; tag {_C.scenario_tag()})")
+            _C.set_scenario(same_pixels="off", verbose=False); g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
+            if kept != [1, 2, 3, 4] or "_pixAny" not in _C.scenario_tag(): bad(f"SAME_PIXELS = 'off' does not keep every pixel (kept {kept}; tag {_C.scenario_tag()})")
+        finally:
+            _C.CURRENT_OUTCOME = _co; _C.set_scenario(same_pixels="pre_post", verbose=False)
+        if "same_pixels_rule(out, in_grp, CURRENT_OUTCOME)" not in _i.getsource(_C.build_treatment_columns) or "the same pixels in pre and post" not in _i.getsource(_C.sample_integrity): bad("build_treatment_columns / sample_integrity do not apply and confirm SAME_PIXELS")
         import _ooc_models as _OM2
+        if "one_side" not in _i.getsource(_OM2._integrity_part) or "the same pixels in pre and post" not in _i.getsource(_OM2.integrity_final) or "same_out" not in _i.getsource(_OM2.prepare_sample): bad("the out-of-core path does not apply / confirm SAME_PIXELS")
+        miss = [os.path.basename(p) for p in nbs + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) if not all(k in open(p, encoding="utf-8").read() for k in ("SAME_PIXELS", "same_pixels=SAME_PIXELS"))]
+        if miss: bad(f"model notebooks without SAME_PIXELS passed to set_scenario: {miss[:6]}")
+        if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("SAME_PIXELS", "same_pixels=SAME_PIXELS")): bad("P00_Settings lacks the panel-level SAME_PIXELS default")
+        for q in rp00:
+            if "SAME_PIXELS       <- " not in open(q, encoding="utf-8").read(): bad(f"{os.path.basename(q)} lacks SAME_PIXELS")
+        if os.path.isdir(rl):
+            for fn, keys in {"reward_design.R": ("same_pixels_R", "pixels_one_side_R", "n_one_side", "_pixAll", 'same_pixels = .one_of("SAME_PIXELS"'), "reward_outofcore.R": ("same_pixels_R(x, o, ctx$d", "same_out", "n_one_side"), "reward_paths.R": ('SAME_PIXELS         <- "pre_post"',)}.items():
+                s_ = open(os.path.join(rl, fn), encoding="utf-8").read(); m_ = [k for k in keys if k not in s_]
+                if m_: bad(f"R {fn} lacks {m_}")
+            m_ = [os.path.basename(p) for p in rmd if "SAME_PIXELS      <- " not in open(p, encoding="utf-8").read()]
+            if m_: bad(f"R notebooks without SAME_PIXELS: {m_[:6]}")
+        note("your rule: SAME_PIXELS 'pre_post' (default) | 'all' | 'off' -- the treated and control groups are the same pixels in pre and post (or every year-season), applied after the control choice in both languages, in memory and out of core, confirmed by the sample integrity")
         if "decide_controls_ooc(" not in _i.getsource(_OM2.prepare_sample) or "presel" not in _i.getsource(_OM2._t_presel): bad("the out-of-core path does not decide the control selection once in the parent")
         if "select_controls(out, in_grp, CURRENT_OUTCOME)" not in _i.getsource(_C.build_treatment_columns): bad("build_treatment_columns does not apply CONTROL_SELECTION")
         miss = [os.path.basename(p) for p in nbs + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) if not all(k in open(p, encoding="utf-8").read() for k in ("CONTROL_SELECTION", "control_selection=CONTROL_SELECTION", "cluster=CLUSTER", "CONTROL_SELECT_ON"))]

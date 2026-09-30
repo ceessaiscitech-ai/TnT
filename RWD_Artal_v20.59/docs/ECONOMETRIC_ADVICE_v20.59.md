@@ -52,6 +52,7 @@ This is now in both pipelines (`CONTROL_SELECTION`, CELL 1 of every model notebo
 | `CONTROL_SELECT_ON = "trend"` (`"level"`, `"both"`) | the distance: mean absolute gap between the demeaned pre series (the parallel-trend distance); the pre-mean gap; their sum |
 | `CONTROL_BLOCK_DEG = 0.01` | the block side (0.01° ≈ 1.1 km) |
 | `CLUSTER = "block"` | the same blocks as the clusters of the SE |
+| `SAME_PIXELS = "pre_post"` (`"all"`, `"off"`) | your rule 3 enforced on every sample: a pixel observed only before or only after treatment leaves; `"all"` keeps only pixels observed in every year-season (a balanced pixel set) |
 
 What the run writes: `CONTROL_SELECTION_<outcome>.csv` (R: `_R.csv`) beside the results — every candidate ring or block with its
 pre-period rows, pixels, level gap, trend distance, slope difference, score, rank and whether it was chosen; the log says the

@@ -338,6 +338,7 @@ ooc_task_sample <- function(ctx, k) {
   if (nrow(ctx$bad)) x <- x[!ctx$bad, on = .(Year, Season)]
   x <- design_columns(x, ctx$d, site_period = ctx$site_period, say = FALSE)
   x <- select_controls_R(x, o, ctx$d, sel = ctx$ctrl_sel, say = FALSE)     # v20.59: the parent's decision applied (the same pixels in every partition)
+  x <- same_pixels_R(x, o, ctx$d, say = FALSE); spo <- attr(x, "same_pixels")   # v20.59: SAME_PIXELS per partition (a pixel's rows are all here), summed by the parent
   if (identical(ctx$d$cluster, "block")) x[, block_id := block_ids_R(x, ctx$d$control_block_deg %||% 0.01)]   # v20.59
   n_tr <- attr(x, "n_transition_left_out") %||% 0L
   pvp <- attr(x, "post_vs_panel")                                       # v20.59: read BEFORE the column subset below (a subset drops the attributes)
@@ -352,7 +353,7 @@ ooc_task_sample <- function(ctx, k) {
   }
   pw <- ctx$m16_window
   tr <- x[post == 0L & treat == 1L & is.finite(event_time) & event_time >= pw[1] & event_time <= pw[2], .N, by = .(event_time, Year)]
-  list(n_transition = n_tr, integrity = integrity_parts_R(x), post_vs_panel = pvp,                          # v20.59: (rows, rows that differ) or NULL
+  list(n_transition = n_tr, integrity = integrity_parts_R(x), post_vs_panel = pvp, same_out = spo,          # v20.59: (rows, rows that differ) or NULL; SAME_PIXELS
        facts = list(n_obs = nrow(x), n_pixels = uniqueN(x$pixel_id), n_units = uniqueN(x$unit), periods = unique(x$period), sites = sort(unique(x$site_id)),
                     rings = sort(unique(x$buff_km)), years = if (nrow(x)) range(x$Year) else c(NA_integer_, NA_integer_), years_set = sort(unique(x$Year)),
                     seasons = sort(unique(x$Season)), base_s = sum(x[treat == 1 & post == 0][[o]], na.rm = TRUE), base_n = sum(is.finite(x[treat == 1 & post == 0][[o]])),
@@ -530,7 +531,8 @@ integrity_merge_R <- function(ps) {
        n_ring_multi = sum(vapply(ps, function(p) as.numeric(p$n_ring_multi), 0)), n_both = sum(vapply(ps, function(p) as.numeric(p$n_both), 0)),
        rings = sort(unique(unlist(lapply(ps, `[[`, "rings")))), years = { y <- unlist(lapply(ps, function(p) p$years)); y <- y[is.finite(y)]; if (length(y)) range(y) else c(NA_integer_, NA_integer_) },
        years_set = sort(unique(unlist(lapply(ps, `[[`, "years_set")))), seasons = sort(unique(unlist(lapply(ps, `[[`, "seasons")))),
-       rows = sum(vapply(ps, function(p) as.numeric(p$rows), 0)), pixels = sum(vapply(ps, function(p) as.numeric(p$pixels), 0)))
+       rows = sum(vapply(ps, function(p) as.numeric(p$rows), 0)), pixels = sum(vapply(ps, function(p) as.numeric(p$pixels), 0)),
+       n_one_side = sum(vapply(ps, function(p) as.numeric(p$n_one_side %||% 0), 0)))                             # v20.59
 }
 ooc_load_R <- function(outcome, d, plan, engines) {
   panel_dedup_note_R()
@@ -587,6 +589,11 @@ ooc_load_R <- function(outcome, d, plan, engines) {
   pv <- Filter(Negate(is.null), lapply(pb, `[[`, "post_vs_panel"))                                   # v20.59: DESIGN vs PANEL, summed over the partitions
   post_vs_panel <- if (length(pv)) c(sum(vapply(pv, function(v) as.numeric(v[1]), 0)), sum(vapply(pv, function(v) as.numeric(v[2]), 0))) else NULL
   design_vs_panel_say_R(post_vs_panel, d)
+  spl <- Filter(Negate(is.null), lapply(pb, `[[`, "same_out"))                                              # v20.59: SAME_PIXELS, summed over the partitions
+  if (length(spl) && sum(vapply(spl, function(v) as.numeric(v$pixels_left_out), 0)) > 0)
+    info(sprintf("SAME_PIXELS = \"%s\" (%s): %s pixel(s) / %s rows leave -- observed %s; the treated and control groups are the same %s pixels", spl[[1]]$rule, outcome,
+                 format(sum(vapply(spl, function(v) as.numeric(v$pixels_left_out), 0)), big.mark = ","), format(sum(vapply(spl, function(v) as.numeric(v$rows_left_out), 0)), big.mark = ","),
+                 if (identical(spl[[1]]$rule, "pre_post")) "only before or only after treatment" else "in some year-seasons only", format(sum(vapply(spl, function(v) as.numeric(v$pixels_kept), 0)), big.mark = ",")))
   fx <- lapply(pb, `[[`, "facts")
   sites <- sort(unique(unlist(lapply(fx, `[[`, "sites")))); pos <- sites[sites > 0]
   cluster_col <- if (identical(d$cluster, "block")) "block_id" else if (length(pos) >= MIN_SWS_CLUSTERS) "site_id" else "Year"   # v20.59: ~1 km blocks

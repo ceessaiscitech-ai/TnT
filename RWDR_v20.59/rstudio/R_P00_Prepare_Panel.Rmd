@@ -66,8 +66,10 @@ CONTROL_SELECTION <- "rings"  # v20.59 (your rule) -- the panel-level DEFAULT of
 CONTROL_SELECT_K  <- 2L       # pre_rings: 1 or 2 (up to 5) buffers
 CONTROL_SELECT_RATIO <- 3     # pre_blocks: control pixels >= this x the treated pixels
 CONTROL_SELECT_ON <- "trend"  # "trend" (closest pre-trend = what DiD needs; recommended) | "level" (nearest to the pre mean) | "both"
+SAME_PIXELS       <- "pre_post"# v20.59 (your rule): the panel-level DEFAULT -- every treated and control pixel observed in pre AND post ("pre_post") or in
+                              #   every year-season ("all"), else it leaves a model's sample -- the groups are the same pixels across the panel | "off"
 CLUSTER           <- "auto"   # "auto" (the sub-watersheds; fewer than 6 -> the years) | "block" (~1 km spatial blocks: many clusters, spatial correlation absorbed)
-cat("design defaults (a model notebook overrides each):", DESIGN_MODE, "| timing", TREATMENT_TIMING, "| period rule (R_P00)", PERIOD_RULE, "| outcome screen", OUTCOME_SCREEN, "| design source", DESIGN_SOURCE, "| control selection", CONTROL_SELECTION, "| cluster", CLUSTER, "| gap-filled rows", if (isTRUE(EXCLUDE_GAPFILLED)) "left out" else "kept", "| rings", paste(CONTROL_RINGS, collapse = ","),
+cat("design defaults (a model notebook overrides each):", DESIGN_MODE, "| timing", TREATMENT_TIMING, "| period rule (R_P00)", PERIOD_RULE, "| outcome screen", OUTCOME_SCREEN, "| design source", DESIGN_SOURCE, "| control selection", CONTROL_SELECTION, "| same pixels", SAME_PIXELS, "| cluster", CLUSTER, "| gap-filled rows", if (isTRUE(EXCLUDE_GAPFILLED)) "left out" else "kept", "| rings", paste(CONTROL_RINGS, collapse = ","),
     "| seasons", paste(SEASONS, collapse = ","), "| fragments", FRAGMENT_RULE, "| overlap", OVERLAP_ROWS, "| pooled FE", POOLED_FE, "\n")
 ```
 
