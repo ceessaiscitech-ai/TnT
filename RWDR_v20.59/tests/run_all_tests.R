@@ -341,7 +341,7 @@ if (!inherits(tE, "error")) {
                cluster_block = list(CLUSTER = "block", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                  # v20.59: ~1 km blocks as clusters
                pix_all = list(SAME_PIXELS = "all", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                    # v20.59: a balanced pixel set
                donut1 = list(DONUT_RINGS = 1L, CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                   # spec 1: ring 1 leaves the control pool (of rings 1-5)
-               ctrl_rmse = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_ON = "rmse", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # spec 1: the RMSE rule
+               ctrl_rmse = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_ON = "rmse", CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # spec 1: the RMSE rule on the 5 rings
                ndvi_base = list(BASELINE_NDVI_MIN = 0.30, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                              # spec 1: the pre-period mean NDVI mask
                no_single_on = list(DROP_SINGLETONS = TRUE, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                             # spec 1: the singleton pre-flight (the notebooks' default; the library's own default is off)
                rabi = list(SEASONS = "Rabi"), manual = list(DESIGN_MODE = "manual"), transition = list(EXCLUDE_TRANSITION_YEAR = TRUE),
@@ -375,7 +375,7 @@ if (!inherits(tE, "error")) {
        !is.null(dp) && all(dp$post == as.integer(dp$Year >= 2022L)) && all(dp[treat == 1L, cohort] == 2022) && !is.null(dpj$tag) && grepl("_panelDesign", dpj$tag, fixed = TRUE),
        if (is.null(dpj$tag)) "no tag" else dpj$tag)
   cp <- rd("ctrl_pre2"); cpj <- tryCatch(fromJSON(file.path(od, "ctrl_pre2.json")), error = function(e) NULL)
-  cpf <- tryCatch(fread(file.path(RESULTS_DIR, "CONTROL_SELECTION_NDVI_R.csv")), error = function(e) NULL)
+  cpf <- tryCatch(fread(file.path(od, "ctrl_pre2_control_selection.csv")), error = function(e) NULL)       # this variant's evidence (a later variant overwrites the results copy)
   chkE("ctrl_pre2", "CONTROL_SELECTION = 'pre_rings', K = 2 (v20.59): exactly 2 control rings, the same control pixels in every year-season, the folder tagged _ctrlPre2r, CONTROL_SELECTION_NDVI_R.csv with 5 rings and 2 selected",
        !is.null(cp) && uniqueN(cp[treat == 0L, buff_km]) == 2 && uniqueN(cp[treat == 0L, .(k = paste(sort(unique(buff_km)), collapse = ",")), by = .(Year, Season)]$k) == 1 && !is.null(cpj$tag) && grepl("_ctrlPre2r", cpj$tag, fixed = TRUE)
        && !is.null(cpf) && nrow(cpf) == 5 && sum(cpf$selected) == 2 && setequal(cpf[selected == TRUE, unit], unique(cp[treat == 0L, buff_km])),
@@ -394,10 +394,10 @@ if (!inherits(tE, "error")) {
        !is.null(dn1) && !any(dn1[treat == 0L, buff_km] == 1L) && setequal(unique(dn1[treat == 0L, buff_km]), 2:5) && !is.null(dn1j$tag) && grepl("_donut1", dn1j$tag, fixed = TRUE),
        if (is.null(dn1)) "no sample" else sprintf("rings %s | %s", paste(sort(unique(dn1[treat == 0L, buff_km])), collapse = ","), dn1j$tag))
   cr <- rd("ctrl_rmse"); crj <- tryCatch(fromJSON(file.path(od, "ctrl_rmse.json")), error = function(e) NULL)
-  crf <- tryCatch(fread(file.path(RESULTS_DIR, "CONTROL_SELECTION_NDVI_R.csv")), error = function(e) NULL)
+  crf <- tryCatch(fread(file.path(od, "ctrl_rmse_control_selection.csv")), error = function(e) NULL)
   crx <- if (!is.null(crf) && "rmse_gap" %in% names(crf)) { o_ <- crf[order(rmse_gap, unit)]; sort(o_$unit[1:2]) } else NULL                 # the two smallest RMSE gaps of the evidence
-  chkE("ctrl_rmse", "CONTROL_SELECT_ON <- 'rmse' (spec 1): the 2 rings with the smallest pre-period RMSE gap of the evidence table, the folder tagged _ctrlPre2rR",
-       !is.null(cr) && uniqueN(cr[treat == 0L, buff_km]) == 2 && !is.null(crx) && setequal(crx, unique(cr[treat == 0L, buff_km])) && !is.null(crj$tag) && grepl("_ctrlPre2rR", crj$tag, fixed = TRUE),
+  chkE("ctrl_rmse", "CONTROL_SELECT_ON <- 'rmse' (spec 1): the 2 of 5 rings with the smallest pre-period RMSE gap of the evidence table, the folder tagged _ctrlPre2rR",
+       !is.null(cr) && uniqueN(cr[treat == 0L, buff_km]) == 2 && !is.null(crf) && nrow(crf) == 5 && !is.null(crx) && setequal(crx, unique(cr[treat == 0L, buff_km])) && !is.null(crj$tag) && grepl("_ctrlPre2rR", crj$tag, fixed = TRUE),
        if (is.null(cr)) "no sample" else sprintf("rings %s | evidence says %s | %s", paste(sort(unique(cr[treat == 0L, buff_km])), collapse = ","), paste(crx, collapse = ","), crj$tag))
   nb_ <- rd("ndvi_base"); nbj <- tryCatch(fromJSON(file.path(od, "ndvi_base.json")), error = function(e) NULL)
   pan_ <- tryCatch(as.data.table(arrow::read_parquet(panel_file(), col_select = c("pixel_id", "Year", "NDVI"))), error = function(e) NULL)

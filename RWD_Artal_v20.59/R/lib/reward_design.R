@@ -1465,6 +1465,8 @@ design_variant_samples <- function(variants, out_dir, outcome = "NDVI") {
       d <- model_design(verbose = FALSE, force = TRUE); x <- load_panel_R(outcome, d)
       out <- x[, .(pixel_id, site_id, Year, Season, buff_km, treat, post, did, cohort, event_time, dose, unit, period, cluster_id)]
       fwrite(out, file.path(out_dir, paste0(nm, ".csv")))
+      ev_ <- file.path(RESULTS_DIR, sprintf("CONTROL_SELECTION_%s_R.csv", outcome))                        # v20.59: this variant's control-selection evidence, kept per variant
+      if (!identical(d$control_selection %||% "rings", "rings") && file.exists(ev_)) file.copy(ev_, file.path(out_dir, paste0(nm, "_control_selection.csv")), overwrite = TRUE)
       writeLines(toJSON(list(tag = scenario_tag(d), control_rings = d$control_rings, year_min = d$year_min, year_max = d$year_max, drop_years = d$drop_years,
                              seasons = d$seasons, treatment_year = d$treatment_year, site_start = d$site_start, site_years = d$site_years, n_sites = d$n_sites,
                              sites = d$sites, choices = d$choices, rows = nrow(out)), auto_unbox = TRUE, digits = NA, null = "null", na = "null"),
