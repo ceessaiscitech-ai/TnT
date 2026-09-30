@@ -175,6 +175,12 @@ rows; the verdict is one line of the log (`pixel consistency CONFIRMED: N pixels
 - `tests/run_all_tests.R`: the scenario-E audit check accepts exports without a `Treat` column (the Year rule, said); a batch model
   without its package fails its own row, not scenario G.
 - An independent DiD-specification audit (`docs/VALIDATION_v20.59.md`, section 5) ran on both engines with R installed.
+- **Found by the self-check of the fourth request (Python):** the resolved-design cache (`resolve_design`, v20.58) restores its
+  snapshot of the whole scenario on a cache hit, and its key held only the design settings -- so CELL 1 re-run in the SAME kernel with
+  another `OUTCOME_SCREEN`, `EXCLUDE_GAPFILLED`, `COVARIATES`, `CLUSTER`, `POOLED_FE`, `UNIT_FE`, `COHORT_OFFSET`, `NONNEGATIVE` (or now
+  `DESIGN_SOURCE`) kept the OLD value silently (a fresh kernel, and every notebook run from the top, was unaffected). Fixed: every raw
+  model-level setting is part of the key (`_design_key`); the self-check toggles them with a resolve in between and confirms the cache
+  still hits when nothing changed.
 
 ## Where each change lives
 

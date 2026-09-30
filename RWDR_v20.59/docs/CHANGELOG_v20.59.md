@@ -138,6 +138,35 @@ the screen then left 41 of 44 year-seasons out of every model. Two things were m
   which wins for that model. `validate_design_options.py` (1,728 checks, R == Python) is the proof that each option does what it says at the
   model stage; the R suite's scenario E checks the panel-level ones.
 
+## Your fourth request — the panel's design as the default, `Treat` used and not kept, one sub-watershed and one ring per pixel
+
+**The panel's design is what every model estimates on by default.** Every model notebook (Python `CELL 1`, R `R_Mxx`) now carries
+`DESIGN_SOURCE = "panel"`: the model's `post` / `pre` / `did` ARE the panel's columns (built by P00 / R_P00 from the exports' `Treat`
+flag under `PERIOD_RULE`), each series' cohort is the panel's first post year of its sub-watershed, and the event time counts from it.
+The design in effect (`TREATMENT_TIMING`, `TREATMENT_YEAR`, `EXCLUDE_TRANSITION_YEAR`, the fund / registry dates) is still computed
+and COMPARED with the panel (the `DESIGN vs PANEL` line says on how many rows it would differ) but is not estimated on. Results are
+tagged `_panelDesign`. `DESIGN_SOURCE = "model"` is design-based modelling: the design in effect builds the columns, as before. P00 /
+R_P00 carry the same default at the panel level; the engine's own default (the validators, the R bridge) stays `"model"` so that every
+timing test keeps its meaning. Python `set_scenario(design_source=...)`, `resolve_design` row `DESIGN_SOURCE`; R `design_settings`
+(`.one_of`), `design_columns`. Out of core the workers receive it (`SCENARIO_KEYS`).
+
+**`Treat` is used, not kept.** The exports' `Treat` column populates `pre` / `post` (and `did`) under `PERIOD_RULE` and is then dropped
+from the final panel in BOTH languages (Python had `Treat` in `DROPPED_FROM_PANEL` already; R_P00's `keep_cols` / the out-of-core
+`all_cols` no longer list it). A panel that still carries it is rebuilt.
+
+**Every row belongs to the sub-watershed whose polygon holds its latitude / longitude, and ONE ring.** `PIXEL_ONE_SITE = True` (P00
+`P.PIXEL_ONE_SITE`, R `reward_paths.R` / R_P00): the location of every row decides its sub-watershed (core first, then the lower id when
+a point lies in the zones of two sub-watersheds) and its ring, whatever id or ring the file carried -- a pure function of the
+coordinates, so the same pixel has the same `site_id` / `buff_km` in every year and season and appears once per year-season. A row in
+no polygon keeps the file's id, flagged (`site_check` 3), and leaves every estimate (the location rule). Python `tag_sites`
+(`site_unified_by_one_site_rule` in `site_tagging_report.csv`), R `overlay_sws` + `ring_from_polygon_codes`. `False` = the v20.58 rule
+(a point in the zones of two sub-watersheds kept once per sub-watershed).
+
+**Confirmed on the finished panel, never assumed.** P00 (`confirm_pixel_consistency`) and R_P00 (`panel_pixel_consistency_R`, in
+memory and out of core) count, per pixel, the distinct `site_id`, `buff_km` and coordinates and the repeated (pixel, year, season)
+rows; the verdict is one line of the log (`pixel consistency CONFIRMED: N pixels ...`) and the offenders, if any, are in
+`panel_pixel_consistency.csv` / `panel_pixel_consistency_R.csv`.
+
 ## Found by running R here (v20.59, after the first delivery)
 
 - **R_P00 stopped before writing the panel** when an outcome column had no finite value at all (`panel_variation_R`: the empty part
@@ -146,6 +175,12 @@ the screen then left 41 of 44 year-seasons out of every model. Two things were m
 - `tests/run_all_tests.R`: the scenario-E audit check accepts exports without a `Treat` column (the Year rule, said); a batch model
   without its package fails its own row, not scenario G.
 - An independent DiD-specification audit (`docs/VALIDATION_v20.59.md`, section 5) ran on both engines with R installed.
+- **Found by the self-check of the fourth request (Python):** the resolved-design cache (`resolve_design`, v20.58) restores its
+  snapshot of the whole scenario on a cache hit, and its key held only the design settings -- so CELL 1 re-run in the SAME kernel with
+  another `OUTCOME_SCREEN`, `EXCLUDE_GAPFILLED`, `COVARIATES`, `CLUSTER`, `POOLED_FE`, `UNIT_FE`, `COHORT_OFFSET`, `NONNEGATIVE` (or now
+  `DESIGN_SOURCE`) kept the OLD value silently (a fresh kernel, and every notebook run from the top, was unaffected). Fixed: every raw
+  model-level setting is part of the key (`_design_key`); the self-check toggles them with a resolve in between and confirms the cache
+  still hits when nothing changed.
 
 ## Where each change lives
 
@@ -157,6 +192,7 @@ the screen then left 41 of 44 year-seasons out of every model. Two things were m
 | DESIGN vs PANEL at the model stage | `_common.build_treatment_columns` -> `design_vs_panel` / `say_design_vs_panel`; `_ooc_models._t_prep` + `prepare_sample` (out of core, summed) | `reward_design.R` `design_columns` -> `design_vs_panel_say_R`, `sample_facts`, `save_result` (`post_rows_differ_from_panel`); `reward_outofcore.R` `ooc_task_sample` / `ooc_load_R` |
 | the outcome screen: evidence, rule, refusal | `_common.screen_decide_table`, `screen_report`, `screen_refuse_years`, `screen_outcome_frame`, `screen_all_outcomes` (P09), `screen_rule`, `set_scenario(outcome_screen=)`, `scenario_tag` (`_screenKept`); `_outofcore.screen_decision` / `_screen_stats` (min, max) | `reward_design.R` `screen_rule_R`, `screen_outcome`, `screen_decide`, `screen_refuse`, `design_settings`, `scenario_tag`; `reward_outofcore.R` (`ooc_task_prep` moments + min / max, `ooc_merge_moments`, `ooc_load_R`); `reward_paths.R` `OUTCOME_SCREEN` |
 | the pixel-variation report of P00 | `_prep_common.prepare_pass_b_block` (exact moments per block, merged out of core by `_merge_moments`), `run_pass_b` -> `panel_variation_by_block.csv` | `reward_prep.R` `panel_variation_R` / `panel_variation_report_R` (in memory and block by block) |
+| the panel's design as the default, `Treat` dropped, one site and ring per pixel | `_common.ACTIVE["design_source"]`, `_design_source_of`, `set_scenario(design_source=)`, `build_treatment_columns` (the override, `_post_design`), `design_vs_panel` / `say_design_vs_panel`, tag `_panelDesign`; `_prep_common.PIXEL_ONE_SITE`, `tag_sites`, `confirm_pixel_consistency` (`run_pass_b`) | `reward_design.R` `design_settings` (`design_source`), `design_columns`, `design_vs_panel_say_R`, `DESIGN_DEFAULTS`; `reward_paths.R` `PIXEL_ONE_SITE`, `DESIGN_SOURCE`; `reward_prep.R` `overlay_sws`, `ring_from_polygon_codes`, `panel_pixel_consistency_R`, `keep_cols` without `Treat`; `reward_prep_ooc.R` (`pix`, `n_rep_in`, `all_cols` without `Treat`) |
 | the notebooks | every model's CELL 1: `OUTCOME_SCREEN`, passed to `set_scenario`; PRE_YEARS / POST_YEARS document the calendar-year form; P00_Settings: `P.POST_FROM_EXPORT_TREAT` | every `R_Mxx` (Rmd and Jupyter): `OUTCOME_SCREEN <- "drop"`, the calendar-year form documented |
 
 ## Checks
@@ -175,6 +211,15 @@ the screen then left 41 of 44 year-seasons out of every model. Two things were m
   `input_design_audit_R.csv` (every file confirmed, `period_rule` in `panel_build_settings_R.csv`); `PERIOD_RULE` `"treat"` / `"year"` /
   `"both"` on a small frame; DESIGN vs PANEL under the fund timing (differs, said) and under fixed 2022 (0 rows differ); the screen's
   evidence file.
+
+- The fourth request: `selfcheck.py` (`DESIGN_SOURCE` parsed and refused, the tag, a six-row frame under `"panel"` -- post / pre / did
+  = the panel's, the design's differing rows counted, cohort and event time from the panel's first post year -- and back under
+  `"model"`; every notebook carries and passes `DESIGN_SOURCE`; P00 / R_P00 carry `PIXEL_ONE_SITE`; the R library's functions;
+  `Treat` in no panel schema); `validate_did_spec.py` (five pixels also exported in a Beguru file with ring 3: in the panel once per
+  year-season, sub-watershed 7, ring 0; `Treat` absent; the consistency count 0 / 0 / 0; `DESIGN_SOURCE = "panel"` under
+  `TREATMENT_YEAR = 2023` = the fixed-2022 estimate to 1e-12 with the 2022 rows counted as differing; `"model"` = 2023; the same in R);
+  `validate_design_options.py` (`design_panel`, `design_panel_fixed_2023`, R == Python); `validate_preprocessing.py` (the shapefile case's
+  consistency); `tests/run_all_tests.R` E (`Treat` absent, `design_panel`, `panel_pixel_consistency_R.csv` with 0 offenders).
 
 What ran on the delivered code, and what could not run here, is in `VALIDATION_v20.59.md`.
 

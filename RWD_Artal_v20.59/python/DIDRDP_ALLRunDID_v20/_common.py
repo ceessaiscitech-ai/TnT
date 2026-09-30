@@ -4290,7 +4290,11 @@ def _design_key(frame_sites=None):
     import _fund as _F
     keys = ("design_mode", "data_keys", "timing", "treatment_year_setting", "post_cutoff_setting", "seasons_setting",
             "site_years_setting", "site_start_setting", "fragment_rule", "fragment_min_share", "sub_watersheds", "dose_variable", "fund_start_rule",
-            "fund_start_share", "fund_rate_months", "fund_dose_before_file", "exclude_transition_year", "overlap_rows")
+            "fund_start_share", "fund_rate_months", "fund_dose_before_file", "exclude_transition_year", "overlap_rows",
+            # v20.59 (found by the self-check): the cache restores the RESOLVED snapshot on a hit, so every raw setting the snapshot carries must be
+            # part of the key -- before, CELL 1 re-run in the same kernel with another OUTCOME_SCREEN / EXCLUDE_GAPFILLED / COVARIATES / DESIGN_SOURCE
+            # kept the OLD value silently (the design key had not changed)
+            "design_source", "outcome_screen", "exclude_gapfilled", "covariates", "cluster", "pooled_fe", "unit_fe", "cohort_offset", "nonnegative")
     k = {x: ACTIVE.get(x) for x in keys}
     dk = set(ACTIVE.get("data_keys") or [])
     if "control_zones" not in dk: k["control_zones"] = list(ACTIVE["control_zones"])

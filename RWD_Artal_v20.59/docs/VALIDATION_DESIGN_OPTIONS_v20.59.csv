@@ -209,6 +209,36 @@ single,screen_keep,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs
 single,screen_keep,history-filled rows left out,PASS,0
 single,screen_keep,unit = pixel x season,PASS,max seasons per unit 1
 single,screen_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,design_panel,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
+single,design_panel,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,design_panel,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,design_panel,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,design_panel,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,design_panel,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl1-5_treatFund_all_clSite_panelDesign_no2017_covAll4_yr2015-2025
+single,design_panel,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,design_panel,post = Year >= the row's cohort (treated rows),PASS,
+single,design_panel,the v20.56 milestone cohort (2026) is never used,PASS,
+single,design_panel,dose 0 on the control rings and untreated periods,PASS,
+single,design_panel,the v20.56 district percent (55) is never the dose,PASS,
+single,design_panel,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+single,design_panel,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+single,design_panel,history-filled rows left out,PASS,0
+single,design_panel,unit = pixel x season,PASS,max seasons per unit 1
+single,design_panel,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,design_panel_fixed_2023,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
+single,design_panel_fixed_2023,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,design_panel_fixed_2023,control rings = the choice,PASS,"used [np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,design_panel_fixed_2023,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,design_panel_fixed_2023,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,design_panel_fixed_2023,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl3-5_treat2023_all_clSite_panelDesign_no2017_covAll4_yr2015-2025
+single,design_panel_fixed_2023,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,design_panel_fixed_2023,post = Year >= the row's cohort (treated rows),PASS,
+single,design_panel_fixed_2023,the v20.56 milestone cohort (2026) is never used,PASS,
+single,design_panel_fixed_2023,dose 0 on the control rings and untreated periods,PASS,
+single,design_panel_fixed_2023,the v20.56 district percent (55) is never the dose,PASS,
+single,design_panel_fixed_2023,history-filled rows left out,PASS,0
+single,design_panel_fixed_2023,unit = pixel x season,PASS,max seasons per unit 1
+single,design_panel_fixed_2023,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,pre_all_post_all,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,pre_all_post_all,only the major sub-watershed(s),PASS,[np.int64(1)]
 single,pre_all_post_all,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
@@ -580,6 +610,26 @@ single,screen_keep,R == Python: dose,PASS,max |diff| 4.51e-17
 single,screen_keep,R == Python: the unit partition,PASS,576 vs 576 groups
 single,screen_keep,R == Python: the period partition,PASS,44 vs 44 groups
 single,screen_keep,R == Python: the cluster_id partition,PASS,11 vs 11 groups
+single,design_panel,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,design_panel,R == Python: treat,PASS,0 differ
+single,design_panel,R == Python: post,PASS,0 differ
+single,design_panel,R == Python: did,PASS,0 differ
+single,design_panel,R == Python: cohort,PASS,0 differ
+single,design_panel,R == Python: event time (treated),PASS,0 differ
+single,design_panel,R == Python: dose,PASS,max |diff| 4.51e-17
+single,design_panel,R == Python: the unit partition,PASS,576 vs 576 groups
+single,design_panel,R == Python: the period partition,PASS,40 vs 40 groups
+single,design_panel,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,design_panel_fixed_2023,R == Python: the same rows,PASS,"Python 3,732 rows, R 3,732"
+single,design_panel_fixed_2023,R == Python: treat,PASS,0 differ
+single,design_panel_fixed_2023,R == Python: post,PASS,0 differ
+single,design_panel_fixed_2023,R == Python: did,PASS,0 differ
+single,design_panel_fixed_2023,R == Python: cohort,PASS,0 differ
+single,design_panel_fixed_2023,R == Python: event time (treated),PASS,0 differ
+single,design_panel_fixed_2023,R == Python: dose,PASS,max |diff| 4.51e-17
+single,design_panel_fixed_2023,R == Python: the unit partition,PASS,384 vs 384 groups
+single,design_panel_fixed_2023,R == Python: the period partition,PASS,40 vs 40 groups
+single,design_panel_fixed_2023,R == Python: the cluster_id partition,PASS,10 vs 10 groups
 single,pre_all_post_all,R == Python: the same rows,PASS,"Python 6,020 rows, R 6,020"
 single,pre_all_post_all,R == Python: treat,PASS,0 differ
 single,pre_all_post_all,R == Python: post,PASS,0 differ
@@ -730,7 +780,7 @@ single,covariates_none,R == Python: dose,PASS,max |diff| 4.51e-17
 single,covariates_none,R == Python: the unit partition,PASS,576 vs 576 groups
 single,covariates_none,R == Python: the period partition,PASS,40 vs 40 groups
 single,covariates_none,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-single,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_7f1p0o4m/single/data/output/did_panel_full.parquet
+single,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_iq7y9h4e/single/data/output/did_panel_full.parquet
 single_v2056,base,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single_v2056,base,only the major sub-watershed(s),PASS,[np.int64(1)]
 single_v2056,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
@@ -804,7 +854,7 @@ single_v2056,timing_fixed_2022,R == Python: dose,PASS,max |diff| 4.51e-17
 single_v2056,timing_fixed_2022,R == Python: the unit partition,PASS,576 vs 576 groups
 single_v2056,timing_fixed_2022,R == Python: the period partition,PASS,40 vs 40 groups
 single_v2056,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-single_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_7f1p0o4m/single_v2056/data/output/did_panel_full.parquet
+single_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_iq7y9h4e/single_v2056/data/output/did_panel_full.parquet
 single_v2056,base,a panel WITHOUT the fragment column (v20.56) gives the same sample,PASS,5600 vs 5600 rows
 pooled,base,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,base,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
@@ -1066,6 +1116,43 @@ pooled,screen_keep,period effect = sub-watershed x year x season,PASS,max sites 
 pooled,screen_keep,history-filled rows left out,PASS,0
 pooled,screen_keep,unit = pixel x season,PASS,max seasons per unit 1
 pooled,screen_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,design_panel,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
+pooled,design_panel,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,design_panel,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,design_panel,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,design_panel,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,design_panel,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,design_panel,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl1-5_treatFund_all_clSite_feSitePeriod_panelDesign_no2017_covAll4_yr2015-2025
+pooled,design_panel,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
+pooled,design_panel,post = Year >= the row's cohort (treated rows),PASS,
+pooled,design_panel,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,design_panel,dose 0 on the control rings and untreated periods,PASS,
+pooled,design_panel,the v20.56 district percent (55) is never the dose,PASS,
+pooled,design_panel,dose of site 1 2024 season 2 = hand-derived,PASS,0.00647621 vs 0.00647621
+pooled,design_panel,dose of site 1 2025 season 1 = hand-derived,PASS,0.0237461 vs 0.0237461
+pooled,design_panel,dose of site 2 2023 season 1 = hand-derived,PASS,0.00113908 vs 0.00113908
+pooled,design_panel,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,design_panel,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,design_panel,history-filled rows left out,PASS,0
+pooled,design_panel,unit = pixel x season,PASS,max seasons per unit 1
+pooled,design_panel,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,design_panel_fixed_2023,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
+pooled,design_panel_fixed_2023,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,design_panel_fixed_2023,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,design_panel_fixed_2023,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,design_panel_fixed_2023,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,design_panel_fixed_2023,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,design_panel_fixed_2023,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl1-5_treat2023_all_clSite_feSitePeriod_panelDesign_no2017_covAll4_yr2015-2025
+pooled,design_panel_fixed_2023,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
+pooled,design_panel_fixed_2023,post = Year >= the row's cohort (treated rows),PASS,
+pooled,design_panel_fixed_2023,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,design_panel_fixed_2023,dose 0 on the control rings and untreated periods,PASS,
+pooled,design_panel_fixed_2023,the v20.56 district percent (55) is never the dose,PASS,
+pooled,design_panel_fixed_2023,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,design_panel_fixed_2023,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,design_panel_fixed_2023,history-filled rows left out,PASS,0
+pooled,design_panel_fixed_2023,unit = pixel x season,PASS,max seasons per unit 1
+pooled,design_panel_fixed_2023,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,pre_all_post_all,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,pre_all_post_all,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,pre_all_post_all,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
@@ -1492,6 +1579,26 @@ pooled,screen_keep,R == Python: dose,PASS,max |diff| 6.25e-17
 pooled,screen_keep,R == Python: the unit partition,PASS,1176 vs 1176 groups
 pooled,screen_keep,R == Python: the period partition,PASS,88 vs 88 groups
 pooled,screen_keep,R == Python: the cluster_id partition,PASS,11 vs 11 groups
+pooled,design_panel,R == Python: the same rows,PASS,"Python 11,484 rows, R 11,484"
+pooled,design_panel,R == Python: treat,PASS,0 differ
+pooled,design_panel,R == Python: post,PASS,0 differ
+pooled,design_panel,R == Python: did,PASS,0 differ
+pooled,design_panel,R == Python: cohort,PASS,0 differ
+pooled,design_panel,R == Python: event time (treated),PASS,0 differ
+pooled,design_panel,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,design_panel,R == Python: the unit partition,PASS,1176 vs 1176 groups
+pooled,design_panel,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,design_panel,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,design_panel_fixed_2023,R == Python: the same rows,PASS,"Python 11,484 rows, R 11,484"
+pooled,design_panel_fixed_2023,R == Python: treat,PASS,0 differ
+pooled,design_panel_fixed_2023,R == Python: post,PASS,0 differ
+pooled,design_panel_fixed_2023,R == Python: did,PASS,0 differ
+pooled,design_panel_fixed_2023,R == Python: cohort,PASS,0 differ
+pooled,design_panel_fixed_2023,R == Python: event time (treated),PASS,0 differ
+pooled,design_panel_fixed_2023,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,design_panel_fixed_2023,R == Python: the unit partition,PASS,1176 vs 1176 groups
+pooled,design_panel_fixed_2023,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,design_panel_fixed_2023,R == Python: the cluster_id partition,PASS,10 vs 10 groups
 pooled,pre_all_post_all,R == Python: the same rows,PASS,"Python 12,349 rows, R 12,349"
 pooled,pre_all_post_all,R == Python: treat,PASS,0 differ
 pooled,pre_all_post_all,R == Python: post,PASS,0 differ
@@ -1642,7 +1749,7 @@ pooled,covariates_none,R == Python: dose,PASS,max |diff| 6.25e-17
 pooled,covariates_none,R == Python: the unit partition,PASS,1176 vs 1176 groups
 pooled,covariates_none,R == Python: the period partition,PASS,80 vs 80 groups
 pooled,covariates_none,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-pooled,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_7f1p0o4m/pooled/data/output/did_panel_full.parquet
+pooled,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_iq7y9h4e/pooled/data/output/did_panel_full.parquet
 pooled_v2056,base,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled_v2056,base,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled_v2056,base,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
@@ -1725,5 +1832,5 @@ pooled_v2056,timing_fixed_2022,R == Python: dose,PASS,max |diff| 6.25e-17
 pooled_v2056,timing_fixed_2022,R == Python: the unit partition,PASS,984 vs 984 groups
 pooled_v2056,timing_fixed_2022,R == Python: the period partition,PASS,80 vs 80 groups
 pooled_v2056,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-pooled_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_7f1p0o4m/pooled_v2056/data/output/did_panel_full.parquet
+pooled_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_iq7y9h4e/pooled_v2056/data/output/did_panel_full.parquet
 pooled_v2056,base,a panel WITHOUT the fragment column (v20.56) gives the same sample,PASS,11484 vs 11484 rows
