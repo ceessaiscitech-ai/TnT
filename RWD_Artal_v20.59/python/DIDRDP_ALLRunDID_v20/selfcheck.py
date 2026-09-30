@@ -2680,10 +2680,11 @@ def check_v20_59():
             ch_, tab_ = _C.select_optimal_control_rings(fs2, "NDVI", treat_ring=0, candidate_rings=[1, 2, 3, 4], pre_years=range(2016, 2022), top_k=2, on="level")
             if sorted(int(x) for x in ch_) != [2, 3] or len(tab_) != 4: bad(f"select_optimal_control_rings does not return the two closest rings on the pre period (got {ch_}, {len(tab_)} rows)")
             _C.set_scenario(control_selection="rings", control_select_on="trend", verbose=False)
-            rc_ = _C.outcome_range_check(fs2.assign(NDVI=fs2.NDVI.where(fs2.index > 1, [1.7, -9999.0])), "NDVI", say=False)
+            _v2 = fs2.NDVI.values.astype(float).copy(); _v2[0], _v2[1] = 1.7, -9999.0     # one value outside [-1, 1], one no-data code
+            rc_ = _C.outcome_range_check(fs2.assign(NDVI=_v2), "NDVI", say=False)
             if not rc_ or rc_.get("ok") is not False or rc_.get("n_outside_bounds", 0) < 1 or rc_.get("n_nodata_codes", 0) < 1: bad(f"outcome_range_check misses a value outside [-1, 1] or a no-data code ({rc_})")
             _C.set_scenario(drop_singletons=True, verbose=False); g = _C.build_treatment_columns(fs2.copy()); s_ = g[g.in_analysis_sample == 1]
-            s1 = _pd.concat([s_, s_.iloc[[0]].assign(pixel_id=99 * 10 ** 9 + 7, Year=2016)], ignore_index=True)     # one series seen once
+            s1 = _pd.concat([s_, s_.iloc[[0]].assign(pixel_id=99 * 10 ** 9 + 7, Year=2016, **({"unit_id": "99_singleton"} if "unit_id" in s_.columns else {}))], ignore_index=True)     # one series (pixel x season) seen once
             b1, _ = _C.estimate_twfe_did(s1, "NDVI", "did_term", "pixel_id", "time_fe_yearseason", "subwshed_id")
             if (_C.LAST_FIT_INFO.get("singleton_rows_dropped") or 0) != 1 or "_noSingle" not in _C.scenario_tag(): bad(f"DROP_SINGLETONS does not drop the series seen once before the demeaning ({_C.LAST_FIT_INFO.get('singleton_rows_dropped')}; tag {_C.scenario_tag()})")
             _C.set_scenario(drop_singletons=False, verbose=False)

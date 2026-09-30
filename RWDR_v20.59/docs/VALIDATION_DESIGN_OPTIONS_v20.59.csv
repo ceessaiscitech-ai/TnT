@@ -1,8 +1,9 @@
 panel,variant,check,status,detail
 single,base,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,base,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,base,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,base,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_no2017_covAll4_yr2015-2025
+single,base,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,base,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,base,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,base,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -17,8 +18,9 @@ single,base,unit = pixel x season,PASS,max seasons per unit 1
 single,base,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,timing_registry,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,timing_registry,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,timing_registry,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_siteyrs2022_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,timing_registry,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,timing_registry,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_siteyrs2022_clSite_no2017_covAll4_yr2015-2025
+single,timing_registry,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_siteyrs2022_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,timing_registry,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,timing_registry,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,timing_registry,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -31,8 +33,9 @@ single,timing_registry,unit = pixel x season,PASS,max seasons per unit 1
 single,timing_registry,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,timing_fixed_2022,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,timing_fixed_2022,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,timing_fixed_2022,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,timing_fixed_2022,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,timing_fixed_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_no2017_covAll4_yr2015-2025
+single,timing_fixed_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,timing_fixed_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,timing_fixed_2022,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,timing_fixed_2022,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -45,8 +48,9 @@ single,timing_fixed_2022,unit = pixel x season,PASS,max seasons per unit 1
 single,timing_fixed_2022,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,timing_fixed_2023,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,timing_fixed_2023,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,timing_fixed_2023,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl3-5_treat2023_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,timing_fixed_2023,control rings = the choice,PASS,"used [np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,timing_fixed_2023,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl3-5_treat2023_all_clSite_no2017_covAll4_yr2015-2025
+single,timing_fixed_2023,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl3-5_treat2023_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,timing_fixed_2023,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,timing_fixed_2023,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,timing_fixed_2023,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -59,8 +63,9 @@ single,timing_fixed_2023,unit = pixel x season,PASS,max seasons per unit 1
 single,timing_fixed_2023,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,fund_rule_share,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,fund_rule_share,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,fund_rule_share,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFundShare10_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,fund_rule_share,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,fund_rule_share,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFundShare10_all_clSite_no2017_covAll4_yr2015-2025
+single,fund_rule_share,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFundShare10_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,fund_rule_share,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,fund_rule_share,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,fund_rule_share,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -73,8 +78,9 @@ single,fund_rule_share,unit = pixel x season,PASS,max seasons per unit 1
 single,fund_rule_share,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,fund_rule_file_start,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,fund_rule_file_start,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,fund_rule_file_start,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFundFileStart_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,fund_rule_file_start,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,fund_rule_file_start,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFundFileStart_all_clSite_no2017_covAll4_yr2015-2025
+single,fund_rule_file_start,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFundFileStart_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,fund_rule_file_start,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,fund_rule_file_start,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,fund_rule_file_start,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -87,8 +93,9 @@ single,fund_rule_file_start,unit = pixel x season,PASS,max seasons per unit 1
 single,fund_rule_file_start,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,dose_amount,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,dose_amount,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,dose_amount,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_doseAmount_noSingle_no2017_covAll4_yr2015-2025
 single,dose_amount,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,dose_amount,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_doseAmount_no2017_covAll4_yr2015-2025
+single,dose_amount,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_doseAmount_noSingle_no2017_covAll4_yr2015-2025
 single,dose_amount,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,dose_amount,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,dose_amount,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -101,8 +108,9 @@ single,dose_amount,unit = pixel x season,PASS,max seasons per unit 1
 single,dose_amount,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,dose_share,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,dose_share,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,dose_share,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_doseShare_noSingle_no2017_covAll4_yr2015-2025
 single,dose_share,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,dose_share,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_doseShare_no2017_covAll4_yr2015-2025
+single,dose_share,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_doseShare_noSingle_no2017_covAll4_yr2015-2025
 single,dose_share,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,dose_share,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,dose_share,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -115,8 +123,9 @@ single,dose_share,unit = pixel x season,PASS,max seasons per unit 1
 single,dose_share,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,dose_before_missing,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,dose_before_missing,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,dose_before_missing,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_doseObsOnly_noSingle_no2017_covAll4_yr2015-2025
 single,dose_before_missing,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,dose_before_missing,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_doseObsOnly_no2017_covAll4_yr2015-2025
+single,dose_before_missing,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_doseObsOnly_noSingle_no2017_covAll4_yr2015-2025
 single,dose_before_missing,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,dose_before_missing,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,dose_before_missing,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -131,8 +140,9 @@ single,dose_before_missing,unit = pixel x season,PASS,max seasons per unit 1
 single,dose_before_missing,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,rings_1_3,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,rings_1_3,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,rings_1_3,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-3_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,rings_1_3,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting [1, 2, 3]"
-single,rings_1_3,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-3_treatFund_all_clSite_no2017_covAll4_yr2015-2025
+single,rings_1_3,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-3_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,rings_1_3,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,rings_1_3,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,rings_1_3,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -148,8 +158,9 @@ single,rings_1_3,DESIGN IN EFFECT: CONTROL_ZONES used = your setting,PASS,"[1, 2
 single,rings_1_3,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,rings_2_4,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,rings_2_4,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,rings_2_4,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2+4_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,rings_2_4,control rings = the choice,PASS,"used [np.int64(2), np.int64(4)], setting [2, 4]"
-single,rings_2_4,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2+4_treatFund_all_clSite_no2017_covAll4_yr2015-2025
+single,rings_2_4,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2+4_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,rings_2_4,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,rings_2_4,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,rings_2_4,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -165,8 +176,9 @@ single,rings_2_4,DESIGN IN EFFECT: CONTROL_ZONES used = your setting,PASS,"[2, 4
 single,rings_2_4,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,pre4_post2,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,pre4_post2,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,pre4_post2,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_covAll4_yr2020-2025
 single,pre4_post2,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,pre4_post2,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_covAll4_yr2020-2025
+single,pre4_post2,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_covAll4_yr2020-2025
 single,pre4_post2,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,pre4_post2,years = PRE_YEARS / POST_YEARS from the first treated year,PASS,2020..2025 (want 2020..2025; base 2024)
 single,pre4_post2,timing: cohort of every treated row = the choice,PASS,0 of 557 differ
@@ -181,8 +193,9 @@ single,pre4_post2,unit = pixel x season,PASS,max seasons per unit 1
 single,pre4_post2,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,pre2018_post2024,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,pre2018_post2024,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,pre2018_post2024,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_covAll4_yr2018-2024
 single,pre2018_post2024,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,pre2018_post2024,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_covAll4_yr2018-2024
+single,pre2018_post2024,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_covAll4_yr2018-2024
 single,pre2018_post2024,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,pre2018_post2024,"years = the calendar years PRE_YEARS / POST_YEARS (a bound at / after the start -> every year before it, said)",PASS,2018..2024 (want 2018..2024; base 2024)
 single,pre2018_post2024,timing: cohort of every treated row = the choice,PASS,0 of 632 differ
@@ -196,8 +209,9 @@ single,pre2018_post2024,unit = pixel x season,PASS,max seasons per unit 1
 single,pre2018_post2024,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,pre_at_start_2022,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,pre_at_start_2022,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,pre_at_start_2022,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_noSingle_no2017_covAll4_yrstart-2025
 single,pre_at_start_2022,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,pre_at_start_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_no2017_covAll4_yrstart-2025
+single,pre_at_start_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_noSingle_no2017_covAll4_yrstart-2025
 single,pre_at_start_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,pre_at_start_2022,"years = the calendar years PRE_YEARS / POST_YEARS (a bound at / after the start -> every year before it, said)",PASS,2015..2025 (want 2015..2025; base 2022)
 single,pre_at_start_2022,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -210,10 +224,11 @@ single,pre_at_start_2022,unit = pixel x season,PASS,max seasons per unit 1
 single,pre_at_start_2022,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,screen_keep,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,screen_keep,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,screen_keep,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_screenKept_noSingle_covAll4_yr2015-2025
 single,screen_keep,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,screen_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_screenKept_covAll4_yr2015-2025
+single,screen_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_screenKept_noSingle_covAll4_yr2015-2025
 single,screen_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
-single,screen_keep,OUTCOME_SCREEN = 'keep': the fill year-season is kept and the results folder is tagged _screenKept,PASS,"years [np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]; tag ctrl1-5_treatFund_all_clSite_screenKept_covAll4_yr2015-2025"
+single,screen_keep,OUTCOME_SCREEN = 'keep': the fill year-season is kept and the results folder is tagged _screenKept,PASS,"years [np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]; tag ctrl1-5_treatFund_all_clSite_screenKept_noSingle_covAll4_yr2015-2025"
 single,screen_keep,timing: cohort of every treated row = the choice,PASS,"0 of 1,026 differ"
 single,screen_keep,post = Year >= the row's cohort (treated rows),PASS,
 single,screen_keep,the v20.56 milestone cohort (2026) is never used,PASS,
@@ -226,11 +241,12 @@ single,screen_keep,unit = pixel x season,PASS,max seasons per unit 1
 single,screen_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,design_panel,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,design_panel,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,design_panel,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 single,design_panel,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,design_panel,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_panelDesign_no2017_covAll4_yr2015-2025
+single,design_panel,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 single,design_panel,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,design_panel,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
-single,design_panel,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl1-5_treatFund_all_clSite_panelDesign_no2017_covAll4_yr2015-2025
+single,design_panel,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl1-5_treatFund_all_clSite_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 single,design_panel,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
 single,design_panel,post = Year >= the row's cohort (treated rows),PASS,
 single,design_panel,the v20.56 milestone cohort (2026) is never used,PASS,
@@ -243,11 +259,12 @@ single,design_panel,unit = pixel x season,PASS,max seasons per unit 1
 single,design_panel,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,design_panel_fixed_2023,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,design_panel_fixed_2023,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,design_panel_fixed_2023,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl3-5_treat2023_all_clSite_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 single,design_panel_fixed_2023,control rings = the choice,PASS,"used [np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,design_panel_fixed_2023,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl3-5_treat2023_all_clSite_panelDesign_no2017_covAll4_yr2015-2025
+single,design_panel_fixed_2023,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl3-5_treat2023_all_clSite_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 single,design_panel_fixed_2023,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,design_panel_fixed_2023,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
-single,design_panel_fixed_2023,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl3-5_treat2023_all_clSite_panelDesign_no2017_covAll4_yr2015-2025
+single,design_panel_fixed_2023,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl3-5_treat2023_all_clSite_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 single,design_panel_fixed_2023,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
 single,design_panel_fixed_2023,post = Year >= the row's cohort (treated rows),PASS,
 single,design_panel_fixed_2023,the v20.56 milestone cohort (2026) is never used,PASS,
@@ -258,12 +275,13 @@ single,design_panel_fixed_2023,unit = pixel x season,PASS,max seasons per unit 1
 single,design_panel_fixed_2023,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,ctrl_pre_rings2,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,ctrl_pre_rings2,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,ctrl_pre_rings2,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_ctrlPre2r_noSingle_no2017_covAll4_yr2015-2025
 single,ctrl_pre_rings2,control rings = the choice,PASS,"used [np.int64(2), np.int64(4)], setting data"
-single,ctrl_pre_rings2,CONTROL_SELECTION: the results folder says so,PASS,ctrl1-5_treat2022_all_clSite_ctrlPre2r_no2017_covAll4_yr2015-2025
+single,ctrl_pre_rings2,CONTROL_SELECTION: the results folder says so,PASS,ctrl1-5_treat2022_all_clSite_ctrlPre2r_noSingle_no2017_covAll4_yr2015-2025
 single,ctrl_pre_rings2,pre_rings: exactly 2 control ring(s) in the sample,PASS,"rings [np.int64(2), np.int64(4)]"
 single,ctrl_pre_rings2,the same control units (rings / blocks) in every year and season -- the same pixels up to a missing outcome (this panel is unbalanced by design),PASS,1 distinct control sets
 single,ctrl_pre_rings2,the pre period's choice recomputed independently = the engine's rings,PASS,"engine [np.int64(2), np.int64(4)], recomputed [2, 4] (trend: {1: 0.001893, 2: 0.001568, 3: 0.001848, 4: 0.001644, 5: 0.001658})"
-single,ctrl_pre_rings2,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_ctrlPre2r_no2017_covAll4_yr2015-2025
+single,ctrl_pre_rings2,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_ctrlPre2r_noSingle_no2017_covAll4_yr2015-2025
 single,ctrl_pre_rings2,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,ctrl_pre_rings2,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,ctrl_pre_rings2,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -276,12 +294,13 @@ single,ctrl_pre_rings2,unit = pixel x season,PASS,max seasons per unit 1
 single,ctrl_pre_rings2,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,ctrl_pre_ring1_level,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,ctrl_pre_ring1_level,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,ctrl_pre_ring1_level,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_ctrlPre1rL_noSingle_no2017_covAll4_yr2015-2025
 single,ctrl_pre_ring1_level,control rings = the choice,PASS,"used [np.int64(5)], setting data"
-single,ctrl_pre_ring1_level,CONTROL_SELECTION: the results folder says so,PASS,ctrl1-5_treat2022_all_clSite_ctrlPre1rL_no2017_covAll4_yr2015-2025
+single,ctrl_pre_ring1_level,CONTROL_SELECTION: the results folder says so,PASS,ctrl1-5_treat2022_all_clSite_ctrlPre1rL_noSingle_no2017_covAll4_yr2015-2025
 single,ctrl_pre_ring1_level,pre_rings: exactly 1 control ring(s) in the sample,PASS,rings [np.int64(5)]
 single,ctrl_pre_ring1_level,the same control units (rings / blocks) in every year and season -- the same pixels up to a missing outcome (this panel is unbalanced by design),PASS,1 distinct control sets
 single,ctrl_pre_ring1_level,the pre period's choice recomputed independently = the engine's rings,PASS,"engine [np.int64(5)], recomputed [5] (level: {1: 0.007277, 2: 0.003025, 3: 0.005625, 4: 0.004256, 5: 0.000223})"
-single,ctrl_pre_ring1_level,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_ctrlPre1rL_no2017_covAll4_yr2015-2025
+single,ctrl_pre_ring1_level,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_ctrlPre1rL_noSingle_no2017_covAll4_yr2015-2025
 single,ctrl_pre_ring1_level,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,ctrl_pre_ring1_level,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,ctrl_pre_ring1_level,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -294,11 +313,12 @@ single,ctrl_pre_ring1_level,unit = pixel x season,PASS,max seasons per unit 1
 single,ctrl_pre_ring1_level,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,ctrl_pre_blocks,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,ctrl_pre_blocks,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,ctrl_pre_blocks,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_ctrlPreBlk1x_noSingle_no2017_covAll4_yr2015-2025
 single,ctrl_pre_blocks,control rings = the choice,PASS,"used [np.int64(1), np.int64(4), np.int64(5)], setting data"
-single,ctrl_pre_blocks,CONTROL_SELECTION: the results folder says so,PASS,ctrl1-5_treat2022_all_clSite_ctrlPreBlk1x_no2017_covAll4_yr2015-2025
+single,ctrl_pre_blocks,CONTROL_SELECTION: the results folder says so,PASS,ctrl1-5_treat2022_all_clSite_ctrlPreBlk1x_noSingle_no2017_covAll4_yr2015-2025
 single,ctrl_pre_blocks,the same control units (rings / blocks) in every year and season -- the same pixels up to a missing outcome (this panel is unbalanced by design),PASS,1 distinct control sets
 single,ctrl_pre_blocks,pre_blocks: control pixels >= CONTROL_SELECT_RATIO x the treated pixels (or every candidate),PASS,43 control / 24 treated pixels
-single,ctrl_pre_blocks,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_ctrlPreBlk1x_no2017_covAll4_yr2015-2025
+single,ctrl_pre_blocks,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_ctrlPreBlk1x_noSingle_no2017_covAll4_yr2015-2025
 single,ctrl_pre_blocks,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,ctrl_pre_blocks,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,ctrl_pre_blocks,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -311,9 +331,10 @@ single,ctrl_pre_blocks,unit = pixel x season,PASS,max seasons per unit 1
 single,ctrl_pre_blocks,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,cluster_block,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,cluster_block,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,cluster_block,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clBlock_noSingle_no2017_covAll4_yr2015-2025
 single,cluster_block,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,cluster_block,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clBlock_no2017_covAll4_yr2015-2025
-single,cluster_block,"CLUSTER = 'block': the ~1 km blocks are the clusters (this synthetic grid spans 3+ blocks), the folder tagged _clBlock",PASS,3 clusters; tag ctrl1-5_treatFund_all_clBlock_no2017_covAll4_yr2015-2025
+single,cluster_block,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clBlock_noSingle_no2017_covAll4_yr2015-2025
+single,cluster_block,"CLUSTER = 'block': the ~1 km blocks are the clusters (this synthetic grid spans 3+ blocks), the folder tagged _clBlock",PASS,3 clusters; tag ctrl1-5_treatFund_all_clBlock_noSingle_no2017_covAll4_yr2015-2025
 single,cluster_block,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,cluster_block,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,cluster_block,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -328,8 +349,9 @@ single,cluster_block,unit = pixel x season,PASS,max seasons per unit 1
 single,cluster_block,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,same_pixels_all,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,same_pixels_all,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,same_pixels_all,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_pixAll_noSingle_no2017_covAll4_yr2015-2025
 single,same_pixels_all,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,same_pixels_all,"SAME_PIXELS = 'all': every pixel of the sample is observed in every year-season (a balanced pixel set), tagged _pixAll",PASS,0 pixel(s) short of 40 cells; tag ctrl1-5_treat2022_all_clSite_pixAll_no2017_covAll4_yr2015-2025
+single,same_pixels_all,"SAME_PIXELS = 'all': every pixel of the sample is observed in every year-season (a balanced pixel set), tagged _pixAll",PASS,0 pixel(s) short of 40 cells; tag ctrl1-5_treat2022_all_clSite_pixAll_noSingle_no2017_covAll4_yr2015-2025
 single,same_pixels_all,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,same_pixels_all,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,same_pixels_all,timing: cohort of every treated row = the choice,PASS,0 of 240 differ
@@ -342,8 +364,9 @@ single,same_pixels_all,unit = pixel x season,PASS,max seasons per unit 1
 single,same_pixels_all,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,same_pixels_off,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,same_pixels_off,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,same_pixels_off,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_pixAny_noSingle_no2017_covAll4_yr2015-2025
 single,same_pixels_off,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,same_pixels_off,"SAME_PIXELS = 'off': the v20.58 sample (a pixel may sit on one side), tagged _pixAny",PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_pixAny_no2017_covAll4_yr2015-2025
+single,same_pixels_off,"SAME_PIXELS = 'off': the v20.58 sample (a pixel may sit on one side), tagged _pixAny",PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_pixAny_noSingle_no2017_covAll4_yr2015-2025
 single,same_pixels_off,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,same_pixels_off,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,same_pixels_off,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -354,10 +377,125 @@ single,same_pixels_off,the v20.56 district percent (55) is never the dose,PASS,
 single,same_pixels_off,history-filled rows left out,PASS,0
 single,same_pixels_off,unit = pixel x season,PASS,max seasons per unit 1
 single,same_pixels_off,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,donut_ring1,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
+single,donut_ring1,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,donut_ring1,"DONUT_RINGS [1]: no control row of these rings, the folder tagged _donut1",PASS,"rings [np.int64(2), np.int64(3), np.int64(4), np.int64(5)]; tag ctrl1-5_treat2022_all_clSite_donut1_noSingle_no2017_covAll4_yr2015-2025"
+single,donut_ring1,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_donut1_noSingle_no2017_covAll4_yr2015-2025
+single,donut_ring1,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,donut_ring1,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_donut1_noSingle_no2017_covAll4_yr2015-2025
+single,donut_ring1,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,donut_ring1,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,donut_ring1,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,donut_ring1,post = Year >= the row's cohort (treated rows),PASS,
+single,donut_ring1,the v20.56 milestone cohort (2026) is never used,PASS,
+single,donut_ring1,dose 0 on the control rings and untreated periods,PASS,
+single,donut_ring1,the v20.56 district percent (55) is never the dose,PASS,
+single,donut_ring1,history-filled rows left out,PASS,0
+single,donut_ring1,unit = pixel x season,PASS,max seasons per unit 1
+single,donut_ring1,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,donut_rings12_rabi,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
+single,donut_rings12_rabi,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,donut_rings12_rabi,"DONUT_RINGS [1, 2]: no control row of these rings, the folder tagged _donut1-2",PASS,"rings [np.int64(3), np.int64(4), np.int64(5)]; tag ctrl1-5_treat2022_rabi_clSite_donut1-2_noSingle_no2017_covAll4_yr2015-2025"
+single,donut_rings12_rabi,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_rabi_clSite_donut1-2_noSingle_no2017_covAll4_yr2015-2025
+single,donut_rings12_rabi,control rings = the choice,PASS,"used [np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,donut_rings12_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_rabi_clSite_donut1-2_noSingle_no2017_covAll4_yr2015-2025
+single,donut_rings12_rabi,seasons = the choice,PASS,"used [np.int64(2)], setting Rabi"
+single,donut_rings12_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,donut_rings12_rabi,timing: cohort of every treated row = the choice,PASS,0 of 231 differ
+single,donut_rings12_rabi,post = Year >= the row's cohort (treated rows),PASS,
+single,donut_rings12_rabi,the v20.56 milestone cohort (2026) is never used,PASS,
+single,donut_rings12_rabi,dose 0 on the control rings and untreated periods,PASS,
+single,donut_rings12_rabi,the v20.56 district percent (55) is never the dose,PASS,
+single,donut_rings12_rabi,history-filled rows left out,PASS,0
+single,donut_rings12_rabi,unit = pixel x season,PASS,max seasons per unit 1
+single,donut_rings12_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,ctrl_pre_rmse,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
+single,ctrl_pre_rmse,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,ctrl_pre_rmse,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_ctrlPre2rR_noSingle_no2017_covAll4_yr2015-2025
+single,ctrl_pre_rmse,control rings = the choice,PASS,"used [np.int64(2), np.int64(5)], setting data"
+single,ctrl_pre_rmse,CONTROL_SELECTION: the results folder says so,PASS,ctrl1-5_treat2022_all_clSite_ctrlPre2rR_noSingle_no2017_covAll4_yr2015-2025
+single,ctrl_pre_rmse,pre_rings: exactly 2 control ring(s) in the sample,PASS,"rings [np.int64(2), np.int64(5)]"
+single,ctrl_pre_rmse,the same control units (rings / blocks) in every year and season -- the same pixels up to a missing outcome (this panel is unbalanced by design),PASS,1 distinct control sets
+single,ctrl_pre_rmse,the pre period's choice recomputed independently = the engine's rings,PASS,"engine [np.int64(2), np.int64(5)], recomputed [2, 5] (rmse: {1: 0.007687, 2: 0.0037, 3: 0.006063, 4: 0.004698, 5: 0.001966})"
+single,ctrl_pre_rmse,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_ctrlPre2rR_noSingle_no2017_covAll4_yr2015-2025
+single,ctrl_pre_rmse,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,ctrl_pre_rmse,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,ctrl_pre_rmse,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,ctrl_pre_rmse,post = Year >= the row's cohort (treated rows),PASS,
+single,ctrl_pre_rmse,the v20.56 milestone cohort (2026) is never used,PASS,
+single,ctrl_pre_rmse,dose 0 on the control rings and untreated periods,PASS,
+single,ctrl_pre_rmse,the v20.56 district percent (55) is never the dose,PASS,
+single,ctrl_pre_rmse,history-filled rows left out,PASS,0
+single,ctrl_pre_rmse,unit = pixel x season,PASS,max seasons per unit 1
+single,ctrl_pre_rmse,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,landuse_keep_1,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
+single,landuse_keep_1,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,landuse_keep_1,"LANDUSE_KEEP [1]: every pixel's baseline class is 1 in this panel -> every pixel of the base sample stays, the folder tagged _lu1",PASS,144 pixels; tag ctrl1-5_treat2022_all_clSite_lu1_noSingle_no2017_covAll4_yr2015-2025
+single,landuse_keep_1,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_lu1_noSingle_no2017_covAll4_yr2015-2025
+single,landuse_keep_1,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,landuse_keep_1,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_lu1_noSingle_no2017_covAll4_yr2015-2025
+single,landuse_keep_1,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,landuse_keep_1,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,landuse_keep_1,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,landuse_keep_1,post = Year >= the row's cohort (treated rows),PASS,
+single,landuse_keep_1,the v20.56 milestone cohort (2026) is never used,PASS,
+single,landuse_keep_1,dose 0 on the control rings and untreated periods,PASS,
+single,landuse_keep_1,the v20.56 district percent (55) is never the dose,PASS,
+single,landuse_keep_1,history-filled rows left out,PASS,0
+single,landuse_keep_1,unit = pixel x season,PASS,max seasons per unit 1
+single,landuse_keep_1,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,baseline_ndvi_030,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
+single,baseline_ndvi_030,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,baseline_ndvi_030,"BASELINE_NDVI_MIN 0.3: every pixel of the sample has a pre-period mean NDVI above it (recomputed from the panel), the folder tagged _ndviPre0.3",PASS,min pre mean 0.3004; tag ctrl1-5_treat2022_all_clSite_ndviPre0.3_noSingle_no2017_covAll4_yr2015-2025
+single,baseline_ndvi_030,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_ndviPre0.3_noSingle_no2017_covAll4_yr2015-2025
+single,baseline_ndvi_030,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,baseline_ndvi_030,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_ndviPre0.3_noSingle_no2017_covAll4_yr2015-2025
+single,baseline_ndvi_030,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,baseline_ndvi_030,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,baseline_ndvi_030,timing: cohort of every treated row = the choice,PASS,0 of 738 differ
+single,baseline_ndvi_030,post = Year >= the row's cohort (treated rows),PASS,
+single,baseline_ndvi_030,the v20.56 milestone cohort (2026) is never used,PASS,
+single,baseline_ndvi_030,dose 0 on the control rings and untreated periods,PASS,
+single,baseline_ndvi_030,the v20.56 district percent (55) is never the dose,PASS,
+single,baseline_ndvi_030,history-filled rows left out,PASS,0
+single,baseline_ndvi_030,unit = pixel x season,PASS,max seasons per unit 1
+single,baseline_ndvi_030,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,coverage_pct_099,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
+single,coverage_pct_099,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,coverage_pct_099,MIN_PIXEL_COVERAGE_PCT 0.99: the folder tagged _cov99,PASS,ctrl1-5_treat2022_all_clSite_cov99_noSingle_no2017_covAll4_yr2015-2025
+single,coverage_pct_099,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_cov99_noSingle_no2017_covAll4_yr2015-2025
+single,coverage_pct_099,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,coverage_pct_099,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_cov99_noSingle_no2017_covAll4_yr2015-2025
+single,coverage_pct_099,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,coverage_pct_099,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,coverage_pct_099,timing: cohort of every treated row = the choice,PASS,0 of 730 differ
+single,coverage_pct_099,post = Year >= the row's cohort (treated rows),PASS,
+single,coverage_pct_099,the v20.56 milestone cohort (2026) is never used,PASS,
+single,coverage_pct_099,dose 0 on the control rings and untreated periods,PASS,
+single,coverage_pct_099,the v20.56 district percent (55) is never the dose,PASS,
+single,coverage_pct_099,history-filled rows left out,PASS,0
+single,coverage_pct_099,unit = pixel x season,PASS,max seasons per unit 1
+single,coverage_pct_099,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+single,singletons_kept,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
+single,singletons_kept,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,singletons_kept,DROP_SINGLETONS False: the folder is NOT tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_no2017_covAll4_yr2015-2025
+single,singletons_kept,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+single,singletons_kept,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_no2017_covAll4_yr2015-2025
+single,singletons_kept,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+single,singletons_kept,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+single,singletons_kept,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
+single,singletons_kept,post = Year >= the row's cohort (treated rows),PASS,
+single,singletons_kept,the v20.56 milestone cohort (2026) is never used,PASS,
+single,singletons_kept,dose 0 on the control rings and untreated periods,PASS,
+single,singletons_kept,the v20.56 district percent (55) is never the dose,PASS,
+single,singletons_kept,history-filled rows left out,PASS,0
+single,singletons_kept,unit = pixel x season,PASS,max seasons per unit 1
+single,singletons_kept,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,pre_all_post_all,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,pre_all_post_all,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,pre_all_post_all,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_covAll4
 single,pre_all_post_all,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,pre_all_post_all,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_covAll4
+single,pre_all_post_all,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_covAll4
 single,pre_all_post_all,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,pre_all_post_all,years: every year (the fill year's annual rows out by the screen),PASS,"[np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,pre_all_post_all,timing: cohort of every treated row = the choice,PASS,"0 of 1,002 differ"
@@ -372,8 +510,9 @@ single,pre_all_post_all,unit = pixel x season,PASS,max seasons per unit 1
 single,pre_all_post_all,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,manual_mode,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,manual_mode,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,manual_mode,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_covAll4
 single,manual_mode,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,manual_mode,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_covAll4
+single,manual_mode,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_covAll4
 single,manual_mode,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,manual_mode,years: every year (the fill year's annual rows out by the screen),PASS,"[np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,manual_mode,timing: cohort of every treated row = the choice,PASS,"0 of 1,002 differ"
@@ -388,8 +527,9 @@ single,manual_mode,unit = pixel x season,PASS,max seasons per unit 1
 single,manual_mode,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,manual_rings_1_3_pre4,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,manual_rings_1_3_pre4,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,manual_rings_1_3_pre4,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-3_treatFund_all_clSite_noSingle_covAll4_yr2020-2025
 single,manual_rings_1_3_pre4,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting [1, 2, 3]"
-single,manual_rings_1_3_pre4,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-3_treatFund_all_clSite_covAll4_yr2020-2025
+single,manual_rings_1_3_pre4,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-3_treatFund_all_clSite_noSingle_covAll4_yr2020-2025
 single,manual_rings_1_3_pre4,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,manual_rings_1_3_pre4,years = PRE_YEARS / POST_YEARS from the first treated year,PASS,2020..2025 (want 2020..2025; base 2024)
 single,manual_rings_1_3_pre4,timing: cohort of every treated row = the choice,PASS,0 of 557 differ
@@ -405,8 +545,9 @@ single,manual_rings_1_3_pre4,DESIGN IN EFFECT: CONTROL_ZONES used = your setting
 single,manual_rings_1_3_pre4,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,seasons_seasonal,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,seasons_seasonal,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_seasonal,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_seasonal,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,seasons_seasonal,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_clSite_no2017_covAll4_yr2015-2025
+single,seasons_seasonal,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_seasonal,seasons = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting seasonal"
 single,seasons_seasonal,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,seasons_seasonal,timing: cohort of every treated row = the choice,PASS,0 of 695 differ
@@ -421,8 +562,9 @@ single,seasons_seasonal,unit = pixel x season,PASS,max seasons per unit 1
 single,seasons_seasonal,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,seasons_yearly,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,seasons_yearly,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_yearly,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_yearly_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_yearly,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,seasons_yearly,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_yearly_clSite_no2017_covAll4_yr2015-2025
+single,seasons_yearly,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_yearly_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_yearly,seasons = the choice,PASS,"used [np.int64(0)], setting yearly"
 single,seasons_yearly,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,seasons_yearly,timing: cohort of every treated row = the choice,PASS,0 of 236 differ
@@ -435,8 +577,9 @@ single,seasons_yearly,unit = pixel x season,PASS,max seasons per unit 1
 single,seasons_yearly,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,seasons_rabi,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,seasons_rabi,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_rabi,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_rabi_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_rabi,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,seasons_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_rabi_clSite_no2017_covAll4_yr2015-2025
+single,seasons_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_rabi_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_rabi,seasons = the choice,PASS,"used [np.int64(2)], setting Rabi"
 single,seasons_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,seasons_rabi,timing: cohort of every treated row = the choice,PASS,0 of 231 differ
@@ -450,8 +593,9 @@ single,seasons_rabi,unit = pixel x season,PASS,max seasons per unit 1
 single,seasons_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,seasons_kharif_rabi,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,seasons_kharif_rabi,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_kharif_rabi,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_kharif+rabi_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_kharif_rabi,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,seasons_kharif_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_kharif+rabi_clSite_no2017_covAll4_yr2015-2025
+single,seasons_kharif_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_kharif+rabi_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_kharif_rabi,seasons = the choice,PASS,"used [np.int64(1), np.int64(2)], setting ['Kharif', 'Rabi']"
 single,seasons_kharif_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,seasons_kharif_rabi,timing: cohort of every treated row = the choice,PASS,0 of 462 differ
@@ -466,8 +610,9 @@ single,seasons_kharif_rabi,unit = pixel x season,PASS,max seasons per unit 1
 single,seasons_kharif_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,seasons_auto,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,seasons_auto,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,seasons_auto,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_auto,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,seasons_auto,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_no2017_covAll4_yr2015-2025
+single,seasons_auto,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,seasons_auto,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting auto"
 single,seasons_auto,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,seasons_auto,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -482,8 +627,9 @@ single,seasons_auto,unit = pixel x season,PASS,max seasons per unit 1
 single,seasons_auto,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,exclude_transition,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,exclude_transition,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,exclude_transition,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_noTransition_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,exclude_transition,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,exclude_transition,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_noTransition_all_clSite_no2017_covAll4_yr2015-2025
+single,exclude_transition,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_noTransition_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,exclude_transition,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,exclude_transition,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,exclude_transition,timing: cohort of every treated row = the choice,PASS,0 of 808 differ
@@ -496,8 +642,9 @@ single,exclude_transition,unit = pixel x season,PASS,max seasons per unit 1
 single,exclude_transition,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,unit_fe_pixel,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,unit_fe_pixel,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,unit_fe_pixel,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_fePixel_noSingle_no2017_covAll4_yr2015-2025
 single,unit_fe_pixel,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,unit_fe_pixel,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_fePixel_no2017_covAll4_yr2015-2025
+single,unit_fe_pixel,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_fePixel_noSingle_no2017_covAll4_yr2015-2025
 single,unit_fe_pixel,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,unit_fe_pixel,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,unit_fe_pixel,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -512,8 +659,9 @@ single,unit_fe_pixel,unit = pixel,PASS,max seasons per unit 4
 single,unit_fe_pixel,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,overlap_keep,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,overlap_keep,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,overlap_keep,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_keepOverlap_noSingle_no2017_covAll4_yr2015-2025
 single,overlap_keep,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,overlap_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_keepOverlap_no2017_covAll4_yr2015-2025
+single,overlap_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_keepOverlap_noSingle_no2017_covAll4_yr2015-2025
 single,overlap_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,overlap_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,overlap_keep,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -527,8 +675,9 @@ single,overlap_keep,history-filled rows left out,PASS,0
 single,overlap_keep,unit = pixel x season,PASS,max seasons per unit 1
 single,overlap_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,fragments_keep,fragments kept (FRAGMENT_RULE keep),PASS,"planted pixels in the sample: [500, 501, 502, 503, 504, 505, 600, 601, 602, 603, 700, 701]; sites [np.int64(1), np.int64(2), np.int64(7), np.int64(9)]"
+single,fragments_keep,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_keepFragments_noSingle_no2017_covAll4_yr2015-2025
 single,fragments_keep,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,fragments_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_keepFragments_no2017_covAll4_yr2015-2025
+single,fragments_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_keepFragments_noSingle_no2017_covAll4_yr2015-2025
 single,fragments_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,fragments_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,fragments_keep,timing: cohort of every treated row = the choice,PASS,"0 of 1,167 differ"
@@ -544,8 +693,9 @@ single,fragments_keep,unit = pixel x season,PASS,max seasons per unit 1
 single,fragments_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,keep
 single,pooled_fe_period,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,pooled_fe_period,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,pooled_fe_period,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,pooled_fe_period,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,pooled_fe_period,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_no2017_covAll4_yr2015-2025
+single,pooled_fe_period,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single,pooled_fe_period,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,pooled_fe_period,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,pooled_fe_period,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -560,8 +710,9 @@ single,pooled_fe_period,unit = pixel x season,PASS,max seasons per unit 1
 single,pooled_fe_period,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,gapfilled_kept,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,gapfilled_kept,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,gapfilled_kept,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_withGapFilled_noSingle_no2017_covAll4_yr2015-2025
 single,gapfilled_kept,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,gapfilled_kept,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_withGapFilled_no2017_covAll4_yr2015-2025
+single,gapfilled_kept,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_withGapFilled_noSingle_no2017_covAll4_yr2015-2025
 single,gapfilled_kept,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,gapfilled_kept,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,gapfilled_kept,timing: cohort of every treated row = the choice,PASS,0 of 938 differ
@@ -576,8 +727,9 @@ single,gapfilled_kept,unit = pixel x season,PASS,max seasons per unit 1
 single,gapfilled_kept,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single,covariates_none,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single,covariates_none,only the major sub-watershed(s),PASS,[np.int64(1)]
+single,covariates_none,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_no2017_covNone_yr2015-2025
 single,covariates_none,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single,covariates_none,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_no2017_covNone_yr2015-2025
+single,covariates_none,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_no2017_covNone_yr2015-2025
 single,covariates_none,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single,covariates_none,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single,covariates_none,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -820,6 +972,76 @@ single,same_pixels_off,R == Python: dose,PASS,max |diff| 4.51e-17
 single,same_pixels_off,R == Python: the unit partition,PASS,576 vs 576 groups
 single,same_pixels_off,R == Python: the period partition,PASS,40 vs 40 groups
 single,same_pixels_off,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,donut_ring1,R == Python: the same rows,PASS,"Python 4,664 rows, R 4,664"
+single,donut_ring1,R == Python: treat,PASS,0 differ
+single,donut_ring1,R == Python: post,PASS,0 differ
+single,donut_ring1,R == Python: did,PASS,0 differ
+single,donut_ring1,R == Python: cohort,PASS,0 differ
+single,donut_ring1,R == Python: event time (treated),PASS,0 differ
+single,donut_ring1,R == Python: dose,PASS,max |diff| 4.51e-17
+single,donut_ring1,R == Python: the unit partition,PASS,480 vs 480 groups
+single,donut_ring1,R == Python: the period partition,PASS,40 vs 40 groups
+single,donut_ring1,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,donut_rings12_rabi,R == Python: the same rows,PASS,"Python 923 rows, R 923"
+single,donut_rings12_rabi,R == Python: treat,PASS,0 differ
+single,donut_rings12_rabi,R == Python: post,PASS,0 differ
+single,donut_rings12_rabi,R == Python: did,PASS,0 differ
+single,donut_rings12_rabi,R == Python: cohort,PASS,0 differ
+single,donut_rings12_rabi,R == Python: event time (treated),PASS,0 differ
+single,donut_rings12_rabi,R == Python: dose,PASS,max |diff| 4.51e-17
+single,donut_rings12_rabi,R == Python: the unit partition,PASS,96 vs 96 groups
+single,donut_rings12_rabi,R == Python: the period partition,PASS,10 vs 10 groups
+single,donut_rings12_rabi,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,ctrl_pre_rmse,R == Python: the same rows,PASS,"Python 2,791 rows, R 2,791"
+single,ctrl_pre_rmse,R == Python: treat,PASS,0 differ
+single,ctrl_pre_rmse,R == Python: post,PASS,0 differ
+single,ctrl_pre_rmse,R == Python: did,PASS,0 differ
+single,ctrl_pre_rmse,R == Python: cohort,PASS,0 differ
+single,ctrl_pre_rmse,R == Python: event time (treated),PASS,0 differ
+single,ctrl_pre_rmse,R == Python: dose,PASS,max |diff| 4.51e-17
+single,ctrl_pre_rmse,R == Python: the unit partition,PASS,288 vs 288 groups
+single,ctrl_pre_rmse,R == Python: the period partition,PASS,40 vs 40 groups
+single,ctrl_pre_rmse,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,landuse_keep_1,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,landuse_keep_1,R == Python: treat,PASS,0 differ
+single,landuse_keep_1,R == Python: post,PASS,0 differ
+single,landuse_keep_1,R == Python: did,PASS,0 differ
+single,landuse_keep_1,R == Python: cohort,PASS,0 differ
+single,landuse_keep_1,R == Python: event time (treated),PASS,0 differ
+single,landuse_keep_1,R == Python: dose,PASS,max |diff| 4.51e-17
+single,landuse_keep_1,R == Python: the unit partition,PASS,576 vs 576 groups
+single,landuse_keep_1,R == Python: the period partition,PASS,40 vs 40 groups
+single,landuse_keep_1,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,baseline_ndvi_030,R == Python: the same rows,PASS,"Python 4,749 rows, R 4,749"
+single,baseline_ndvi_030,R == Python: treat,PASS,0 differ
+single,baseline_ndvi_030,R == Python: post,PASS,0 differ
+single,baseline_ndvi_030,R == Python: did,PASS,0 differ
+single,baseline_ndvi_030,R == Python: cohort,PASS,0 differ
+single,baseline_ndvi_030,R == Python: event time (treated),PASS,0 differ
+single,baseline_ndvi_030,R == Python: dose,PASS,max |diff| 4.51e-17
+single,baseline_ndvi_030,R == Python: the unit partition,PASS,488 vs 488 groups
+single,baseline_ndvi_030,R == Python: the period partition,PASS,40 vs 40 groups
+single,baseline_ndvi_030,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,coverage_pct_099,R == Python: the same rows,PASS,"Python 4,387 rows, R 4,387"
+single,coverage_pct_099,R == Python: treat,PASS,0 differ
+single,coverage_pct_099,R == Python: post,PASS,0 differ
+single,coverage_pct_099,R == Python: did,PASS,0 differ
+single,coverage_pct_099,R == Python: cohort,PASS,0 differ
+single,coverage_pct_099,R == Python: event time (treated),PASS,0 differ
+single,coverage_pct_099,R == Python: dose,PASS,max |diff| 3.62e-17
+single,coverage_pct_099,R == Python: the unit partition,PASS,576 vs 576 groups
+single,coverage_pct_099,R == Python: the period partition,PASS,31 vs 31 groups
+single,coverage_pct_099,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+single,singletons_kept,R == Python: the same rows,PASS,"Python 5,600 rows, R 5,600"
+single,singletons_kept,R == Python: treat,PASS,0 differ
+single,singletons_kept,R == Python: post,PASS,0 differ
+single,singletons_kept,R == Python: did,PASS,0 differ
+single,singletons_kept,R == Python: cohort,PASS,0 differ
+single,singletons_kept,R == Python: event time (treated),PASS,0 differ
+single,singletons_kept,R == Python: dose,PASS,max |diff| 4.51e-17
+single,singletons_kept,R == Python: the unit partition,PASS,576 vs 576 groups
+single,singletons_kept,R == Python: the period partition,PASS,40 vs 40 groups
+single,singletons_kept,R == Python: the cluster_id partition,PASS,10 vs 10 groups
 single,pre_all_post_all,R == Python: the same rows,PASS,"Python 6,020 rows, R 6,020"
 single,pre_all_post_all,R == Python: treat,PASS,0 differ
 single,pre_all_post_all,R == Python: post,PASS,0 differ
@@ -970,11 +1192,12 @@ single,covariates_none,R == Python: dose,PASS,max |diff| 4.51e-17
 single,covariates_none,R == Python: the unit partition,PASS,576 vs 576 groups
 single,covariates_none,R == Python: the period partition,PASS,40 vs 40 groups
 single,covariates_none,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-single,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_gbc8ifyi/single/data/output/did_panel_full.parquet
+single,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_76kj4ip6/single/data/output/did_panel_full.parquet
 single_v2056,base,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single_v2056,base,only the major sub-watershed(s),PASS,[np.int64(1)]
+single_v2056,base,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single_v2056,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single_v2056,base,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_no2017_covAll4_yr2015-2025
+single_v2056,base,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single_v2056,base,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single_v2056,base,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single_v2056,base,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -988,8 +1211,9 @@ single_v2056,base,history-filled rows left out,PASS,0
 single_v2056,base,unit = pixel x season,PASS,max seasons per unit 1
 single_v2056,base,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 single_v2056,fragments_keep,fragments kept (FRAGMENT_RULE keep),PASS,"planted pixels in the sample: [500, 501, 502, 503, 504, 505, 600, 601, 602, 603, 700, 701]; sites [np.int64(1), np.int64(2), np.int64(7), np.int64(9)]"
+single_v2056,fragments_keep,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_keepFragments_noSingle_no2017_covAll4_yr2015-2025
 single_v2056,fragments_keep,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single_v2056,fragments_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_keepFragments_no2017_covAll4_yr2015-2025
+single_v2056,fragments_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_keepFragments_noSingle_no2017_covAll4_yr2015-2025
 single_v2056,fragments_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single_v2056,fragments_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single_v2056,fragments_keep,timing: cohort of every treated row = the choice,PASS,"0 of 1,167 differ"
@@ -1005,8 +1229,9 @@ single_v2056,fragments_keep,unit = pixel x season,PASS,max seasons per unit 1
 single_v2056,fragments_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,keep
 single_v2056,timing_fixed_2022,fragments left out (FRAGMENT_RULE drop),PASS,planted pixels left in: none; sites in the sample [np.int64(1)]
 single_v2056,timing_fixed_2022,only the major sub-watershed(s),PASS,[np.int64(1)]
+single_v2056,timing_fixed_2022,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2022_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single_v2056,timing_fixed_2022,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-single_v2056,timing_fixed_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_no2017_covAll4_yr2015-2025
+single_v2056,timing_fixed_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2022_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 single_v2056,timing_fixed_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 single_v2056,timing_fixed_2022,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 single_v2056,timing_fixed_2022,timing: cohort of every treated row = the choice,PASS,0 of 931 differ
@@ -1047,13 +1272,14 @@ single_v2056,timing_fixed_2022,R == Python: dose,PASS,max |diff| 4.51e-17
 single_v2056,timing_fixed_2022,R == Python: the unit partition,PASS,576 vs 576 groups
 single_v2056,timing_fixed_2022,R == Python: the period partition,PASS,40 vs 40 groups
 single_v2056,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-single_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_gbc8ifyi/single_v2056/data/output/did_panel_full.parquet
+single_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_76kj4ip6/single_v2056/data/output/did_panel_full.parquet
 single_v2056,base,a panel WITHOUT the fragment column (v20.56) gives the same sample,PASS,5600 vs 5600 rows
 pooled,base,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,base,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,base,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,base,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,base,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,base,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,base,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,base,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,base,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1072,8 +1298,9 @@ pooled,base,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,timing_registry,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,timing_registry,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,timing_registry,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,timing_registry,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_siteyrs2022_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,timing_registry,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,timing_registry,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_siteyrs2022_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,timing_registry,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_siteyrs2022_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,timing_registry,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,timing_registry,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,timing_registry,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1089,8 +1316,9 @@ pooled,timing_registry,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,
 pooled,timing_fixed_2022,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,timing_fixed_2022,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,timing_fixed_2022,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,timing_fixed_2022,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,timing_fixed_2022,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,timing_fixed_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,timing_fixed_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,timing_fixed_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,timing_fixed_2022,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,timing_fixed_2022,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1106,8 +1334,9 @@ pooled,timing_fixed_2022,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PAS
 pooled,timing_fixed_2023,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,timing_fixed_2023,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,timing_fixed_2023,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,timing_fixed_2023,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2023_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,timing_fixed_2023,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,timing_fixed_2023,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2023_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,timing_fixed_2023,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2023_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,timing_fixed_2023,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,timing_fixed_2023,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,timing_fixed_2023,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1123,8 +1352,9 @@ pooled,timing_fixed_2023,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PAS
 pooled,fund_rule_share,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,fund_rule_share,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,fund_rule_share,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,fund_rule_share,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFundShare10_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,fund_rule_share,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,fund_rule_share,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFundShare10_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,fund_rule_share,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFundShare10_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,fund_rule_share,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,fund_rule_share,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,fund_rule_share,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1140,8 +1370,9 @@ pooled,fund_rule_share,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,
 pooled,fund_rule_file_start,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,fund_rule_file_start,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,fund_rule_file_start,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,fund_rule_file_start,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFundFileStart_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,fund_rule_file_start,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,fund_rule_file_start,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFundFileStart_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,fund_rule_file_start,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFundFileStart_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,fund_rule_file_start,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,fund_rule_file_start,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,fund_rule_file_start,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1157,8 +1388,9 @@ pooled,fund_rule_file_start,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,
 pooled,dose_amount,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,dose_amount,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,dose_amount,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,dose_amount,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_doseAmount_noSingle_no2017_covAll4_yr2015-2025
 pooled,dose_amount,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,dose_amount,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_doseAmount_no2017_covAll4_yr2015-2025
+pooled,dose_amount,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_doseAmount_noSingle_no2017_covAll4_yr2015-2025
 pooled,dose_amount,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,dose_amount,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,dose_amount,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1174,8 +1406,9 @@ pooled,dose_amount,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,dose_share,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,dose_share,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,dose_share,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,dose_share,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_doseShare_noSingle_no2017_covAll4_yr2015-2025
 pooled,dose_share,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,dose_share,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_doseShare_no2017_covAll4_yr2015-2025
+pooled,dose_share,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_doseShare_noSingle_no2017_covAll4_yr2015-2025
 pooled,dose_share,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,dose_share,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,dose_share,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1191,8 +1424,9 @@ pooled,dose_share,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,dose_before_missing,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,dose_before_missing,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,dose_before_missing,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,dose_before_missing,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_doseObsOnly_noSingle_no2017_covAll4_yr2015-2025
 pooled,dose_before_missing,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,dose_before_missing,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_doseObsOnly_no2017_covAll4_yr2015-2025
+pooled,dose_before_missing,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_doseObsOnly_noSingle_no2017_covAll4_yr2015-2025
 pooled,dose_before_missing,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,dose_before_missing,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,dose_before_missing,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1210,8 +1444,9 @@ pooled,dose_before_missing,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,P
 pooled,rings_1_3,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,rings_1_3,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,rings_1_3,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,rings_1_3,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-3_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,rings_1_3,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting [1, 2, 3]"
-pooled,rings_1_3,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-3_treatFund_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,rings_1_3,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-3_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,rings_1_3,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,rings_1_3,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,rings_1_3,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1231,8 +1466,9 @@ pooled,rings_1_3,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,rings_2_4,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,rings_2_4,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,rings_2_4,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,rings_2_4,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2+4_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,rings_2_4,control rings = the choice,PASS,"used [np.int64(2), np.int64(4)], setting [2, 4]"
-pooled,rings_2_4,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2+4_treatFund_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,rings_2_4,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2+4_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,rings_2_4,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,rings_2_4,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,rings_2_4,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1252,8 +1488,9 @@ pooled,rings_2_4,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,pre4_post2,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,pre4_post2,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,pre4_post2,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,pre4_post2,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_covAll4_yr2019-2024
 pooled,pre4_post2,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,pre4_post2,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_covAll4_yr2019-2024
+pooled,pre4_post2,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_covAll4_yr2019-2024
 pooled,pre4_post2,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,pre4_post2,years = PRE_YEARS / POST_YEARS from the first treated year,PASS,2019..2024 (want 2019..2024; base 2023)
 pooled,pre4_post2,timing: cohort of every treated row = the choice,PASS,"0 of 1,246 differ"
@@ -1271,8 +1508,9 @@ pooled,pre4_post2,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,pre2018_post2024,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,pre2018_post2024,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,pre2018_post2024,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,pre2018_post2024,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_covAll4_yr2018-2024
 pooled,pre2018_post2024,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,pre2018_post2024,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_covAll4_yr2018-2024
+pooled,pre2018_post2024,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_covAll4_yr2018-2024
 pooled,pre2018_post2024,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,pre2018_post2024,"years = the calendar years PRE_YEARS / POST_YEARS (a bound at / after the start -> every year before it, said)",PASS,2018..2024 (want 2018..2024; base 2023)
 pooled,pre2018_post2024,timing: cohort of every treated row = the choice,PASS,"0 of 1,451 differ"
@@ -1290,8 +1528,9 @@ pooled,pre2018_post2024,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS
 pooled,pre_at_start_2022,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,pre_at_start_2022,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,pre_at_start_2022,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,pre_at_start_2022,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yrstart-2025
 pooled,pre_at_start_2022,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,pre_at_start_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_no2017_covAll4_yrstart-2025
+pooled,pre_at_start_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yrstart-2025
 pooled,pre_at_start_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,pre_at_start_2022,"years = the calendar years PRE_YEARS / POST_YEARS (a bound at / after the start -> every year before it, said)",PASS,2015..2025 (want 2015..2025; base 2022)
 pooled,pre_at_start_2022,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1307,10 +1546,11 @@ pooled,pre_at_start_2022,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PAS
 pooled,screen_keep,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,screen_keep,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,screen_keep,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,screen_keep,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_screenKept_noSingle_covAll4_yr2015-2025
 pooled,screen_keep,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,screen_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_screenKept_covAll4_yr2015-2025
+pooled,screen_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_screenKept_noSingle_covAll4_yr2015-2025
 pooled,screen_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
-pooled,screen_keep,OUTCOME_SCREEN = 'keep': the fill year-season is kept and the results folder is tagged _screenKept,PASS,"years [np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_screenKept_covAll4_yr2015-2025"
+pooled,screen_keep,OUTCOME_SCREEN = 'keep': the fill year-season is kept and the results folder is tagged _screenKept,PASS,"years [np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_screenKept_noSingle_covAll4_yr2015-2025"
 pooled,screen_keep,timing: cohort of every treated row = the choice,PASS,"0 of 2,317 differ"
 pooled,screen_keep,post = Year >= the row's cohort (treated rows),PASS,
 pooled,screen_keep,the v20.56 milestone cohort (2026) is never used,PASS,
@@ -1327,11 +1567,12 @@ pooled,screen_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,design_panel,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,design_panel,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,design_panel,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,design_panel,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 pooled,design_panel,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,design_panel,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_panelDesign_no2017_covAll4_yr2015-2025
+pooled,design_panel,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 pooled,design_panel,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,design_panel,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
-pooled,design_panel,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl1-5_treatFund_all_clSite_feSitePeriod_panelDesign_no2017_covAll4_yr2015-2025
+pooled,design_panel,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl1-5_treatFund_all_clSite_feSitePeriod_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 pooled,design_panel,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
 pooled,design_panel,post = Year >= the row's cohort (treated rows),PASS,
 pooled,design_panel,the v20.56 milestone cohort (2026) is never used,PASS,
@@ -1348,11 +1589,12 @@ pooled,design_panel,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,dro
 pooled,design_panel_fixed_2023,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,design_panel_fixed_2023,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,design_panel_fixed_2023,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,design_panel_fixed_2023,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treat2023_all_clSite_feSitePeriod_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 pooled,design_panel_fixed_2023,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,design_panel_fixed_2023,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2023_all_clSite_feSitePeriod_panelDesign_no2017_covAll4_yr2015-2025
+pooled,design_panel_fixed_2023,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treat2023_all_clSite_feSitePeriod_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 pooled,design_panel_fixed_2023,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,design_panel_fixed_2023,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
-pooled,design_panel_fixed_2023,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl1-5_treat2023_all_clSite_feSitePeriod_panelDesign_no2017_covAll4_yr2015-2025
+pooled,design_panel_fixed_2023,"DESIGN_SOURCE = 'panel': post = the panel's post column on every row, the results folder tagged _panelDesign",PASS,tag ctrl1-5_treat2023_all_clSite_feSitePeriod_panelDesign_noSingle_no2017_covAll4_yr2015-2025
 pooled,design_panel_fixed_2023,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
 pooled,design_panel_fixed_2023,post = Year >= the row's cohort (treated rows),PASS,
 pooled,design_panel_fixed_2023,the v20.56 milestone cohort (2026) is never used,PASS,
@@ -1366,12 +1608,13 @@ pooled,design_panel_fixed_2023,DESIGN IN EFFECT: FRAGMENT_RULE used = your setti
 pooled,ctrl_pre_rings2,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,ctrl_pre_rings2,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,ctrl_pre_rings2,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,ctrl_pre_rings2,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre2r_noSingle_no2017_covAll4_yr2015-2025
 pooled,ctrl_pre_rings2,control rings = the choice,PASS,"used [np.int64(2), np.int64(4)], setting data"
-pooled,ctrl_pre_rings2,CONTROL_SELECTION: the results folder says so,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre2r_no2017_covAll4_yr2015-2025
+pooled,ctrl_pre_rings2,CONTROL_SELECTION: the results folder says so,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre2r_noSingle_no2017_covAll4_yr2015-2025
 pooled,ctrl_pre_rings2,pre_rings: exactly 2 control ring(s) in the sample,PASS,"rings [np.int64(2), np.int64(4)]"
 pooled,ctrl_pre_rings2,the same control units (rings / blocks) in every year and season -- the same pixels up to a missing outcome (this panel is unbalanced by design),PASS,1 distinct control sets
 pooled,ctrl_pre_rings2,the pre period's choice recomputed independently = the engine's rings,PASS,"engine [np.int64(2), np.int64(4)], recomputed [2, 4] (trend: {2: 0.001651, 3: 0.001651, 4: 0.001586, 5: 0.001706})"
-pooled,ctrl_pre_rings2,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre2r_no2017_covAll4_yr2015-2025
+pooled,ctrl_pre_rings2,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre2r_noSingle_no2017_covAll4_yr2015-2025
 pooled,ctrl_pre_rings2,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,ctrl_pre_rings2,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,ctrl_pre_rings2,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1387,12 +1630,13 @@ pooled,ctrl_pre_rings2,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,
 pooled,ctrl_pre_ring1_level,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,ctrl_pre_ring1_level,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,ctrl_pre_ring1_level,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,ctrl_pre_ring1_level,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre1rL_noSingle_no2017_covAll4_yr2015-2025
 pooled,ctrl_pre_ring1_level,control rings = the choice,PASS,"used [np.int64(5)], setting data"
-pooled,ctrl_pre_ring1_level,CONTROL_SELECTION: the results folder says so,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre1rL_no2017_covAll4_yr2015-2025
+pooled,ctrl_pre_ring1_level,CONTROL_SELECTION: the results folder says so,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre1rL_noSingle_no2017_covAll4_yr2015-2025
 pooled,ctrl_pre_ring1_level,pre_rings: exactly 1 control ring(s) in the sample,PASS,rings [np.int64(5)]
 pooled,ctrl_pre_ring1_level,the same control units (rings / blocks) in every year and season -- the same pixels up to a missing outcome (this panel is unbalanced by design),PASS,1 distinct control sets
 pooled,ctrl_pre_ring1_level,the pre period's choice recomputed independently = the engine's rings,PASS,"engine [np.int64(5)], recomputed [5] (level: {2: 0.003115, 3: 0.00583, 4: 0.003846, 5: 0.000449})"
-pooled,ctrl_pre_ring1_level,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre1rL_no2017_covAll4_yr2015-2025
+pooled,ctrl_pre_ring1_level,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre1rL_noSingle_no2017_covAll4_yr2015-2025
 pooled,ctrl_pre_ring1_level,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,ctrl_pre_ring1_level,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,ctrl_pre_ring1_level,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1408,11 +1652,12 @@ pooled,ctrl_pre_ring1_level,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,
 pooled,ctrl_pre_blocks,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,ctrl_pre_blocks,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,ctrl_pre_blocks,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,ctrl_pre_blocks,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPreBlk1x_noSingle_no2017_covAll4_yr2015-2025
 pooled,ctrl_pre_blocks,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,ctrl_pre_blocks,CONTROL_SELECTION: the results folder says so,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPreBlk1x_no2017_covAll4_yr2015-2025
+pooled,ctrl_pre_blocks,CONTROL_SELECTION: the results folder says so,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPreBlk1x_noSingle_no2017_covAll4_yr2015-2025
 pooled,ctrl_pre_blocks,the same control units (rings / blocks) in every year and season -- the same pixels up to a missing outcome (this panel is unbalanced by design),PASS,1 distinct control sets
 pooled,ctrl_pre_blocks,pre_blocks: control pixels >= CONTROL_SELECT_RATIO x the treated pixels (or every candidate),PASS,66 control / 54 treated pixels
-pooled,ctrl_pre_blocks,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPreBlk1x_no2017_covAll4_yr2015-2025
+pooled,ctrl_pre_blocks,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPreBlk1x_noSingle_no2017_covAll4_yr2015-2025
 pooled,ctrl_pre_blocks,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,ctrl_pre_blocks,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,ctrl_pre_blocks,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1428,9 +1673,10 @@ pooled,ctrl_pre_blocks,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,
 pooled,cluster_block,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,cluster_block,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,cluster_block,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,cluster_block,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_feSitePeriod_clBlock_noSingle_no2017_covAll4_yr2015-2025
 pooled,cluster_block,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,cluster_block,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_feSitePeriod_clBlock_no2017_covAll4_yr2015-2025
-pooled,cluster_block,"CLUSTER = 'block': the ~1 km blocks are the clusters (this synthetic grid spans 3+ blocks), the folder tagged _clBlock",PASS,7 clusters; tag ctrl1-5_treatFund_all_feSitePeriod_clBlock_no2017_covAll4_yr2015-2025
+pooled,cluster_block,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_feSitePeriod_clBlock_noSingle_no2017_covAll4_yr2015-2025
+pooled,cluster_block,"CLUSTER = 'block': the ~1 km blocks are the clusters (this synthetic grid spans 3+ blocks), the folder tagged _clBlock",PASS,7 clusters; tag ctrl1-5_treatFund_all_feSitePeriod_clBlock_noSingle_no2017_covAll4_yr2015-2025
 pooled,cluster_block,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,cluster_block,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,cluster_block,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1449,8 +1695,9 @@ pooled,cluster_block,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,dr
 pooled,same_pixels_all,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,same_pixels_all,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,same_pixels_all,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files) -- up to the balanced pixel rule,PASS,"kept [501, 502, 503, 504] of [500, 501, 502, 503, 504, 505]"
+pooled,same_pixels_all,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_pixAll_noSingle_no2017_covAll4_yr2015-2025
 pooled,same_pixels_all,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,same_pixels_all,"SAME_PIXELS = 'all': every pixel of the sample is observed in every year-season (a balanced pixel set), tagged _pixAll",PASS,0 pixel(s) short of 40 cells; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_pixAll_no2017_covAll4_yr2015-2025
+pooled,same_pixels_all,"SAME_PIXELS = 'all': every pixel of the sample is observed in every year-season (a balanced pixel set), tagged _pixAll",PASS,0 pixel(s) short of 40 cells; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_pixAll_noSingle_no2017_covAll4_yr2015-2025
 pooled,same_pixels_all,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,same_pixels_all,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,same_pixels_all,timing: cohort of every treated row = the choice,PASS,0 of 840 differ
@@ -1466,8 +1713,9 @@ pooled,same_pixels_all,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,
 pooled,same_pixels_off,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,same_pixels_off,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,same_pixels_off,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,same_pixels_off,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_pixAny_noSingle_no2017_covAll4_yr2015-2025
 pooled,same_pixels_off,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,same_pixels_off,"SAME_PIXELS = 'off': the v20.58 sample (a pixel may sit on one side), tagged _pixAny",PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_pixAny_no2017_covAll4_yr2015-2025
+pooled,same_pixels_off,"SAME_PIXELS = 'off': the v20.58 sample (a pixel may sit on one side), tagged _pixAny",PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_pixAny_noSingle_no2017_covAll4_yr2015-2025
 pooled,same_pixels_off,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,same_pixels_off,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,same_pixels_off,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1480,11 +1728,147 @@ pooled,same_pixels_off,period effect = sub-watershed x year x season,PASS,max si
 pooled,same_pixels_off,history-filled rows left out,PASS,0
 pooled,same_pixels_off,unit = pixel x season,PASS,max seasons per unit 1
 pooled,same_pixels_off,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,donut_ring1,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
+pooled,donut_ring1,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,donut_ring1,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,donut_ring1,"DONUT_RINGS [1]: no control row of these rings, the folder tagged _donut1",PASS,"rings [np.int64(2), np.int64(3), np.int64(4), np.int64(5)]; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_donut1_noSingle_no2017_covAll4_yr2015-2025"
+pooled,donut_ring1,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_donut1_noSingle_no2017_covAll4_yr2015-2025
+pooled,donut_ring1,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,donut_ring1,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_donut1_noSingle_no2017_covAll4_yr2015-2025
+pooled,donut_ring1,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,donut_ring1,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,donut_ring1,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
+pooled,donut_ring1,post = Year >= the row's cohort (treated rows),PASS,
+pooled,donut_ring1,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,donut_ring1,dose 0 on the control rings and untreated periods,PASS,
+pooled,donut_ring1,the v20.56 district percent (55) is never the dose,PASS,
+pooled,donut_ring1,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,donut_ring1,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,donut_ring1,history-filled rows left out,PASS,0
+pooled,donut_ring1,unit = pixel x season,PASS,max seasons per unit 1
+pooled,donut_ring1,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,donut_rings12_rabi,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
+pooled,donut_rings12_rabi,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,donut_rings12_rabi,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,donut_rings12_rabi,"DONUT_RINGS [1, 2]: no control row of these rings, the folder tagged _donut1-2",PASS,"rings [np.int64(3), np.int64(4), np.int64(5)]; tag ctrl2-5_treat2022_rabi_clSite_feSitePeriod_donut1-2_noSingle_no2017_covAll4_yr2015-2025"
+pooled,donut_rings12_rabi,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_rabi_clSite_feSitePeriod_donut1-2_noSingle_no2017_covAll4_yr2015-2025
+pooled,donut_rings12_rabi,control rings = the choice,PASS,"used [np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,donut_rings12_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_rabi_clSite_feSitePeriod_donut1-2_noSingle_no2017_covAll4_yr2015-2025
+pooled,donut_rings12_rabi,seasons = the choice,PASS,"used [np.int64(2)], setting Rabi"
+pooled,donut_rings12_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,donut_rings12_rabi,timing: cohort of every treated row = the choice,PASS,0 of 525 differ
+pooled,donut_rings12_rabi,post = Year >= the row's cohort (treated rows),PASS,
+pooled,donut_rings12_rabi,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,donut_rings12_rabi,dose 0 on the control rings and untreated periods,PASS,
+pooled,donut_rings12_rabi,the v20.56 district percent (55) is never the dose,PASS,
+pooled,donut_rings12_rabi,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,donut_rings12_rabi,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,donut_rings12_rabi,history-filled rows left out,PASS,0
+pooled,donut_rings12_rabi,unit = pixel x season,PASS,max seasons per unit 1
+pooled,donut_rings12_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,ctrl_pre_rmse,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
+pooled,ctrl_pre_rmse,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,ctrl_pre_rmse,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,ctrl_pre_rmse,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre2rR_noSingle_no2017_covAll4_yr2015-2025
+pooled,ctrl_pre_rmse,control rings = the choice,PASS,"used [np.int64(2), np.int64(5)], setting data"
+pooled,ctrl_pre_rmse,CONTROL_SELECTION: the results folder says so,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre2rR_noSingle_no2017_covAll4_yr2015-2025
+pooled,ctrl_pre_rmse,pre_rings: exactly 2 control ring(s) in the sample,PASS,"rings [np.int64(2), np.int64(5)]"
+pooled,ctrl_pre_rmse,the same control units (rings / blocks) in every year and season -- the same pixels up to a missing outcome (this panel is unbalanced by design),PASS,1 distinct control sets
+pooled,ctrl_pre_rmse,the pre period's choice recomputed independently = the engine's rings,PASS,"engine [np.int64(2), np.int64(5)], recomputed [2, 5] (rmse: {2: 0.00375, 3: 0.006167, 4: 0.004335, 5: 0.002292})"
+pooled,ctrl_pre_rmse,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_ctrlPre2rR_noSingle_no2017_covAll4_yr2015-2025
+pooled,ctrl_pre_rmse,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,ctrl_pre_rmse,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,ctrl_pre_rmse,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
+pooled,ctrl_pre_rmse,post = Year >= the row's cohort (treated rows),PASS,
+pooled,ctrl_pre_rmse,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,ctrl_pre_rmse,dose 0 on the control rings and untreated periods,PASS,
+pooled,ctrl_pre_rmse,the v20.56 district percent (55) is never the dose,PASS,
+pooled,ctrl_pre_rmse,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,ctrl_pre_rmse,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,ctrl_pre_rmse,history-filled rows left out,PASS,0
+pooled,ctrl_pre_rmse,unit = pixel x season,PASS,max seasons per unit 1
+pooled,ctrl_pre_rmse,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,landuse_keep_1,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
+pooled,landuse_keep_1,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,landuse_keep_1,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,landuse_keep_1,"LANDUSE_KEEP [1]: every pixel's baseline class is 1 in this panel -> every pixel of the base sample stays, the folder tagged _lu1",PASS,246 pixels; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_lu1_noSingle_no2017_covAll4_yr2015-2025
+pooled,landuse_keep_1,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_lu1_noSingle_no2017_covAll4_yr2015-2025
+pooled,landuse_keep_1,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,landuse_keep_1,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_lu1_noSingle_no2017_covAll4_yr2015-2025
+pooled,landuse_keep_1,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,landuse_keep_1,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,landuse_keep_1,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
+pooled,landuse_keep_1,post = Year >= the row's cohort (treated rows),PASS,
+pooled,landuse_keep_1,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,landuse_keep_1,dose 0 on the control rings and untreated periods,PASS,
+pooled,landuse_keep_1,the v20.56 district percent (55) is never the dose,PASS,
+pooled,landuse_keep_1,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,landuse_keep_1,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,landuse_keep_1,history-filled rows left out,PASS,0
+pooled,landuse_keep_1,unit = pixel x season,PASS,max seasons per unit 1
+pooled,landuse_keep_1,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,baseline_ndvi_030,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
+pooled,baseline_ndvi_030,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,baseline_ndvi_030,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,baseline_ndvi_030,"BASELINE_NDVI_MIN 0.3: every pixel of the sample has a pre-period mean NDVI above it (recomputed from the panel), the folder tagged _ndviPre0.3",PASS,min pre mean 0.3002; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_ndviPre0.3_noSingle_no2017_covAll4_yr2015-2025
+pooled,baseline_ndvi_030,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_ndviPre0.3_noSingle_no2017_covAll4_yr2015-2025
+pooled,baseline_ndvi_030,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,baseline_ndvi_030,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_ndviPre0.3_noSingle_no2017_covAll4_yr2015-2025
+pooled,baseline_ndvi_030,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,baseline_ndvi_030,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,baseline_ndvi_030,timing: cohort of every treated row = the choice,PASS,"0 of 1,750 differ"
+pooled,baseline_ndvi_030,post = Year >= the row's cohort (treated rows),PASS,
+pooled,baseline_ndvi_030,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,baseline_ndvi_030,dose 0 on the control rings and untreated periods,PASS,
+pooled,baseline_ndvi_030,the v20.56 district percent (55) is never the dose,PASS,
+pooled,baseline_ndvi_030,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,baseline_ndvi_030,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,baseline_ndvi_030,history-filled rows left out,PASS,0
+pooled,baseline_ndvi_030,unit = pixel x season,PASS,max seasons per unit 1
+pooled,baseline_ndvi_030,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,coverage_pct_099,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
+pooled,coverage_pct_099,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,coverage_pct_099,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,coverage_pct_099,MIN_PIXEL_COVERAGE_PCT 0.99: the folder tagged _cov99,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_cov99_noSingle_no2017_covAll4_yr2015-2025
+pooled,coverage_pct_099,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_cov99_noSingle_no2017_covAll4_yr2015-2025
+pooled,coverage_pct_099,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,coverage_pct_099,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_cov99_noSingle_no2017_covAll4_yr2015-2025
+pooled,coverage_pct_099,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,coverage_pct_099,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,coverage_pct_099,timing: cohort of every treated row = the choice,PASS,"0 of 1,015 differ"
+pooled,coverage_pct_099,post = Year >= the row's cohort (treated rows),PASS,
+pooled,coverage_pct_099,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,coverage_pct_099,dose 0 on the control rings and untreated periods,PASS,
+pooled,coverage_pct_099,the v20.56 district percent (55) is never the dose,PASS,
+pooled,coverage_pct_099,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,coverage_pct_099,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,coverage_pct_099,history-filled rows left out,PASS,0
+pooled,coverage_pct_099,unit = pixel x season,PASS,max seasons per unit 1
+pooled,coverage_pct_099,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
+pooled,singletons_kept,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
+pooled,singletons_kept,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
+pooled,singletons_kept,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,singletons_kept,DROP_SINGLETONS False: the folder is NOT tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,singletons_kept,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
+pooled,singletons_kept,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,singletons_kept,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
+pooled,singletons_kept,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
+pooled,singletons_kept,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
+pooled,singletons_kept,post = Year >= the row's cohort (treated rows),PASS,
+pooled,singletons_kept,the v20.56 milestone cohort (2026) is never used,PASS,
+pooled,singletons_kept,dose 0 on the control rings and untreated periods,PASS,
+pooled,singletons_kept,the v20.56 district percent (55) is never the dose,PASS,
+pooled,singletons_kept,overlap rows left out (OVERLAP_ROWS drop),PASS,0 rows
+pooled,singletons_kept,period effect = sub-watershed x year x season,PASS,max sites per period 1
+pooled,singletons_kept,history-filled rows left out,PASS,0
+pooled,singletons_kept,unit = pixel x season,PASS,max seasons per unit 1
+pooled,singletons_kept,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,pre_all_post_all,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,pre_all_post_all,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,pre_all_post_all,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,pre_all_post_all,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_covAll4
 pooled,pre_all_post_all,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,pre_all_post_all,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_covAll4
+pooled,pre_all_post_all,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_covAll4
 pooled,pre_all_post_all,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,pre_all_post_all,years: every year (the fill year's annual rows out by the screen),PASS,"[np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,pre_all_post_all,timing: cohort of every treated row = the choice,PASS,"0 of 2,264 differ"
@@ -1503,8 +1887,9 @@ pooled,pre_all_post_all,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS
 pooled,manual_mode,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,manual_mode,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,manual_mode,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,manual_mode,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_covAll4
 pooled,manual_mode,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,manual_mode,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_covAll4
+pooled,manual_mode,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_covAll4
 pooled,manual_mode,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,manual_mode,years: every year (the fill year's annual rows out by the screen),PASS,"[np.int64(2015), np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,manual_mode,timing: cohort of every treated row = the choice,PASS,"0 of 2,264 differ"
@@ -1523,8 +1908,9 @@ pooled,manual_mode,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,manual_rings_1_3_pre4,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,manual_rings_1_3_pre4,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,manual_rings_1_3_pre4,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,manual_rings_1_3_pre4,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-3_treatFund_all_clSite_feSitePeriod_noSingle_covAll4_yr2019-2025
 pooled,manual_rings_1_3_pre4,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting [1, 2, 3]"
-pooled,manual_rings_1_3_pre4,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-3_treatFund_all_clSite_feSitePeriod_covAll4_yr2019-2025
+pooled,manual_rings_1_3_pre4,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-3_treatFund_all_clSite_feSitePeriod_noSingle_covAll4_yr2019-2025
 pooled,manual_rings_1_3_pre4,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,manual_rings_1_3_pre4,years = PRE_YEARS / POST_YEARS from the first treated year,PASS,2019..2025 (want 2019..2025; base 2023)
 pooled,manual_rings_1_3_pre4,timing: cohort of every treated row = the choice,PASS,"0 of 1,472 differ"
@@ -1544,8 +1930,9 @@ pooled,manual_rings_1_3_pre4,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting
 pooled,seasons_seasonal,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,seasons_seasonal,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,seasons_seasonal,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,seasons_seasonal,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_seasonal,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,seasons_seasonal,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,seasons_seasonal,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_seasonal,seasons = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3)], setting seasonal"
 pooled,seasons_seasonal,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,seasons_seasonal,timing: cohort of every treated row = the choice,PASS,"0 of 1,576 differ"
@@ -1564,8 +1951,9 @@ pooled,seasons_seasonal,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS
 pooled,seasons_yearly,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,seasons_yearly,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,seasons_yearly,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,seasons_yearly,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_yearly_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_yearly,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,seasons_yearly,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_yearly_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,seasons_yearly,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_yearly_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_yearly,seasons = the choice,PASS,"used [np.int64(0)], setting yearly"
 pooled,seasons_yearly,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,seasons_yearly,timing: cohort of every treated row = the choice,PASS,0 of 518 differ
@@ -1581,8 +1969,9 @@ pooled,seasons_yearly,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,d
 pooled,seasons_rabi,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,seasons_rabi,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,seasons_rabi,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,seasons_rabi,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_rabi_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_rabi,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,seasons_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_rabi_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,seasons_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_rabi_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_rabi,seasons = the choice,PASS,"used [np.int64(2)], setting Rabi"
 pooled,seasons_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,seasons_rabi,timing: cohort of every treated row = the choice,PASS,0 of 525 differ
@@ -1599,8 +1988,9 @@ pooled,seasons_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,dro
 pooled,seasons_kharif_rabi,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,seasons_kharif_rabi,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,seasons_kharif_rabi,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,seasons_kharif_rabi,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_kharif+rabi_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_kharif_rabi,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,seasons_kharif_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_kharif+rabi_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,seasons_kharif_rabi,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_kharif+rabi_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_kharif_rabi,seasons = the choice,PASS,"used [np.int64(1), np.int64(2)], setting ['Kharif', 'Rabi']"
 pooled,seasons_kharif_rabi,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,seasons_kharif_rabi,timing: cohort of every treated row = the choice,PASS,"0 of 1,047 differ"
@@ -1619,8 +2009,9 @@ pooled,seasons_kharif_rabi,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,P
 pooled,seasons_auto,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,seasons_auto,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,seasons_auto,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,seasons_auto,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_auto,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,seasons_auto,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,seasons_auto,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,seasons_auto,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting auto"
 pooled,seasons_auto,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,seasons_auto,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1639,8 +2030,9 @@ pooled,seasons_auto,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,dro
 pooled,exclude_transition,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,exclude_transition,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,exclude_transition,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,exclude_transition,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_noTransition_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,exclude_transition,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,exclude_transition,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_noTransition_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled,exclude_transition,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_noTransition_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled,exclude_transition,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,exclude_transition,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,exclude_transition,timing: cohort of every treated row = the choice,PASS,"0 of 1,686 differ"
@@ -1656,8 +2048,9 @@ pooled,exclude_transition,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PA
 pooled,unit_fe_pixel,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,unit_fe_pixel,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,unit_fe_pixel,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,unit_fe_pixel,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_fePixel_noSingle_no2017_covAll4_yr2015-2025
 pooled,unit_fe_pixel,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,unit_fe_pixel,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_fePixel_no2017_covAll4_yr2015-2025
+pooled,unit_fe_pixel,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_fePixel_noSingle_no2017_covAll4_yr2015-2025
 pooled,unit_fe_pixel,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,unit_fe_pixel,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,unit_fe_pixel,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1676,8 +2069,9 @@ pooled,unit_fe_pixel,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,dr
 pooled,overlap_keep,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,overlap_keep,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,overlap_keep,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,overlap_keep,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl3-5_treatFund_all_clSite_feSitePeriod_keepOverlap_noSingle_no2017_covAll4_yr2015-2025
 pooled,overlap_keep,control rings = the choice,PASS,"used [np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,overlap_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl3-5_treatFund_all_clSite_feSitePeriod_keepOverlap_no2017_covAll4_yr2015-2025
+pooled,overlap_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl3-5_treatFund_all_clSite_feSitePeriod_keepOverlap_noSingle_no2017_covAll4_yr2015-2025
 pooled,overlap_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,overlap_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,overlap_keep,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1694,8 +2088,9 @@ pooled,overlap_keep,history-filled rows left out,PASS,0
 pooled,overlap_keep,unit = pixel x season,PASS,max seasons per unit 1
 pooled,overlap_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled,fragments_keep,fragments kept (FRAGMENT_RULE keep),PASS,"planted pixels in the sample: [600, 601, 602, 603]; sites [np.int64(1), np.int64(2), np.int64(7)]"
+pooled,fragments_keep,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treatFund_all_clSite_feSitePeriod_keepFragments_noSingle_no2017_covAll4_yr2015-2025
 pooled,fragments_keep,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,fragments_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treatFund_all_clSite_feSitePeriod_keepFragments_no2017_covAll4_yr2015-2025
+pooled,fragments_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treatFund_all_clSite_feSitePeriod_keepFragments_noSingle_no2017_covAll4_yr2015-2025
 pooled,fragments_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,fragments_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,fragments_keep,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1714,8 +2109,9 @@ pooled,fragments_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,k
 pooled,pooled_fe_period,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,pooled_fe_period,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,pooled_fe_period,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,pooled_fe_period,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 pooled,pooled_fe_period,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,pooled_fe_period,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_no2017_covAll4_yr2015-2025
+pooled,pooled_fe_period,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_noSingle_no2017_covAll4_yr2015-2025
 pooled,pooled_fe_period,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,pooled_fe_period,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,pooled_fe_period,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -1734,8 +2130,9 @@ pooled,pooled_fe_period,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS
 pooled,gapfilled_kept,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,gapfilled_kept,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,gapfilled_kept,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,gapfilled_kept,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_withGapFilled_noSingle_no2017_covAll4_yr2015-2025
 pooled,gapfilled_kept,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,gapfilled_kept,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_withGapFilled_no2017_covAll4_yr2015-2025
+pooled,gapfilled_kept,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_withGapFilled_noSingle_no2017_covAll4_yr2015-2025
 pooled,gapfilled_kept,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,gapfilled_kept,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,gapfilled_kept,timing: cohort of every treated row = the choice,PASS,"0 of 2,111 differ"
@@ -1754,8 +2151,9 @@ pooled,gapfilled_kept,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,d
 pooled,covariates_none,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled,covariates_none,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled,covariates_none,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled,covariates_none,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covNone_yr2015-2025
 pooled,covariates_none,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled,covariates_none,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_no2017_covNone_yr2015-2025
+pooled,covariates_none,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covNone_yr2015-2025
 pooled,covariates_none,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled,covariates_none,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled,covariates_none,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -2001,6 +2399,76 @@ pooled,same_pixels_off,R == Python: dose,PASS,max |diff| 6.25e-17
 pooled,same_pixels_off,R == Python: the unit partition,PASS,984 vs 984 groups
 pooled,same_pixels_off,R == Python: the period partition,PASS,80 vs 80 groups
 pooled,same_pixels_off,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,donut_ring1,R == Python: the same rows,PASS,"Python 9,611 rows, R 9,611"
+pooled,donut_ring1,R == Python: treat,PASS,0 differ
+pooled,donut_ring1,R == Python: post,PASS,0 differ
+pooled,donut_ring1,R == Python: did,PASS,0 differ
+pooled,donut_ring1,R == Python: cohort,PASS,0 differ
+pooled,donut_ring1,R == Python: event time (treated),PASS,0 differ
+pooled,donut_ring1,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,donut_ring1,R == Python: the unit partition,PASS,984 vs 984 groups
+pooled,donut_ring1,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,donut_ring1,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,donut_rings12_rabi,R == Python: the same rows,PASS,"Python 1,933 rows, R 1,933"
+pooled,donut_rings12_rabi,R == Python: treat,PASS,0 differ
+pooled,donut_rings12_rabi,R == Python: post,PASS,0 differ
+pooled,donut_rings12_rabi,R == Python: did,PASS,0 differ
+pooled,donut_rings12_rabi,R == Python: cohort,PASS,0 differ
+pooled,donut_rings12_rabi,R == Python: event time (treated),PASS,0 differ
+pooled,donut_rings12_rabi,R == Python: dose,PASS,max |diff| 4.51e-17
+pooled,donut_rings12_rabi,R == Python: the unit partition,PASS,198 vs 198 groups
+pooled,donut_rings12_rabi,R == Python: the period partition,PASS,20 vs 20 groups
+pooled,donut_rings12_rabi,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,ctrl_pre_rmse,R == Python: the same rows,PASS,"Python 5,863 rows, R 5,863"
+pooled,ctrl_pre_rmse,R == Python: treat,PASS,0 differ
+pooled,ctrl_pre_rmse,R == Python: post,PASS,0 differ
+pooled,ctrl_pre_rmse,R == Python: did,PASS,0 differ
+pooled,ctrl_pre_rmse,R == Python: cohort,PASS,0 differ
+pooled,ctrl_pre_rmse,R == Python: event time (treated),PASS,0 differ
+pooled,ctrl_pre_rmse,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,ctrl_pre_rmse,R == Python: the unit partition,PASS,600 vs 600 groups
+pooled,ctrl_pre_rmse,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,ctrl_pre_rmse,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,landuse_keep_1,R == Python: the same rows,PASS,"Python 9,611 rows, R 9,611"
+pooled,landuse_keep_1,R == Python: treat,PASS,0 differ
+pooled,landuse_keep_1,R == Python: post,PASS,0 differ
+pooled,landuse_keep_1,R == Python: did,PASS,0 differ
+pooled,landuse_keep_1,R == Python: cohort,PASS,0 differ
+pooled,landuse_keep_1,R == Python: event time (treated),PASS,0 differ
+pooled,landuse_keep_1,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,landuse_keep_1,R == Python: the unit partition,PASS,984 vs 984 groups
+pooled,landuse_keep_1,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,landuse_keep_1,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,baseline_ndvi_030,R == Python: the same rows,PASS,"Python 7,963 rows, R 7,963"
+pooled,baseline_ndvi_030,R == Python: treat,PASS,0 differ
+pooled,baseline_ndvi_030,R == Python: post,PASS,0 differ
+pooled,baseline_ndvi_030,R == Python: did,PASS,0 differ
+pooled,baseline_ndvi_030,R == Python: cohort,PASS,0 differ
+pooled,baseline_ndvi_030,R == Python: event time (treated),PASS,0 differ
+pooled,baseline_ndvi_030,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,baseline_ndvi_030,R == Python: the unit partition,PASS,816 vs 816 groups
+pooled,baseline_ndvi_030,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,baseline_ndvi_030,R == Python: the cluster_id partition,PASS,10 vs 10 groups
+pooled,coverage_pct_099,R == Python: the same rows,PASS,"Python 4,600 rows, R 4,600"
+pooled,coverage_pct_099,R == Python: treat,PASS,0 differ
+pooled,coverage_pct_099,R == Python: post,PASS,0 differ
+pooled,coverage_pct_099,R == Python: did,PASS,0 differ
+pooled,coverage_pct_099,R == Python: cohort,PASS,0 differ
+pooled,coverage_pct_099,R == Python: event time (treated),PASS,0 differ
+pooled,coverage_pct_099,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,coverage_pct_099,R == Python: the unit partition,PASS,984 vs 984 groups
+pooled,coverage_pct_099,R == Python: the period partition,PASS,38 vs 38 groups
+pooled,coverage_pct_099,R == Python: the cluster_id partition,PASS,9 vs 9 groups
+pooled,singletons_kept,R == Python: the same rows,PASS,"Python 9,611 rows, R 9,611"
+pooled,singletons_kept,R == Python: treat,PASS,0 differ
+pooled,singletons_kept,R == Python: post,PASS,0 differ
+pooled,singletons_kept,R == Python: did,PASS,0 differ
+pooled,singletons_kept,R == Python: cohort,PASS,0 differ
+pooled,singletons_kept,R == Python: event time (treated),PASS,0 differ
+pooled,singletons_kept,R == Python: dose,PASS,max |diff| 6.25e-17
+pooled,singletons_kept,R == Python: the unit partition,PASS,984 vs 984 groups
+pooled,singletons_kept,R == Python: the period partition,PASS,80 vs 80 groups
+pooled,singletons_kept,R == Python: the cluster_id partition,PASS,10 vs 10 groups
 pooled,pre_all_post_all,R == Python: the same rows,PASS,"Python 12,349 rows, R 12,349"
 pooled,pre_all_post_all,R == Python: treat,PASS,0 differ
 pooled,pre_all_post_all,R == Python: post,PASS,0 differ
@@ -2151,12 +2619,13 @@ pooled,covariates_none,R == Python: dose,PASS,max |diff| 6.25e-17
 pooled,covariates_none,R == Python: the unit partition,PASS,1176 vs 1176 groups
 pooled,covariates_none,R == Python: the period partition,PASS,80 vs 80 groups
 pooled,covariates_none,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-pooled,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_gbc8ifyi/pooled/data/output/did_panel_full.parquet
+pooled,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_76kj4ip6/pooled/data/output/did_panel_full.parquet
 pooled_v2056,base,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled_v2056,base,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled_v2056,base,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled_v2056,base,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled_v2056,base,control rings = the choice,PASS,"used [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled_v2056,base,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled_v2056,base,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl1-5_treatFund_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled_v2056,base,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled_v2056,base,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled_v2056,base,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -2173,8 +2642,9 @@ pooled_v2056,base,history-filled rows left out,PASS,0
 pooled_v2056,base,unit = pixel x season,PASS,max seasons per unit 1
 pooled_v2056,base,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,PASS,drop
 pooled_v2056,fragments_keep,fragments kept (FRAGMENT_RULE keep),PASS,"planted pixels in the sample: [600, 601, 602, 603]; sites [np.int64(1), np.int64(2), np.int64(7)]"
+pooled_v2056,fragments_keep,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treatFund_all_clSite_feSitePeriod_keepFragments_noSingle_no2017_covAll4_yr2015-2025
 pooled_v2056,fragments_keep,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled_v2056,fragments_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treatFund_all_clSite_feSitePeriod_keepFragments_no2017_covAll4_yr2015-2025
+pooled_v2056,fragments_keep,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treatFund_all_clSite_feSitePeriod_keepFragments_noSingle_no2017_covAll4_yr2015-2025
 pooled_v2056,fragments_keep,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled_v2056,fragments_keep,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled_v2056,fragments_keep,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -2193,8 +2663,9 @@ pooled_v2056,fragments_keep,DESIGN IN EFFECT: FRAGMENT_RULE used = your setting,
 pooled_v2056,timing_fixed_2022,fragments left out (FRAGMENT_RULE drop),PASS,"planted pixels left in: none; sites in the sample [np.int64(1), np.int64(2)]"
 pooled_v2056,timing_fixed_2022,only the major sub-watershed(s),PASS,"[np.int64(1), np.int64(2)]"
 pooled_v2056,timing_fixed_2022,a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files),PASS,"kept [500, 501, 502, 503, 504, 505] of [500, 501, 502, 503, 504, 505]"
+pooled_v2056,timing_fixed_2022,DROP_SINGLETONS True (the default): the folder tagged _noSingle,PASS,ctrl2-5_treat2022_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled_v2056,timing_fixed_2022,control rings = the choice,PASS,"used [np.int64(2), np.int64(3), np.int64(4), np.int64(5)], setting data"
-pooled_v2056,timing_fixed_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_no2017_covAll4_yr2015-2025
+pooled_v2056,timing_fixed_2022,SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post,PASS,0 pixel(s) on one side only; tag ctrl2-5_treat2022_all_clSite_feSitePeriod_noSingle_no2017_covAll4_yr2015-2025
 pooled_v2056,timing_fixed_2022,seasons = the choice,PASS,"used [np.int64(0), np.int64(1), np.int64(2), np.int64(3)], setting all"
 pooled_v2056,timing_fixed_2022,years: the data window without the fill year,PASS,"[np.int64(2015), np.int64(2016), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]"
 pooled_v2056,timing_fixed_2022,timing: cohort of every treated row = the choice,PASS,"0 of 2,103 differ"
@@ -2237,5 +2708,5 @@ pooled_v2056,timing_fixed_2022,R == Python: dose,PASS,max |diff| 6.25e-17
 pooled_v2056,timing_fixed_2022,R == Python: the unit partition,PASS,984 vs 984 groups
 pooled_v2056,timing_fixed_2022,R == Python: the period partition,PASS,80 vs 80 groups
 pooled_v2056,timing_fixed_2022,R == Python: the cluster_id partition,PASS,10 vs 10 groups
-pooled_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_gbc8ifyi/pooled_v2056/data/output/did_panel_full.parquet
+pooled_v2056,-,the panel file is unchanged by every option (byte-identical),PASS,/tmp/design_options_76kj4ip6/pooled_v2056/data/output/did_panel_full.parquet
 pooled_v2056,base,a panel WITHOUT the fragment column (v20.56) gives the same sample,PASS,11484 vs 11484 rows
