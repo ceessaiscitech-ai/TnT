@@ -2659,7 +2659,7 @@ def check_v20_59():
         if _C.ACTIVE.get("control_select_on") != "rmse": bad("CONTROL_SELECT_ON 'rmse' (spec 1) is not accepted")
         _C.set_scenario(control_select_on="trend", verbose=False)
         _rows = []                                                                    # a frame: ring 1 far, rings 2 and 3 close to the treated core's pre level, ring 4 with a trend
-        for _p, _ring, _lvl, _sl in ((1, 0, 0.30, 0.0), (2, 0, 0.30, 0.0), (3, 1, 0.45, 0.0), (4, 1, 0.45, 0.0), (5, 2, 0.31, 0.0), (6, 2, 0.31, 0.0), (7, 3, 0.32, 0.0), (8, 3, 0.32, 0.0), (9, 4, 0.30, 0.02), (10, 4, 0.30, 0.02)):
+        for _p, _ring, _lvl, _sl in ((1, 0, 0.30, 0.0), (2, 0, 0.30, 0.0), (3, 1, 0.45, 0.0), (4, 1, 0.45, 0.0), (5, 2, 0.31, 0.0), (6, 2, 0.31, 0.0), (7, 3, 0.29, 0.0), (8, 3, 0.29, 0.0), (9, 4, 0.30, 0.02), (10, 4, 0.30, 0.02)):
             for _y in range(2016, 2025):
                 _rows.append((_p * 10 ** 9 + 7, _ring, _y, 2, 7, "SW7", f"{_y}_2", _lvl + _sl * (_y - 2016) + 0.001 * (_p % 3) + 0.03 * (_ring == 0 and _y >= 2022), int(_y >= 2022), 15.0 + _p * 3e-4, 75.0, 1.0 if _ring < 4 else 2.0))
         fs2 = _pd.DataFrame(_rows, columns=["pixel_id", "buff_km", "Year", "Season", "site_id", "subwshed_id", "time_fe_yearseason", "NDVI", "post", "latitude", "longitude", "LandUse"])
@@ -2670,9 +2670,11 @@ def check_v20_59():
             if rg != [2, 3, 4] or "_donut1" not in _C.scenario_tag() or (_C.LAST_DESIGN_INFO.get("donut") or {}).get("pixels_left_out") != 2: bad(f"DONUT_RINGS [1] does not remove ring 1 from the control pool (rings {rg}; {_C.LAST_DESIGN_INFO.get('donut')}; tag {_C.scenario_tag()})")
             _C.set_scenario(donut_rings=[], landuse_keep=[1], verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
             if rg != [1, 2, 3] or "_lu1" not in _C.scenario_tag(): bad(f"LANDUSE_KEEP [1] does not keep the pixels of baseline class 1 only (rings {rg}; tag {_C.scenario_tag()})")
-            _C.set_scenario(landuse_keep="all", baseline_ndvi_min=0.305, verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
-            if rg != [1, 2, 3] or "_ndviPre0.305" not in _C.scenario_tag(): bad(f"BASELINE_NDVI_MIN 0.305 does not keep the pixels whose pre mean is above it (rings {rg}; tag {_C.scenario_tag()})")
-            _C.set_scenario(baseline_ndvi_min=None, control_selection="pre_rings", control_select_k=2, control_select_on="rmse", verbose=False); g = _C.build_treatment_columns(fs2.copy())
+            _C.set_scenario(landuse_keep="all", baseline_ndvi_min=0.2995, verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
+            if rg != [1, 2, 4] or "_ndviPre0.2995" not in _C.scenario_tag(): bad(f"BASELINE_NDVI_MIN 0.2995 does not keep the pixels whose pre mean is above it (ring 3 at 0.29 leaves; rings {rg}; tag {_C.scenario_tag()})")
+            _C.set_scenario(baseline_ndvi_min=None, verbose=False)
+            if _C.ACTIVE.get("baseline_ndvi_min") is not None or "_ndviPre" in _C.scenario_tag(): bad("set_scenario(baseline_ndvi_min=None) does not reset the mask (a notebook's None after an earlier value in the same kernel)")
+            _C.set_scenario(control_selection="pre_rings", control_select_k=2, control_select_on="rmse", verbose=False); g = _C.build_treatment_columns(fs2.copy())
             rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
             if rg != [2, 3] or "_ctrlPre2rR" not in _C.scenario_tag(): bad(f"CONTROL_SELECT_ON 'rmse' does not choose the two rings with the smallest pre-period RMSE gap (rings {rg}; tag {_C.scenario_tag()})")
             ch_, tab_ = _C.select_optimal_control_rings(fs2, "NDVI", treat_ring=0, candidate_rings=[1, 2, 3, 4], pre_years=range(2016, 2022), top_k=2, on="level")

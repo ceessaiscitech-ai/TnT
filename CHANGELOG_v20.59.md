@@ -257,6 +257,10 @@ SE, p, the pre-trend p (a differential pre-period slope, clustered), N, clusters
 
 Found while integrating: the two-level SDiD's season-block weights used the pixel count of whichever cell-year row came first, and the
 two languages order those rows differently (0.015015 vs 0.014956 on the synthetic panel) -- now the cell's largest pixel count in both.
+Found by `validate_design_options.py`: `set_scenario(baseline_ndvi_min=None)` meant "not given", so a notebook's `BASELINE_NDVI_MIN = None`
+could not switch the mask off after an earlier value in the same kernel (every later variant kept `_ndviPre0.3`); now None resets it (a
+sentinel marks "not given"), and the self-check confirms the reset. The `"rmse"` rule's folder tag (`_ctrlPre2rR`) was missing in both
+engines (R's tag lookup stopped on it).
 
 ## Found by running R here (v20.59, after the first delivery)
 

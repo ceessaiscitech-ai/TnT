@@ -3552,6 +3552,7 @@ def save_results(df_or_dict, results_dir, filename):
 # Rebuilt columns: treatment, control, pre, post, did_term, in_analysis_sample, event_time, period_index
 # (plus the aliases treat_core / control_zone_selected / pre_period / post_period).
 # Results are written to a per-scenario sub-folder, so scenarios never overwrite each other and can be compared.
+_UNSET = object()                      # spec 1: set_scenario's "not given" for options whose reset value is None (BASELINE_NDVI_MIN)
 ACTIVE = {"control_zones": tuple(DEFAULT_CONTROL_ZONES), "treatment_year": TREATMENT_YEAR,
           "post_cutoff": POST_CUTOFF, "exclude_transition_year": EXCLUDE_TRANSITION_YEAR,
           # v20.2 -- how many YEARS enter the estimation. None = every year present in the panel.
@@ -3594,7 +3595,7 @@ ACTIVE = {"control_zones": tuple(DEFAULT_CONTROL_ZONES), "treatment_year": TREAT
                                              #   year-season ("all"), else it leaves the sample -- the groups are the same pixels across the panel | "off"
           "donut_rings": [],                 # spec 1: rings left OUT of the control pool (the spillover buffer next to the core), e.g. [1]; the notebooks set [1]
           "landuse_keep": "all",             # spec 1: "all" | the LandUse class codes a pixel's PRE-period (baseline) class must be in
-          "baseline_ndvi_min": None,         # spec 1: a pixel's pre-period mean NDVI must exceed this (an agricultural mask), e.g. 0.25 | None
+          "baseline_ndvi_min": None,         # spec 1: a pixel's pre-period mean NDVI must exceed this (an agricultural mask), e.g. 0.25 | None (set_scenario: None resets it; _UNSET = not given)
           "min_pixel_coverage_pct": 0.05,    # spec 1 / 3: a year-season whose treated or control coverage is below this share of the typical one is screened
           "drop_singletons": False,          # spec 3: series seen once leave before the demeaning (the pre-flight)
           "precision_tolerance": 1e-6,       # spec 1: |value| <= tolerance is the no-data zero; a year-season is "constant" within it (indices in [-1, 1])
@@ -3661,7 +3662,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                  design_mode=None, fragment_rule=None, fragment_min_share=None, dose_variable=None, fund_start_rule=None,
                  fund_start_share=None, fund_rate_months=None, fund_dose_before_file=None, exclude_gapfilled=None, sub_watersheds=None,
                  outcome_screen=None, design_source=None, control_selection=None, control_select_k=None, control_select_ratio=None,
-                 control_select_on=None, control_block_deg=None, same_pixels=None, donut_rings=None, landuse_keep=None, baseline_ndvi_min=None,
+                 control_select_on=None, control_block_deg=None, same_pixels=None, donut_rings=None, landuse_keep=None, baseline_ndvi_min=_UNSET,
                  min_pixel_coverage_pct=None, drop_singletons=None, precision_tolerance=None, persist=False, verbose=True):
     """Set the run's control rings and treatment timing. Call it in CELL 1, BEFORE loading the panel.
     post_cutoff defaults to treatment_year (shifting the timing shifts the pre/post split with it).
@@ -3694,7 +3695,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                    ("control_select_ratio", control_select_ratio), ("control_select_on", control_select_on), ("control_block_deg", control_block_deg),
                    ("same_pixels", same_pixels), ("donut_rings", donut_rings), ("landuse_keep", landuse_keep), ("baseline_ndvi_min", baseline_ndvi_min),
                    ("min_pixel_coverage_pct", min_pixel_coverage_pct), ("drop_singletons", drop_singletons), ("precision_tolerance", precision_tolerance)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule, the design's source, the control selection
-        if _v is not None: _EXPLICIT_KEYS.add(_k)
+        if _v is not None and _v is not _UNSET: _EXPLICIT_KEYS.add(_k)
     # v20.57: which keys the notebook set, in the form load_scenario() respects (a "data" option is explicit too)
     for _k, _v in (("treatment_year_setting", treatment_year), ("post_cutoff_setting", post_cutoff), ("seasons_setting", seasons),
                    ("site_years_setting", site_years), ("site_start_setting", site_start)):
@@ -3786,8 +3787,8 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
     if landuse_keep is not None:                                                                      # spec 1: the land-use mask
         if isinstance(landuse_keep, str) and landuse_keep.strip().lower() in ("all", "none", "off", ""): ACTIVE["landuse_keep"] = "all"
         else: ACTIVE["landuse_keep"] = sorted(set(int(x) for x in ([landuse_keep] if isinstance(landuse_keep, (int, float, np.integer)) else landuse_keep)))
-    if baseline_ndvi_min is not None:
-        ACTIVE["baseline_ndvi_min"] = None if (baseline_ndvi_min is False or (isinstance(baseline_ndvi_min, str) and baseline_ndvi_min.lower() in ("none", "off", ""))) else float(baseline_ndvi_min)
+    if baseline_ndvi_min is not _UNSET:                                   # spec 1: None given = the mask OFF (a notebook's BASELINE_NDVI_MIN = None must reset an earlier run's value in the same kernel)
+        ACTIVE["baseline_ndvi_min"] = None if (baseline_ndvi_min is None or baseline_ndvi_min is False or (isinstance(baseline_ndvi_min, str) and baseline_ndvi_min.lower() in ("none", "off", ""))) else float(baseline_ndvi_min)
         if ACTIVE["baseline_ndvi_min"] is not None and not (-1 <= ACTIVE["baseline_ndvi_min"] <= 1): raise InsufficientDataError("BASELINE_NDVI_MIN must be an NDVI value in [-1, 1] or None")
     if min_pixel_coverage_pct is not None:
         if not (0 <= float(min_pixel_coverage_pct) < 1): raise InsufficientDataError("MIN_PIXEL_COVERAGE_PCT must be in [0, 1) -- a share of the typical year-season's coverage")
