@@ -17,8 +17,10 @@ Windows note: concurrent.futures.ProcessPoolExecutor cannot exceed 61 workers on
 """
 import os, sys, math
 
-WINDOWS_POOL_LIMIT = 60          # 61 is the hard limit of concurrent.futures on Windows; v20.59: the pools below use multiprocessing.Pool,
-                                 # which has no such limit -- every logical core of every processor group works
+WINDOWS_POOL_LIMIT = 60          # Windows waits on at most 63 process handles per pool (WaitForMultipleObjects): concurrent.futures refuses
+                                 # more than 61 workers and multiprocessing.Pool's worker thread dies with 'need at most 63 handles' (your
+                                 # 64-core run: 64 workers + 2 handles = 66). 60 worker PROCESSES per pool on Windows; the parent's BLAS /
+                                 # the GPU use the rest. No limit elsewhere.
 RESERVE_CORES = 0                # v20.57 (your 98 % rule): no core is held back -- every logical core works
 
 def logical_cores_all():
@@ -67,7 +69,7 @@ def machine_profile():
     return {"logical_cores": logical, "physical_cores": physical or logical,
             "smt": bool(physical and logical > physical),
             "ram_total": total, "ram_free": free, "windows": os.name == "nt", "processor_groups": processor_groups(),
-            "pool_limit": max(1, logical)}                          # v20.59: make_pool() has no 61-worker limit on Windows
+            "pool_limit": (min(max(1, logical), WINDOWS_POOL_LIMIT) if os.name == "nt" else max(1, logical))}   # the 63-handle wait limit of Windows (see WINDOWS_POOL_LIMIT)
 
 def _memory_share():                        # v20.45: _paths.MEMORY_SHARE (0.45 each when two pipelines run at once)
     try:
@@ -286,10 +288,12 @@ class _PoolAdapter:
         else: self._p.terminate()
 
 def make_pool(n_workers, initializer=None, initargs=()):
-    """v20.59: a pool of `n_workers` worker PROCESSES (spawn start method: Windows / Jupyter safe) -- multiprocessing.Pool first
-    (every logical core of every processor group), concurrent.futures as the fall-back (<= 61 workers on Windows)."""
+    """v20.59: a pool of `n_workers` worker PROCESSES (spawn start method: Windows / Jupyter safe) -- multiprocessing.Pool first,
+    concurrent.futures as the fall-back. On Windows never more than WINDOWS_POOL_LIMIT (60) workers: a pool of 64 killed its worker
+    thread ('need at most 63 handles, got 66') and PASS A sat at 0 % on your 2 x EPYC."""
     import multiprocessing as _mp
     n = max(1, int(n_workers))
+    if os.name == "nt": n = min(n, WINDOWS_POOL_LIMIT)
     try:
         return _PoolAdapter(_mp.get_context("spawn").Pool(processes=n, initializer=initializer, initargs=tuple(initargs)))
     except Exception:

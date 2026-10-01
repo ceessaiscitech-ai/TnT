@@ -112,8 +112,11 @@ the screen then left 41 of 44 year-seasons out of every model. Two things were m
 - **Half the cores were idle on Windows.** Windows splits a box with more than 64 logical processors into PROCESSOR GROUPS;
   `os.cpu_count()` and R's `detectCores()` report one group (64), and `concurrent.futures` refuses more than 61 worker processes. Now
   `_hardware.logical_cores_all()` (GetActiveProcessorCount over ALL groups) and R's `all_logical_cores_R()` (the CIM count) give every
-  logical processor, and PASS A / PASS B run on `multiprocessing.Pool` (`_hardware.make_pool`), which has no 61-worker limit: one worker
-  per logical core of every group. `N_THREADS` in R follows the same count.
+  logical processor, and PASS A / PASS B run on `multiprocessing.Pool` (`_hardware.make_pool`). **Correction from your A40 run:** Windows
+  waits on at most 63 process handles per pool, for `multiprocessing.Pool` as much as for `concurrent.futures` -- a pool of 64 workers
+  killed its worker thread (`need at most 63 handles, got a sequence of length 66`) and PASS A sat at 0 %. A pool now holds at most 60
+  worker processes on Windows (`WINDOWS_POOL_LIMIT`; no limit elsewhere); the parent's BLAS threads and the GPU use the remaining cores,
+  and the PASS A line says so. `N_THREADS` in R follows the full count (R uses threads, not a process pool, there).
 - **"RAM ceiling (98 %) reached after 97.6 GB" with 292 GB usable.** PASS B processes every Year x Season block at once and holds up to
   `MEM_BLOCK_COPIES` (3) copies of each, so the in-RAM hand-over needs that multiple of the panel's size; and a block above 256 MB is handed
   to a worker as a FILE in any case (a pickled block that size breaks the Windows process pool). Your blocks are ~2 GB each, so the in-RAM
@@ -262,7 +265,12 @@ could not switch the mask off after an earlier value in the same kernel (every l
 sentinel marks "not given"), and the self-check confirms the reset. The `"rmse"` rule's folder tag (`_ctrlPre2rR`) was missing in both
 engines (R's tag lookup stopped on it).
 
-## From your A40 run: the PyTorch "NumPy array is not writable" warning
+## From your A40 run: the 64-worker pool on Windows, and the PyTorch "NumPy array is not writable" warning
+
+`ValueError: need at most 63 handles, got a sequence of length 66` in `multiprocessing.pool._handle_workers`, PASS A at 0 of 2,876 files:
+the v20.59 "every logical core" rule started 64 worker processes, and Windows' `WaitForMultipleObjects` takes at most 63 handles (64
+workers + 2 internal handles). `_hardware.make_pool` and `worker_cap` now cap a pool at 60 workers on Windows (`WINDOWS_POOL_LIMIT`), the
+message says why, and the self-check simulates the 64-core Windows box (60) and the same box off Windows (64).
 
 `_common.py` (the GPU demeaning, `_demean_gpu` / the two-way matrix path / the location rule's GPU distance) built the tensors with
 `torch.as_tensor` on a numpy view of a pandas column, which is read-only; PyTorch warned once per run (`tensor_numpy.cpp:209`). The

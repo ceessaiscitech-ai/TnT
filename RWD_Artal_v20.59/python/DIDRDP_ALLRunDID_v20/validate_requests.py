@@ -122,7 +122,7 @@ def r08():
     f = pd.DataFrame({"NDVI": [0.4, np.nan, 0.0, 0.4], "Rain": [0.0, 10.0, 12.0, 11.0], "buff_km": [0, 0, 1, 1]})
     g, _ = P.apply_missing_policy(f.copy(), stage="file")        # rows 2 and 3 (NaN / 0 outcome) leave; the exported Rain 0 is missing
     ok = (not C._usable([0.0], "NDVI")[0]) and (not C._usable([np.nan], "NDVI")[0]) and len(g) == 2 and np.isnan(g.Rain.iloc[0]) and g.Rain.iloc[1] == 11.0
-    r_ok = "x[x == 0] <- NA" in RPREP.split("apply_missing_policy <- function")[1].split("\n}")[0]     # v20.55: R's apply_missing_policy, the Python port
+    _rb = RPREP.split("apply_missing_policy <- function")[1].split("\n}")[0]; r_ok = "x[x == 0] <- NA" in _rb or 'abs(x) <= .opt("PRECISION_TOLERANCE"' in _rb   # v20.55: R's apply_missing_policy; spec 1: |x| <= the tolerance
     return ("PASS" if ok and r_ok else "FAIL", "an exact 0 or NaN is no-data in outcomes AND covariates (Python and, since v20.54, R); the row without an "
             "outcome is dropped; load_panel blocks both from every model (validate_all_models: no placeholder value in any result)")
 rule(8, "NaN and exact-zero cells are no-data: dropped in preparation, blocked from every model; no placeholder results", "_prep_common.apply_missing_policy, _common._usable; R apply_missing_policy", r08)
@@ -218,7 +218,7 @@ rule(16, "Sub-watershed names >= 80 % similar are the same sub-watershed", "_nam
 def r17():
     p = H.machine_profile(); n = H.worker_cap(n_tasks=10**6)
     ok = (not H.AUTO_SPLIT and H.MEMORY_SHARE == 1.0 and H.memory_share() == 1.0 and n == min(int(p["logical_cores"]), p["pool_limit"])
-          and rconst(RP, "N_THREADS").startswith("max(1L, parallel::detectCores())") and rconst(RDES, "AUTO_SPLIT") == "FALSE")
+          and rconst(RP, "N_THREADS").startswith(("max(1L, parallel::detectCores())", "max(1L, all_logical_cores_R())")) and rconst(RDES, "AUTO_SPLIT") == "FALSE")
     return ("PASS" if ok else "FAIL", f"run: {n} worker processes on this {p['logical_cores']}-core machine (every core; Windows' own pool limit is "
             f"{H.WINDOWS_POOL_LIMIT}), share of the machine {H.memory_share():.0%}, also when several pipelines run (AUTO_SPLIT {H.AUTO_SPLIT}); the "
             f"only limit is your 98 % rule. R: every core")
@@ -478,11 +478,11 @@ def r32():
     files = [os.path.join(HERE, f) for f in ("_common.py", "_prep_common.py", "_hardware.py")] + glob.glob(os.path.join(HERE, "python_prebuilt", "*.py")) \
             + glob.glob(os.path.join(HERE, "0[2-5]_*", "M*.ipynb"))
     left = sorted({c for f in files for c in caps if c in open(f, encoding="utf-8").read()})
-    rdes = RDES; r_ok = "MEMORY_CEILING <- 0.98" in rdes and "detectCores() - 1" not in RP + rdes and rconst(RP, "N_THREADS").startswith("max(1L, parallel::detectCores())")
+    rdes = RDES; r_ok = "MEMORY_CEILING <- 0.98" in rdes and "detectCores() - 1" not in RP + rdes and rconst(RP, "N_THREADS").startswith(("max(1L, parallel::detectCores())", "max(1L, all_logical_cores_R())"))
     gpu_first = C.GPU_MAX_ROWS is None and "gpu_budget_bytes" in inspect.getsource(C.gpu_capacity_rows)
     ok = abs(budget - 58e9) < 1 and n_w == 61 and n_w_ram == 58 and H.RESERVE_CORES == 0 and C.MEMORY_HEADROOM == 1.0 and not left and r_ok and gpu_first
     return ("PASS" if ok else "FAIL", f"run on a stand-in 64-core / 100 GB machine with 60 GB free: {budget / 1e9:.0f} GB may be loaded (up to 98 % of the TOTAL, "
-            f"nothing held back), {n_w} worker processes (every core; 61 = Windows' own pool limit), {n_w_ram} when each needs 1 GB (fewer ONLY because more "
+            f"nothing held back), {n_w} worker processes (every core up to the platform's own pool limit: 60 on Windows, where a pool waits on at most 63 handles), {n_w_ram} when each needs 1 GB (fewer ONLY because more "
             f"would pass 98 %); no fixed sample size or core reserve left in Python or R; the GPU is used first when the rows fit below 98 % of its memory, "
             f"else RAM" + ("" if ok else f" -- caps left {left}, R {r_ok}, GPU {gpu_first}"))
 rule(32, "No GPU / RAM / CPU cap in any stage until 98 % of the TOTAL; GPU or RAM first", "_hardware.MEMORY_CEILING / worker_cap, _common.rows_that_fit / gpu_capacity_rows; R MEMORY_CEILING / units_that_fit", r32)

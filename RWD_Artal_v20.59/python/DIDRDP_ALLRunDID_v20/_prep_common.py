@@ -1933,8 +1933,11 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
             import multiprocessing as _mp, _hardware as _H
             pool = _H.make_pool(n_workers, initializer=_pa_worker_init, initargs=(_mdir, KNOWN_SUBWSHED_NAMES, cfg))   # v20.59: every core of every processor group
             _p = _H.machine_profile()
-            print(f"[INFO]    PASS A running on {n_workers} worker processes ({_p['logical_cores']} logical cores"
-                  + (f" in {_p['processor_groups']} processor groups" if _p.get("processor_groups", 1) > 1 else "") + f"; 1 BLAS thread each) | {_H.gpu_line()}")
+            _nw = min(int(n_workers), _p["pool_limit"])
+            print(f"[INFO]    PASS A running on {_nw} worker processes ({_p['logical_cores']} logical cores"
+                  + (f" in {_p['processor_groups']} processor groups" if _p.get("processor_groups", 1) > 1 else "")
+                  + (f"; Windows waits on at most 63 process handles per pool, so {_nw} workers -- the parent's BLAS and the GPU use the rest" if _p["windows"] and _nw < _p["logical_cores"] else "")
+                  + f"; 1 BLAS thread each) | {_H.gpu_line()}")
         except Exception as e:
             print(f"[WARNING] could not start the process pool ({type(e).__name__}: {e}) -- running sequentially")
             pool = None
@@ -2092,7 +2095,7 @@ PASS_B_BYTES_PER_ROW = 220.0     # measured working-set per row inside a worker 
 
 def pass_b_worker_count(n_blocks, rows_per_block=2_000_000, verbose=True):
     """How many blocks to process at once: every core (v20.57: no reserve), never more than the number of blocks,
-    never more than fit below 98 % of the RAM, never above the platform pool limit (61 on Windows)."""
+    never more than fit below 98 % of the RAM, never above the platform pool limit (60 on Windows: the 63-handle wait limit)."""
     try:
         import _hardware as _H
         n = _H.worker_cap(n_tasks=n_blocks, bytes_per_worker=rows_per_block * PASS_B_BYTES_PER_ROW)

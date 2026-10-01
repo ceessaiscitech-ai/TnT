@@ -234,8 +234,13 @@ def check_full_machine():
         os.cpu_count = lambda: 64; H.os.name = "nt"
         a = H.worker_cap(n_tasks=1449); b = H.worker_cap(n_tasks=44, bytes_per_worker=1_710_519 * 220)
         if a < 32: bad(f"PASS A would use only {a} workers on a 64-core box")
-        elif a != 64: bad(f"PASS A would ask for {a} workers on a 64-core box -- v20.59: every logical core (make_pool has no 61-worker limit on Windows)")
-        else: note(f"simulated 64-core Windows box: PASS A {a} workers, PASS B {b} workers")
+        elif a != H.WINDOWS_POOL_LIMIT: bad(f"PASS A would ask for {a} workers on a 64-core WINDOWS box -- at most {H.WINDOWS_POOL_LIMIT}: a pool of 64 dies with 'need at most 63 handles' (your run)")
+        else: note(f"simulated 64-core Windows box: PASS A {a} workers (the 63-handle wait limit of Windows), PASS B {b} workers")
+        H.os.name = "posix"; a2 = H.worker_cap(n_tasks=1449)
+        if a2 != 64: bad(f"off Windows PASS A would ask for {a2} workers on a 64-core box (expected 64: no pool limit there)")
+        H.os.name = "nt"
+        import inspect as _ins
+        if 'if os.name == "nt": n = min(n, WINDOWS_POOL_LIMIT)' not in _ins.getsource(H.make_pool).split("try:")[0]: bad("make_pool does not cap multiprocessing.Pool at WINDOWS_POOL_LIMIT on Windows (the 63-handle limit)")
         if b != 44: bad(f"PASS B would use {b} workers for 44 blocks with 480 GB free (expected 44)")
     finally:
         H._psutil, os.cpu_count, H.os.name, H.WINDOWS_POOL_LIMIT = saved_ps, saved_cpu, saved_name, saved_lim
