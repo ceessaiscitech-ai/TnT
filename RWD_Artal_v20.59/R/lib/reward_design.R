@@ -148,7 +148,7 @@ screen_decide <- function(s, outcome, rule = screen_rule_R()) {
   s <- copy(s); s[is.na(sd), sd := 0]
   for (k in c("min", "max", "n_pixels")) if (!k %in% names(s)) set(s, j = k, value = NA_real_)
   mt <- median(s$n_treated); mc <- median(s$n_control)
-  tol <- .opt("PRECISION_TOLERANCE", 1e-6); cov_ <- .opt("MIN_PIXEL_COVERAGE_PCT", SCREEN_MIN_COVERAGE)                  # spec 1 / 3 (as Python)
+  tol <- .tol_R(); cov_ <- .cov_R()                                                                                  # spec 1 / 3 (as Python); 1 Oct: the values in force
   s[, constant := sd <= pmax(tol, 1e-9 * pmax(1, abs(mean)))]
   s[, collapse := n_treated < cov_ * mt | n_control < cov_ * mc]
   s[, why := paste0(ifelse(constant, sprintf("constant across pixels (a fill value: %s rows%s, every value %s%s)", formatC(n, big.mark = ",", format = "d"),
@@ -439,19 +439,29 @@ design_settings <- function() {
             sub_watersheds = .opt("SUB_WATERSHEDS", "data"),                    # v20.58: the processing set (the location rule)
             outcome_screen = screen_rule_R(.opt("OUTCOME_SCREEN", "drop")),    # v20.59: the outcome screen's rule -- drop | keep | off
             design_source = .one_of("DESIGN_SOURCE", .opt("DESIGN_SOURCE", "model"), c("panel", "model")),   # v20.59: "panel" = the panel's columns are estimated on (the notebooks' default) | "model" = the design in effect
-            control_selection = control_selection_R(.opt("CONTROL_SELECTION", "rings")),                    # v20.59 (your fifth request): rings | pre_rings | pre_blocks
+            # 1 Oct (your rule): every optional rule has a USE_ switch -- the *_set entries are the settings, the plain entries the value IN FORCE (off = not applied)
+            use_control_selection = isTRUE(.opt("USE_CONTROL_SELECTION", FALSE)), use_same_pixels = isTRUE(.opt("USE_SAME_PIXELS", FALSE)), use_donut = isTRUE(.opt("USE_DONUT", FALSE)),
+            use_landuse_mask = isTRUE(.opt("USE_LANDUSE_MASK", FALSE)), use_baseline_ndvi_mask = isTRUE(.opt("USE_BASELINE_NDVI_MASK", FALSE)),
+            use_coverage_threshold = isTRUE(.opt("USE_COVERAGE_THRESHOLD", FALSE)), use_precision_tolerance = isTRUE(.opt("USE_PRECISION_TOLERANCE", FALSE)),
+            control_selection_set = control_selection_R(.opt("CONTROL_SELECTION", "rings")),
+            control_selection = if (isTRUE(.opt("USE_CONTROL_SELECTION", FALSE))) control_selection_R(.opt("CONTROL_SELECTION", "rings")) else "rings",   # v20.59 (your fifth request): rings | pre_rings | pre_blocks
             control_select_k = as.integer(.opt("CONTROL_SELECT_K", 2L)), control_select_ratio = as.numeric(.opt("CONTROL_SELECT_RATIO", 3)),
             control_select_on = .one_of("CONTROL_SELECT_ON", .opt("CONTROL_SELECT_ON", "trend"), c("trend", "level", "both", "rmse")),
             control_block_deg = as.numeric(.opt("CONTROL_BLOCK_DEG", 0.01)),
             cluster = .one_of("CLUSTER", .opt("CLUSTER", "auto"), c("auto", "block")),                     # v20.59: ~1 km spatial blocks as clusters
-            same_pixels = .one_of("SAME_PIXELS", .opt("SAME_PIXELS", "pre_post"), c("pre_post", "all", "off")),   # v20.59: the same pixels across the panel
-            donut_rings = { v <- .opt("DONUT_RINGS", integer(0)); v <- suppressWarnings(as.integer(unlist(v))); v <- sort(unique(v[is.finite(v)])); if (length(v) && any(!v %in% 1:5)) stop("DONUT_RINGS must name rings 1..5"); v },   # spec 1
-            landuse_keep = { v <- .opt("LANDUSE_KEEP", "all"); if (is.character(v) && length(v) == 1 && tolower(v) %in% c("all", "none", "off", "")) "all" else sort(unique(as.integer(unlist(v)))) },
-            baseline_ndvi_min = { v <- .opt("BASELINE_NDVI_MIN", NA); v <- suppressWarnings(as.numeric(v[1])); if (is.finite(v) && (v < -1 || v > 1)) stop("BASELINE_NDVI_MIN must be an NDVI value in [-1, 1] or NA"); if (is.finite(v)) v else NA_real_ },
-            min_pixel_coverage_pct = as.numeric(.opt("MIN_PIXEL_COVERAGE_PCT", SCREEN_MIN_COVERAGE)), drop_singletons = isTRUE(.opt("DROP_SINGLETONS", FALSE)),
-            precision_tolerance = as.numeric(.opt("PRECISION_TOLERANCE", 1e-6)))
-  if (!(is.finite(s$min_pixel_coverage_pct) && s$min_pixel_coverage_pct >= 0 && s$min_pixel_coverage_pct < 1)) stop("MIN_PIXEL_COVERAGE_PCT must be in [0, 1)")
-  if (!(is.finite(s$precision_tolerance) && s$precision_tolerance >= 0 && s$precision_tolerance <= 1e-2)) stop("PRECISION_TOLERANCE must be in [0, 1e-2]")
+            same_pixels_set = .one_of("SAME_PIXELS", .opt("SAME_PIXELS", "pre_post"), c("pre_post", "all", "off")),
+            same_pixels = if (isTRUE(.opt("USE_SAME_PIXELS", FALSE))) .one_of("SAME_PIXELS", .opt("SAME_PIXELS", "pre_post"), c("pre_post", "all", "off")) else "off",   # v20.59: the same pixels across the panel
+            donut_rings_set = { v <- .opt("DONUT_RINGS", integer(0)); v <- suppressWarnings(as.integer(unlist(v))); v <- sort(unique(v[is.finite(v)])); if (length(v) && any(!v %in% 1:5)) stop("DONUT_RINGS must name rings 1..5"); v },   # spec 1
+            donut_rings = if (isTRUE(.opt("USE_DONUT", FALSE))) { v <- suppressWarnings(as.integer(unlist(.opt("DONUT_RINGS", integer(0))))); sort(unique(v[is.finite(v)])) } else integer(0),
+            landuse_keep_set = { v <- .opt("LANDUSE_KEEP", "all"); if (is.character(v) && length(v) == 1 && tolower(v) %in% c("all", "none", "off", "")) "all" else sort(unique(as.integer(unlist(v)))) },
+            landuse_keep = if (isTRUE(.opt("USE_LANDUSE_MASK", FALSE))) { v <- .opt("LANDUSE_KEEP", "all"); if (is.character(v) && length(v) == 1 && tolower(v) %in% c("all", "none", "off", "")) "all" else sort(unique(as.integer(unlist(v)))) } else "all",
+            baseline_ndvi_min_set = { v <- .opt("BASELINE_NDVI_MIN", NA); v <- suppressWarnings(as.numeric(v[1])); if (is.finite(v) && (v < -1 || v > 1)) stop("BASELINE_NDVI_MIN must be an NDVI value in [-1, 1] or NA"); if (is.finite(v)) v else NA_real_ },
+            baseline_ndvi_min = if (isTRUE(.opt("USE_BASELINE_NDVI_MASK", FALSE))) { v <- suppressWarnings(as.numeric(.opt("BASELINE_NDVI_MIN", NA)[1])); if (is.finite(v)) v else NA_real_ } else NA_real_,
+            min_pixel_coverage_pct_set = as.numeric(.opt("MIN_PIXEL_COVERAGE_PCT", SCREEN_MIN_COVERAGE)), min_pixel_coverage_pct = .cov_R(),
+            drop_singletons = isTRUE(.opt("USE_DROP_SINGLETONS", .opt("DROP_SINGLETONS", FALSE))),
+            precision_tolerance_set = as.numeric(.opt("PRECISION_TOLERANCE", 1e-6)), precision_tolerance = .tol_R())
+  if (!(is.finite(s$min_pixel_coverage_pct_set) && s$min_pixel_coverage_pct_set >= 0 && s$min_pixel_coverage_pct_set < 1)) stop("MIN_PIXEL_COVERAGE_PCT must be in [0, 1)")
+  if (!(is.finite(s$precision_tolerance_set) && s$precision_tolerance_set >= 0 && s$precision_tolerance_set <= 1e-2)) stop("PRECISION_TOLERANCE must be in [0, 1e-2]")
   if (!(is.finite(s$control_select_k) && s$control_select_k >= 1L && s$control_select_k <= 5L)) stop("CONTROL_SELECT_K must be 1..5")
   if (!(is.finite(s$control_select_ratio) && s$control_select_ratio > 0)) stop("CONTROL_SELECT_RATIO must be > 0")
   if (!(is.finite(s$control_block_deg) && s$control_block_deg >= 0.001 && s$control_block_deg <= 1)) stop("CONTROL_BLOCK_DEG must be between 0.001 and 1 degree")
@@ -826,17 +836,19 @@ model_design <- function(verbose = TRUE, force = FALSE) {
                                                                              keep = " (such year-seasons are reported and KEPT; results tagged _screenKept)", off = " (no screen)")[[s$outcome_screen]]))
   add_ch("DESIGN_SOURCE", s$design_source, s$design_source, paste0("your setting", c(panel = " (the PANEL's treat / control / pre / post / did -- the exports' Treat flag, PERIOD_RULE -- are estimated on; the design in effect above is compared with them)",
                                                                        model = " (the design in effect above is estimated on -- design-based modelling; DESIGN_SOURCE <- \"panel\" estimates on the panel's columns)")[[s$design_source]]))
-  add_ch("CONTROL_SELECTION", s$control_selection, s$control_selection, paste0("your setting", switch(s$control_selection,
+  .sw <- function(on, name) if (isTRUE(on)) "" else " -- switch OFF"                                   # 1 Oct: the switch beside the setting ...
+  .why <- function(on, name) if (isTRUE(on)) "" else sprintf("USE_%s = FALSE -> NOT applied; ", name)   # ... and why the value used differs from it
+  add_ch("CONTROL_SELECTION", paste0(s$control_selection_set, .sw(s$use_control_selection, "CONTROL_SELECTION")), s$control_selection, paste0(.why(s$use_control_selection, "CONTROL_SELECTION"), "your setting", switch(s$control_selection,
          rings = " (every ring of CONTROL_RINGS is the control group)",
          pre_rings = sprintf(" (per outcome, the %d ring(s) whose PRE-period series is closest to the treatment area's -- '%s'; decided on the pre period only, the same pixels in every year and season; CONTROL_SELECTION_<outcome>_R.csv)", s$control_select_k, s$control_select_on),
          pre_blocks = sprintf(" (per outcome, ~%.1f km blocks of control pixels closest to the treatment area's PRE-period series -- '%s' -- until %g x the treated pixels; the same pixels in every year and season; CONTROL_SELECTION_<outcome>_R.csv)", s$control_block_deg * 111, s$control_select_on, s$control_select_ratio))))
-  add_ch("DONUT_RINGS", if (length(s$donut_rings)) paste(s$donut_rings, collapse = ",") else "none", if (length(s$donut_rings)) paste(s$donut_rings, collapse = ",") else "none", "your setting (rings left out of the control pool -- the spillover buffer next to the core)")
-  add_ch("LANDUSE_KEEP", paste(s$landuse_keep, collapse = ","), paste(s$landuse_keep, collapse = ","), "your setting (a pixel is kept by its PRE-period land-use class)")
-  add_ch("BASELINE_NDVI_MIN", s$baseline_ndvi_min, s$baseline_ndvi_min, "your setting (a pixel's pre-period mean NDVI must exceed it)")
-  add_ch("MIN_PIXEL_COVERAGE_PCT", s$min_pixel_coverage_pct, s$min_pixel_coverage_pct, "your setting (a year-season below this share of the typical coverage is screened out)")
-  add_ch("DROP_SINGLETONS", s$drop_singletons, s$drop_singletons, "your setting (series seen once leave before the demeaning)")
-  add_ch("PRECISION_TOLERANCE", s$precision_tolerance, s$precision_tolerance, "your setting (|value| <= tolerance is the no-data zero; a year-season is constant within it)")
-  add_ch("SAME_PIXELS", s$same_pixels, s$same_pixels, paste0("your setting", c(pre_post = " (every treated and control pixel is observed in pre AND post; a pixel seen on one side only leaves -- the groups are the same pixels across the panel)",
+  add_ch("DONUT_RINGS", paste0(if (length(s$donut_rings_set)) paste(s$donut_rings_set, collapse = ",") else "none", .sw(s$use_donut, "DONUT")), if (length(s$donut_rings)) paste(s$donut_rings, collapse = ",") else "none", paste0(.why(s$use_donut, "DONUT"), "your setting (rings left out of the control pool -- the spillover buffer next to the core)"))
+  add_ch("LANDUSE_KEEP", paste0(paste(s$landuse_keep_set, collapse = ","), .sw(s$use_landuse_mask, "LANDUSE_MASK")), paste(s$landuse_keep, collapse = ","), paste0(.why(s$use_landuse_mask, "LANDUSE_MASK"), "your setting (a pixel is kept by its PRE-period land-use class)"))
+  add_ch("BASELINE_NDVI_MIN", paste0(s$baseline_ndvi_min_set, .sw(s$use_baseline_ndvi_mask, "BASELINE_NDVI_MASK")), s$baseline_ndvi_min, paste0(.why(s$use_baseline_ndvi_mask, "BASELINE_NDVI_MASK"), "your setting (a pixel's pre-period mean NDVI must exceed it)"))
+  add_ch("MIN_PIXEL_COVERAGE_PCT", paste0(s$min_pixel_coverage_pct_set, .sw(s$use_coverage_threshold, "COVERAGE_THRESHOLD")), s$min_pixel_coverage_pct, paste0(.why(s$use_coverage_threshold, "COVERAGE_THRESHOLD"), "your setting (a year-season below this share of the typical coverage is screened out)"))
+  add_ch("USE_DROP_SINGLETONS", s$drop_singletons, s$drop_singletons, "your setting (TRUE = series seen once leave before the demeaning)")
+  add_ch("PRECISION_TOLERANCE", paste0(s$precision_tolerance_set, .sw(s$use_precision_tolerance, "PRECISION_TOLERANCE")), s$precision_tolerance, paste0(.why(s$use_precision_tolerance, "PRECISION_TOLERANCE"), "your setting (|value| <= tolerance is the no-data zero; a year-season is constant within it)"))
+  add_ch("SAME_PIXELS", paste0(s$same_pixels_set, .sw(s$use_same_pixels, "SAME_PIXELS")), s$same_pixels, paste0(.why(s$use_same_pixels, "SAME_PIXELS"), "your setting", c(pre_post = " (every treated and control pixel is observed in pre AND post; a pixel seen on one side only leaves -- the groups are the same pixels across the panel)",
                                                                    all = " (every pixel is observed in every year-season of the sample: a balanced pixel set)", off = " (a pixel may contribute to one side only -- the v20.58 sample)")[[s$same_pixels]]))
   add_ch("CLUSTER", s$cluster, s$cluster, paste0("your setting", if (identical(s$cluster, "block")) " (~1 km spatial blocks of pixels -- many clusters, the spatial correlation of neighbouring pixels absorbed)" else sprintf(" (the sub-watershed; fewer than %d sub-watersheds -> the years)", MIN_SWS_CLUSTERS)))
   add_ch("COVARIATES", if (length(s$covariates)) s$covariates else "none", if (length(s$covariates)) s$covariates else "none", "your setting")
@@ -895,7 +907,7 @@ scenario_tag <- function(d) {
   if (cs %in% c("pre_rings", "pre_blocks")) t <- paste0(t, if (identical(cs, "pre_rings")) sprintf("_ctrlPre%dr", as.integer(d$control_select_k %||% 2L)) else sprintf("_ctrlPreBlk%gx", as.numeric(d$control_select_ratio %||% 3)),
                                                       c(trend = "", level = "L", both = "B", rmse = "R")[[d$control_select_on %||% "trend"]])     # spec 1: R = the pre-period RMSE rule
   if (identical(d$cluster, "block")) t <- paste0(t, "_clBlock")                                  # v20.59: ~1 km spatial blocks as clusters (as Python)
-  spx <- d$same_pixels %||% "pre_post"; if (identical(spx, "all")) t <- paste0(t, "_pixAll") else if (identical(spx, "off")) t <- paste0(t, "_pixAny")   # v20.59 (as Python)
+  spx <- d$same_pixels %||% "off"; if (identical(spx, "all")) t <- paste0(t, "_pixAll") else if (identical(spx, "pre_post")) t <- paste0(t, "_pixPP")   # v20.59 (as Python; 1 Oct: no tag when off)
   if (length(d$donut_rings %||% integer(0))) t <- paste0(t, "_donut", paste(d$donut_rings, collapse = "-"))                                          # spec 1 (as Python)
   if (!identical(d$landuse_keep %||% "all", "all")) t <- paste0(t, "_lu", paste(d$landuse_keep, collapse = "-"))
   if (is.finite(d$baseline_ndvi_min %||% NA)) t <- paste0(t, sprintf("_ndviPre%g", d$baseline_ndvi_min))
@@ -1018,7 +1030,7 @@ pixels_one_side_R <- function(x, rule) {
   sum(g$k < uniqueN(cells))
 }
 same_pixels_R <- function(x, o, d, say = TRUE) {
-  rule <- d$same_pixels %||% "pre_post"
+  rule <- d$same_pixels %||% "off"
   if (identical(rule, "off") || !all(c("pixel_id", "post") %in% names(x))) return(x)
   fin <- is.finite(x[[o]])
   keep_p <- if (identical(rule, "pre_post")) { g <- x[fin, .(mn = min(post), mx = max(post)), by = pixel_id]; g[mn == 0L & mx == 1L, pixel_id] }
@@ -1076,7 +1088,7 @@ OUTCOME_BOUNDS_R <- list(NDVI = c(-1, 1), EVI = c(-1, 1), SAVI = c(-1.5, 1.5), N
 NODATA_VALUES_R <- c(-9999, -999, -10, 9999)
 outcome_range_check_R <- function(x, outcome, say = TRUE) {                    # spec 3: range safety (as Python's outcome_range_check)
   if (!outcome %in% names(x)) return(NULL)
-  v <- suppressWarnings(as.numeric(x[[outcome]])); fin <- is.finite(v); n <- sum(fin); bd <- OUTCOME_BOUNDS_R[[outcome]]; tol <- .opt("PRECISION_TOLERANCE", 1e-6)
+  v <- suppressWarnings(as.numeric(x[[outcome]])); fin <- is.finite(v); n <- sum(fin); bd <- OUTCOME_BOUNDS_R[[outcome]]; tol <- .tol_R()
   res <- list(outcome = outcome, n_finite = n, n_nan = sum(!fin), bounds = bd, n_outside_bounds = if (!is.null(bd) && n) sum(v[fin] < bd[1] | v[fin] > bd[2]) else 0L,
               n_nodata_codes = if (n) sum(v[fin] %in% NODATA_VALUES_R) else 0L, n_zero_padding = if (n) sum(abs(v[fin]) <= tol) else 0L,
               vmin = if (n) min(v[fin]) else NA, vmax = if (n) max(v[fin]) else NA)
@@ -1284,7 +1296,7 @@ integrity_parts_R <- function(x) {
        dup = if (nd == 0L) "" else paste(x[nd, .(pixel_id, Year, Season)], collapse = " "),
        n_ring_multi = nrow(x[, .(nr = uniqueN(buff_km)), by = .(site_id, pixel_id)][nr > 1L]),
        n_both = length(intersect(x[treat == 1L, unique(pixel_id)], x[treat == 0L, unique(pixel_id)])),
-       n_one_side = pixels_one_side_R(x, .opt("SAME_PIXELS", "pre_post")),                                    # v20.59: your rule (the rows here are finite)
+       n_one_side = pixels_one_side_R(x, .same_pixels_opt_R()),                                    # v20.59: your rule (the rows here are finite)
        rings = sort(unique(x$buff_km)), years = if (nrow(x)) range(x$Year) else c(NA_integer_, NA_integer_),
        years_set = sort(unique(x$Year)), seasons = sort(unique(x$Season)),
        rows = nrow(x), pixels = uniqueN(x$pixel_id))
@@ -1298,7 +1310,7 @@ integrity_decide_R <- function(p, d, outcome = "", S = d$processed) {
   add("no repeated pixel-year-season", !nzchar(p$dup), if (!nzchar(p$dup)) sprintf("%s rows, every (pixel, year, season) once", format(p$rows, big.mark = ",")) else sprintf("repeated: %s", p$dup), strict_o)
   add("one ring per pixel", p$n_ring_multi == 0L, sprintf("%d pixel(s) with more than one ring", p$n_ring_multi), strict_o)
   add("no pixel both treated and a control", p$n_both == 0L, sprintf("%d pixel(s) on both sides", p$n_both), strict_o)
-  spx <- d$same_pixels %||% "pre_post"                                                                       # v20.59: your rule, confirmed on the sample
+  spx <- d$same_pixels %||% "off"                                                                            # v20.59: your rule, confirmed on the sample
   if (!identical(spx, "off") && !is.null(p$n_one_side))
     add(if (identical(spx, "pre_post")) "the same pixels in pre and post" else "the same pixels in every year-season", p$n_one_side == 0,
         sprintf("%d pixel(s) observed %s", as.integer(p$n_one_side), if (identical(spx, "pre_post")) "on one side only" else "in some year-seasons only"))
@@ -1453,8 +1465,10 @@ DESIGN_DEFAULTS <- list(DESIGN_MODE = "recommended", TREATMENT_TIMING = "fund", 
                         OVERLAP_ROWS = "drop", FRAGMENT_RULE = "drop", FRAGMENT_MIN_SHARE = 0.05, POOLED_FE = "site_period", EXCLUDE_GAPFILLED = TRUE,
                         COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SUB_WATERSHEDS = "data", OUTCOME_SCREEN = "drop", DESIGN_SOURCE = "model",   # v20.59: + the screen's rule, the design's source
                         CONTROL_SELECTION = "rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_RATIO = 3, CONTROL_SELECT_ON = "trend", CONTROL_BLOCK_DEG = 0.01, CLUSTER = "auto",   # v20.59: the control selection, the cluster
-                        SAME_PIXELS = "pre_post", DONUT_RINGS = integer(0), LANDUSE_KEEP = "all", BASELINE_NDVI_MIN = NA, MIN_PIXEL_COVERAGE_PCT = 0.05,
-                        DROP_SINGLETONS = FALSE, PRECISION_TOLERANCE = 1e-6)   # spec 1 / 3
+                        SAME_PIXELS = "pre_post", DONUT_RINGS = 1L, LANDUSE_KEEP = "all", BASELINE_NDVI_MIN = 0.25, MIN_PIXEL_COVERAGE_PCT = 0.70,
+                        USE_DROP_SINGLETONS = FALSE, PRECISION_TOLERANCE = 1e-6,   # spec 1 / 3
+                        USE_CONTROL_SELECTION = FALSE, USE_SAME_PIXELS = FALSE, USE_DONUT = FALSE, USE_LANDUSE_MASK = FALSE, USE_BASELINE_NDVI_MASK = FALSE,
+                        USE_COVERAGE_THRESHOLD = FALSE, USE_PRECISION_TOLERANCE = FALSE)   # 1 Oct: the switches, all off
 design_variant_samples <- function(variants, out_dir, outcome = "NDVI") {
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
   for (nm in names(variants)) {

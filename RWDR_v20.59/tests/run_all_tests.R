@@ -337,13 +337,15 @@ if (!inherits(tE, "error")) {
                pre_at_start = list(TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022, PRE_YEARS = 2022),                                 # v20.59: no pre year -> said, every year before
                screen_keep = list(OUTCOME_SCREEN = "keep"),                                                                              # v20.59: the screen's cells kept
                design_panel = list(DESIGN_SOURCE = "panel", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2023),                           # v20.59: the panel's post (2022) wins over 2023
-               ctrl_pre2 = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # v20.59: the pre period picks 2 of the 5 rings
+               ctrl_pre2 = list(USE_CONTROL_SELECTION = TRUE, CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # v20.59: the pre period picks 2 of the 5 rings
                cluster_block = list(CLUSTER = "block", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                  # v20.59: ~1 km blocks as clusters
-               pix_all = list(SAME_PIXELS = "all", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                                    # v20.59: a balanced pixel set
-               donut1 = list(DONUT_RINGS = 1L, CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                   # spec 1: ring 1 leaves the control pool (of rings 1-5)
-               ctrl_rmse = list(CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_ON = "rmse", CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # spec 1: the RMSE rule on the 5 rings
-               ndvi_base = list(BASELINE_NDVI_MIN = 0.30, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                              # spec 1: the pre-period mean NDVI mask
-               no_single_on = list(DROP_SINGLETONS = TRUE, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                             # spec 1: the singleton pre-flight (the notebooks' default; the library's own default is off)
+               pix_all = list(USE_SAME_PIXELS = TRUE, SAME_PIXELS = "all", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),            # v20.59: a balanced pixel set
+               pix_pp = list(USE_SAME_PIXELS = TRUE, SAME_PIXELS = "pre_post", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),        # v20.59: the same pixels in pre and post
+               pix_switch_off = list(USE_SAME_PIXELS = FALSE, SAME_PIXELS = "all", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # 1 Oct: the switch off -> nothing applied
+               donut1 = list(USE_DONUT = TRUE, DONUT_RINGS = 1L, CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                   # spec 1: ring 1 leaves the control pool (of rings 1-5)
+               ctrl_rmse = list(USE_CONTROL_SELECTION = TRUE, CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_ON = "rmse", CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # spec 1: the RMSE rule on the 5 rings
+               ndvi_base = list(USE_BASELINE_NDVI_MASK = TRUE, BASELINE_NDVI_MIN = 0.30, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                              # spec 1: the pre-period mean NDVI mask
+               no_single_on = list(USE_DROP_SINGLETONS = TRUE, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                             # spec 1: the singleton pre-flight (the notebooks' default; the library's own default is off)
                rabi = list(SEASONS = "Rabi"), manual = list(DESIGN_MODE = "manual"), transition = list(EXCLUDE_TRANSITION_YEAR = TRUE),
                gapfilled_kept = list(EXCLUDE_GAPFILLED = FALSE), dose_amount = list(DOSE_VARIABLE = "dose_amount_sws"))
   od <- file.path(TMP, "E_out"); design_variant_samples(vars, od)
@@ -384,7 +386,10 @@ if (!inherits(tE, "error")) {
   chkE("cluster_block", "CLUSTER = 'block' (v20.59): ~1 km blocks as the clusters (many), the folder tagged _clBlock", !is.null(cb) && uniqueN(cb$cluster_id) > 20 && !is.null(cbj$tag) && grepl("_clBlock", cbj$tag, fixed = TRUE),
        if (is.null(cb)) "no sample" else sprintf("%d clusters | %s", uniqueN(cb$cluster_id), cbj$tag))
   gb <- if (!is.null(b)) b[, .(mn = min(post), mx = max(post)), by = pixel_id] else NULL
-  chkE("base", "SAME_PIXELS = 'pre_post' (v20.59, the default): every pixel of the base sample is observed in pre and post", !is.null(gb) && all(gb$mn == 0L & gb$mx == 1L), if (is.null(gb)) "no sample" else sprintf("%d pixel(s) on one side only", sum(gb$mn != 0L | gb$mx != 1L)))
+  pp_ <- rd("pix_pp"); ppj <- tryCatch(fromJSON(file.path(od, "pix_pp.json")), error = function(e) NULL); gb <- if (!is.null(pp_)) pp_[, .(mn = min(post), mx = max(post)), by = pixel_id] else NULL
+  chkE("pix_pp", "USE_SAME_PIXELS <- TRUE, 'pre_post' (v20.59): every pixel of the sample is observed in pre and post, the folder tagged _pixPP", !is.null(gb) && all(gb$mn == 0L & gb$mx == 1L) && !is.null(ppj$tag) && grepl("_pixPP", ppj$tag, fixed = TRUE), if (is.null(gb)) "no sample" else sprintf("%d pixel(s) on one side only", sum(gb$mn != 0L | gb$mx != 1L)))
+  so_ <- rd("pix_switch_off"); soj <- tryCatch(fromJSON(file.path(od, "pix_switch_off.json")), error = function(e) NULL)
+  chkE("pix_switch_off", "USE_SAME_PIXELS <- FALSE with SAME_PIXELS <- 'all' (1 Oct): NOT applied -- the same rows as base, no _pix tag", !is.null(so_) && nrow(so_) == nrow(b) && !is.null(soj$tag) && !grepl("_pix", soj$tag, fixed = TRUE), if (is.null(so_)) "no sample" else sprintf("%d vs base %d rows | %s", nrow(so_), nrow(b), soj$tag))
   pa <- rd("pix_all"); paj <- tryCatch(fromJSON(file.path(od, "pix_all.json")), error = function(e) NULL)
   pc_ <- if (!is.null(pa)) pa[, .(k = uniqueN(paste(Year, Season))), by = pixel_id] else NULL
   chkE("pix_all", "SAME_PIXELS = 'all' (v20.59): every pixel of the sample in every year-season (a balanced pixel set), the folder tagged _pixAll",

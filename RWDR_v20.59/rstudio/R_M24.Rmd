@@ -32,21 +32,6 @@ FUND_START_RULE  <- "backcast"      # fund timing: "backcast" | "share" (the amo
 DOSE_VARIABLE    <- "dose_intensity_per_ha"   # the dose (fund file): amount released / treatment area | "dose_amount_sws" | "dose_share_of_target"
                                               #   -- 0 on the control rings and before the treatment starts
 CONTROL_RINGS    <- "data"          # control ring(s): "data" | 1:5 | 1:3 | 2:5 | c(1, 3, 5)
-CONTROL_SELECTION <- "rings"        # v20.59 (your rule): "rings" = every ring of CONTROL_RINGS is the control group | "pre_rings" = per outcome, the CONTROL_SELECT_K
-                                    #   rings whose PRE-period series is closest to the treatment area's | "pre_blocks" = ~1 km blocks of control pixels chosen the same way until
-                                    #   CONTROL_SELECT_RATIO x the treated pixels. Decided on the PRE period ONLY (a post- or outcome-based rule is refused), the same control
-                                    #   pixels in every year and season; evidence CONTROL_SELECTION_<outcome>_R.csv beside the results; results tagged _ctrlPre...
-CONTROL_SELECT_K <- 2L              # pre_rings: how many rings (1-5)
-CONTROL_SELECT_RATIO <- 3           # pre_blocks: control pixels >= this x the treated pixels
-CONTROL_SELECT_ON <- "trend"        # "trend" (the demeaned pre series' distance = what the parallel-trends assumption asks) | "level" (the pre mean's gap) | "both"
-SAME_PIXELS       <- "pre_post"     # v20.59 (your rule): every treated and control pixel must be observed in pre AND post ("pre_post") or in every year-season
-DONUT_RINGS       <- 1L             # spec 1: rings left OUT of the control pool -- the spillover buffer next to the treated core (integer(0) = none)
-LANDUSE_KEEP      <- "all"          # spec 1: "all" | your exporter's LandUse class codes, e.g. 2L: a pixel is kept by its PRE-period (baseline) class
-BASELINE_NDVI_MIN <- NA             # spec 1: e.g. 0.25 -- a pixel's pre-period mean NDVI must exceed it (an agricultural mask) | NA = off
-MIN_PIXEL_COVERAGE_PCT <- 0.05      # spec 1 / 3: a year-season whose treated or control coverage is below this share of the typical one is screened out
-DROP_SINGLETONS   <- FALSE          # spec 3: series seen once leave before the demeaning (the pre-flight)
-PRECISION_TOLERANCE <- 1e-6         # spec 1: |value| <= this is the no-data zero; a year-season is "constant" within it (indices in [-1, 1])
-                                    #   ("all"), else it leaves the sample -- the groups are the same pixels across the panel | "off" (a pixel may contribute to one side only)
 CLUSTER          <- "auto"          # v20.59: "auto" (the sub-watersheds; fewer than 6 -> the years) | "block" (~1 km spatial blocks of pixels: many clusters, spatial correlation absorbed)
 PRE_YEARS        <- "data"          # years BEFORE the start: "data" | NA (every year) | 4 (the 4 years before) | 2015 (a calendar year = the FIRST pre year)
 POST_YEARS       <- "data"          # years FROM the start:   "data" | NA (every year) | 2 (the start year + 1) | 2025 (a calendar year = the LAST post year)
@@ -69,6 +54,44 @@ DESIGN_SOURCE     <- "panel"        # v20.59 -- YOUR RULE: the PANEL's treat / c
                                     #   what this model estimates on (results tagged _panelDesign; the design in effect above is COMPARED with them) | "model" =
                                     #   design-based modelling: the timing / TREATMENT_YEAR / transition-year settings above build post / pre / did
 COVARIATES       <- c("Rain", "Tmax", "Tmean", "Tmin")   # the weather covariates of this model | character(0) = none
+# ================================================================================================================================
+# OPTIONAL CUSTOMISATIONS (1 Oct, your rule) -- every one has a USE_ switch. FALSE = NOT applied at all, whatever the value beside it
+# says (the standard design above runs as it is); TRUE = applied exactly as set. All are FALSE by default. DESIGN IN EFFECT shows each
+# one as "not used" or with the value in force; a rule in force also tags the results folder (the tag is named beside each option).
+# --------------------------------------------------------------------------------------------------------------------------------
+# SECTION B -- THE CONTROL GROUP CHOSEN ON THE PRE PERIOD (your request of 30 Sep): which buffers / clusters are the controls for THIS
+# outcome, decided on the pre period only and then FIXED across the whole panel (the same control pixels in every year and season)
+# --------------------------------------------------------------------------------------------------------------------------------
+USE_CONTROL_SELECTION <- FALSE    # FALSE = every ring of CONTROL_RINGS is the control group (as above) | TRUE = CONTROL_SELECTION below chooses it
+CONTROL_SELECTION <- "pre_rings"  #   "pre_rings": the CONTROL_SELECT_K (1 or 2) buffers whose PRE-period series is closest to the treatment area's -- your
+                                  #   "most close 1 or 2 buffers" | "pre_blocks": control CLUSTERS (~1 km blocks of pixels) from ANY part of the buffers, the
+                                  #   closest first, until CONTROL_SELECT_RATIO x the treated pixels -- your "clusters from any part of the buffers".
+                                  #   Per outcome; the decision uses the PRE period only (a post- or outcome-based rule is refused); made once and applied
+                                  #   to every year and season. Evidence: CONTROL_SELECTION_<outcome>_R.csv beside the results. Tag _ctrlPre2r / _ctrlPreBlk3x
+CONTROL_SELECT_K  <- 2L           #   pre_rings: how many buffers -- 1 or 2 (up to 5)
+CONTROL_SELECT_RATIO <- 3         #   pre_blocks: control pixels >= this x the treated pixels
+CONTROL_SELECT_ON <- "trend"      #   what "closest" means: "trend" = the demeaned pre series' distance (what the parallel-trends assumption asks; recommended)
+                                  #   | "level" = the nearest pre-period MEAN (your "mean of the treatment area vs the buffer's mean") | "rmse" = the RMSE of the
+                                  #   cell-wise pre differences | "both" = trend + level.  Tag suffix: none / L / R / B
+USE_SAME_PIXELS   <- FALSE        # FALSE = a pixel may contribute to one side only (the v20.58 sample) | TRUE = the treated and control groups are the SAME
+SAME_PIXELS       <- "pre_post"   #   pixels across the panel: "pre_post" = every pixel observed in pre AND post, else it leaves (tag _pixPP) | "all" = in
+                                  #   every year-season of the sample (a balanced pixel set; tag _pixAll). The sample-integrity line confirms it at every run
+# --------------------------------------------------------------------------------------------------------------------------------
+# SECTION C -- PANEL-PREPARATION ENHANCEMENTS (the three specifications of 30 Sep); each with its own switch
+# --------------------------------------------------------------------------------------------------------------------------------
+USE_DONUT         <- FALSE        # FALSE = ring 1 is a control like the others | TRUE = DONUT_RINGS leave the control pool -- the spillover buffer next to the core
+DONUT_RINGS       <- 1L           #   the ring(s) left out, e.g. 1L or c(1L, 2L); applied before any control choice. Tag _donut1
+USE_LANDUSE_MASK  <- FALSE        # FALSE = every land-use class | TRUE = only pixels whose PRE-period (baseline) LandUse class is in LANDUSE_KEEP stay. Tag _lu2
+LANDUSE_KEEP      <- 2L           #   your exporter's class code(s) for agriculture (a pixel's class is read on the pre period, so the works cannot move it)
+USE_BASELINE_NDVI_MASK <- FALSE   # FALSE = no mask | TRUE = only pixels whose PRE-period mean NDVI exceeds BASELINE_NDVI_MIN stay (an agricultural mask). Tag _ndviPre0.25
+BASELINE_NDVI_MIN <- 0.25         #   the threshold (an NDVI value)
+USE_COVERAGE_THRESHOLD <- FALSE   # FALSE = the standard screen (a year-season below 5 % of the typical coverage leaves) | TRUE = below MIN_PIXEL_COVERAGE_PCT. Tag _cov70
+MIN_PIXEL_COVERAGE_PCT <- 0.70    #   the share of the typical treated / control coverage a year-season must reach (your log: 2023 Zaid, 2025 Kharif / Zaid collapsed)
+USE_DROP_SINGLETONS <- FALSE      # FALSE = series seen once stay | TRUE = they leave before the demeaning (the pre-flight). Tag _noSingle
+USE_PRECISION_TOLERANCE <- FALSE  # FALSE = the no-data zero is an EXACT 0 (the v20.58 rule) | TRUE = |value| <= PRECISION_TOLERANCE is the no-data zero and a
+PRECISION_TOLERANCE <- 1e-6       #   year-season is "constant across pixels" within it -- indices in [-1, 1] are never compared with exact equality
+# The Rabi-only run of the specifications is SEASONS <- "Rabi" above; the ~1 km block clusters are CLUSTER <- "block" above.
+# ================================================================================================================================
 ```
 
 **Run** -- load the screened panel, estimate, save (results under ROOT/output/results).

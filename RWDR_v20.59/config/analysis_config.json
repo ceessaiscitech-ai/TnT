@@ -1,20 +1,28 @@
 {
   "ANALYSIS_VARIABLE": "NDVI",
-  "SEASON_FILTER": "Rabi",
+  "SEASON_FILTER": "All",
   "DONUT_RINGS": [
     1
   ],
   "CONTROL_RINGS": "data",
-  "CONTROL_SELECTION_METHOD": "pre_bias_min",
+  "CONTROL_SELECTION_METHOD": "all",
   "CONTROL_SELECT_ON": "level",
   "PRECISION_TOLERANCE": 1e-06,
   "MIN_PIXEL_COVERAGE_PCT": 0.7,
   "CLUSTER_VAR": "subwshed_id",
   "ESTIMATOR": "SURROGATE_DID",
-  "LANDUSE_KEEP": "all",
-  "BASELINE_NDVI_MIN": null,
+  "LANDUSE_KEEP": [
+    2
+  ],
+  "BASELINE_NDVI_MIN": 0.25,
   "SAME_PIXELS": "pre_post",
-  "DROP_SINGLETONS": true,
+  "USE_SAME_PIXELS": false,
+  "USE_DONUT": false,
+  "USE_LANDUSE_MASK": false,
+  "USE_BASELINE_NDVI_MASK": false,
+  "USE_COVERAGE_THRESHOLD": false,
+  "USE_PRECISION_TOLERANCE": false,
+  "USE_DROP_SINGLETONS": false,
   "TREATMENT_TIMING": "fixed",
   "TREATMENT_YEAR": 2022,
   "PRE_YEARS": "data",

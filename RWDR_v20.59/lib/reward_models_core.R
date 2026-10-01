@@ -34,7 +34,7 @@ fe_demean <- function(X, f1, f2 = NULL, tol = 1e-10, maxit = 5000) {
 }
 fe_fit <- function(dt, y, x, fe = c("unit", "period"), cluster = "cluster_id") {
   x <- unique(x[x %in% names(dt)])
-  if (isTRUE(.opt("DROP_SINGLETONS", FALSE)) && fe[1] %in% names(dt)) {                       # spec 3: the singleton pre-flight (as Python's DROP_SINGLETONS)
+  if (isTRUE(.opt("USE_DROP_SINGLETONS", .opt("DROP_SINGLETONS", FALSE))) && fe[1] %in% names(dt)) {                       # spec 3: the singleton pre-flight (as Python's DROP_SINGLETONS)
     n1 <- dt[, .N, by = c(fe[1])]; one <- n1[N == 1L][[fe[1]]]
     if (length(one)) { info(sprintf("DROP_SINGLETONS: %s row(s) of %s series seen once left out before the demeaning", format(length(one), big.mark = ","), fe[1])); dt <- dt[!get(fe[1]) %in% one] }
   }

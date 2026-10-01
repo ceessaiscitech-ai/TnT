@@ -157,10 +157,10 @@ def check_ctrl(base, engines, rows):
     set once on the merged pre-period facts of the partitions and every worker applies it; the same result files, byte for byte in their numbers."""
     import validate_known_answers as KA, pyarrow as pa, pyarrow.parquet as pq
     df, coh = KA.make_panel("single")
-    for label, extra in (("pre_rings", {"control_selection": "pre_rings", "control_select_k": 2, "control_select_on": "trend"}),
-                         ("pre_blocks", {"control_selection": "pre_blocks", "control_select_ratio": 2.0}),
-                         ("cluster_block", {"cluster": "block"}), ("same_pixels_all", {"same_pixels": "all"}),
-                         ("donut_ring1", {"donut_rings": [1]}), ("baseline_ndvi", {"baseline_ndvi_min": 0.30, "control_selection": "pre_rings", "control_select_k": 2, "control_select_on": "rmse"})):   # spec 1
+    for label, extra in (("pre_rings", {"use_control_selection": True, "control_selection": "pre_rings", "control_select_k": 2, "control_select_on": "trend"}),
+                         ("pre_blocks", {"use_control_selection": True, "control_selection": "pre_blocks", "control_select_ratio": 2.0}),
+                         ("cluster_block", {"cluster": "block"}), ("same_pixels_all", {"use_same_pixels": True, "same_pixels": "all"}),
+                         ("donut_ring1", {"use_donut": True, "donut_rings": [1]}), ("baseline_ndvi", {"use_baseline_ndvi_mask": True, "baseline_ndvi_min": 0.30, "use_control_selection": True, "control_selection": "pre_rings", "control_select_k": 2, "control_select_on": "rmse"})):   # spec 1
         d = os.path.join(base, f"ctrl_{label}"); os.makedirs(d, exist_ok=True)
         panel = os.path.join(d, "panel.parquet"); pq.write_table(pa.Table.from_pandas(df, preserve_index=False), panel)
         mem = os.path.join(d, "memory"); models = ["M01", "M02"]

@@ -15,9 +15,10 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import _common as C
 import surrogate_did_estimator as SD
 
-DEFAULTS = {"ANALYSIS_VARIABLE": "NDVI", "SEASON_FILTER": "Rabi", "DONUT_RINGS": [1], "CONTROL_RINGS": "data", "CONTROL_SELECTION_METHOD": "pre_bias_min", "CONTROL_SELECT_ON": "level",
+DEFAULTS = {"ANALYSIS_VARIABLE": "NDVI", "SEASON_FILTER": "All", "DONUT_RINGS": [1], "CONTROL_RINGS": "data", "CONTROL_SELECTION_METHOD": "all", "CONTROL_SELECT_ON": "level",
             "PRECISION_TOLERANCE": 1e-6, "MIN_PIXEL_COVERAGE_PCT": 0.70, "CLUSTER_VAR": "subwshed_id", "ESTIMATOR": "SURROGATE_DID", "LANDUSE_KEEP": "all", "BASELINE_NDVI_MIN": None,
-            "SAME_PIXELS": "pre_post", "DROP_SINGLETONS": True, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022, "PRE_YEARS": "data", "POST_YEARS": "data", "DESIGN_SOURCE": "model", "EXCLUDE_TRANSITION_YEAR": False,
+            "SAME_PIXELS": "pre_post", "USE_SAME_PIXELS": False, "USE_DONUT": False, "USE_LANDUSE_MASK": False, "USE_BASELINE_NDVI_MASK": False, "USE_COVERAGE_THRESHOLD": False,
+            "USE_DROP_SINGLETONS": False, "USE_PRECISION_TOLERANCE": False, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022, "PRE_YEARS": "data", "POST_YEARS": "data", "DESIGN_SOURCE": "model", "EXCLUDE_TRANSITION_YEAR": False,
             "OUTCOME_SCREEN": "drop", "EXCLUDE_GAPFILLED": True, "COVARIATES": ["Rain", "Tmax", "Tmean", "Tmin"], "SURROGATES": ["NDWI", "LSWI", "NDMI", "Rain"], "SURROGATE_SEASON": 1,
             "OUTCOME_SEASONS": [2, 3], "REPORT_SPECS": ["canonical", "donut", "matched", "synthetic_did", "surrogate_index"]}
 SEASONS = {"rabi": "Rabi", "kharif": "Kharif", "zaid": "Zaid", "yearly": "yearly", "all": "all"}
@@ -43,6 +44,9 @@ def validate_config(cfg):
     if any(int(x) < 1 or int(x) > 5 for x in dn): bad.append("DONUT_RINGS must name rings 1..5")
     if str(cfg["CONTROL_SELECT_ON"]).lower() not in ("level", "rmse", "trend", "both"): bad.append("CONTROL_SELECT_ON: level | rmse | trend | both")
     if str(cfg["SAME_PIXELS"]).lower() not in ("pre_post", "all", "off"): bad.append("SAME_PIXELS: pre_post | all | off")
+    if "DROP_SINGLETONS" in cfg and "USE_DROP_SINGLETONS" not in cfg: cfg["USE_DROP_SINGLETONS"] = cfg["DROP_SINGLETONS"]     # the earlier name of the switch
+    for k in ("USE_SAME_PIXELS", "USE_DONUT", "USE_LANDUSE_MASK", "USE_BASELINE_NDVI_MASK", "USE_COVERAGE_THRESHOLD", "USE_DROP_SINGLETONS", "USE_PRECISION_TOLERANCE"):
+        if not isinstance(cfg.get(k, False), bool): bad.append(f"{k}: true | false")
     if str(cfg["TREATMENT_TIMING"]).lower() not in ("fund", "registry", "fixed"): bad.append("TREATMENT_TIMING: fund | registry | fixed")
     if str(cfg["DESIGN_SOURCE"]).lower() not in ("panel", "model"): bad.append("DESIGN_SOURCE: panel | model")
     for k in ("PRE_YEARS", "POST_YEARS"):
@@ -63,10 +67,14 @@ def scenario_kwargs(cfg, spec="config"):
               seasons=SEASONS[str(cfg["SEASON_FILTER"]).lower()], donut_rings=[int(x) for x in (cfg.get("DONUT_RINGS") or [])],
               control_selection=method, control_select_k=k, control_select_on=cfg["CONTROL_SELECT_ON"], cluster=CLUSTERS[str(cfg["CLUSTER_VAR"]).lower()],
               landuse_keep=cfg["LANDUSE_KEEP"], baseline_ndvi_min=cfg["BASELINE_NDVI_MIN"], min_pixel_coverage_pct=float(cfg["MIN_PIXEL_COVERAGE_PCT"]),
-              drop_singletons=bool(cfg["DROP_SINGLETONS"]), precision_tolerance=float(cfg["PRECISION_TOLERANCE"]), same_pixels=cfg["SAME_PIXELS"], verbose=False)
-    if spec == "canonical": kw.update(seasons="all", donut_rings=[], control_selection="rings")            # every ring 1-5, every season
-    elif spec == "donut": kw.update(control_selection="rings")                                             # the season filter + the donut, every remaining ring
-    elif spec == "matched": kw.update(control_selection=method if method != "rings" else "pre_rings")     # the pre-period-chosen rings
+              drop_singletons=bool(cfg.get("USE_DROP_SINGLETONS", False)), precision_tolerance=float(cfg["PRECISION_TOLERANCE"]), same_pixels=cfg["SAME_PIXELS"], verbose=False,
+              # 1 Oct (your rule): the USE_ switches -- an optional rule acts only when its switch is on; the config's switches are all off unless you set them
+              use_control_selection=(method != "rings"), use_same_pixels=bool(cfg.get("USE_SAME_PIXELS", False)), use_donut=bool(cfg.get("USE_DONUT", False)),
+              use_landuse_mask=bool(cfg.get("USE_LANDUSE_MASK", False)), use_baseline_ndvi_mask=bool(cfg.get("USE_BASELINE_NDVI_MASK", False)),
+              use_coverage_threshold=bool(cfg.get("USE_COVERAGE_THRESHOLD", False)), use_precision_tolerance=bool(cfg.get("USE_PRECISION_TOLERANCE", False)))
+    if spec == "canonical": kw.update(seasons="all", donut_rings=[], use_donut=False, control_selection="rings", use_control_selection=False)   # every ring 1-5, every season
+    elif spec == "donut": kw.update(control_selection="rings", use_control_selection=False, use_donut=True)                 # the season filter + the donut, every remaining ring
+    elif spec == "matched": kw.update(control_selection=method if method != "rings" else "pre_rings", use_control_selection=True)   # the pre-period-chosen rings
     return kw
 
 def apply_config(cfg, spec="config"):

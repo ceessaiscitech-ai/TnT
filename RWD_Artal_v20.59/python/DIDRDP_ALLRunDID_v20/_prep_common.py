@@ -366,7 +366,8 @@ def apply_missing_policy(df, log=None, stage="file", drop_empty=True):
     if ZERO_AS_MISSING and cols:
         for c in cols:
             v = pd.to_numeric(df[c], errors="coerce")
-            z = (v.abs() <= PRECISION_TOLERANCE)                                    # spec 1: the no-data zero within the tolerance, never exact equality
+            z = (v.abs() <= (PRECISION_TOLERANCE if USE_PRECISION_TOLERANCE else 0.0))   # 1 Oct: the tolerance only when its switch is on, else the exact zero (v20.58)
+            # spec 1: the no-data zero within the tolerance, never exact equality
             if z.any():
                 stats["zero_cells_set_missing"] += int(z.sum())
                 df[c] = v.mask(z, np.nan)
@@ -1119,6 +1120,7 @@ def data_qc(df):
 
 
 # ====================== v20.28: WHICH SUB-WATERSHED EVERY PIXEL IS IN (shapefile SWSs20_KarnatakaAll5k) ======================
+USE_PRECISION_TOLERANCE = False   # 1 Oct (your rule): False = the no-data zero is an EXACT 0 (the v20.58 rule) | True = |value| <= PRECISION_TOLERANCE is the no-data zero
 PRECISION_TOLERANCE = 1e-6     # spec 1: satellite indices in [-1, 1] -- |value| <= tolerance is the no-data zero (P00 and every model); never exact equality
 PIXEL_ONE_SITE = True          # v20.59 -- YOUR RULE: ONE sub-watershed and ONE ring per pixel in the whole panel. Every row goes to the sub-watershed whose
                                #   polygon holds its latitude / longitude (core first, then the lower id) and takes THAT polygon's ring, whatever id or ring

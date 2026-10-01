@@ -113,11 +113,23 @@ CONTROL_SELECT_ON   <- "trend"                                 #   treated pixel
 CONTROL_BLOCK_DEG   <- 0.01                                    #   period only, the same pixels in every year and season; evidence CONTROL_SELECTION_<outcome>_R.csv
 CONTROL_BLOCK_MIN_PIXELS <- 30L                                #   a block with fewer control pixels in the pre period is not a candidate
 CLUSTER             <- "auto"                                  # v20.59: "auto" (the sub-watersheds; fewer than MIN_SWS_CLUSTERS -> the years) | "block" (~1 km blocks)
-DONUT_RINGS         <- integer(0)                              # spec 1: rings left OUT of the control pool (the spillover buffer next to the core); the notebooks set 1L
+DONUT_RINGS         <- 1L                                      # spec 1: the ring(s) left OUT of the control pool when USE_DONUT (the spillover buffer next to the core)
 LANDUSE_KEEP        <- "all"                                   # spec 1: "all" | the LandUse class codes a pixel's PRE-period (baseline) class must be in
-BASELINE_NDVI_MIN   <- NA                                      # spec 1: a pixel's pre-period mean NDVI must exceed this (an agricultural mask), e.g. 0.25 | NA
-MIN_PIXEL_COVERAGE_PCT <- 0.05                                 # spec 1 / 3: a year-season below this share of the typical coverage is screened out (SCREEN_MIN_COVERAGE)
-DROP_SINGLETONS     <- FALSE                                   # spec 3: series seen once leave before the demeaning
+BASELINE_NDVI_MIN   <- 0.25                                    # spec 1: a pixel's pre-period mean NDVI must exceed this when USE_BASELINE_NDVI_MASK (an agricultural mask)
+MIN_PIXEL_COVERAGE_PCT <- 0.70                                 # spec 1 / 3: when USE_COVERAGE_THRESHOLD, a year-season below this share of the typical coverage is screened out
+# ---- 1 Oct (your rule): the USE_ switches. An optional rule is applied ONLY when its switch is TRUE, whatever the value beside it says;
+#      all FALSE here and in every notebook (SECTION B / C of R_Mxx). .tol_R() / .cov_R() / .same_pixels_opt_R() give the value IN FORCE.
+USE_CONTROL_SELECTION <- FALSE                                 # TRUE = CONTROL_SELECTION / CONTROL_SELECT_K / _RATIO / _ON choose the control group on the pre period
+USE_SAME_PIXELS     <- FALSE                                   # TRUE = SAME_PIXELS keeps the treated and control groups the same pixels across the panel
+USE_DONUT           <- FALSE                                   # TRUE = DONUT_RINGS leave the control pool
+USE_LANDUSE_MASK    <- FALSE                                   # TRUE = only pixels whose pre-period LandUse class is in LANDUSE_KEEP
+USE_BASELINE_NDVI_MASK <- FALSE                                # TRUE = only pixels whose pre-period mean NDVI exceeds BASELINE_NDVI_MIN
+USE_COVERAGE_THRESHOLD <- FALSE                                # TRUE = the screen uses MIN_PIXEL_COVERAGE_PCT instead of the standard SCREEN_MIN_COVERAGE (5 %)
+USE_DROP_SINGLETONS <- FALSE                                   # TRUE = series seen once leave before the demeaning (spec 3; the option IS its switch)
+USE_PRECISION_TOLERANCE <- FALSE                               # TRUE = |value| <= PRECISION_TOLERANCE is the no-data zero | FALSE = the exact 0 (the v20.58 rule)
+.tol_R <- function() if (isTRUE(.opt("USE_PRECISION_TOLERANCE", FALSE))) as.numeric(.opt("PRECISION_TOLERANCE", 1e-6)) else 0
+.cov_R <- function() if (isTRUE(.opt("USE_COVERAGE_THRESHOLD", FALSE))) as.numeric(.opt("MIN_PIXEL_COVERAGE_PCT", SCREEN_MIN_COVERAGE)) else SCREEN_MIN_COVERAGE
+.same_pixels_opt_R <- function() if (isTRUE(.opt("USE_SAME_PIXELS", FALSE))) .opt("SAME_PIXELS", "pre_post") else "off"
 PRECISION_TOLERANCE <- 1e-6                                    # spec 1: |value| <= tolerance is the no-data zero (R_P00 and every model); never exact equality
 SAME_PIXELS         <- "pre_post"                              # v20.59 (your rule): every treated and control pixel is observed in pre AND post ("pre_post"), or in
                                                                #   every year-season ("all"), else it leaves -- the groups are the same pixels across the panel | "off"

@@ -112,14 +112,14 @@ recode_buff_km <- function(v) {                                                 
 drop_rows_without_outcome <- function(dt) {                                         # _prep_common.drop_rows_without_outcome
   oc <- intersect(OUTCOME_VARS, names(dt))
   if (!length(oc)) return(dt)
-  any_ok <- rowSums(is.finite(as.matrix(dt[, ..oc]))) > 0
+  any_ok <- rep(FALSE, nrow(dt)); for (v in oc) any_ok <- any_ok | is.finite(dt[[v]])     # 1 Oct: column by column (no N x K matrix of 86 M rows; 2.5 x faster)
   attr_n <- sum(!any_ok); out <- dt[any_ok]; attr(out, "rows_dropped_no_outcome") <- attr_n; out
 }
 apply_missing_policy <- function(dt, drop_empty = TRUE) {                            # _prep_common.apply_missing_policy (stage "file")
   # v20.58 (second pass, the poison test with cloud gaps): drop_empty = FALSE keeps the rows with no usable outcome -- run_prep drops them only
   # AFTER resolve_duplicates. Dropped per file (before it), a newer export's row that a cloud left empty was gone before the duplicates were
   # compared, and the OLDER repeated row of that pixel-year-season took its place (a repeated row reached every model)
-  for (v in intersect(ZERO_RULE_VARS, names(dt))) if (!v %in% ZERO_RULE_EXCEPT) { x <- suppressWarnings(as.numeric(dt[[v]])); x[is.finite(x) & abs(x) <= .opt("PRECISION_TOLERANCE", 1e-6)] <- NA; set(dt, j = v, value = x) }   # spec 1: the tolerance, never exact equality
+  for (v in intersect(ZERO_RULE_VARS, names(dt))) if (!v %in% ZERO_RULE_EXCEPT) { x <- suppressWarnings(as.numeric(dt[[v]])); x[is.finite(x) & abs(x) <= .tol_R()] <- NA; set(dt, j = v, value = x) }   # spec 1: the tolerance, never exact equality
   if (DROP_ROWS_WITHOUT_OUTCOME && isTRUE(drop_empty)) dt <- drop_rows_without_outcome(dt)
   for (v in intersect(WEATHER_VARS, names(dt))) {                                    # the negative-covariate barrier, no-data first
     x <- as.numeric(dt[[v]])
@@ -219,7 +219,8 @@ ring_from_polygon_codes <- function() if (isTRUE(.opt("BUFF_FROM_GEOMETRY", FALS
 # year-season. Pixels outside every polygon (site_check 3) are reported apart (they keep the file's id and leave every estimate). pix = one
 # row per (pixel_id, site_id, buff_km, latitude, longitude) seen -- the whole panel in memory, or the blocks' unique rows merged out of core.
 panel_pixel_consistency_R <- function(pix, n_rep, n_rows, write = TRUE) {
-  g <- pix[, .(sites = uniqueN(site_id), rings = uniqueN(buff_km), coords = uniqueN(paste(latitude, longitude))), by = pixel_id]
+  g <- merge(merge(unique(pix, by = c("pixel_id", "site_id"))[, .(sites = .N), by = pixel_id], unique(pix, by = c("pixel_id", "buff_km"))[, .(rings = .N), by = pixel_id], by = "pixel_id"),
+             unique(pix, by = c("pixel_id", "latitude", "longitude"))[, .(coords = .N), by = pixel_id], by = "pixel_id")        # 1 Oct: unique() + .N per key (seconds at 3 M pixels), the same counts
   bad <- g[sites > 1 | rings > 1 | coords > 1]
   if (write) fwrite(bad, file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv"))
   if (!nrow(g) && n_rep == 0) ok(sprintf("pixel consistency: no pixel inside a polygon to check (%s rows, every pixel outside every polygon keeps its file's id and leaves every estimate -- the location rule)", format(n_rows, big.mark = ",")))
@@ -272,7 +273,7 @@ pixel_registry <- function(dt) {
   d <- dt[, c("pixel_id", "latitude", "longitude", "file_mtime", "src_file", oc), with = FALSE]
   d[, n_ok := rowSums(is.finite(as.matrix(.SD))), .SDcols = oc]
   setorder(d, file_mtime)
-  d[, .(lat = mean(latitude), lon = mean(longitude), mtime = max(file_mtime), n_rows = .N, n_ok = sum(n_ok), src = src_file[.N]), by = pixel_id][
+  d[, .(lat = mean(latitude), lon = mean(longitude), mtime = max(file_mtime), n_rows = .N, n_ok = sum(n_ok), src = last(src_file)), by = pixel_id][     # 1 Oct: last() (GForce), not src_file[.N]
     , completeness := n_ok / pmax(n_rows, 1)][]
 }
 near_duplicate_pairs <- function(reg, size_m = PIXEL_SIZE_M, overlap_min = PIXEL_OVERLAP_MIN) {
@@ -670,22 +671,29 @@ run_prep <- function() {
                                     format(n0 - nrow(dt), big.mark = ",")))
   }
   # v20.58 -- YOUR RULE: repeated rows and pixels are dropped AND CONFIRMED (checked on the result, never assumed)
+  .t_step <- Sys.time(); .said <- function(what) { info(sprintf("%s (%.0f s)", what, as.numeric(difftime(Sys.time(), .t_step, units = "secs")))); .t_step <<- Sys.time() }   # 1 Oct: progress lines
   nk <- anyDuplicated(dt, by = c("site_id", "pixel_id", "Year", "Season"))
   if (nk) stop(sprintf("duplicate removal FAILED: (site %s, pixel %s, %s, season %s) is still repeated -- please report this", dt$site_id[nk], dt$pixel_id[nk], dt$Year[nk], dt$Season[nk]))
   no <- dt[site_check == 3L, anyDuplicated(.SD), .SDcols = c("pixel_id", "Year", "Season")]
   if (no) stop("duplicate removal FAILED: a pixel outside every polygon is still repeated in a year-season -- please report this")
   n2 <- nrow(dt) - uniqueN(dt, by = c("pixel_id", "Year", "Season"))
   if (n2) info(sprintf("%s pixel-year-season(s) lie in the polygons of TWO sub-watersheds (their zones overlap): kept once per sub-watershed -- the location rule of the models keeps each in its own sub-watershed only", format(n2, big.mark = ",")))
-  panel_pixel_consistency_R(unique(dt[is.na(site_check) | site_check != 3L, .(pixel_id, site_id, buff_km, latitude, longitude)]),           # v20.59: your rule, confirmed
-                            nrow(dt[is.na(site_check) | site_check != 3L]) - uniqueN(dt[is.na(site_check) | site_check != 3L], by = c("pixel_id", "Year", "Season")), nrow(dt))
+  .said("duplicates checked on the result")
+  ins_ <- is.na(dt$site_check) | dt$site_check != 3L                                                                          # 1 Oct: the inside mask once (three 86 M-row subsets before)
+  panel_pixel_consistency_R(unique(dt[ins_, .(pixel_id, site_id, buff_km, latitude, longitude)]),                               # v20.59: your rule, confirmed
+                            sum(ins_) - uniqueN(dt[ins_, .(pixel_id, Year, Season)]), nrow(dt))
+  .said("pixel consistency checked")
   if (isTRUE(NEAR_DUPLICATE_PIXELS)) {
     reg2 <- pixel_registry(dt); left <- nrow(near_duplicate_pairs(reg2))
     (if (left) warn else ok)(sprintf("near-duplicate pixels CONFIRMED: %s pixel(s) remain whose footprints overlap >= %.0f %% among %s pixels%s", format(left, big.mark = ","),
                                      100 * PIXEL_OVERLAP_MIN, format(nrow(reg2), big.mark = ","), if (left) " (a chain the one-to-one merge cannot join) -- the models leave the smaller of each pair out (OVERLAP_ROWS)" else ""))
+    .said("near-duplicate pixels checked on the result")
   }
   ok(sprintf("duplicates CONFIRMED removed: %s rows, every (sub-watershed, pixel, year, season) exactly once", format(nrow(dt), big.mark = ",")))
   dt <- panel_design_columns_R(dt)                                                                  # v20.59: treat / control / pre / post / did in the panel
+  .said("design columns added")
   vt <- panel_variation_report_R(panel_variation_R(dt))                                             # v20.59: pixel variation per outcome x year-season
+  .said("pixel-variation report written")
   panel_kept_report_R(vt, if ("GapFilled" %in% names(dt)) sum(dt$GapFilled > 0, na.rm = TRUE) else 0L)   # v20.59: the panel KEEPS every row and value
   keep_cols <- intersect(c("pixel_id", "site_id", "Year", "Season", "latitude", "longitude", "buff_km", "sws_export", "site_check", "sws_name",
                            "fragment", "SubwshedID", PANEL_DESIGN_COLS, OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), names(dt))   # v20.59: Treat used, not kept

@@ -148,15 +148,16 @@ VARIANTS = {
     "ctrl_pre_ring1_level":   {"CONTROL_SELECTION": "pre_rings", "CONTROL_SELECT_K": 1, "CONTROL_SELECT_ON": "level", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},
     "ctrl_pre_blocks":        {"CONTROL_SELECTION": "pre_blocks", "CONTROL_SELECT_RATIO": 1.0, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # ~1 km blocks until 1 x the treated pixels
     "cluster_block":          {"CLUSTER": "block"},                                                          # v20.59: ~1 km spatial blocks as clusters
-    "same_pixels_all":        {"SAME_PIXELS": "all", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: a balanced pixel set
-    "same_pixels_off":        {"SAME_PIXELS": "off", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: the v20.58 sample
+    "same_pixels_all":        {"USE_SAME_PIXELS": True, "SAME_PIXELS": "all", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: a balanced pixel set
+    "same_pixels_pre_post":   {"USE_SAME_PIXELS": True, "SAME_PIXELS": "pre_post", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: the same pixels in pre and post
+    "same_pixels_off":        {"USE_SAME_PIXELS": False, "SAME_PIXELS": "all", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # 1 Oct: the switch off -> "all" is NOT applied
     "donut_ring1":            {"DONUT_RINGS": [1], "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},            # spec 1: ring 1 leaves the control pool
     "donut_rings12_rabi":     {"DONUT_RINGS": [1, 2], "SEASONS": "Rabi", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # spec 1: the Rabi donut spec (rings 3-5)
     "ctrl_pre_rmse":          {"CONTROL_SELECTION": "pre_rings", "CONTROL_SELECT_K": 2, "CONTROL_SELECT_ON": "rmse", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # spec 1: the pre-period RMSE rule
     "landuse_keep_1":         {"LANDUSE_KEEP": [1], "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},              # spec 1: every pixel's baseline class is 1 -> nothing leaves, tagged
     "baseline_ndvi_030":      {"BASELINE_NDVI_MIN": 0.30, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},        # spec 1: the pre-period mean NDVI mask
     "coverage_pct_099":       {"MIN_PIXEL_COVERAGE_PCT": 0.99, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},    # spec 1: a strict coverage threshold, tagged
-    "singletons_kept":        {"DROP_SINGLETONS": False, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},         # spec 1: the singleton pre-flight off
+    "singletons_dropped":     {"USE_DROP_SINGLETONS": True, "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},     # spec 1: the singleton pre-flight on (off by default)
     "pre_all_post_all":       {"PRE_YEARS": None, "POST_YEARS": None},
     "manual_mode":            {"DESIGN_MODE": "manual"},
     "manual_rings_1_3_pre4":  {"DESIGN_MODE": "recommended", "CONTROL_RINGS": [1, 2, 3], "PRE_YEARS": 4},
@@ -174,7 +175,15 @@ VARIANTS = {
     "covariates_none":        {"COVARIATES": []},
 }
 
+def switches(o):
+    """1 Oct (your rule): the USE_ switches of a variant -- a rule the variant names is ON (unless it says USE_... False), every other one OFF."""
+    return {"USE_CONTROL_SELECTION": o.get("USE_CONTROL_SELECTION", o.get("CONTROL_SELECTION", "rings") != "rings"), "USE_SAME_PIXELS": o.get("USE_SAME_PIXELS", False),
+            "USE_DONUT": o.get("USE_DONUT", bool(o.get("DONUT_RINGS"))), "USE_LANDUSE_MASK": o.get("USE_LANDUSE_MASK", o.get("LANDUSE_KEEP", "all") != "all"),
+            "USE_BASELINE_NDVI_MASK": o.get("USE_BASELINE_NDVI_MASK", o.get("BASELINE_NDVI_MIN") is not None), "USE_COVERAGE_THRESHOLD": o.get("USE_COVERAGE_THRESHOLD", "MIN_PIXEL_COVERAGE_PCT" in o),
+            "USE_DROP_SINGLETONS": bool(o.get("USE_DROP_SINGLETONS", False)), "USE_PRECISION_TOLERANCE": o.get("USE_PRECISION_TOLERANCE", "PRECISION_TOLERANCE" in o)}
+
 def py_kwargs(o):
+    sw = switches(o)
     cr = o["CONTROL_RINGS"]; sea = o["SEASONS"]
     return dict(design_mode=o["DESIGN_MODE"], timing=o["TREATMENT_TIMING"], treatment_year=int(o["TREATMENT_YEAR"]), fund_start_rule=o["FUND_START_RULE"],
                 fund_dose_before_file=o["FUND_DOSE_BEFORE_FILE"], dose_variable=o["DOSE_VARIABLE"],
@@ -186,8 +195,10 @@ def py_kwargs(o):
                 cluster=("block" if o.get("CLUSTER") == "block" else "site"), cohort_offset=0, nonnegative=False, outcome_screen=o.get("OUTCOME_SCREEN", "drop"),
                 design_source=o.get("DESIGN_SOURCE", "model"), control_selection=o.get("CONTROL_SELECTION", "rings"), control_select_k=int(o.get("CONTROL_SELECT_K", 2)),
                 control_select_ratio=float(o.get("CONTROL_SELECT_RATIO", 3.0)), control_select_on=o.get("CONTROL_SELECT_ON", "trend"), same_pixels=o.get("SAME_PIXELS", "pre_post"),
-                donut_rings=list(o.get("DONUT_RINGS", [])), landuse_keep=o.get("LANDUSE_KEEP", "all"), baseline_ndvi_min=o.get("BASELINE_NDVI_MIN"),
-                min_pixel_coverage_pct=float(o.get("MIN_PIXEL_COVERAGE_PCT", 0.05)), drop_singletons=bool(o.get("DROP_SINGLETONS", True)), precision_tolerance=float(o.get("PRECISION_TOLERANCE", 1e-6)))
+                donut_rings=list(o.get("DONUT_RINGS", [1])), landuse_keep=o.get("LANDUSE_KEEP", "all"), baseline_ndvi_min=o.get("BASELINE_NDVI_MIN"),
+                min_pixel_coverage_pct=float(o.get("MIN_PIXEL_COVERAGE_PCT", 0.70)), drop_singletons=sw["USE_DROP_SINGLETONS"], precision_tolerance=float(o.get("PRECISION_TOLERANCE", 1e-6)),
+                use_control_selection=sw["USE_CONTROL_SELECTION"], use_same_pixels=sw["USE_SAME_PIXELS"], use_donut=sw["USE_DONUT"], use_landuse_mask=sw["USE_LANDUSE_MASK"],
+                use_baseline_ndvi_mask=sw["USE_BASELINE_NDVI_MASK"], use_coverage_threshold=sw["USE_COVERAGE_THRESHOLD"], use_precision_tolerance=sw["USE_PRECISION_TOLERANCE"])
 
 def py_sample(C, o):
     C.set_scenario(verbose=False, all_years=True)
@@ -207,18 +218,18 @@ def py_sample(C, o):
                         "period": d["time_fe_yearseason"].astype(str).values, "cluster_id": d[ck].astype(str).values})
     meta_ctrl = None
     if o.get("CONTROL_SELECTION", "rings") == "pre_rings":                             # v20.59: an independent recomputation on the rows the rule saw (every ring)
-        C.set_scenario(verbose=False, control_selection="rings"); d0 = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI")))
+        C.set_scenario(verbose=False, use_control_selection=False); d0 = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI")))
         d0 = d0[(d0.in_analysis_sample == 1) & (d0.post == 0) & np.isfinite(d0.NDVI)]; mt_ = d0[d0.treatment == 1].groupby(["Year", "Season"]).NDVI.mean(); on_ = o.get("CONTROL_SELECT_ON", "trend"); meta_ctrl = {}
         for r_ in range(1, 6):
             mc_ = d0[d0.buff_km == r_].groupby(["Year", "Season"]).NDVI.mean(); j_ = mc_.index.intersection(mt_.index)
             if not len(j_): continue
             dif_ = (mc_[j_] - mt_[j_]).values; lev_ = float(dif_.mean()); tr_ = float(np.abs(dif_ - lev_).mean())
             meta_ctrl[int(r_)] = {"trend": tr_, "level": abs(lev_), "both": tr_ + abs(lev_), "rmse": float(np.sqrt(np.mean(dif_ ** 2)))}[on_]
-        C.set_scenario(verbose=False, control_selection=o["CONTROL_SELECTION"])
+        C.set_scenario(verbose=False, use_control_selection=True)
     base_pixels = None
     if o.get("LANDUSE_KEEP", "all") != "all":                                        # spec 1: the base sample's pixels (the mask off) for the expectation
-        C.set_scenario(verbose=False, landuse_keep="all"); dl = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); base_pixels = int(dl.loc[dl.in_analysis_sample == 1, "pixel_id"].nunique())
-        C.set_scenario(verbose=False, landuse_keep=o["LANDUSE_KEEP"])
+        C.set_scenario(verbose=False, use_landuse_mask=False); dl = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); base_pixels = int(dl.loc[dl.in_analysis_sample == 1, "pixel_id"].nunique())
+        C.set_scenario(verbose=False, use_landuse_mask=True)
     meta = {"tag": C.scenario_tag(), "control_rings": list(C.ACTIVE["control_zones"]), "window": C.scenario_years(), "drop_years": list(C.ACTIVE.get("drop_years") or []), "ctrl_recomputed": meta_ctrl, "base_pixels": base_pixels,
             "seasons": C.seasons_mode(verbose=False), "treatment_year": C.ACTIVE["treatment_year"], "site_start": dict(C.ACTIVE.get("site_start") or {}),
             "site_years": dict(C.ACTIVE.get("site_years") or {}), "choices": C.design_in_effect()}
@@ -288,8 +299,8 @@ def expect(panel, name, o, py, meta, full):
             f"planted pixels left in: {sorted(pids & planted) or 'none'}; sites in the sample {sorted(s)}")
         rec(panel, name, "only the major sub-watershed(s)", s == ({1} if panel.startswith("single") else {1, 2}), sorted(s))
         if panel.startswith("pooled"):
-            rec(panel, name, "a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files)" + (" -- up to the balanced pixel rule" if o.get("SAME_PIXELS") == "all" else ""),
-                (beguru_piece <= pids) if o.get("SAME_PIXELS") != "all" else bool(beguru_piece & pids), f"kept {sorted(beguru_piece & pids)} of {sorted(beguru_piece)}")
+            rec(panel, name, "a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files)" + (" -- up to the balanced pixel rule" if (o.get("SAME_PIXELS") == "all" and o.get("USE_SAME_PIXELS")) else ""),
+                (beguru_piece <= pids) if not (o.get("SAME_PIXELS") == "all" and o.get("USE_SAME_PIXELS")) else bool(beguru_piece & pids), f"kept {sorted(beguru_piece & pids)} of {sorted(beguru_piece)}")
     else:
         rec(panel, name, "fragments kept (FRAGMENT_RULE keep)", has_frag, f"planted pixels in the sample: {sorted(pids & planted)}; sites {sorted(s)}")
     rings = set(py.loc[py.buff_km > 0, "buff_km"].unique())
@@ -308,10 +319,10 @@ def expect(panel, name, o, py, meta, full):
             bool((bm.reindex(list(pids)).fillna(-9) > th).all()) and f"_ndviPre{th:g}" in meta["tag"], f"min pre mean {bm.reindex(list(pids)).min():.4f}; tag {meta['tag']}")
     if float(o.get("MIN_PIXEL_COVERAGE_PCT", 0.05)) != 0.05:
         rec(panel, name, f"MIN_PIXEL_COVERAGE_PCT {o['MIN_PIXEL_COVERAGE_PCT']}: the folder tagged _cov{int(round(float(o['MIN_PIXEL_COVERAGE_PCT']) * 100))}", f"_cov{int(round(float(o['MIN_PIXEL_COVERAGE_PCT']) * 100))}" in meta["tag"], meta["tag"])
-    if o.get("DROP_SINGLETONS", True) is False:
-        rec(panel, name, "DROP_SINGLETONS False: the folder is NOT tagged _noSingle", "_noSingle" not in meta["tag"], meta["tag"])
-    elif "_noSingle" in meta["tag"] or True:
-        rec(panel, name, "DROP_SINGLETONS True (the default): the folder tagged _noSingle", "_noSingle" in meta["tag"], meta["tag"])
+    if o.get("USE_DROP_SINGLETONS", False):
+        rec(panel, name, "USE_DROP_SINGLETONS True: the folder tagged _noSingle", "_noSingle" in meta["tag"], meta["tag"])
+    else:
+        rec(panel, name, "USE_DROP_SINGLETONS False (the default): the folder is NOT tagged _noSingle", "_noSingle" not in meta["tag"], meta["tag"])
     rec(panel, name, "control rings = the choice", rings <= want_r and (len(rings) == len(want_r) or o["CONTROL_RINGS"] == "data"), f"used {sorted(rings)}, setting {o['CONTROL_RINGS']}")
     cs = o.get("CONTROL_SELECTION", "rings")                                          # v20.59 (your fifth request): the control group chosen on the PRE period
     if cs != "rings":
@@ -327,15 +338,15 @@ def expect(panel, name, o, py, meta, full):
         if cs == "pre_rings" and meta.get("ctrl_recomputed"):                             # an independent recomputation on the rows the rule saw (every ring)
             dist = meta["ctrl_recomputed"]; exp_r = sorted(sorted(dist, key=lambda r_: (dist[r_], r_))[:k])
             rec(panel, name, "the pre period's choice recomputed independently = the engine's rings", sorted(int(x) for x in rings) == exp_r, f"engine {sorted(rings)}, recomputed {exp_r} ({on_}: {dict((r_, round(v, 6)) for r_, v in dist.items())})")
-    spx = o.get("SAME_PIXELS", "pre_post")                                            # v20.59 (your rule): the same pixels in pre and post
+    spx = o.get("SAME_PIXELS", "pre_post") if o.get("USE_SAME_PIXELS", False) else "off"     # v20.59 (your rule): the same pixels in pre and post; 1 Oct: only when its switch is on
     gp_ = py.groupby("pixel_id")["post"].agg(["min", "max"]); one_side = int(((gp_["min"] != 0) | (gp_["max"] != 1)).sum())
     if spx == "pre_post":
-        rec(panel, name, "SAME_PIXELS = 'pre_post': every pixel of the sample is observed in pre and post", one_side == 0 and "_pix" not in meta["tag"], f"{one_side} pixel(s) on one side only; tag {meta['tag']}")
+        rec(panel, name, "USE_SAME_PIXELS, 'pre_post': every pixel of the sample is observed in pre and post, tagged _pixPP", one_side == 0 and "_pixPP" in meta["tag"], f"{one_side} pixel(s) on one side only; tag {meta['tag']}")
     elif spx == "all":
         cells_ = py.groupby("pixel_id").apply(lambda g_: len(set(zip(g_.Year, g_.Season))), include_groups=False); n_cells_ = len(set(zip(py.Year, py.Season)))
         rec(panel, name, "SAME_PIXELS = 'all': every pixel of the sample is observed in every year-season (a balanced pixel set), tagged _pixAll", bool((cells_ == n_cells_).all()) and "_pixAll" in meta["tag"], f"{int((cells_ < n_cells_).sum())} pixel(s) short of {n_cells_} cells; tag {meta['tag']}")
     else:
-        rec(panel, name, "SAME_PIXELS = 'off': the v20.58 sample (a pixel may sit on one side), tagged _pixAny", "_pixAny" in meta["tag"], f"{one_side} pixel(s) on one side only; tag {meta['tag']}")
+        rec(panel, name, "USE_SAME_PIXELS False (the default): the v20.58 sample (a pixel may sit on one side), no _pix tag", "_pix" not in meta["tag"], f"{one_side} pixel(s) on one side only; tag {meta['tag']}")
     if o.get("CLUSTER") == "block":
         rec(panel, name, "CLUSTER = 'block': the ~1 km blocks are the clusters (this synthetic grid spans 3+ blocks), the folder tagged _clBlock", py.cluster_id.nunique() >= 3 and "_clBlock" in meta["tag"], f"{py.cluster_id.nunique()} clusters; tag {meta['tag']}")
     sea = set(py.Season.unique())
@@ -437,7 +448,7 @@ def main():
         C.set_paths(input_dir=root, fund_release=fund, verbose=False); C.clear_panel_cache()
         C.SELECTED_OUTCOMES = ["NDVI"]
         names = list(VARIANTS) if kind in ("single", "pooled") else ["base", "fragments_keep", "timing_fixed_2022"]
-        variants = {n: {**BASE, **VARIANTS[n]} for n in names}
+        variants = {n: {**BASE, **VARIANTS[n], **switches({**BASE, **VARIANTS[n]})} for n in names}     # 1 Oct: the USE_ switches travel with the variant (R reads them as globals)
         py = {}
         for n, o in variants.items():
             try:

@@ -1,19 +1,27 @@
 # REWARD DiD -- the centralised configuration of a run (spec 3). The SAME file drives orchestrator.py and orchestrator.R (the parameter names
 # are those of every notebook's CELL 1 / R_Mxx). Values here are the run's defaults; a notebook's own CELL 1 still decides for that notebook.
 ANALYSIS_VARIABLE: NDVI          # the outcome (any of the panel's indices)
-SEASON_FILTER: Rabi              # Rabi | Kharif | Zaid | Yearly | All      (the dry season isolates the irrigation effect the works aim at)
+SEASON_FILTER: All               # All | Rabi | Kharif | Zaid | Yearly      (Rabi = the dry season, where the irrigation effect the works aim at shows)
 DONUT_RINGS: [1]                 # rings left OUT of the control pool (the spillover buffer next to the treated core); [] = none
 CONTROL_RINGS: data              # data (every ring the panel has, 1-5) | [2, 3, 4, 5] ...
-CONTROL_SELECTION_METHOD: pre_bias_min   # all | pre_bias_min (the 2 rings with the smallest pre-treatment mean bias) | closest_1 | closest_2
+CONTROL_SELECTION_METHOD: all   # all (every ring: the control selection OFF) | pre_bias_min (the 2 rings with the smallest pre-treatment mean bias) | closest_1 | closest_2
 CONTROL_SELECT_ON: level         # level (mean absolute pre bias) | rmse | trend (the parallel-trend distance) | both
 PRECISION_TOLERANCE: 1.0e-6      # |value| <= tolerance is the no-data zero; a year-season is "constant" within it (indices in [-1, 1])
 MIN_PIXEL_COVERAGE_PCT: 0.70     # a year-season whose treated or control coverage is below this share of the typical one is screened out
 CLUSTER_VAR: subwshed_id         # subwshed_id (the sub-watershed; fewer than 6 -> the years) | year | block (~1 km spatial blocks of pixels)
 ESTIMATOR: SURROGATE_DID         # TWFE_CANONICAL | SYNTHETIC_DID | SURROGATE_INDEX | SURROGATE_DID (= synthetic DiD and the surrogate index)
-LANDUSE_KEEP: all                # all | the LandUse class codes a pixel's PRE-period class must be in, e.g. [2]
-BASELINE_NDVI_MIN: null          # e.g. 0.25 -- a pixel's pre-period mean NDVI must exceed it (an agricultural mask) | null
+LANDUSE_KEEP: [2]                # the LandUse class codes a pixel's PRE-period class must be in -- applied when USE_LANDUSE_MASK (all = every class)
+BASELINE_NDVI_MIN: 0.25          # a pixel's pre-period mean NDVI must exceed it (an agricultural mask) -- applied when USE_BASELINE_NDVI_MASK
 SAME_PIXELS: pre_post            # pre_post | all | off  -- the treated and control groups are the same pixels in pre and post (or every year-season)
-DROP_SINGLETONS: true            # series seen once leave before the demeaning (the pre-flight)
+# ---- the USE_ switches (1 Oct, your rule): an optional rule is applied ONLY when its switch is true; all false here. The report's own specs set what
+#      they need (the donut spec turns the donut on, the matched spec the control selection); every other spec follows these switches.
+USE_SAME_PIXELS: false           # true = SAME_PIXELS above is enforced
+USE_DONUT: false                 # true = DONUT_RINGS above leave the control pool in every spec (the donut spec does so regardless)
+USE_LANDUSE_MASK: false          # true = LANDUSE_KEEP below is applied
+USE_BASELINE_NDVI_MASK: false    # true = BASELINE_NDVI_MIN below is applied
+USE_COVERAGE_THRESHOLD: false    # true = MIN_PIXEL_COVERAGE_PCT above replaces the standard 5 % screen
+USE_PRECISION_TOLERANCE: false   # true = PRECISION_TOLERANCE above is the no-data zero (else the exact 0)
+USE_DROP_SINGLETONS: false       # true = series seen once leave before the demeaning (the pre-flight)
 TREATMENT_TIMING: fixed          # fund | registry | fixed
 TREATMENT_YEAR: 2022
 PRE_YEARS: data                  # data (the recommendation's window) | all | a count of pre years | the first calendar year

@@ -1120,7 +1120,7 @@ def check_v20_35():
         _C.set_scenario(verbose=False, all_years=True, control_zones="1-5", treatment_year=2022, seasons="all", covariates=[], nonnegative=False,
                         same_pixels="off")             # v20.59: a shifted grid IS pixels seen on one side only -- the diagnostic must see them, SAME_PIXELS would drop them
         S, _ = _C.diagnose_effect_size("NDVI", df=df, save=False, verbose=False)
-        _C.set_scenario(verbose=False, same_pixels="pre_post")
+        _C.set_scenario(verbose=False, use_same_pixels=False)
         if "SHIFTED pixel grid" not in S["verdicts"] or "PIXEL_OVERLAP_MIN" not in S["verdicts"]:
             bad(f"the diagnostic missed a shifted pixel grid: {S['verdicts'][:120]}")
         else: note("small-effect diagnostic finds a shifted later grid and names the P00 fix (P13 runs it for every outcome)")
@@ -1520,7 +1520,7 @@ def check_v20_44():
     except Exception as e:
         bad(f"a LandUse request must be dropped, not fail ({type(e).__name__}: {str(e)[:80]})")
     if _C.LAST_FIT_INFO.get("n_singleton_series") != 20: bad(f"singleton series miscounted: {_C.LAST_FIT_INFO.get('n_singleton_series')} (want 20)")
-    _C.set_scenario(verbose=False, same_pixels="pre_post")
+    _C.set_scenario(verbose=False, use_same_pixels=False)
     _C._pf_quiet(lambda: _w.warn("123 singleton fixed effect(s) dropped from the model.", UserWarning))
     if _C.LAST_FIT_INFO.get("pyfixest_singletons_dropped") != 123: bad("pyfixest's singleton warning is not turned into a count")
     dd = open(os.path.join(HERE, "python_prebuilt", "dd_pipeline.py"), encoding="utf-8").read()
@@ -2579,7 +2579,7 @@ def check_v20_59():
         fr = _pd.DataFrame(_rows, columns=["pixel_id", "buff_km", "Year", "Season", "site_id", "subwshed_id", "time_fe_yearseason", "NDVI", "post"])
         _co = _C.CURRENT_OUTCOME; _C.CURRENT_OUTCOME = "NDVI"
         try:
-            _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", design_source="model", control_selection="pre_rings", control_select_k=2, control_select_on="trend", verbose=False)
+            _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", design_source="model", use_control_selection=True, control_selection="pre_rings", control_select_k=2, control_select_on="trend", verbose=False)
             g = _C.build_treatment_columns(fr.copy()); sg = g[g.in_analysis_sample == 1]
             rg = sorted(set(sg.loc[sg.treatment == 0, "buff_km"].astype(int)))
             if rg != [1, 3] or "_ctrlPre2r" not in _C.scenario_tag() or (_C.LAST_DESIGN_INFO.get("control_selection") or {}).get("units") != [1, 3]:
@@ -2592,7 +2592,7 @@ def check_v20_59():
             if sorted(set(sg.loc[sg.treatment == 0, "buff_km"].astype(int))) != [1, 2] or "_ctrlPre2rL" not in _C.scenario_tag(): bad("pre_rings on 'level' does not pick the two rings with the closest pre level")
             _mp = _C.CONTROL_BLOCK_MIN_PIXELS; _C.CONTROL_BLOCK_MIN_PIXELS = 5
             try:
-                _C.set_scenario(control_selection="pre_blocks", control_select_ratio=1.0, control_select_on="trend", verbose=False); g = _C.build_treatment_columns(fr.copy()); sg = g[g.in_analysis_sample == 1]
+                _C.set_scenario(use_control_selection=True, control_selection="pre_blocks", control_select_ratio=1.0, control_select_on="trend", verbose=False); g = _C.build_treatment_columns(fr.copy()); sg = g[g.in_analysis_sample == 1]
                 if "_ctrlPreBlk1x" not in _C.scenario_tag() or sg.loc[sg.treatment == 0, "pixel_id"].nunique() < 30 or sg.loc[sg.treatment == 0, "pixel_id"].nunique() >= 150: bad(f"pre_blocks does not stop at the ratio ({sg.loc[sg.treatment == 0, 'pixel_id'].nunique()} control pixels; tag {_C.scenario_tag()})")
             finally: _C.CONTROL_BLOCK_MIN_PIXELS = _mp
             if int(_C.block_id_from_pixel(_np.array([10500000 * 10 ** 9 + 25500000]))[0]) != 10500025500 or int(_C.block_id_from_pixel(_pd.Series(["10500000_25500000"]))[0]) != 10500025500 \
@@ -2616,17 +2616,19 @@ def check_v20_59():
         fs_ = _pd.DataFrame(_rows, columns=["pixel_id", "buff_km", "Year", "Season", "site_id", "subwshed_id", "time_fe_yearseason", "NDVI", "post"])
         _co = _C.CURRENT_OUTCOME; _C.CURRENT_OUTCOME = "NDVI"
         try:
-            _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", same_pixels="pre_post", verbose=False)
+            _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", use_same_pixels=True, same_pixels="pre_post", verbose=False)
             g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
-            if kept != [1, 4, 5] or (_C.LAST_DESIGN_INFO.get("same_pixels") or {}).get("pixels_left_out") != 2 or "_pix" in _C.scenario_tag():
+            if kept != [1, 4, 5] or (_C.LAST_DESIGN_INFO.get("same_pixels") or {}).get("pixels_left_out") != 2 or "_pixPP" not in _C.scenario_tag():
                 bad(f"SAME_PIXELS = 'pre_post' does not keep exactly the pixels observed in pre and post (kept {kept}; {_C.LAST_DESIGN_INFO.get('same_pixels')}; tag {_C.scenario_tag()})")
             if not any(r["check"] == "the same pixels in pre and post" and r["ok"] for r in _C.LAST_INTEGRITY): bad("the sample integrity does not confirm the same pixels in pre and post")
             _C.set_scenario(same_pixels="all", verbose=False); g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
             if kept != [1, 4] or "_pixAll" not in _C.scenario_tag(): bad(f"SAME_PIXELS = 'all' does not keep exactly the pixels observed in every year-season (kept {kept}; tag {_C.scenario_tag()})")
-            _C.set_scenario(same_pixels="off", verbose=False); g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
-            if kept != [1, 2, 3, 4, 5] or "_pixAny" not in _C.scenario_tag(): bad(f"SAME_PIXELS = 'off' does not keep every pixel (kept {kept}; tag {_C.scenario_tag()})")
+            _C.set_scenario(use_same_pixels=False, verbose=False); g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
+            if kept != [1, 2, 3, 4, 5] or "_pix" in _C.scenario_tag(): bad(f"USE_SAME_PIXELS = False (the default) does not keep every pixel, or tags the folder (kept {kept}; tag {_C.scenario_tag()})")
+            _C.set_scenario(use_same_pixels=False, same_pixels="all", verbose=False); g = _C.build_treatment_columns(fs_.copy()); kept = sorted(set(g.loc[g.in_analysis_sample == 1, "pixel_id"] // 10 ** 9))
+            if kept != [1, 2, 3, 4, 5]: bad(f"SAME_PIXELS = 'all' acts although USE_SAME_PIXELS is False (kept {kept})")
         finally:
-            _C.CURRENT_OUTCOME = _co; _C.set_scenario(same_pixels="pre_post", verbose=False)
+            _C.CURRENT_OUTCOME = _co; _C.set_scenario(use_same_pixels=False, same_pixels="pre_post", verbose=False)
         if "same_pixels_rule(out, in_grp, CURRENT_OUTCOME)" not in _i.getsource(_C.build_treatment_columns) or "the same pixels in pre and post" not in _i.getsource(_C.sample_integrity): bad("build_treatment_columns / sample_integrity do not apply and confirm SAME_PIXELS")
         import _ooc_models as _OM2
         if "one_side" not in _i.getsource(_OM2._integrity_part) or "the same pixels in pre and post" not in _i.getsource(_OM2.integrity_final) or "same_out" not in _i.getsource(_OM2.prepare_sample): bad("the out-of-core path does not apply / confirm SAME_PIXELS")
@@ -2634,12 +2636,12 @@ def check_v20_59():
         if miss: bad(f"model notebooks without SAME_PIXELS passed to set_scenario: {miss[:6]}")
         if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("SAME_PIXELS", "same_pixels=SAME_PIXELS")): bad("P00_Settings lacks the panel-level SAME_PIXELS default")
         for q in rp00:
-            if "SAME_PIXELS       <- " not in open(q, encoding="utf-8").read(): bad(f"{os.path.basename(q)} lacks SAME_PIXELS")
+            if not re.search(r"^SAME_PIXELS\s*<-", open(q, encoding="utf-8").read(), flags=re.M): bad(f"{os.path.basename(q)} lacks SAME_PIXELS")
         if os.path.isdir(rl):
             for fn, keys in {"reward_design.R": ("same_pixels_R", "pixels_one_side_R", "n_one_side", "_pixAll", 'same_pixels = .one_of("SAME_PIXELS"'), "reward_outofcore.R": ("same_pixels_R(x, o, ctx$d", "same_out", "n_one_side"), "reward_paths.R": ('SAME_PIXELS         <- "pre_post"',)}.items():
                 s_ = open(os.path.join(rl, fn), encoding="utf-8").read(); m_ = [k for k in keys if k not in s_]
                 if m_: bad(f"R {fn} lacks {m_}")
-            m_ = [os.path.basename(p) for p in rmd if "SAME_PIXELS      <- " not in open(p, encoding="utf-8").read()]
+            m_ = [os.path.basename(p) for p in rmd if not re.search(r"^\s*SAME_PIXELS\s*<-", open(p, encoding="utf-8").read(), flags=re.M)]
             if m_: bad(f"R notebooks without SAME_PIXELS: {m_[:6]}")
         note("your rule: SAME_PIXELS 'pre_post' (default) | 'all' | 'off' -- the treated and control groups are the same pixels in pre and post (or every year-season), applied after the control choice in both languages, in memory and out of core, confirmed by the sample integrity")
         if "decide_controls_ooc(" not in _i.getsource(_OM2.prepare_sample) or "presel" not in _i.getsource(_OM2._t_presel): bad("the out-of-core path does not decide the control selection once in the parent")
@@ -2656,7 +2658,7 @@ def check_v20_59():
         if "PRECISION_TOLERANCE" not in open(os.path.join(HERE, "_prep_common.py"), encoding="utf-8").read(): bad("_prep_common lacks PRECISION_TOLERANCE (the zero rule of the panel)")
         for k_, w_ in (("donut_rings", []), ("landuse_keep", "all"), ("baseline_ndvi_min", None), ("min_pixel_coverage_pct", 0.05), ("drop_singletons", True), ("precision_tolerance", 1e-6)):
             if k_ not in _C.SCENARIO_KEYS: bad(f"{k_} is not part of the scenario the workers receive")
-        try: _C.set_scenario(donut_rings=[7], verbose=False); bad("DONUT_RINGS 7 (no such ring) is not refused")
+        try: _C.set_scenario(use_donut=True, donut_rings=[7], verbose=False); bad("DONUT_RINGS 7 (no such ring) is not refused")
         except Exception: pass
         try: _C.set_scenario(control_select_on="post_rmse", verbose=False); bad("CONTROL_SELECT_ON 'post_rmse' is not refused")
         except Exception: pass
@@ -2670,21 +2672,23 @@ def check_v20_59():
         fs2 = _pd.DataFrame(_rows, columns=["pixel_id", "buff_km", "Year", "Season", "site_id", "subwshed_id", "time_fe_yearseason", "NDVI", "post", "latitude", "longitude", "LandUse"])
         _co = _C.CURRENT_OUTCOME; _C.CURRENT_OUTCOME = "NDVI"
         try:
-            _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", same_pixels="pre_post", control_selection="rings", verbose=False)
-            _C.set_scenario(donut_rings=[1], verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
+            _C.set_scenario(timing="fixed", treatment_year=2022, control_zones="1-5", use_same_pixels=False, use_control_selection=False, verbose=False)
+            _C.set_scenario(use_donut=False, donut_rings=[1], verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
+            if rg != [1, 2, 3, 4] or "_donut" in _C.scenario_tag(): bad(f"DONUT_RINGS [1] acts although USE_DONUT is False (rings {rg}; tag {_C.scenario_tag()})")   # 1 Oct: the switch
+            _C.set_scenario(use_donut=True, donut_rings=[1], verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
             if rg != [2, 3, 4] or "_donut1" not in _C.scenario_tag() or (_C.LAST_DESIGN_INFO.get("donut") or {}).get("pixels_left_out") != 2: bad(f"DONUT_RINGS [1] does not remove ring 1 from the control pool (rings {rg}; {_C.LAST_DESIGN_INFO.get('donut')}; tag {_C.scenario_tag()})")
-            _C.set_scenario(donut_rings=[], landuse_keep=[1], verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
+            _C.set_scenario(use_donut=False, use_landuse_mask=True, landuse_keep=[1], verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
             if rg != [1, 2, 3] or "_lu1" not in _C.scenario_tag(): bad(f"LANDUSE_KEEP [1] does not keep the pixels of baseline class 1 only (rings {rg}; tag {_C.scenario_tag()})")
-            _C.set_scenario(landuse_keep="all", baseline_ndvi_min=0.2995, verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
+            _C.set_scenario(use_landuse_mask=False, use_baseline_ndvi_mask=True, baseline_ndvi_min=0.2995, verbose=False); g = _C.build_treatment_columns(fs2.copy()); rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
             if rg != [1, 2, 4] or "_ndviPre0.2995" not in _C.scenario_tag(): bad(f"BASELINE_NDVI_MIN 0.2995 does not keep the pixels whose pre mean is above it (ring 3 at 0.29 leaves; rings {rg}; tag {_C.scenario_tag()})")
             _C.set_scenario(baseline_ndvi_min=None, verbose=False)
             if _C.ACTIVE.get("baseline_ndvi_min") is not None or "_ndviPre" in _C.scenario_tag(): bad("set_scenario(baseline_ndvi_min=None) does not reset the mask (a notebook's None after an earlier value in the same kernel)")
-            _C.set_scenario(control_selection="pre_rings", control_select_k=2, control_select_on="rmse", verbose=False); g = _C.build_treatment_columns(fs2.copy())
+            _C.set_scenario(use_baseline_ndvi_mask=False, use_control_selection=True, control_selection="pre_rings", control_select_k=2, control_select_on="rmse", verbose=False); g = _C.build_treatment_columns(fs2.copy())
             rg = sorted(set(g.loc[(g.in_analysis_sample == 1) & (g.treatment == 0), "buff_km"].astype(int)))
             if rg != [2, 3] or "_ctrlPre2rR" not in _C.scenario_tag(): bad(f"CONTROL_SELECT_ON 'rmse' does not choose the two rings with the smallest pre-period RMSE gap (rings {rg}; tag {_C.scenario_tag()})")
             ch_, tab_ = _C.select_optimal_control_rings(fs2, "NDVI", treat_ring=0, candidate_rings=[1, 2, 3, 4], pre_years=range(2016, 2022), top_k=2, on="level")
             if sorted(int(x) for x in ch_) != [2, 3] or len(tab_) != 4: bad(f"select_optimal_control_rings does not return the two closest rings on the pre period (got {ch_}, {len(tab_)} rows)")
-            _C.set_scenario(control_selection="rings", control_select_on="trend", verbose=False)
+            _C.set_scenario(use_control_selection=False, control_select_on="trend", verbose=False)
             _v2 = fs2.NDVI.values.astype(float).copy(); _v2[0], _v2[1] = 1.7, -9999.0     # one value outside [-1, 1], one no-data code
             rc_ = _C.outcome_range_check(fs2.assign(NDVI=_v2), "NDVI", say=False)
             if not rc_ or rc_.get("ok") is not False or rc_.get("n_outside_bounds", 0) < 1 or rc_.get("n_nodata_codes", 0) < 1: bad(f"outcome_range_check misses a value outside [-1, 1] or a no-data code ({rc_})")
@@ -2694,11 +2698,17 @@ def check_v20_59():
             if (_C.LAST_FIT_INFO.get("singleton_rows_dropped") or 0) != 1 or "_noSingle" not in _C.scenario_tag(): bad(f"DROP_SINGLETONS does not drop the series seen once before the demeaning ({_C.LAST_FIT_INFO.get('singleton_rows_dropped')}; tag {_C.scenario_tag()})")
             _C.set_scenario(drop_singletons=False, verbose=False)
             if "_noSingle" in _C.scenario_tag(): bad("DROP_SINGLETONS False still tags _noSingle")
-            _C.set_scenario(drop_singletons=True, min_pixel_coverage_pct=0.70, verbose=False)
+            _C.set_scenario(drop_singletons=True, use_coverage_threshold=False, min_pixel_coverage_pct=0.70, verbose=False)
+            if "_cov70" in _C.scenario_tag() or _C.opt("min_pixel_coverage_pct") != _C.SCREEN_MIN_COVERAGE: bad("MIN_PIXEL_COVERAGE_PCT acts although USE_COVERAGE_THRESHOLD is False")
+            _C.set_scenario(use_coverage_threshold=True, verbose=False)
             if "_cov70" not in _C.scenario_tag(): bad("MIN_PIXEL_COVERAGE_PCT 0.70 is not tagged _cov70")
-            _C.set_scenario(min_pixel_coverage_pct=0.05, verbose=False)
+            _C.set_scenario(use_coverage_threshold=False, use_precision_tolerance=False, precision_tolerance=1e-6, verbose=False)
+            if _C.opt("precision_tolerance") != 0.0: bad("PRECISION_TOLERANCE acts although USE_PRECISION_TOLERANCE is False (the exact zero is the rule then)")
+            _C.set_scenario(use_precision_tolerance=True, verbose=False)
+            if _C.opt("precision_tolerance") != 1e-6: bad("USE_PRECISION_TOLERANCE = True does not put the tolerance in force")
+            _C.set_scenario(use_precision_tolerance=False, verbose=False)
         finally:
-            _C.CURRENT_OUTCOME = _co; _C.set_scenario(donut_rings=[], landuse_keep="all", baseline_ndvi_min=None, control_selection="rings", control_select_on="trend", drop_singletons=True, min_pixel_coverage_pct=0.05, verbose=False)
+            _C.CURRENT_OUTCOME = _co; _C.set_scenario(use_donut=False, use_landuse_mask=False, use_baseline_ndvi_mask=False, use_control_selection=False, use_coverage_threshold=False, use_precision_tolerance=False, donut_rings=[], landuse_keep="all", baseline_ndvi_min=None, control_selection="rings", control_select_on="trend", drop_singletons=True, min_pixel_coverage_pct=0.05, verbose=False)
         import surrogate_did_estimator as _SD
         for fn_ in ("simplex_ridge_weights", "aggregate_cells", "synthetic_did_two_level", "surrogate_index_did", "standard_row", "save_outputs"):
             if not callable(getattr(_SD, fn_, None)): bad(f"surrogate_did_estimator lacks {fn_}")
@@ -2710,7 +2720,7 @@ def check_v20_59():
         _cfg = _O.load_config(os.path.join(HERE, "config", "analysis_config.yaml"))
         for k_ in ("ANALYSIS_VARIABLE", "SEASON_FILTER", "DONUT_RINGS", "CONTROL_SELECTION_METHOD", "PRECISION_TOLERANCE", "MIN_PIXEL_COVERAGE_PCT", "CLUSTER_VAR", "ESTIMATOR", "SAME_PIXELS", "DROP_SINGLETONS"):
             if k_ not in _cfg: bad(f"analysis_config.yaml lacks {k_}")
-        if _cfg["DONUT_RINGS"] != [1] or _cfg["SEASON_FILTER"] != "Rabi" or abs(float(_cfg["PRECISION_TOLERANCE"]) - 1e-6) > 1e-12: bad("analysis_config.yaml defaults are not the spec's (donut [1], Rabi, 1e-6)")
+        if _cfg["DONUT_RINGS"] != [1] or _cfg["SEASON_FILTER"] != "All" or abs(float(_cfg["PRECISION_TOLERANCE"]) - 1e-6) > 1e-12: bad("analysis_config.yaml defaults are not the documented ones (donut [1] with its switch off, every season, 1e-6)")
         _kw = _O.scenario_kwargs(dict(_cfg, CONTROL_SELECTION_METHOD="closest_1"), "matched")
         if _kw["control_selection"] != "pre_rings" or _kw["control_select_k"] != 1 or _kw["donut_rings"] != [1] or _kw["seasons"] != "Rabi": bad(f"CONTROL_SELECTION_METHOD closest_1 does not map to pre_rings K = 1 ({_kw})")
         _kw = _O.scenario_kwargs(_cfg, "canonical")
@@ -2722,6 +2732,18 @@ def check_v20_59():
             if os.path.isdir(rl) and not os.path.exists(os.path.join(os.path.dirname(rl), f_)): bad(f"the R bundle lacks {f_}")
         miss = [os.path.basename(p) for p in nbs + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) if not all(k in open(p, encoding="utf-8").read() for k in ("DONUT_RINGS", "donut_rings=DONUT_RINGS", "LANDUSE_KEEP", "BASELINE_NDVI_MIN", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS", "PRECISION_TOLERANCE"))]
         if miss: bad(f"model notebooks without the spec-1 settings passed to set_scenario: {miss[:6]}")
+        _sw_keys = ("USE_CONTROL_SELECTION", "USE_SAME_PIXELS", "USE_DONUT", "USE_LANDUSE_MASK", "USE_BASELINE_NDVI_MASK", "USE_COVERAGE_THRESHOLD", "USE_DROP_SINGLETONS", "USE_PRECISION_TOLERANCE")
+        for p in nbs + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) + p00[:1]:                                             # 1 Oct (your rule): every switch, OFF, passed to set_scenario
+            t_ = open(p, encoding="utf-8").read(); m_ = [k for k in _sw_keys if not re.search(k + r"\s*=\s*False", t_)]
+            if m_ or not all(f"use_{k[4:].lower()}=USE_{k[4:]}" in t_ for k in _sw_keys if k != "USE_DROP_SINGLETONS") or "drop_singletons=USE_DROP_SINGLETONS" not in t_:
+                bad(f"{os.path.basename(p)}: switches missing / not False / not passed: {m_[:4]}"); break
+        if os.path.isdir(rl):
+            for p in rmd + rp00:
+                t_ = open(p, encoding="utf-8").read(); m_ = [k for k in _sw_keys if not re.search(k + r"\s*<-\s*FALSE", t_)]
+                if m_: bad(f"{os.path.basename(p)}: R switches missing / not FALSE: {m_[:4]}"); break
+        import orchestrator as _O2; _cfg2 = _O2.load_config(os.path.join(HERE, "config", "analysis_config.yaml"))
+        if any(_cfg2.get(k) is not False for k in _sw_keys if k != "USE_CONTROL_SELECTION") or _cfg2.get("CONTROL_SELECTION_METHOD") != "all": bad("analysis_config.yaml: a switch is on by default")
+        if any(_C.ACTIVE.get(k_) for k_ in ("use_control_selection", "use_same_pixels", "use_donut", "use_landuse_mask", "use_baseline_ndvi_mask", "use_coverage_threshold", "use_precision_tolerance")): bad("a switch is on in the engine defaults")
         if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("DONUT_RINGS", "PRECISION_TOLERANCE", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS")): bad("P00_Settings lacks the panel-level spec-1 defaults")
         for nb_, key_ in (("M11_", "synthetic_did_two_level"), ("M07_", "surrogate_index_did")):
             q_ = [p for p in nbs if os.path.basename(p).startswith(nb_)]
@@ -2730,7 +2752,7 @@ def check_v20_59():
             want = {"reward_design.R": ("donut_rule_R", "landuse_rule_R", "baseline_ndvi_rule_R", "select_optimal_control_rings_R", "outcome_range_check_R", "rmse_gap", "_donut", "_ndviPre", "_noSingle"),
                     "reward_models_core.R": ("surrogate_did_estimator.R", "synthetic_did_two_level_R", "m07_surrogate_index", "DROP_SINGLETONS"),
                     "reward_outofcore.R": ("donut_rule_R(x, ctx$d", "landuse_rule_R(x, ctx$d", "baseline_ndvi_rule_R(x, ctx$d"),
-                    "reward_paths.R": ("DONUT_RINGS", "LANDUSE_KEEP", "BASELINE_NDVI_MIN", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS", "PRECISION_TOLERANCE"),
+                    "reward_paths.R": ("DONUT_RINGS", "LANDUSE_KEEP", "BASELINE_NDVI_MIN", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS", "PRECISION_TOLERANCE", "USE_CONTROL_SELECTION <- FALSE", "USE_SAME_PIXELS     <- FALSE", "USE_DONUT           <- FALSE", "USE_PRECISION_TOLERANCE <- FALSE", ".tol_R <- function", ".cov_R <- function", ".same_pixels_opt_R <- function"),
                     "reward_prep.R": ("PRECISION_TOLERANCE",), "surrogate_did_estimator.R": ("simplex_ridge_weights_R", "synthetic_did_two_level_R", "surrogate_index_did_R", "save_outputs_R")}
             for fn, keys in want.items():
                 s_ = open(os.path.join(rl, fn), encoding="utf-8").read(); m_ = [k for k in keys if k not in s_]
@@ -2950,7 +2972,7 @@ def check_v20_57():
     else:
         saved = {k: (list(v) if isinstance(v, (list, tuple)) else (dict(v) if isinstance(v, dict) else v)) for k, v in _C.ACTIVE.items()}
         try:
-            _C.set_scenario(verbose=False, timing="fund", site_start={1: [2024, 2]}, treatment_year=2024, same_pixels="off")   # v20.59: this two-pixel frame has one pixel per side by design
+            _C.set_scenario(verbose=False, timing="fund", site_start={1: [2024, 2]}, treatment_year=2024, use_same_pixels=False)   # v20.59: this two-pixel frame has one pixel per side by design
             f_ = _pd.DataFrame({"site_id": [1] * 8, "buff_km": [0] * 4 + [3] * 4, "Year": [2024] * 4 + [2025] * 4, "Season": [0, 3, 1, 2] * 2,
                                 "pixel_id": [1] * 4 + [2] * 4, "subwshed_id": "S1", "time_fe_yearseason": "x"})
             d_ = _C.build_treatment_columns(f_.copy())

@@ -1248,12 +1248,23 @@ def _pixels_one_side(frame, rule):
     c = _cells_of(frame); g = pd.DataFrame({"p": frame["pixel_id"].values, "c": c}).groupby("p")["c"].nunique()
     return int((g < len(np.unique(c))).sum())
 
+_SWITCH_OF = {"control_selection": ("use_control_selection", "rings"), "same_pixels": ("use_same_pixels", "off"), "donut_rings": ("use_donut", []),
+              "landuse_keep": ("use_landuse_mask", "all"), "baseline_ndvi_min": ("use_baseline_ndvi_mask", None),
+              "min_pixel_coverage_pct": ("use_coverage_threshold", "SCREEN_MIN_COVERAGE"), "precision_tolerance": ("use_precision_tolerance", 0.0)}
+def opt(key, a=None):
+    """1 Oct (your rule): the option IN FORCE -- its value when its USE_ switch is True, else the 'do not use' value (every ring, a pixel may
+    sit on one side, no donut, every class, no baseline mask, the standard 5 % screen, the exact zero). The engine reads every optional rule
+    through this, so a switch that is off leaves nothing applied whatever the value beside it says."""
+    a = ACTIVE if a is None else a; sw, off = _SWITCH_OF[key]
+    if off == "SCREEN_MIN_COVERAGE": off = SCREEN_MIN_COVERAGE
+    return a.get(key, off) if a.get(sw) else off
+
 def same_pixels_rule(out, in_grp, outcome=None):
     """v20.59 (your rule): the treated and control groups are the SAME pixels across the panel. 'pre_post': a pixel with an outcome only before
     or only after treatment leaves (it identifies no within-pixel change); 'all': a pixel missing any year-season of the sample leaves (a balanced
     pixel set); 'off': the v20.58 sample. Applied after the location rule, the seasons, the years and the control choice, in memory and out of
     core (pixel partitions: a pixel's rows are all in one partition); confirmed by the sample integrity."""
-    rule = ACTIVE.get("same_pixels", "pre_post")
+    rule = opt("same_pixels")
     m = np.asarray(in_grp).copy()
     if rule == "off" or "pixel_id" not in out.columns or "post" not in out.columns: return m, None
     o = outcome or CURRENT_OUTCOME
@@ -1330,7 +1341,7 @@ def block_ids(out, deg=None):
 def control_selection_aggregates(out, in_grp, outcome):
     """The PRE-period facts the selection needs, as small tables (summed across out-of-core partitions by the parent): the treatment area's
     (Year, Season) sums and counts, and every candidate unit's (ring or block) sums, counts and pixel counts."""
-    mode = ACTIVE.get("control_selection", "rings")
+    mode = opt("control_selection")
     y = pd.to_numeric(out[outcome], errors="coerce").values.astype(float)
     m = np.asarray(in_grp) & (out["post"].values.astype(np.int8) == 0) & np.isfinite(y)
     tr = out["treatment"].values.astype(np.int8) == 1; co = out["control"].values.astype(np.int8) == 1
@@ -1391,13 +1402,13 @@ def control_selection_path(outcome):
 
 def _control_selection_key():
     return json.dumps({"k": ACTIVE.get("control_select_k"), "r": ACTIVE.get("control_select_ratio"), "on": ACTIVE.get("control_select_on"), "deg": ACTIVE.get("control_block_deg"),
-                       "dn": list(ACTIVE.get("donut_rings") or []), "lu": ACTIVE.get("landuse_keep"), "bn": ACTIVE.get("baseline_ndvi_min"),
+                       "dn": list(opt("donut_rings") or []), "lu": opt("landuse_keep"), "bn": opt("baseline_ndvi_min"),
                        "z": list(ACTIVE.get("control_zones", ())), "ty": ACTIVE.get("treatment_year"), "pc": ACTIVE.get("post_cutoff"), "t": ACTIVE.get("timing"),
                        "ds": ACTIVE.get("design_source"), "s": ACTIVE.get("seasons"), "y": [ACTIVE.get("year_min"), ACTIVE.get("year_max")]}, sort_keys=True, default=str)
 
 def record_control_selection(tab, chosen, outcome, say=True):
     """The decision of this run: kept in ACTIVE (the workers receive it), written beside the results, said once."""
-    mode = ACTIVE.get("control_selection", "rings")
+    mode = opt("control_selection")
     sel = {"outcome": str(outcome), "mode": str(mode), "key": _control_selection_key(), "units": [int(u) for u in chosen],
            "n_candidates": int(len(tab))}                      # plain Python values only: the out-of-core state snapshot sends ACTIVE to the workers
     ACTIVE["control_selected"] = sel
@@ -1441,7 +1452,7 @@ def select_optimal_control_rings(df, outcome_var, treat_ring=0, candidate_rings=
 
 def donut_rule(out, in_grp):
     """Spec 1: DONUT_RINGS -- the rings next to the treated core leave the control pool (hydrological / spatial spillover), before any control choice."""
-    dn = [int(x) for x in (ACTIVE.get("donut_rings") or [])]
+    dn = [int(x) for x in (opt("donut_rings") or [])]
     m = np.asarray(in_grp).copy()
     if not dn or "buff_km" not in out.columns: return m, None
     bk = pd.to_numeric(out["buff_km"], errors="coerce").fillna(-1).astype(np.int64).values
@@ -1464,7 +1475,7 @@ def _pixel_baseline(out, mask, col, how):
 def landuse_rule(out, in_grp):
     """Spec 1: LANDUSE_KEEP -- a pixel is kept by its PRE-period (baseline) land-use class, so the works cannot move it between groups; the
     same pixels across the panel."""
-    keep = ACTIVE.get("landuse_keep", "all"); m = np.asarray(in_grp).copy()
+    keep = opt("landuse_keep"); m = np.asarray(in_grp).copy()
     if keep == "all" or not keep or "LandUse" not in out.columns or "pixel_id" not in out.columns: return m, None
     base = _pixel_baseline(out, m, "LandUse", "mode")
     if not len(base): return m, None
@@ -1478,7 +1489,7 @@ def landuse_rule(out, in_grp):
 
 def baseline_ndvi_rule(out, in_grp):
     """Spec 1: BASELINE_NDVI_MIN -- a pixel whose pre-period mean NDVI is at or below the threshold leaves (an agricultural mask on the baseline)."""
-    th = ACTIVE.get("baseline_ndvi_min"); m = np.asarray(in_grp).copy()
+    th = opt("baseline_ndvi_min"); m = np.asarray(in_grp).copy()
     if th is None or "NDVI" not in out.columns or "pixel_id" not in out.columns: return m, None
     base = _pixel_baseline(out, m, "NDVI", "mean")
     if not len(base): return m, None
@@ -1498,7 +1509,7 @@ def outcome_range_check(df, outcome, say=True):
     zero-padding (|v| <= PRECISION_TOLERANCE). Reported, recorded in LAST_LOAD_INFO['range_check']; the orchestrator refuses on a violation."""
     if not outcome or outcome not in df.columns: return None
     v = pd.to_numeric(df[outcome], errors="coerce").values.astype(float); fin = np.isfinite(v); n = int(fin.sum())
-    lo, hi = OUTCOME_BOUNDS.get(outcome, (None, None)); tol = float(ACTIVE.get("precision_tolerance", 1e-6))
+    lo, hi = OUTCOME_BOUNDS.get(outcome, (None, None)); tol = float(opt("precision_tolerance"))
     res = {"outcome": outcome, "n_finite": n, "n_nan": int((~fin).sum()), "bounds": [lo, hi],
            "n_outside_bounds": int(((v[fin] < lo) | (v[fin] > hi)).sum()) if lo is not None and n else 0,
            "n_nodata_codes": int(np.isin(v[fin], NODATA_VALUES).sum()) if n else 0, "n_zero_padding": int((np.abs(v[fin]) <= tol).sum()) if n else 0,
@@ -1517,7 +1528,7 @@ def select_controls(out, in_grp, outcome=None):
     ~1 km blocks whose PRE-period series is closest to the treatment area's ('pre_rings' / 'pre_blocks'). The decision is a function of the
     PRE period alone, made once per outcome and kept for every year and season, so the control pixels are the same across the whole panel;
     unselected control rows leave the sample (treated rows never do). Out of core the parent decides on the merged facts and the workers apply."""
-    mode = ACTIVE.get("control_selection", "rings")
+    mode = opt("control_selection")
     if mode == "rings" or "treatment" not in out.columns: return np.asarray(in_grp), None
     o = outcome or CURRENT_OUTCOME
     if not o or o not in out.columns:
@@ -1555,7 +1566,7 @@ def screen_decide_table(g, outcome):
     the columns usable / why, each with its numbers. Shared by the in-memory screen, the per-variable report (P09) and the out-of-core path."""
     g = g.copy()
     g["sd"] = g["sd"].fillna(0.0)
-    _tol = float(ACTIVE.get("precision_tolerance", 1e-6)); _cov = float(ACTIVE.get("min_pixel_coverage_pct", SCREEN_MIN_COVERAGE))   # spec 1 / 3
+    _tol = float(opt("precision_tolerance")); _cov = float(opt("min_pixel_coverage_pct"))   # spec 1 / 3
     const = g["sd"] <= np.maximum(_tol, 1e-9 * np.maximum(1.0, g["mean"].abs()))
     med_t, med_c = float(g["n_treated"].median()), float(g["n_control"].median())
     collapse = (g["n_treated"] < _cov * med_t) | (g["n_control"] < _cov * med_c)
@@ -2273,7 +2284,7 @@ def sample_integrity(frame, control_zones=None, label=None, verbose=True):
     if {"treatment", "pixel_id"} <= set(d.columns):
         tp = set(d.loc[d["treatment"].values == 1, "pixel_id"].tolist()); cp = set(d.loc[d["treatment"].values == 0, "pixel_id"].tolist())
         add("no pixel both treated and a control", not (tp & cp), f"{len(tp & cp)} pixel(s) on both sides", strict_o)
-    _spx = ACTIVE.get("same_pixels", "pre_post")                                                             # v20.59: your rule, confirmed on the sample
+    _spx = opt("same_pixels")                                                                                # v20.59: your rule, confirmed on the sample
     if _spx != "off" and {"pixel_id", "post"} <= set(d.columns):
         _fin = np.isfinite(pd.to_numeric(d[CURRENT_OUTCOME], errors="coerce").values) if CURRENT_OUTCOME and CURRENT_OUTCOME in d.columns else np.ones(len(d), bool)
         _one = _pixels_one_side(d[_fin], _spx)
@@ -2301,7 +2312,7 @@ def sample_integrity(frame, control_zones=None, label=None, verbose=True):
            + (f"years {int(pd.to_numeric(d['Year']).min())}-{int(pd.to_numeric(d['Year']).max())} | " if "Year" in d.columns and len(d) else "")
            + (f"seasons {[SEASON_LABEL.get(int(x), x) for x in sorted(pd.unique(d['Season']))]} | " if "Season" in d.columns and len(d) else "")
            + "CONFIRMED: every (pixel, year, season) once, one ring per pixel, no pixel both treated and a control, nothing outside the processed sub-watershed(s)"
-           + {"pre_post": ", the same pixels in pre and post", "all": ", the same pixels in every year-season"}.get(ACTIVE.get("same_pixels", "pre_post"), ""))
+           + {"pre_post": ", the same pixels in pre and post", "all": ", the same pixels in every year-season"}.get(opt("same_pixels"), ""))
     return tab
 
 FORCE_BATCH_UNITS = None      # v20.58 (tests only): a batch size that forces the batch path of a model, to prove it gives the all-at-once answer
@@ -2595,7 +2606,7 @@ def _usable(values, col=None):
     v = pd.to_numeric(pd.Series(np.asarray(values)), errors="coerce").values.astype(np.float64)
     m = np.isfinite(v)
     if ZERO_AS_MISSING and col not in ZERO_RULE_EXCEPT and not _is_categorical_col(col) and col not in FLOORED_COVARIATES and not _is_design_term(col):
-        m &= (np.abs(v) > float(ACTIVE.get("precision_tolerance", 1e-6)))     # spec 1: the no-data zero within the precision tolerance, never exact equality
+        m &= (np.abs(v) > float(opt("precision_tolerance")))     # spec 1: the no-data zero within the precision tolerance, never exact equality
     return m
 LAST_LOAD_INFO = {}
 
@@ -2626,8 +2637,8 @@ def columns_for(outcome, extra=()):
     cols |= {"GapFilled", "Coverage"}                                    # v20.35: read when present, never required
     cols |= {"post"}                                                     # v20.59: the panel's post (the exports' Treat flag) -- read when present,
                                                                          #   compared with the design in effect (build_treatment_columns), never estimated on
-    if ACTIVE.get("baseline_ndvi_min") is not None: cols |= {"NDVI"}                          # spec 1: the baseline mask reads NDVI
-    if ACTIVE.get("cluster") == "block" or ACTIVE.get("control_selection") == "pre_blocks":   # v20.59: the ~1 km blocks of a panel whose ids
+    if opt("baseline_ndvi_min") is not None: cols |= {"NDVI"}                          # spec 1: the baseline mask reads NDVI
+    if ACTIVE.get("cluster") == "block" or opt("control_selection") == "pre_blocks":   # v20.59: the ~1 km blocks of a panel whose ids
         cols |= {"latitude", "longitude"}                                                      #   are not the coordinates (read when present)
     cols |= {"LandUse"}                          # v20.44: a DESCRIPTOR (M10's land-use group, CATE splits) -- loaded,
                                                  # never required and never a covariate unless the model asks for it
@@ -3599,6 +3610,10 @@ ACTIVE = {"control_zones": tuple(DEFAULT_CONTROL_ZONES), "treatment_year": TREAT
           "min_pixel_coverage_pct": 0.05,    # spec 1 / 3: a year-season whose treated or control coverage is below this share of the typical one is screened
           "drop_singletons": False,          # spec 3: series seen once leave before the demeaning (the pre-flight)
           "precision_tolerance": 1e-6,       # spec 1: |value| <= tolerance is the no-data zero; a year-season is "constant" within it (indices in [-1, 1])
+          # 1 Oct (your rule): the USE_ switches -- an optional rule is applied ONLY when its switch is True, whatever its value says; all False by
+          # default (the notebooks' SECTION B / C). opt(key) gives the value IN FORCE: the setting when its switch is on, else the "do not use" value.
+          "use_control_selection": False, "use_same_pixels": False, "use_donut": False, "use_landuse_mask": False, "use_baseline_ndvi_mask": False,
+          "use_coverage_threshold": False, "use_precision_tolerance": False,
           "design_source": "model",          # v20.59: "panel" = the PANEL's post / pre / did (the exports' Treat flag, PERIOD_RULE) are the design the model estimates
                                              #   on (the notebooks' default); "model" = the design in effect (timing, TREATMENT_YEAR ...) -- the design-based option
           # v20.12: which rows enter the estimation. "seasonal" = Kharif/Rabi/Zaid (Season 1-3, the default);
@@ -3663,7 +3678,8 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                  fund_start_share=None, fund_rate_months=None, fund_dose_before_file=None, exclude_gapfilled=None, sub_watersheds=None,
                  outcome_screen=None, design_source=None, control_selection=None, control_select_k=None, control_select_ratio=None,
                  control_select_on=None, control_block_deg=None, same_pixels=None, donut_rings=None, landuse_keep=None, baseline_ndvi_min=_UNSET,
-                 min_pixel_coverage_pct=None, drop_singletons=None, precision_tolerance=None, persist=False, verbose=True):
+                 min_pixel_coverage_pct=None, drop_singletons=None, precision_tolerance=None, use_control_selection=None, use_same_pixels=None, use_donut=None,
+                 use_landuse_mask=None, use_baseline_ndvi_mask=None, use_coverage_threshold=None, use_precision_tolerance=None, persist=False, verbose=True):
     """Set the run's control rings and treatment timing. Call it in CELL 1, BEFORE loading the panel.
     post_cutoff defaults to treatment_year (shifting the timing shifts the pre/post split with it).
 
@@ -3694,7 +3710,9 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                    ("design_source", design_source), ("control_selection", control_selection), ("control_select_k", control_select_k),
                    ("control_select_ratio", control_select_ratio), ("control_select_on", control_select_on), ("control_block_deg", control_block_deg),
                    ("same_pixels", same_pixels), ("donut_rings", donut_rings), ("landuse_keep", landuse_keep), ("baseline_ndvi_min", baseline_ndvi_min),
-                   ("min_pixel_coverage_pct", min_pixel_coverage_pct), ("drop_singletons", drop_singletons), ("precision_tolerance", precision_tolerance)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule, the design's source, the control selection
+                   ("min_pixel_coverage_pct", min_pixel_coverage_pct), ("drop_singletons", drop_singletons), ("precision_tolerance", precision_tolerance),
+                   ("use_control_selection", use_control_selection), ("use_same_pixels", use_same_pixels), ("use_donut", use_donut), ("use_landuse_mask", use_landuse_mask),
+                   ("use_baseline_ndvi_mask", use_baseline_ndvi_mask), ("use_coverage_threshold", use_coverage_threshold), ("use_precision_tolerance", use_precision_tolerance)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule, the design's source, the control selection
         if _v is not None and _v is not _UNSET: _EXPLICIT_KEYS.add(_k)
     # v20.57: which keys the notebook set, in the form load_scenario() respects (a "data" option is explicit too)
     for _k, _v in (("treatment_year_setting", treatment_year), ("post_cutoff_setting", post_cutoff), ("seasons_setting", seasons),
@@ -3794,6 +3812,9 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
         if not (0 <= float(min_pixel_coverage_pct) < 1): raise InsufficientDataError("MIN_PIXEL_COVERAGE_PCT must be in [0, 1) -- a share of the typical year-season's coverage")
         ACTIVE["min_pixel_coverage_pct"] = float(min_pixel_coverage_pct)
     if drop_singletons is not None: ACTIVE["drop_singletons"] = bool(drop_singletons)
+    for _k, _v in (("use_control_selection", use_control_selection), ("use_same_pixels", use_same_pixels), ("use_donut", use_donut), ("use_landuse_mask", use_landuse_mask),
+                   ("use_baseline_ndvi_mask", use_baseline_ndvi_mask), ("use_coverage_threshold", use_coverage_threshold), ("use_precision_tolerance", use_precision_tolerance)):
+        if _v is not None: ACTIVE[_k] = bool(_v)                       # 1 Oct (your rule): the USE_ switches -- an optional rule acts only when its switch is True
     if precision_tolerance is not None:
         if not (0 <= float(precision_tolerance) <= 1e-2): raise InsufficientDataError("PRECISION_TOLERANCE must be in [0, 1e-2]")
         ACTIVE["precision_tolerance"] = float(precision_tolerance)
@@ -4206,18 +4227,19 @@ def scenario_tag(scn=None):
     if a.get("exclude_gapfilled", True) is False: t += "_withGapFilled"                                          # v20.57
     if screen_rule(a) == "keep": t += "_screenKept"                                                           # v20.59: the screen's cells kept
     if a.get("design_source", "model") == "panel": t += "_panelDesign"                                        # v20.59: the panel's design estimated on
-    _cs = a.get("control_selection", "rings")                                                                   # v20.59: the pre period's control choice
+    _cs = opt("control_selection", a)                                                                           # v20.59: the pre period's control choice
     if _cs in ("pre_rings", "pre_blocks"):
         t += (f"_ctrlPre{int(a.get('control_select_k', 2))}r" if _cs == "pre_rings" else f"_ctrlPreBlk{float(a.get('control_select_ratio', 3.0)):g}x")
         t += {"trend": "", "level": "L", "both": "B", "rmse": "R"}.get(a.get("control_select_on", "trend"), "")     # spec 1: R = the pre-period RMSE rule
     if a.get("cluster", "subwshed") == "block": t += "_clBlock"                                                 # v20.59: ~1 km spatial blocks as clusters
-    _spx = a.get("same_pixels", "pre_post")                                                                     # v20.59: the same pixels across the panel
-    if _spx == "all": t += "_pixAll"
-    elif _spx == "off": t += "_pixAny"
-    if a.get("donut_rings"): t += "_donut" + "-".join(str(int(x)) for x in a["donut_rings"])                    # spec 1
-    if a.get("landuse_keep", "all") != "all": t += "_lu" + "-".join(str(int(x)) for x in a["landuse_keep"])
-    if a.get("baseline_ndvi_min") is not None: t += f"_ndviPre{float(a['baseline_ndvi_min']):g}"
-    if abs(float(a.get("min_pixel_coverage_pct", 0.05)) - 0.05) > 1e-12: t += f"_cov{int(round(100 * float(a['min_pixel_coverage_pct'])))}"
+    _spx = opt("same_pixels", a)                                                                                # v20.59: the same pixels across the panel
+    if _spx == "all": t += "_pixAll"                                                                            #   (1 Oct: no tag when USE_SAME_PIXELS is off)
+    elif _spx == "pre_post": t += "_pixPP"
+    if opt("donut_rings", a): t += "_donut" + "-".join(str(int(x)) for x in opt("donut_rings", a))                    # spec 1
+    if opt("landuse_keep", a) != "all": t += "_lu" + "-".join(str(int(x)) for x in opt("landuse_keep", a))
+    if opt("baseline_ndvi_min", a) is not None: t += f"_ndviPre{float(opt('baseline_ndvi_min', a)):g}"
+    _cv = float(opt("min_pixel_coverage_pct", a))
+    if abs(_cv - SCREEN_MIN_COVERAGE) > 1e-12: t += f"_cov{int(round(100 * _cv))}"
     if a.get("drop_singletons"): t += "_noSingle"                                                                # spec 3
     if a.get("drop_years"): t += "_no" + "-".join(str(int(y)) for y in a["drop_years"])
     _sync_negative_switch()                                                               # v20.33: one suffix only
@@ -4246,7 +4268,8 @@ SCENARIO_KEYS = ("control_zones", "treatment_year", "post_cutoff", "exclude_tran
                  "fund_start_rule", "fund_start_share", "fund_rate_months", "fund_dose_before_file", "exclude_gapfilled", "outcome_screen",
                  "design_source", "control_selection", "control_select_k", "control_select_ratio", "control_select_on", "control_block_deg",
                  "control_selected", "same_pixels", "donut_rings", "landuse_keep", "baseline_ndvi_min", "min_pixel_coverage_pct", "drop_singletons",
-                 "precision_tolerance")   # v20.59 + spec 1 / 3
+                 "precision_tolerance", "use_control_selection", "use_same_pixels", "use_donut", "use_landuse_mask", "use_baseline_ndvi_mask",
+                 "use_coverage_threshold", "use_precision_tolerance")   # v20.59 + spec 1 / 3; 1 Oct: the USE_ switches
 def scenario_file(path=None):
     """Where a scenario chosen during panel preparation is stored: next to the prepared panel."""
     return path or os.path.join(os.path.dirname(PREPARED_PANEL), "did_scenario.json")
@@ -4686,7 +4709,8 @@ def _design_key(frame_sites=None):
             # kept the OLD value silently (the design key had not changed)
             "design_source", "outcome_screen", "exclude_gapfilled", "covariates", "cluster", "pooled_fe", "unit_fe", "cohort_offset", "nonnegative",
             "control_selection", "control_select_k", "control_select_ratio", "control_select_on", "control_block_deg", "same_pixels",
-            "donut_rings", "landuse_keep", "baseline_ndvi_min", "min_pixel_coverage_pct", "drop_singletons", "precision_tolerance")
+            "donut_rings", "landuse_keep", "baseline_ndvi_min", "min_pixel_coverage_pct", "drop_singletons", "precision_tolerance",
+            "use_control_selection", "use_same_pixels", "use_donut", "use_landuse_mask", "use_baseline_ndvi_mask", "use_coverage_threshold", "use_precision_tolerance")
     k = {x: ACTIVE.get(x) for x in keys}
     dk = set(ACTIVE.get("data_keys") or [])
     if "control_zones" not in dk: k["control_zones"] = list(ACTIVE["control_zones"])
@@ -4855,18 +4879,20 @@ def resolve_design(verbose=True, force=False, frame=None):
     ch("DESIGN_SOURCE", ACTIVE.get("design_source", "model"), ACTIVE.get("design_source", "model"),
        "your setting" + {"panel": " (the PANEL's treat / control / pre / post / did -- the exports' Treat flag, PERIOD_RULE -- are estimated on; the design in effect above is compared with them)",
                          "model": " (the design in effect above is estimated on -- design-based modelling; DESIGN_SOURCE = 'panel' estimates on the panel's columns)"}[ACTIVE.get("design_source", "model")])
-    _cs_ = ACTIVE.get("control_selection", "rings")
-    ch("CONTROL_SELECTION", _cs_, _cs_, "your setting" + {"rings": " (every ring of CONTROL_RINGS is the control group)",
+    def _sw(key, name): return "" if ACTIVE.get(key) else " -- switch OFF"                              # 1 Oct: the switch beside the setting ...
+    def _why(key, name): return "" if ACTIVE.get(key) else f"USE_{name} = False -> NOT applied; "        # ... and why the value used differs from it
+    _cs_ = opt("control_selection")
+    ch("CONTROL_SELECTION", f"{ACTIVE.get('control_selection', 'rings')}{_sw('use_control_selection', 'CONTROL_SELECTION')}", _cs_, _why("use_control_selection", "CONTROL_SELECTION") + "your setting" + {"rings": " (every ring of CONTROL_RINGS is the control group)",
         "pre_rings": f" (per outcome, the {ACTIVE.get('control_select_k', 2)} ring(s) whose PRE-period series is closest to the treatment area's -- '{ACTIVE.get('control_select_on', 'trend')}'; decided on the pre period only, the same pixels in every year and season; CONTROL_SELECTION_<outcome>.csv)",
         "pre_blocks": f" (per outcome, ~{float(ACTIVE.get('control_block_deg', 0.01)) * 111:.1f} km blocks of control pixels closest to the treatment area's PRE-period series -- '{ACTIVE.get('control_select_on', 'trend')}' -- until {ACTIVE.get('control_select_ratio', 3.0):g} x the treated pixels; the same pixels in every year and season; CONTROL_SELECTION_<outcome>.csv)"}[_cs_])
-    ch("DONUT_RINGS", list(ACTIVE.get("donut_rings") or []) or "none", list(ACTIVE.get("donut_rings") or []) or "none", "your setting (rings left out of the control pool -- the spillover buffer next to the core)")
-    ch("LANDUSE_KEEP", ACTIVE.get("landuse_keep", "all"), ACTIVE.get("landuse_keep", "all"), "your setting (a pixel is kept by its PRE-period land-use class)")
-    ch("BASELINE_NDVI_MIN", ACTIVE.get("baseline_ndvi_min"), ACTIVE.get("baseline_ndvi_min"), "your setting (a pixel's pre-period mean NDVI must exceed it)")
-    ch("MIN_PIXEL_COVERAGE_PCT", ACTIVE.get("min_pixel_coverage_pct", 0.05), ACTIVE.get("min_pixel_coverage_pct", 0.05), "your setting (a year-season below this share of the typical coverage is screened out)")
-    ch("DROP_SINGLETONS", ACTIVE.get("drop_singletons", False), ACTIVE.get("drop_singletons", False), "your setting (series seen once leave before the demeaning)")
-    ch("PRECISION_TOLERANCE", ACTIVE.get("precision_tolerance", 1e-6), ACTIVE.get("precision_tolerance", 1e-6), "your setting (|value| <= tolerance is the no-data zero; a year-season is constant within it)")
-    _spx_ = ACTIVE.get("same_pixels", "pre_post")
-    ch("SAME_PIXELS", _spx_, _spx_, "your setting" + {"pre_post": " (every treated and control pixel is observed in pre AND post; a pixel seen on one side only leaves -- the groups are the same pixels across the panel)",
+    ch("DONUT_RINGS", f"{list(ACTIVE.get('donut_rings') or []) or 'none'}{_sw('use_donut', 'DONUT')}", list(opt("donut_rings") or []) or "none", _why("use_donut", "DONUT") + "your setting (rings left out of the control pool -- the spillover buffer next to the core)")
+    ch("LANDUSE_KEEP", f"{ACTIVE.get('landuse_keep', 'all')}{_sw('use_landuse_mask', 'LANDUSE_MASK')}", opt("landuse_keep"), _why("use_landuse_mask", "LANDUSE_MASK") + "your setting (a pixel is kept by its PRE-period land-use class)")
+    ch("BASELINE_NDVI_MIN", f"{ACTIVE.get('baseline_ndvi_min')}{_sw('use_baseline_ndvi_mask', 'BASELINE_NDVI_MASK')}", opt("baseline_ndvi_min"), _why("use_baseline_ndvi_mask", "BASELINE_NDVI_MASK") + "your setting (a pixel's pre-period mean NDVI must exceed it)")
+    ch("MIN_PIXEL_COVERAGE_PCT", f"{ACTIVE.get('min_pixel_coverage_pct', 0.05)}{_sw('use_coverage_threshold', 'COVERAGE_THRESHOLD')}", opt("min_pixel_coverage_pct"), _why("use_coverage_threshold", "COVERAGE_THRESHOLD") + "your setting (a year-season below this share of the typical coverage is screened out)")
+    ch("USE_DROP_SINGLETONS", ACTIVE.get("drop_singletons", False), ACTIVE.get("drop_singletons", False), "your setting (True = series seen once leave before the demeaning)")
+    ch("PRECISION_TOLERANCE", f"{ACTIVE.get('precision_tolerance', 1e-6)}{_sw('use_precision_tolerance', 'PRECISION_TOLERANCE')}", opt("precision_tolerance"), _why("use_precision_tolerance", "PRECISION_TOLERANCE") + "your setting (|value| <= tolerance is the no-data zero; a year-season is constant within it)")
+    _spx_ = opt("same_pixels")
+    ch("SAME_PIXELS", f"{ACTIVE.get('same_pixels', 'pre_post')}{_sw('use_same_pixels', 'SAME_PIXELS')}", _spx_, _why("use_same_pixels", "SAME_PIXELS") + "your setting" + {"pre_post": " (every treated and control pixel is observed in pre AND post; a pixel seen on one side only leaves -- the groups are the same pixels across the panel)",
                                                        "all": " (every pixel is observed in every year-season of the sample: a balanced pixel set)", "off": " (a pixel may contribute to one side only -- the v20.58 sample)"}[_spx_])
     ch("CLUSTER", ACTIVE.get("cluster", "site"), ACTIVE.get("cluster", "site"), "your setting" + (" (~1 km spatial blocks of pixels -- many clusters, the spatial correlation of neighbouring pixels absorbed)" if ACTIVE.get("cluster") == "block" else " (the sub-watershed; fewer than %d sub-watersheds -> the years)" % MIN_SWS_CLUSTERS))
     ch("COVARIATES", ",".join(ACTIVE.get("covariates") or []) or "none", ",".join(ACTIVE.get("covariates") or []) or "none", "your setting")

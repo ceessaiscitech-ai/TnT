@@ -75,7 +75,7 @@ def _integrity_part(d):
         r["ydrop"] = bool(np.isin(yr, C.ACTIVE.get("drop_years") or []).any())
     if "Season" in d.columns and len(d): r["ss"] = sorted(int(x) for x in pd.unique(d["Season"]))
     r["pixels"] = int(d["pixel_id"].nunique()) if "pixel_id" in d.columns else 0
-    _spx = C.ACTIVE.get("same_pixels", "pre_post")                                                        # v20.59: pixel partitions -- a pixel's rows are
+    _spx = C.opt("same_pixels")                                                                           # v20.59: pixel partitions -- a pixel's rows are
     if _spx != "off" and {"pixel_id", "post"} <= set(d.columns):                                          #   all here, so the count adds exactly
         _o = C.CURRENT_OUTCOME; _fin = np.isfinite(_num(d[_o]).values) if _o and _o in d.columns else np.ones(len(d), bool)
         r["one_side"] = int(C._pixels_one_side(d[_fin], _spx))
@@ -105,7 +105,7 @@ def integrity_final(parts, control_zones=None, label=None, verbose=True):
         nr = int(sum(p.get("nr", 0) for p in parts)); add("one ring per pixel", nr == 0, f"{nr} pixel(s) with more than one ring", strict_o)
     if {"treatment", "pixel_id"} <= cols:
         nb = int(sum(p.get("nboth", 0) for p in parts)); add("no pixel both treated and a control", not nb, f"{nb} pixel(s) on both sides", strict_o)
-    _spx = C.ACTIVE.get("same_pixels", "pre_post")
+    _spx = C.opt("same_pixels")
     if _spx != "off" and any("one_side" in p for p in parts):
         _one = int(sum(p.get("one_side", 0) for p in parts))
         add("the same pixels in pre and post" if _spx == "pre_post" else "the same pixels in every year-season", _one == 0,
@@ -265,9 +265,9 @@ def _t_presel(p):
     C = _C()
     d = O.read_part(p["path"], p["bad"])
     if not len(d): return {"empty": True}
-    saved = C.ACTIVE.get("control_selection"); C.ACTIVE["control_selection"] = "rings"
+    saved = C.ACTIVE.get("use_control_selection"); C.ACTIVE["use_control_selection"] = False     # the selection OFF: every control row counted
     try: d = C.build_treatment_columns(d, control_zones=p["control_zones"])
-    finally: C.ACTIVE["control_selection"] = saved
+    finally: C.ACTIVE["use_control_selection"] = saved
     f = C.control_selection_aggregates(d, d["in_analysis_sample"].values == 1, p["outcome"])
     return {"agg_t": f["agg_t"].to_dict("list"), "t_pixels": f["t_pixels"], "agg_c": f["agg_c"].to_dict("list"), "pix_c": f["pix_c"].to_dict("list"), "mode": f["mode"]}
 
@@ -279,9 +279,9 @@ def decide_controls_ooc(pool, pay, outcome):
     """v20.59: the parent's decision under CONTROL_SELECTION from every partition's pre-period facts (pixel partitions: the pixel counts add
     exactly); kept in ACTIVE so that the 'prep' workers apply the same fixed set."""
     C = _C()
-    if C.ACTIVE.get("control_selection", "rings") == "rings": return None
+    if C.opt("control_selection") == "rings": return None
     sel = C.ACTIVE.get("control_selected")
-    if isinstance(sel, dict) and sel.get("outcome") == outcome and sel.get("mode") == C.ACTIVE.get("control_selection") and sel.get("key") == C._control_selection_key(): return sel
+    if isinstance(sel, dict) and sel.get("outcome") == outcome and sel.get("mode") == C.opt("control_selection") and sel.get("key") == C._control_selection_key(): return sel
     got = pool.map("presel", pay)
     parts = [g["result"] for g in got if g["result"] and not g["result"].get("empty")]
     if not parts: raise C.InsufficientDataError(f"CONTROL_SELECTION: no pre-period rows of {outcome} in any partition")

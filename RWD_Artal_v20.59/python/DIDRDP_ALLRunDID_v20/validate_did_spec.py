@@ -181,7 +181,7 @@ check("DESIGN_SOURCE = 'model' (design-based modelling): post = Year >= 2023 (th
       (dm["post"].values == (dm["Year"].values >= 2023).astype(int)).all() and "_panelDesign" not in C.scenario_tag() and abs(bm - b) > 1e-6, f"{bm:.8f} vs {b:.8f}")
 C.set_scenario(timing="fixed", treatment_year=T0, design_source="model", verbose=False); C._RESOLVED["key"] = None
 # v20.59 (your fifth request): the control group chosen on the PRE period -- per outcome, the same pixels in every year and season; never on the post period
-C.set_scenario(control_selection="pre_rings", control_select_k=2, control_select_on="level", verbose=False); C._RESOLVED["key"] = None
+C.set_scenario(use_control_selection=True, control_selection="pre_rings", control_select_k=2, control_select_on="level", verbose=False); C._RESOLVED["key"] = None
 dl = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); sl = dl[dl.in_analysis_sample == 1].copy()
 check("CONTROL_SELECTION = 'pre_rings', K = 2 on 'level': rings 1 and 2 (the DGP's ring levels are 0.30 + 0.02 x ring), the folder tagged _ctrlPre2rL",
       set(sl.loc[sl.treatment == 0, "buff_km"].astype(int)) == {1, 2} and "_ctrlPre2rL" in C.scenario_tag(), f"rings {sorted(sl.loc[sl.treatment == 0, 'buff_km'].unique())}, tag {C.scenario_tag()}")
@@ -203,24 +203,24 @@ try:
     C.set_scenario(control_selection="post_means", verbose=False); check("a post-period / outcome-mean rule is refused (it selects on the outcome)", False, "accepted")
 except Exception as e_:
     check("a post-period / outcome-mean rule is refused (it selects on the outcome)", "selects on the outcome" in str(e_), str(e_)[:120])
-C.set_scenario(control_selection="rings", control_select_on="trend", verbose=False); C._RESOLVED["key"] = None
+C.set_scenario(use_control_selection=False, control_select_on="trend", use_same_pixels=True, same_pixels="pre_post", verbose=False); C._RESOLVED["key"] = None
 # v20.59 (your rule): the same pixels in pre and post -- on this balanced DGP nothing leaves under the default, and the integrity line confirms it
 dr = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI")))
-check("SAME_PIXELS = 'pre_post' (the default): every pixel of this DGP is observed before and after treatment -> 0 pixels leave; the sample integrity confirms 'the same pixels in pre and post'",
+check("USE_SAME_PIXELS, SAME_PIXELS = 'pre_post': every pixel of this DGP is observed before and after treatment -> 0 pixels leave; the sample integrity confirms 'the same pixels in pre and post'",
       (C.LAST_DESIGN_INFO.get("same_pixels") or {}).get("pixels_left_out") == 0 and any(r["check"] == "the same pixels in pre and post" and r["ok"] for r in C.LAST_INTEGRITY), str(C.LAST_DESIGN_INFO.get("same_pixels")))
 # ---------------------------------------------------------------- 3b specs 1-3: the donut, the RMSE rule + select_optimal_control_rings, the surrogate / synthetic DiD module, range safety
-C.set_scenario(donut_rings=[1], verbose=False); C._RESOLVED["key"] = None
+C.set_scenario(use_same_pixels=False, use_donut=True, donut_rings=[1], verbose=False); C._RESOLVED["key"] = None
 ddn = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); sdn = ddn[ddn.in_analysis_sample == 1].copy()
 check("DONUT_RINGS [1]: ring 1 leaves the control pool, rings 2-5 stay, the folder tagged _donut1", set(sdn.loc[sdn.treatment == 0, "buff_km"].astype(int)) == {2, 3, 4, 5} and "_donut1" in C.scenario_tag(), f"rings {sorted(sdn.loc[sdn.treatment == 0, 'buff_km'].unique())}, tag {C.scenario_tag()}")
 bdn, sedn = C.estimate_twfe_did(sdn, "NDVI", "did_term", "pixel_id", "time_fe_yearseason", "subwshed_id")
 check("M01 on the donut sample = explicit-dummy OLS to 1e-8 and within 2 SE of the TRUE delta", abs(bdn - ols_on(sdn)) < 1e-8 and abs(bdn - DELTA) < 2 * max(sedn, 1e-6), f"{bdn:.8f} (se {sedn:.6f}) vs OLS {ols_on(sdn):.8f}, true {DELTA}")
-C.set_scenario(donut_rings=[], control_selection="pre_rings", control_select_k=2, control_select_on="rmse", verbose=False); C._RESOLVED["key"] = None
+C.set_scenario(use_donut=False, use_control_selection=True, control_selection="pre_rings", control_select_k=2, control_select_on="rmse", verbose=False); C._RESOLVED["key"] = None
 drm = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI"))); srm = drm[drm.in_analysis_sample == 1].copy(); rmse_ = {}
 for r_ in range(1, 6):
     mc_ = pre_[pre_.buff_km == r_].groupby(["Year", "Season"]).NDVI.mean(); j_ = mc_.index.intersection(mt_.index); dif_ = (mc_[j_] - mt_[j_]).values; rmse_[r_] = float(np.sqrt(np.mean(dif_ ** 2)))
 exp_rm = sorted(sorted(rmse_, key=lambda r_: (rmse_[r_], r_))[:2]); got_rm = sorted(set(srm.loc[srm.treatment == 0, "buff_km"].astype(int)))
 check("CONTROL_SELECT_ON 'rmse' (spec 1): the engine's two rings = the two smallest pre-period RMSE gaps recomputed independently (rings 1 and 2 on this DGP), tagged _ctrlPre2rR", got_rm == exp_rm == [1, 2] and "_ctrlPre2rR" in C.scenario_tag(), f"engine {got_rm}, recomputed {exp_rm} from {dict((k_, round(v_, 6)) for k_, v_ in rmse_.items())}; tag {C.scenario_tag()}")
-C.set_scenario(control_selection="rings", control_select_on="trend", verbose=False); C._RESOLVED["key"] = None
+C.set_scenario(use_control_selection=False, control_select_on="trend", verbose=False); C._RESOLVED["key"] = None
 opt_ch, opt_tab = C.select_optimal_control_rings(s, "NDVI", treat_ring=0, candidate_rings=[1, 2, 3, 4, 5], pre_years=range(2016, 2022), top_k=2, on="level")
 check("select_optimal_control_rings (level, top 2): rings 1 and 2 (the DGP's ring levels are 0.30 + 0.02 x ring), every candidate in its table", sorted(int(x) for x in opt_ch) == [1, 2] and len(opt_tab) == 5, f"{opt_ch}, {len(opt_tab)} rows")
 import surrogate_did_estimator as SD
@@ -253,14 +253,14 @@ EXCLUDE_GAPFILLED <- TRUE
 DESIGN_SOURCE <- "panel"; TREATMENT_YEAR <- 2023; dpn <- model_design(verbose = FALSE, force = TRUE); xp <- load_panel_R("NDVI", dpn); fp <- fe_fit(xp, "NDVI", "did"); tag_p <- scenario_tag(dpn); pvp <- attr(xp, "post_vs_panel")
 DESIGN_SOURCE <- "model"; dmn <- model_design(verbose = FALSE, force = TRUE); xm <- load_panel_R("NDVI", dmn); fm <- fe_fit(xm, "NDVI", "did"); tag_m <- scenario_tag(dmn)
 TREATMENT_YEAR <- {T0}
-CONTROL_SELECTION <- "pre_rings"; CONTROL_SELECT_K <- 2L; CONTROL_SELECT_ON <- "trend"; dcs <- model_design(verbose = FALSE, force = TRUE); xs <- load_panel_R("NDVI", dcs); fs <- fe_fit(xs, "NDVI", "did"); tag_s <- scenario_tag(dcs)
+USE_CONTROL_SELECTION <- TRUE; CONTROL_SELECTION <- "pre_rings"; CONTROL_SELECT_K <- 2L; CONTROL_SELECT_ON <- "trend"; dcs <- model_design(verbose = FALSE, force = TRUE); xs <- load_panel_R("NDVI", dcs); fs <- fe_fit(xs, "NDVI", "did"); tag_s <- scenario_tag(dcs)
 sel_rings <- sort(unique(xs[treat == 0L, buff_km])); sel_fixed <- uniqueN(xs[treat == 0L, .(k = paste(sort(pixel_id), collapse = ",")), by = .(Year, Season)]$k)
 CONTROL_SELECT_ON <- "level"; dcl <- model_design(verbose = FALSE, force = TRUE); xl <- load_panel_R("NDVI", dcl); sel_rings_level <- sort(unique(xl[treat == 0L, buff_km]))
-CONTROL_SELECTION <- "rings"; CONTROL_SELECT_ON <- "trend"
-same_out <- attr(x, "same_pixels")
-DONUT_RINGS <- 1L; ddn <- model_design(verbose = FALSE, force = TRUE); xdn <- load_panel_R("NDVI", ddn); dn_rings <- sort(unique(xdn[treat == 0L, buff_km])); fdn <- fe_fit(xdn, "NDVI", "did"); tag_dn <- scenario_tag(ddn); DONUT_RINGS <- integer(0)
-CONTROL_SELECTION <- "pre_rings"; CONTROL_SELECT_K <- 2L; CONTROL_SELECT_ON <- "rmse"; drm <- model_design(verbose = FALSE, force = TRUE); xrm <- load_panel_R("NDVI", drm); rmse_rings <- sort(unique(xrm[treat == 0L, buff_km])); tag_rm <- scenario_tag(drm)
-CONTROL_SELECTION <- "rings"; CONTROL_SELECT_ON <- "trend"; d <- model_design(verbose = FALSE, force = TRUE)
+USE_CONTROL_SELECTION <- FALSE; CONTROL_SELECT_ON <- "trend"
+USE_SAME_PIXELS <- TRUE; dsp <- model_design(verbose = FALSE, force = TRUE); xsp <- load_panel_R("NDVI", dsp); same_out <- attr(xsp, "same_pixels"); same_conf_ <- any(attr(xsp, "integrity")$check == "the same pixels in pre and post" & attr(xsp, "integrity")$ok); USE_SAME_PIXELS <- FALSE
+USE_DONUT <- TRUE; DONUT_RINGS <- 1L; ddn <- model_design(verbose = FALSE, force = TRUE); xdn <- load_panel_R("NDVI", ddn); dn_rings <- sort(unique(xdn[treat == 0L, buff_km])); fdn <- fe_fit(xdn, "NDVI", "did"); tag_dn <- scenario_tag(ddn); USE_DONUT <- FALSE
+USE_CONTROL_SELECTION <- TRUE; CONTROL_SELECTION <- "pre_rings"; CONTROL_SELECT_K <- 2L; CONTROL_SELECT_ON <- "rmse"; drm <- model_design(verbose = FALSE, force = TRUE); xrm <- load_panel_R("NDVI", drm); rmse_rings <- sort(unique(xrm[treat == 0L, buff_km])); tag_rm <- scenario_tag(drm)
+USE_CONTROL_SELECTION <- FALSE; CONTROL_SELECT_ON <- "trend"; d <- model_design(verbose = FALSE, force = TRUE)
 sd_r <- synthetic_did_two_level_R(x, "NDVI", pixel_level = TRUE, cluster_col = "cluster_id", say = FALSE)
 xsi <- load_panel_R("NDVI", d, extra = c("Rain", "Tmax")); si_r <- surrogate_index_did_R(xsi, "NDVI", c("Rain", "Tmax"), outcome_seasons = c(2L, 3L), surrogate_season = 1L, cluster_col = "cluster_id", say = FALSE)
 opt_r <- select_optimal_control_rings_R(x, "NDVI", candidate_rings = 1:5, pre_years = 2016:2021, top_k = 2L, on = "level")
@@ -278,7 +278,7 @@ writeLines(jsonlite::toJSON(list(n = f1$n, G = f1$G, fixest_beta = unname(f1$coe
                                  sel_file = file.exists(file.path(RESULTS_DIR, "CONTROL_SELECTION_NDVI_R.csv")),
                                  donut_rings = as.list(dn_rings), donut_beta = unname(fdn$coef["did"]), donut_n = fdn$n, donut_tag = tag_dn, rmse_rings = as.list(rmse_rings), rmse_tag = tag_rm,
                                  sdid_att = sd_r$att, sdid_se = sd_r$se, sdid_wls_beta = sd_r$pixel_wls$beta, si_att = si_r$att, si_se = si_r$se, opt_rings = as.list(opt_r$chosen),
-                                 same_left = as.integer(same_out$pixels_left_out), same_rule = same_out$rule, same_conf = any(attr(x, "integrity")$check == "the same pixels in pre and post" & attr(x, "integrity")$ok),
+                                 same_left = as.integer(same_out$pixels_left_out), same_rule = same_out$rule, same_conf = same_conf_,
                                  pixel_consistency_offenders = nrow(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")))), auto_unbox = TRUE, digits = NA), file.path(root, "r_m01.json"))
 cat("@@RDONE@@\\n")
 """
@@ -316,7 +316,7 @@ else:
           sorted(int(v) for v in (rj.get("sel_rings") or [])) == got2 and rj.get("sel_fixed") == 1 and abs(rj["sel_beta"] - bt_) < 1e-8 and rj.get("sel_n") == len(st) and "_ctrlPre2r" in str(rj.get("sel_tag")) and rj.get("sel_file") is True,
           f"R rings {rj.get('sel_rings')} beta {rj.get('sel_beta')} n {rj.get('sel_n')} vs Python {got2} {bt_:.10f} n {len(st)}; tag {rj.get('sel_tag')}")
     check("R 'level' K = 2: rings 1 and 2 (as Python)", sorted(int(v) for v in (rj.get("sel_rings_level") or [])) == [1, 2], str(rj.get("sel_rings_level")))
-    check("R SAME_PIXELS 'pre_post' (the default): 0 pixels leave, the integrity confirms the same pixels in pre and post", rj.get("same_left") == 0 and rj.get("same_rule") == "pre_post" and rj.get("same_conf") is True, f"{rj.get('same_rule')} left {rj.get('same_left')} confirmed {rj.get('same_conf')}")
+    check("R USE_SAME_PIXELS, 'pre_post': 0 pixels leave, the integrity confirms the same pixels in pre and post", rj.get("same_left") == 0 and rj.get("same_rule") == "pre_post" and rj.get("same_conf") is True, f"{rj.get('same_rule')} left {rj.get('same_left')} confirmed {rj.get('same_conf')}")
     check("R DONUT_RINGS <- 1L: rings 2-5 as controls, _donut1 tag, the same beta as Python's donut estimate to 1e-8 on the same rows",
           sorted(int(v) for v in (rj.get("donut_rings") or [])) == [2, 3, 4, 5] and "_donut1" in str(rj.get("donut_tag")) and abs(rj["donut_beta"] - bdn) < 1e-8 and rj.get("donut_n") == len(sdn), f"R {rj.get('donut_rings')} {rj.get('donut_beta')} n {rj.get('donut_n')} vs Python {bdn:.10f} n {len(sdn)}; tag {rj.get('donut_tag')}")
     check("R CONTROL_SELECT_ON <- 'rmse': the same two rings as Python's, tagged _ctrlPre2rR", sorted(int(v) for v in (rj.get("rmse_rings") or [])) == got_rm and "_ctrlPre2rR" in str(rj.get("rmse_tag")), f"R {rj.get('rmse_rings')} vs Python {got_rm}; tag {rj.get('rmse_tag')}")
