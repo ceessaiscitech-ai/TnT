@@ -262,6 +262,13 @@ could not switch the mask off after an earlier value in the same kernel (every l
 sentinel marks "not given"), and the self-check confirms the reset. The `"rmse"` rule's folder tag (`_ctrlPre2rR`) was missing in both
 engines (R's tag lookup stopped on it).
 
+## From your A40 run: the PyTorch "NumPy array is not writable" warning
+
+`_common.py` (the GPU demeaning, `_demean_gpu` / the two-way matrix path / the location rule's GPU distance) built the tensors with
+`torch.as_tensor` on a numpy view of a pandas column, which is read-only; PyTorch warned once per run (`tensor_numpy.cpp:209`). The
+tensors were only ever read, so no number was affected. They are now built from a writable copy (`np.array(..., copy=True)`); the warning
+is gone. The warning also confirms the GPU path is in use on your machine.
+
 ## Found by running R here (v20.59, after the first delivery)
 
 - **R_P00 stopped before writing the panel** when an outcome column had no finite value at all (`panel_variation_R`: the empty part

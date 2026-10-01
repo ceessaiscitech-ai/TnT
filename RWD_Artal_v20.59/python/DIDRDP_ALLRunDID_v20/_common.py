@@ -5267,8 +5267,8 @@ def _nn_match_torch_chunked(query_xy, registry_xy, query_chunk=20000, registry_c
     chose another neighbour for 2 of 3,000 points with a 1.46 m distance error across a 5 km area (V00d, G5). Distances
     are now computed from the coordinate differences themselves (compute_mode="donot_use_mm_for_euclid_dist")."""
     center = registry_xy.mean(axis=0)
-    q_all = torch.as_tensor(query_xy - center, dtype=torch.float32, device="cuda")
-    r_all = torch.as_tensor(registry_xy - center, dtype=torch.float32, device="cuda")
+    q_all = torch.as_tensor(np.array(query_xy - center, copy=True), dtype=torch.float32, device="cuda")
+    r_all = torch.as_tensor(np.array(registry_xy - center, copy=True), dtype=torch.float32, device="cuda")
     n = q_all.shape[0]
     out_dist = torch.empty(n, device="cuda")
     out_idx = torch.empty(n, dtype=torch.int64, device="cuda")
@@ -5386,7 +5386,7 @@ def _fe_more(it, max_iter, chg, tol, over_floor=True):
 def _demean_gpu_matrix(T, Y, fes, tol, max_iter):
     """v20.23: the GPU path for a whole matrix -- index_add_ on (K x k) sums handles every column in one kernel."""
     dev = T.device("cuda")
-    R = T.as_tensor(np.ascontiguousarray(np.asarray(Y, dtype=np.float64)), device=dev)
+    R = T.as_tensor(np.array(Y, dtype=np.float64, order="C", copy=True), device=dev)      # a writable copy: a read-only pandas view would make PyTorch warn
     if R.ndim == 1: R = R.reshape(-1, 1)
     R = R.clone(); k = R.shape[1]
     codes, counts, rows_ok = [], [], []
@@ -5422,7 +5422,7 @@ def _demean_gpu_matrix(T, Y, fes, tol, max_iter):
 
 def _demean_gpu(T, y, fes, tol, max_iter):
     dev = "cuda"
-    r = T.as_tensor(np.ascontiguousarray(y, dtype=np.float64), device=dev)
+    r = T.as_tensor(np.array(y, dtype=np.float64, order="C", copy=True), device=dev)      # a writable copy (the warning your A40 run printed)
     codes, counts, rows_ok = [], [], []
     for f in fes:
         cd, uniq = pd.factorize(pd.Series(np.asarray(f)), sort=False)
@@ -5572,7 +5572,7 @@ def _demean_torch(y, fes, tol, max_iter):
     for f in fes:
         cd, uniq = pd.factorize(pd.Series(f), sort=False)
         codes.append(torch.as_tensor(cd, dtype=torch.int64, device=dev)); sizes.append(len(uniq))
-    r = torch.as_tensor(np.asarray(y, dtype=np.float64), dtype=torch.float64, device=dev)
+    r = torch.as_tensor(np.array(y, dtype=np.float64, order="C", copy=True), dtype=torch.float64, device=dev)
     counts = [torch.zeros(k, dtype=torch.float64, device=dev).index_add_(0, cd, torch.ones_like(r)) for cd, k in zip(codes, sizes)]
     floor = max(tol, FE_NOISE_ULPS * np.finfo(np.float64).eps * float(r.abs().max())) if r.numel() else tol
     it = 0; chg = np.inf
