@@ -2794,8 +2794,8 @@ def check_v20_59():
         if "_ensure_p_value(" not in _i.getsource(_C.save_results) or "HEADLINES_ALL_VARIABLES.csv" not in _i.getsource(_C.headline): bad("save_results / headline do not carry the p-value guarantee and the all-variables table")
         if "d.copy()" in _i.getsource(_P2._registry_aggregate) or "MemoryError" not in _i.getsource(_P2.pixel_registry) or "read_row_group" not in _i.getsource(_P2._registry_one_shard): bad("the pixel registry still copies whole shards / has no memory fall-back")
         _dfr = _pd.DataFrame({"pixel_id": [1, 1, 2], "latitude": [10.0, 10.2, 11.0], "longitude": [70.0, 70.0, 71.0], "file_mtime": [1.0, 2.0, 1.0], "src_file": ["a", "b", "c"], "NDVI": [0.1, _np.nan, 0.3], "LAI": [1.0, 2.0, _np.nan]})
-        _g = _P2._registry_combine([_P2._registry_aggregate(_dfr.iloc[:2]), _P2._registry_aggregate(_dfr.iloc[2:])])
-        if not (_g.loc[1, "n_rows"] == 2 and _g.loc[1, "n_ok"] == 3 and _g.loc[1, "src"] == "b" and abs(_g.loc[1, "lat_sum"] / 2 - 10.1) < 1e-12 and _g.loc[2, "n_ok"] == 1): bad(f"the registry's per-pixel sums are wrong ({_g.to_dict()})")
+        _rg = _P2._registry_combine([_P2._registry_aggregate(_dfr.iloc[:2]), _P2._registry_aggregate(_dfr.iloc[2:])])
+        if not (_rg.loc[1, "n_rows"] == 2 and _rg.loc[1, "n_ok"] == 3 and _rg.loc[1, "src"] == "b" and abs(_rg.loc[1, "lat_sum"] / 2 - 10.1) < 1e-12 and _rg.loc[2, "n_ok"] == 1): bad(f"the registry's per-pixel sums are wrong ({_g.to_dict()})")
         if "P.PANEL_FLOAT_DTYPE" not in open(p00[0], encoding="utf-8").read() or "panel_precision_report" not in open(p00[0], encoding="utf-8").read(): bad("P00 lacks PANEL_FLOAT_DTYPE / the precision report")
         note("2 Oct (your rules): outcomes stored at full precision (float64; a float32 panel is rebuilt; panel_precision_report.csv tracks the smallest differences), "
              "a p-value beside every beta and SE (save_results; HEADLINES_ALL_VARIABLES.csv across variables), the pixel registry without shard copies and with a memory fall-back")
