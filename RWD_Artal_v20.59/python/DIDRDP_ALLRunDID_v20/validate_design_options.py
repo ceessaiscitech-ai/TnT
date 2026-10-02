@@ -459,7 +459,7 @@ def main():
         rdir = os.path.join(work, kind, "r_out")
         p, log = run_r(variants, root, fund, sites_csv, rdir)
         if p is None:
-            r_ok = False; rec(kind, "-", "R model stage available", False, log)
+            r_ok = False; print(f"[INFO]    {kind}: R == Python not compared -- {log} (the R track is kept outside this module: R_separate_track/)")
         else:
             for n in variants:
                 j = os.path.join(rdir, n + ".json"); f = os.path.join(rdir, n + ".csv")

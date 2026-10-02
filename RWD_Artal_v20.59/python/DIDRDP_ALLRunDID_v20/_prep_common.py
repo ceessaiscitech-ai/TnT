@@ -787,6 +787,15 @@ def final_panel_is_valid(path=None, required_cols=None, min_rows=1):
             warn(f"final panel exists but lacks {sorted(missing)} -> will rebuild"); return False
         if nrows < min_rows:
             warn("final panel exists but is empty -> will rebuild"); return False
+        if str(PANEL_FLOAT_DTYPE) == "float64":                                              # 2 Oct: a float32 panel lost the 8th-10th decimals -> rebuild
+            try:
+                _pf = pq.ParquetFile(path); _sch = _pf.schema_arrow
+                try: _pf.close()
+                except Exception: pass
+                _f32 = [c_ for c_ in PANEL_OUTCOME_VARS_21 if c_ in _sch.names and str(_sch.field(c_).type) == "float"]
+                if _f32: warn(f"final panel stores {len(_f32)} outcome column(s) as float32 (7 significant digits; e.g. {_f32[:4]}) and PANEL_FLOAT_DTYPE is float64 -> will rebuild with full precision"); return False
+            except Exception as _e:
+                warn(f"the panel's stored precision could not be read ({_e}); the build goes on")
         # v20.25: a panel built WITHOUT the near-duplicate pixel merge (or with other settings) is out of date
         _bs = os.path.join(os.path.dirname(path), "panel_build_settings.json")
         _want = {"enabled": bool(NEAR_DUPLICATE_PIXELS), "overlap_min": PIXEL_OVERLAP_MIN, "pixel_size_m": PIXEL_SIZE_M, "priority": DEDUP_PRIORITY}
@@ -1121,6 +1130,11 @@ def data_qc(df):
 
 # ====================== v20.28: WHICH SUB-WATERSHED EVERY PIXEL IS IN (shapefile SWSs20_KarnatakaAll5k) ======================
 USE_PRECISION_TOLERANCE = False   # 1 Oct (your rule): False = the no-data zero is an EXACT 0 (the v20.58 rule) | True = |value| <= PRECISION_TOLERANCE is the no-data zero
+PANEL_FLOAT_DTYPE = "float64"     # 2 Oct (your rule): the outcomes, covariates and dose columns are STORED in the panel with the exports' full precision
+                                  #   (float64: 15-16 significant digits -- differences at the 8th to 10th decimal survive). "float32" halves the panel's
+                                  #   size but keeps ~7 significant digits (v20.58 and before: values 1e-8 apart became the SAME number). A panel stored as
+                                  #   float32 is rebuilt by P00 when this says float64; panel_precision_report.csv shows, per variable, the smallest
+                                  #   difference present in the data and whether float32 would have lost it.
 PRECISION_TOLERANCE = 1e-6     # spec 1: satellite indices in [-1, 1] -- |value| <= tolerance is the no-data zero (P00 and every model); never exact equality
 PIXEL_ONE_SITE = True          # v20.59 -- YOUR RULE: ONE sub-watershed and ONE ring per pixel in the whole panel. Every row goes to the sub-watershed whose
                                #   polygon holds its latitude / longitude (core first, then the lower id) and takes THAT polygon's ring, whatever id or ring
@@ -1714,11 +1728,11 @@ FINAL_PANEL_SCHEMA = {
     # event_time and period_index are NOT stored: build_treatment_columns re-derives both from
     # Year/Season at model time (saves 5 bytes/row = 5 GB at 1B rows).
     # ---- treatment timing / dose (NaN-able -> float32) ----
-    "dose_per_subwshed": "float32", "dose_amount_sws": "float32", "dose_intensity_per_ha": "float32",   # v20.38
+    "dose_per_subwshed": PANEL_FLOAT_DTYPE, "dose_amount_sws": PANEL_FLOAT_DTYPE, "dose_intensity_per_ha": PANEL_FLOAT_DTYPE,   # v20.38; 2 Oct: full precision
     "first_treat_agri_year": "float32",
     "first_treat_season": "float32", "area_hectare": "float32",
     # ---- the 21 planned outcome variables ----
-    **{v: "float32" for v in PANEL_OUTCOME_VARS_21},
+    **{v: PANEL_FLOAT_DTYPE for v in PANEL_OUTCOME_VARS_21},   # 2 Oct (your rule): full precision -- the 8th-10th decimals are data
     # ---- covariates ----
     "LandUse": "float32", "LandUseDW": "float32",
     # ---- QC needed for validation / filtering ----
@@ -2162,23 +2176,38 @@ def _registry_one_shard(path):
         names = pf.schema_arrow.names
         cols = [c for c in ("pixel_id", "latitude", "longitude", "file_mtime", "src_file") if c in names]
         ocols = [c for c in OUTCOME_VARS if c in names]
-        d = pd.concat([pf.read_row_group(i_, columns=cols + ocols).to_pandas() for i_ in range(pf.num_row_groups)],
-                      ignore_index=True) if pf.num_row_groups else pd.DataFrame(columns=cols + ocols)
+        parts = []                                                       # 1 Oct: one row group at a time (never the whole shard in RAM at once)
+        for i_ in range(pf.num_row_groups):
+            g_ = _registry_aggregate(pf.read_row_group(i_, columns=cols + ocols).to_pandas())
+            if g_ is not None: parts.append(g_)
     finally:
         try: pf.close()
         except Exception: pass
-    return _registry_aggregate(d)
+    return _registry_combine(parts) if parts else None
 
 def _registry_aggregate(d):
+    """Per-pixel sums of one frame (lat / lon sums, rows, usable outcome cells, newest file) -- combined exactly by _registry_combine.
+    1 Oct: no copy of the frame and no N x K float64 matrix of every outcome (your PASS B stopped here: 'Unable to allocate 881 MiB for
+    an array with shape (13, 8886488)' -- a 13-column copy of an 8.9 M-row shard inside each of many threads); the usable-cell count is
+    taken column by column."""
     if not len(d): return None
     ocols = [c_ for c_ in OUTCOME_VARS if c_ in d.columns]
-    d = d.copy()
-    d["_ok"] = np.isfinite(d[ocols].apply(pd.to_numeric, errors="coerce").values.astype(np.float64)).sum(axis=1) if ocols else 0
-    if "file_mtime" not in d.columns: d["file_mtime"] = 0.0
-    if "src_file" not in d.columns: d["src_file"] = ""
-    d = d.sort_values("file_mtime", kind="mergesort")
-    return d.groupby("pixel_id", sort=False).agg(lat=("latitude", "mean"), lon=("longitude", "mean"), mtime=("file_mtime", "max"),
-                                                 n_rows=("_ok", "size"), n_ok=("_ok", "sum"), src=("src_file", "last"))
+    ok = np.zeros(len(d), dtype=np.int16)
+    for c_ in ocols: ok += np.isfinite(pd.to_numeric(d[c_], errors="coerce").to_numpy(dtype=np.float64, na_value=np.nan)).astype(np.int16)
+    mt = pd.to_numeric(d["file_mtime"], errors="coerce").fillna(0.0).to_numpy(dtype=np.float64) if "file_mtime" in d.columns else np.zeros(len(d))
+    src = d["src_file"].astype(str).to_numpy() if "src_file" in d.columns else np.full(len(d), "", dtype=object)
+    small = pd.DataFrame({"pixel_id": d["pixel_id"].to_numpy(), "lat": pd.to_numeric(d["latitude"], errors="coerce").to_numpy(dtype=np.float64),
+                          "lon": pd.to_numeric(d["longitude"], errors="coerce").to_numpy(dtype=np.float64), "mtime": mt, "_ok": ok, "src": src})
+    order = np.argsort(mt, kind="mergesort"); small = small.iloc[order]
+    g = small.groupby("pixel_id", sort=False).agg(lat_sum=("lat", "sum"), lon_sum=("lon", "sum"), mtime=("mtime", "max"), n_rows=("_ok", "size"), n_ok=("_ok", "sum"), src=("src", "last"))
+    return g
+
+def _registry_combine(parts):
+    """The exact combination of per-pixel sums from several frames / row groups: the newest file wins the name, means from the sums."""
+    r = pd.concat(parts)
+    r = r.sort_values("mtime", kind="mergesort")
+    reg = r.groupby(level=0, sort=False).agg(lat_sum=("lat_sum", "sum"), lon_sum=("lon_sum", "sum"), mtime=("mtime", "max"), n_rows=("n_rows", "sum"), n_ok=("n_ok", "sum"), src=("src", "last"))
+    return reg
 
 def pixel_registry(shard_paths, verbose=True, n_threads=None):
     """One row per pixel_id across ALL blocks: mean coordinates, newest file time, rows, usable outcome cells and the
@@ -2190,17 +2219,63 @@ def pixel_registry(shard_paths, verbose=True, n_threads=None):
     except Exception:
         n_threads = n_threads or min(8, len(keys))
     from concurrent.futures import ThreadPoolExecutor
-    with ThreadPoolExecutor(max_workers=max(1, int(n_threads))) as ex:
-        it = ex.map(_registry_one_shard, [shard_paths[k] for k in keys])
-        parts = [p_ for p_ in (progress(it, total=len(keys), desc="pixel registry", unit="block") if verbose else it) if p_ is not None]
+    import gc
+    n_threads = max(1, int(n_threads)); parts = None
+    while parts is None:                                                 # 1 Oct: the MEMORY FALL-BACK -- fewer threads, then one; the numbers are the same
+        try:
+            with ThreadPoolExecutor(max_workers=n_threads) as ex:
+                it = ex.map(_registry_one_shard, [shard_paths[k] for k in keys])
+                parts = [p_ for p_ in (progress(it, total=len(keys), desc="pixel registry", unit="block") if verbose else it) if p_ is not None]
+        except MemoryError as e:
+            gc.collect()
+            if n_threads == 1: raise MemoryError(f"the pixel registry ran out of memory even one shard at a time ({e}) -- close other programs, or raise the Windows page file; the panel was not written") from e
+            n_new = max(1, n_threads // 4)
+            warn(f"the pixel registry ran out of memory with {n_threads} threads scanning the shards at once ({str(e)[:90]}) -- retrying with {n_new} (the same numbers, slower); "
+                 f"PASS A's blocks still held in RAM count against the same memory")
+            n_threads = n_new
     if not parts:
         return pd.DataFrame(columns=["lat", "lon", "mtime", "n_rows", "n_ok", "src", "completeness"])
-    r = pd.concat(parts)
-    r = r.sort_values("mtime", kind="mergesort")
-    reg = r.groupby(level=0, sort=False).agg(lat=("lat", "mean"), lon=("lon", "mean"), mtime=("mtime", "max"),
-                                             n_rows=("n_rows", "sum"), n_ok=("n_ok", "sum"), src=("src", "last"))
+    reg = _registry_combine(parts)
+    reg["lat"] = reg["lat_sum"] / reg["n_rows"].clip(lower=1); reg["lon"] = reg["lon_sum"] / reg["n_rows"].clip(lower=1)
+    reg = reg[["lat", "lon", "mtime", "n_rows", "n_ok", "src"]]
     reg["completeness"] = reg["n_ok"] / reg["n_rows"].clip(lower=1)
     return reg
+
+def panel_precision_report(final_path, output_dir=None, columns=None, verbose=True):
+    """2 Oct (your rule): what precision the panel HOLDS, per variable -- the stored dtype, the finite values, the distinct values, the smallest
+    difference between two distinct values present in the data, the decimals needed to tell them apart, and whether float32 (7 significant
+    digits) would have merged them. Streamed row group by row group (the distinct values of each group, merged). -> panel_precision_report.csv"""
+    output_dir = output_dir or os.path.dirname(final_path); pf = pq.ParquetFile(final_path); names = pf.schema_arrow.names
+    cols = [c for c in (columns or list(PANEL_OUTCOME_VARS_21) + ["Rain", "Tmax", "Tmean", "Tmin", "dose_intensity_per_ha"]) if c in names]
+    acc = {c: {"uniq": [], "n": 0, "n_fin": 0, "amax": 0.0} for c in cols}; rows = []
+    try:
+        for i_ in range(pf.num_row_groups):
+            t = pf.read_row_group(i_, columns=cols)
+            for c in cols:
+                v = t.column(c).to_numpy(zero_copy_only=False).astype(np.float64, copy=False); fin = np.isfinite(v); a = acc[c]
+                a["n"] += int(len(v)); a["n_fin"] += int(fin.sum())
+                if fin.any(): a["amax"] = max(a["amax"], float(np.abs(v[fin]).max())); a["uniq"].append(np.unique(v[fin]))
+        for c in cols:
+            a = acc[c]; u = np.unique(np.concatenate(a["uniq"])) if a["uniq"] else np.array([], float)
+            gaps = np.diff(u); gaps = gaps[gaps > 0]; gmin = float(gaps.min()) if len(gaps) else float("nan")
+            dec = int(min(15, max(0, np.ceil(-np.log10(gmin))))) if np.isfinite(gmin) and gmin > 0 else None
+            f32_eps = a["amax"] * 2.0 ** -23                                             # one float32 step at the largest magnitude
+            rows.append({"variable": c, "stored_dtype": str(pf.schema_arrow.field(c).type), "rows": a["n"], "finite": a["n_fin"], "distinct_values": int(len(u)),
+                         "smallest_difference": gmin, "decimals_needed": dec, "largest_abs": a["amax"], "float32_step_at_max": f32_eps,
+                         "float32_would_merge_values": bool(np.isfinite(gmin) and gmin < f32_eps), "full_precision_kept": str(pf.schema_arrow.field(c).type) == "double"})
+    finally:
+        try: pf.close()
+        except Exception: pass
+    tab = pd.DataFrame(rows); os.makedirs(output_dir, exist_ok=True); out = os.path.join(output_dir, "panel_precision_report.csv"); tab.to_csv(out, index=False, float_format="%.17g")
+    if verbose and len(tab):
+        lost = tab[(~tab.full_precision_kept) & tab.float32_would_merge_values]; fine = tab[tab.full_precision_kept & tab.float32_would_merge_values]
+        (warn if len(lost) else ok)(f"precision of the stored panel: {int(tab.full_precision_kept.sum())} of {len(tab)} variables at full precision (float64); "
+                                  f"{len(fine)} carry differences finer than a float32 step and are kept as they are"
+                                  + (f"; {len(lost)} are stored as float32 although their data differ below one float32 step: {lost.variable.tolist()[:6]} -- rebuild with PANEL_FLOAT_DTYPE = 'float64'" if len(lost) else "")
+                                  + f" -> {out}")
+        for r in tab.itertuples():
+            if r.decimals_needed is not None: info(f"  {r.variable:<8s} {r.stored_dtype:<7s} {r.distinct_values:>12,} distinct | smallest difference {r.smallest_difference:.3g} ({r.decimals_needed} decimals needed)")
+    return tab
 
 def confirm_pixel_consistency(final_path, output_dir=None, verbose=True):
     """v20.59 -- YOUR RULE, CONFIRMED on the finished panel: every pixel has ONE sub-watershed and ONE ring in the whole panel (the same site_id /
@@ -2546,7 +2621,7 @@ def prepare_pass_b_block(yr, se, shard_path, dose_table=None, crosswalk=None):
     # v20.38: the dose belongs to the TREATMENT AREA -- control rings receive none, and before the programme it is 0
     for c_ in ("dose_amount_sws", "dose_intensity_per_ha"):
         if c_ not in block.columns: block[c_] = np.nan
-        block[c_] = pd.to_numeric(block[c_], errors="coerce").astype("float32")
+        block[c_] = pd.to_numeric(block[c_], errors="coerce").astype(PANEL_FLOAT_DTYPE)
         block.loc[block["treatment"].values != 1, c_] = 0.0
         block.loc[(block["treatment"].values == 1) & (block["post"].values == 0), c_] = 0.0
     # v20.27: DESIGN CHECK -- every row placed and coded by the rules, before the block is written:

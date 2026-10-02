@@ -18,6 +18,9 @@ and a .parquet export, a season present in some years only (an unbalanced panel)
 
     python validate_r_parity.py           (needs R with the lib's packages; without R it says so and stops)
 """
+import os as _os0, sys as _sys0
+if not _os0.path.isdir(_os0.path.join(_os0.path.dirname(_os0.path.dirname(_os0.path.dirname(_os0.path.abspath(__file__)))), "R", "lib")):
+    print("[INFO]    this validator compares R with Python; the R track is kept outside this module (R_separate_track/) -- nothing to compare here"); _sys0.exit(0)
 import os, sys, json, glob, shutil, subprocess, tempfile, time
 import numpy as np, pandas as pd
 

@@ -284,8 +284,8 @@ cat("@@RDONE@@\\n")
 """
 open(ROOT + "/audit.R", "w").write(rs)
 rscript = shutil.which("Rscript")
-if rscript is None:
-    print("[INFO]    Rscript not found: the R route is not checked here (run this file where R is installed)"); r = None
+if rscript is None or not os.path.isdir(RLIB):
+    print("[INFO]    the R route is not checked here: " + ("Rscript not found" if rscript is None else "the R library is not part of this module (R_separate_track/)")); r = None
 else:
     r = subprocess.run([rscript, "--vanilla", ROOT + "/audit.R"], capture_output=True, text=True, timeout=3600)
 if r is not None: open(ROOT + "/audit_R.log", "w").write(r.stdout + r.stderr)

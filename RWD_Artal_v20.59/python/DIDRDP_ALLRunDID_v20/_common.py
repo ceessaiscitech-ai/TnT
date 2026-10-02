@@ -997,7 +997,7 @@ def build_estimator_files(outcomes=None, path=None, out_dir=None, row_group_size
             if spec is not None:                                  # computed row group by row group: no extra memory
                 _v = float(spec["intercept"]) + sum(float(b) * pd.to_numeric(d[p], errors="coerce").astype("float64")
                                                     for p, b in zip(spec["predictors"], spec["coef"]))
-                d[o] = _v.astype("float32")
+                d[o] = _v.astype(ESTIMATOR_FLOAT_DTYPE)
                 d = d.drop(columns=[p for p in spec["predictors"] if p not in base])
             # derived time FE if the panel lacks them
             if "time_fe_yearseason" not in d: d["time_fe_yearseason"] = d["Year"].astype(str) + "_" + d["Season"].map(SEASON_LABEL)
@@ -1007,7 +1007,7 @@ def build_estimator_files(outcomes=None, path=None, out_dir=None, row_group_size
             d = build_treatment_columns(d)                         # in place: int8 treatment/control/pre/post/did_term/...
             d = _compact_frame(d)
             for c in (o,) + tuple(x for x in ALL_COVARIATE_COLUMNS if not _is_categorical_col(x)):
-                if c in d and str(d[c].dtype) == "float64": d[c] = d[c].astype("float32")
+                if ESTIMATOR_FLOAT_DTYPE == "float32" and c in d and str(d[c].dtype) == "float64": d[c] = d[c].astype("float32")   # 2 Oct: never by default
             for c in ("LandUse", "event_time"):
                 if c in d and d[c].notna().all():
                     try: d[c] = d[c].astype("int16" if c == "event_time" else "int8")
@@ -2054,6 +2054,11 @@ def load_panel(columns=None, season_not_equal=0, path=None, max_rows=None, finit
         df = df[[c for c in list(columns) + [x for x in ("site_check",) if x not in columns] if c in df.columns]]
     mb = df.memory_usage(deep=True).sum() / 1e6
     ok(f"kept {len(df):,} of {scanned:,} scanned rows x {df.shape[1]} cols ({mb:.1f} MB)")
+    _f32 = [c_ for c_ in df.columns if str(df[c_].dtype) == "float32" and (c_ in ALL_ESTIMATION_VARIABLES or c_ in ALL_COVARIATE_COLUMNS) and not _is_categorical_col(c_)]
+    if _f32 and not _PRECISION_SAID.get("f32"):                                   # 2 Oct (your rule): the 8th-10th decimals are data
+        _PRECISION_SAID["f32"] = True
+        warn(f"precision: {len(_f32)} variable(s) are STORED as float32 in this panel ({_f32[:5]}): differences below ~1e-7 of the value were lost when it was built -- "
+             f"re-run P00 (PANEL_FLOAT_DTYPE = 'float64') to keep the full precision of the exports; the estimates run in float64 from here on")
     if mb > 8000:
         info(f"this frame holds {mb / 1000:.1f} GB -- it fits below 98 % of the RAM, every row stays (your rule)")
     if screen and CURRENT_OUTCOME and CURRENT_OUTCOME in df.columns:   # v20.45: fill years are not data (v20.58: screen=False -- one pixel
@@ -2342,8 +2347,8 @@ def _sample_integrity_once(out, control_zones):
     try:
         m = out["in_analysis_sample"].values == 1
         if not m.any(): return None
-        key = (CURRENT_MODEL_ID, CURRENT_OUTCOME, int(m.sum()), tuple(control_zones))
-        if key in _INTEGRITY_SEEN: return _INTEGRITY_SEEN[key]
+        key = (CURRENT_MODEL_ID, CURRENT_OUTCOME, int(m.sum()), tuple(control_zones), scenario_tag())   # 1 Oct: the design's tag too -- a switch turned on
+        if key in _INTEGRITY_SEEN: return _INTEGRITY_SEEN[key]                                               #   re-checks (and re-confirms) the same rows
         tab = sample_integrity(out[m], control_zones, verbose=True); _INTEGRITY_SEEN[key] = tab
         return tab
     except InsufficientDataError:
@@ -2609,6 +2614,8 @@ def _usable(values, col=None):
         m &= (np.abs(v) > float(opt("precision_tolerance")))     # spec 1: the no-data zero within the precision tolerance, never exact equality
     return m
 LAST_LOAD_INFO = {}
+_PRECISION_SAID = {}
+ESTIMATOR_FLOAT_DTYPE = "float64"   # 2 Oct (your rule): the per-variable estimator files keep the panel's full precision (float32 kept ~7 significant digits before)
 
 # ====================== v20.35: WHAT ENTERS THE ESTIMATE -- structural causes of attenuated effects ======================
 EXCLUDE_GAPFILLED = True   # the exporter fills the unpublished tail of an incomplete recent window with a day-weighted blend
@@ -3000,6 +3007,14 @@ def headline(model_id, outcome, estimate=None, se=None, p=None, kind=None, se_ho
     try:
         os.makedirs(rd, exist_ok=True)
         pd.DataFrame([row]).to_csv(os.path.join(rd, f"HEADLINE_{outcome}.csv"), index=False)
+        try:                                                                 # 2 Oct (your rule): beta, SE and p of EVERY variable in one table per run
+            _hp = os.path.join(RESULTS_ROOT, "HEADLINES_ALL_VARIABLES.csv"); _keep = ["model", "outcome", "scenario", "kind", "estimate", "se", "p_value", "p_how", "se_how", "engine", "engine_version"]
+            _new = pd.DataFrame([{k: row.get(k) for k in _keep}]); _new["n_clusters"] = G; _new["n_obs"] = LAST_FIT_INFO.get("n_obs"); _new["written"] = pd.Timestamp.now().isoformat(timespec="seconds")
+            if os.path.exists(_hp):
+                _old = pd.read_csv(_hp); _old = _old[~((_old["model"] == model_id) & (_old["outcome"] == outcome) & (_old["scenario"] == row["scenario"]))]
+                _new = pd.concat([_old, _new], ignore_index=True)
+            _new.sort_values(["model", "outcome"]).to_csv(_hp, index=False)
+        except Exception as _e: trace(f"HEADLINES_ALL_VARIABLES.csv not updated: {_e}")
         if LAST_INTEGRITY: pd.DataFrame(LAST_INTEGRITY).assign(outcome=outcome).to_csv(os.path.join(rd, f"SAMPLE_INTEGRITY_{outcome}.csv"), index=False)
         _lr = LAST_DESIGN_INFO.get("location_rows") or LAST_LOAD_INFO.get("location_rows") or {}
         import _location as _L
@@ -3462,6 +3477,26 @@ def audit_results(root=None, write=True, verbose=True):
         if verbose: info(f"results audit: {len(out)} results, {n0} with SE ~ 0 -> RESULTS_AUDIT.md")
     return out
 
+_P_KEYS = ("p_value", "p_t_G1", "p", "pval", "p_wild")
+def _ensure_p_value(row):
+    """2 Oct (your rule): a result row that carries an estimate (beta / att / coef / estimate / effect) and its se gets p_value when none of the
+    p columns is there -- t with (clusters - 1) df when the row knows its clusters, else normal -- and says how (p_how). Nothing is touched when
+    the row already has a p."""
+    from scipy import stats as _st
+    if any(k in row and row[k] is not None and np.isfinite(_safe_float(row[k])) for k in _P_KEYS): return row
+    est_key = next((k for k in ("beta", "att", "coef", "estimate", "effect", "ATT", "DDD", "PSM_DID", "QTE") if k in row), None)
+    if est_key is None or "se" not in row: return row
+    b_, se_ = _safe_float(row[est_key]), _safe_float(row["se"])
+    if not (np.isfinite(b_) and np.isfinite(se_) and se_ > 0): return row
+    G = _safe_float(row.get("n_clusters", np.nan))
+    if np.isfinite(G) and G >= 2: p_, how_ = float(2 * _st.t.sf(abs(b_ / se_), int(G) - 1)), f"t with {int(G) - 1} df (clusters - 1) from {est_key} / se"
+    else: p_, how_ = float(2 * _st.norm.sf(abs(b_ / se_))), f"normal from {est_key} / se"
+    return {**row, "p_value": p_, "p_how": row.get("p_how") or how_}
+
+def _safe_float(x):
+    try: return float(x)
+    except Exception: return float("nan")
+
 def save_results(df_or_dict, results_dir, filename):
     """v20.32: every result records whether negative values were blocked, so no table can be read out of context."""
     """Write a result file. v20.20 -- NO PLACEHOLDERS: a row whose estimates are all NaN, or any cell holding a
@@ -3515,6 +3550,11 @@ def save_results(df_or_dict, results_dir, filename):
         if _hit:
             df_or_dict = {**df_or_dict, **{k: v for k, v in LAST_FIT_INFO.items() if k not in df_or_dict and k != "_beta"}, "fit_info_for": _hit[0]}
             df_or_dict.setdefault("status", "ok")
+    if isinstance(df_or_dict, dict):                                        # 2 Oct (your rule): a p-value beside EVERY beta and SE, in every result file
+        df_or_dict = _ensure_p_value(df_or_dict)
+    elif isinstance(df_or_dict, pd.DataFrame) and len(df_or_dict) and "se" in df_or_dict.columns:
+        try: df_or_dict = pd.DataFrame([_ensure_p_value(r_) for r_ in df_or_dict.to_dict("records")])
+        except Exception: pass
     out = pd.DataFrame([df_or_dict]) if isinstance(df_or_dict, dict) else df_or_dict
     if isinstance(out, pd.DataFrame) and len(out) and "seasons_used" not in out.columns:       # v20.24
         try:
@@ -6416,7 +6456,8 @@ def r_bridge_script():
     """v20.45: the R library lives in the bundle's R folder (FINAL/R/lib) -- found from this engine (python/<engine>)
     two levels up, or an older layout's engine/R."""
     here = os.path.dirname(os.path.abspath(__file__))
-    for p in (os.path.join(here, "..", "..", "R", "lib", "run_one.R"), os.path.join(here, "..", "R", "lib", "run_one.R")):   # never an old engine/R
+    for p in (os.path.join(here, "..", "..", "R", "lib", "run_one.R"), os.path.join(here, "..", "R", "lib", "run_one.R"),   # never an old engine/R
+              os.path.join(here, "..", "..", "..", "R_separate_track", "RWD_Artal_R", "lib", "run_one.R")):   # 2 Oct: the R track kept outside the module (the repository layout)
         if os.path.exists(p): return os.path.abspath(p)
     return os.path.abspath(os.path.join(here, "..", "..", "R", "lib", "run_one.R"))
 

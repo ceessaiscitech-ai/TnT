@@ -1755,7 +1755,7 @@ def check_v20_54():
     rl = os.path.dirname(_C.r_bridge_script())
     rp, rpr, rd = (open(os.path.join(rl, f_), encoding="utf-8").read() for f_ in ("reward_paths.R", "reward_prep.R", "reward_design.R"))
     if "ALLOW_NEGATIVE_COVARIATES <- FALSE" not in rp or "isTRUE(ALLOW_NEGATIVE_COVARIATES)" not in rpr: bad("R: no switch for the negative-covariate barrier")
-    elif not any(k_ in rpr.split("apply_missing_policy <- function")[1].split("\n}")[0] for k_ in ("x[x == 0] <- NA", "PRECISION_TOLERANCE")): bad("R: an exported 0 of a covariate is not missing (Python's zero rule)")   # v20.55: in apply_missing_policy, as Python; spec 1: within the tolerance
+    elif not any(k_ in rpr.split("apply_missing_policy <- function")[1].split("\n}")[0] for k_ in ("x[x == 0] <- NA", "PRECISION_TOLERANCE", ".tol_R()")): bad("R: an exported 0 of a covariate is not missing (Python's zero rule)")   # v20.55: in apply_missing_policy, as Python; spec 1: within the tolerance
     elif "return(sh)" not in rd.split("memory_share <- function")[1].split("\n}")[0]: bad("R: MEMORY_SHARE ignored")
     else: note("R: ALLOW_NEGATIVE_COVARIATES and the covariate zero rule as in Python; MEMORY_SHARE honoured")
     # 8. warnings you reported: pyfixest's raw singleton warning (pf_pipeline), R's coercion / qte notes
@@ -2636,12 +2636,12 @@ def check_v20_59():
         if miss: bad(f"model notebooks without SAME_PIXELS passed to set_scenario: {miss[:6]}")
         if not p00 or not all(k in open(p00[0], encoding="utf-8").read() for k in ("SAME_PIXELS", "same_pixels=SAME_PIXELS")): bad("P00_Settings lacks the panel-level SAME_PIXELS default")
         for q in rp00:
-            if not re.search(r"^SAME_PIXELS\s*<-", open(q, encoding="utf-8").read(), flags=re.M): bad(f"{os.path.basename(q)} lacks SAME_PIXELS")
+            if not re.search(r"(^|\")\s*SAME_PIXELS\s*<-", open(q, encoding="utf-8").read(), flags=re.M): bad(f"{os.path.basename(q)} lacks SAME_PIXELS")   # Rmd and ipynb (JSON) forms
         if os.path.isdir(rl):
-            for fn, keys in {"reward_design.R": ("same_pixels_R", "pixels_one_side_R", "n_one_side", "_pixAll", 'same_pixels = .one_of("SAME_PIXELS"'), "reward_outofcore.R": ("same_pixels_R(x, o, ctx$d", "same_out", "n_one_side"), "reward_paths.R": ('SAME_PIXELS         <- "pre_post"',)}.items():
+            for fn, keys in {"reward_design.R": ("same_pixels_R", "pixels_one_side_R", "n_one_side", "_pixAll", 'same_pixels = if (isTRUE(.opt("USE_SAME_PIXELS"'), "reward_outofcore.R": ("same_pixels_R(x, o, ctx$d", "same_out", "n_one_side"), "reward_paths.R": ('SAME_PIXELS         <- "pre_post"',)}.items():
                 s_ = open(os.path.join(rl, fn), encoding="utf-8").read(); m_ = [k for k in keys if k not in s_]
                 if m_: bad(f"R {fn} lacks {m_}")
-            m_ = [os.path.basename(p) for p in rmd if not re.search(r"^\s*SAME_PIXELS\s*<-", open(p, encoding="utf-8").read(), flags=re.M)]
+            m_ = [os.path.basename(p) for p in rmd if not re.search(r"(^|\")\s*SAME_PIXELS\s*<-", open(p, encoding="utf-8").read(), flags=re.M)]
             if m_: bad(f"R notebooks without SAME_PIXELS: {m_[:6]}")
         note("your rule: SAME_PIXELS 'pre_post' (default) | 'all' | 'off' -- the treated and control groups are the same pixels in pre and post (or every year-season), applied after the control choice in both languages, in memory and out of core, confirmed by the sample integrity")
         if "decide_controls_ooc(" not in _i.getsource(_OM2.prepare_sample) or "presel" not in _i.getsource(_OM2._t_presel): bad("the out-of-core path does not decide the control selection once in the parent")
@@ -2718,11 +2718,11 @@ def check_v20_59():
             if not os.path.exists(os.path.join(HERE, f_)): bad(f"missing {f_}")
         import orchestrator as _O
         _cfg = _O.load_config(os.path.join(HERE, "config", "analysis_config.yaml"))
-        for k_ in ("ANALYSIS_VARIABLE", "SEASON_FILTER", "DONUT_RINGS", "CONTROL_SELECTION_METHOD", "PRECISION_TOLERANCE", "MIN_PIXEL_COVERAGE_PCT", "CLUSTER_VAR", "ESTIMATOR", "SAME_PIXELS", "DROP_SINGLETONS"):
+        for k_ in ("ANALYSIS_VARIABLE", "SEASON_FILTER", "DONUT_RINGS", "CONTROL_SELECTION_METHOD", "PRECISION_TOLERANCE", "MIN_PIXEL_COVERAGE_PCT", "CLUSTER_VAR", "ESTIMATOR", "SAME_PIXELS", "USE_DROP_SINGLETONS", "USE_DONUT", "USE_SAME_PIXELS"):
             if k_ not in _cfg: bad(f"analysis_config.yaml lacks {k_}")
         if _cfg["DONUT_RINGS"] != [1] or _cfg["SEASON_FILTER"] != "All" or abs(float(_cfg["PRECISION_TOLERANCE"]) - 1e-6) > 1e-12: bad("analysis_config.yaml defaults are not the documented ones (donut [1] with its switch off, every season, 1e-6)")
         _kw = _O.scenario_kwargs(dict(_cfg, CONTROL_SELECTION_METHOD="closest_1"), "matched")
-        if _kw["control_selection"] != "pre_rings" or _kw["control_select_k"] != 1 or _kw["donut_rings"] != [1] or _kw["seasons"] != "Rabi": bad(f"CONTROL_SELECTION_METHOD closest_1 does not map to pre_rings K = 1 ({_kw})")
+        if _kw["control_selection"] != "pre_rings" or _kw["control_select_k"] != 1 or not _kw["use_control_selection"] or _kw["donut_rings"] != [1] or _kw["use_donut"] or _kw["seasons"] != "all": bad(f"CONTROL_SELECTION_METHOD closest_1 does not map to pre_rings K = 1 ({_kw})")
         _kw = _O.scenario_kwargs(_cfg, "canonical")
         if _kw["control_selection"] != "rings" or _kw["donut_rings"] != [] or _kw["seasons"] != "all": bad(f"the canonical spec is not every ring / every season ({_kw})")
         for bad_cfg in (dict(_cfg, CONTROL_SELECTION_METHOD="post_means"), dict(_cfg, SEASON_FILTER="Monsoon"), dict(_cfg, DONUT_RINGS=[7]), dict(_cfg, ESTIMATOR="OLS"), dict(_cfg, MIN_PIXEL_COVERAGE_PCT=1.5)):
@@ -2753,12 +2753,45 @@ def check_v20_59():
                     "reward_models_core.R": ("surrogate_did_estimator.R", "synthetic_did_two_level_R", "m07_surrogate_index", "DROP_SINGLETONS"),
                     "reward_outofcore.R": ("donut_rule_R(x, ctx$d", "landuse_rule_R(x, ctx$d", "baseline_ndvi_rule_R(x, ctx$d"),
                     "reward_paths.R": ("DONUT_RINGS", "LANDUSE_KEEP", "BASELINE_NDVI_MIN", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS", "PRECISION_TOLERANCE", "USE_CONTROL_SELECTION <- FALSE", "USE_SAME_PIXELS     <- FALSE", "USE_DONUT           <- FALSE", "USE_PRECISION_TOLERANCE <- FALSE", ".tol_R <- function", ".cov_R <- function", ".same_pixels_opt_R <- function"),
-                    "reward_prep.R": ("PRECISION_TOLERANCE",), "surrogate_did_estimator.R": ("simplex_ridge_weights_R", "synthetic_did_two_level_R", "surrogate_index_did_R", "save_outputs_R")}
+                    "reward_prep.R": (".tol_R()",), "surrogate_did_estimator.R": ("simplex_ridge_weights_R", "synthetic_did_two_level_R", "surrogate_index_did_R", "save_outputs_R")}
             for fn, keys in want.items():
                 s_ = open(os.path.join(rl, fn), encoding="utf-8").read(); m_ = [k for k in keys if k not in s_]
                 if m_: bad(f"R {fn} lacks {m_}")
             m_ = [os.path.basename(p) for p in rmd if not all(k in open(p, encoding="utf-8").read() for k in ("DONUT_RINGS", "LANDUSE_KEEP", "BASELINE_NDVI_MIN", "MIN_PIXEL_COVERAGE_PCT", "DROP_SINGLETONS", "PRECISION_TOLERANCE"))]
             if m_: bad(f"R notebooks without the spec-1 settings: {m_[:6]}")
+        # 11 (2 Oct, your rules): the 8th-10th decimals kept; a p-value beside every beta and SE; the registry's memory fall-back
+        import _prep_common as _P2, tempfile as _tf2, pyarrow as _pa2, pyarrow.parquet as _pq2
+        if _P2.PANEL_FLOAT_DTYPE != "float64" or any(_P2.FINAL_PANEL_SCHEMA.get(v_) != "float64" for v_ in _P2.PANEL_OUTCOME_VARS_21 if v_ in _P2.FINAL_PANEL_SCHEMA) or _P2.FINAL_PANEL_SCHEMA.get("dose_intensity_per_ha") != "float64":
+            bad("the panel schema does not store the outcomes / dose at full precision (PANEL_FLOAT_DTYPE float64)")
+        if _C.ESTIMATOR_FLOAT_DTYPE != "float64" or 'd[o] = _v.astype(ESTIMATOR_FLOAT_DTYPE)' not in _i.getsource(_C.build_estimator_files): bad("the estimator files downcast to float32")
+        if "float32" not in _i.getsource(_P2.final_panel_is_valid) or "PANEL_FLOAT_DTYPE" not in _i.getsource(_P2.final_panel_is_valid): bad("final_panel_is_valid does not rebuild a float32 panel when float64 is asked")
+        if "_f32" not in _i.getsource(_C.load_panel): bad("load_panel does not warn about a float32 panel")
+        _td = _tf2.mkdtemp(prefix="reward_precision_"); _vals = _np.array([0.4123456789, 0.4123456790, 0.4123456791, 0.41, 0.0, _np.nan] * 4)
+        _pq2.write_table(_pa2.table({"NDVI": _vals, "Rain": _vals * 1000, "pixel_id": _np.arange(len(_vals))}), os.path.join(_td, "p64.parquet"))
+        _pq2.write_table(_pa2.table({"NDVI": _vals.astype(_np.float32), "pixel_id": _np.arange(len(_vals))}), os.path.join(_td, "p32.parquet"))
+        _r64 = _P2.panel_precision_report(os.path.join(_td, "p64.parquet"), _td, verbose=False); _r32 = _P2.panel_precision_report(os.path.join(_td, "p32.parquet"), _td, verbose=False)
+        _n64 = _r64[_r64.variable == "NDVI"].iloc[0]; _n32 = _r32[_r32.variable == "NDVI"].iloc[0]
+        if not (_n64.full_precision_kept and _n64.decimals_needed == 10 and abs(_n64.smallest_difference - 1e-10) < 1e-13 and _n64.distinct_values == 5 and _n64.float32_would_merge_values):
+            bad(f"panel_precision_report misses the 10th-decimal differences of a float64 column ({_n64.to_dict()})")
+        if _n32.full_precision_kept or _n32.distinct_values > 3: bad(f"panel_precision_report does not show the float32 loss ({_n32.to_dict()})")
+        if os.path.exists(os.path.join(_td, "panel_precision_report.csv")) is False: bad("panel_precision_report.csv not written")
+        _saved_fp = _P2.FINAL_PANEL_COLUMNS
+        try:
+            if _P2.final_panel_is_valid(os.path.join(_td, "p32.parquet"), required_cols=["NDVI"]) is not False: bad("a float32 panel is accepted as valid although PANEL_FLOAT_DTYPE is float64")
+        except Exception as _e: bad(f"final_panel_is_valid on a float32 panel: {type(_e).__name__}: {_e}")
+        from scipy import stats as _st2
+        _r1 = _C._ensure_p_value({"beta": 0.1, "se": 0.05, "n_clusters": 10})
+        if not (abs(_r1["p_value"] - 2 * _st2.t.sf(2.0, 9)) < 1e-12 and "t with 9 df" in _r1["p_how"]): bad(f"_ensure_p_value does not add the clustered-t p-value ({_r1})")
+        _r2 = _C._ensure_p_value({"beta": 0.1, "se": 0.05}); _r3 = _C._ensure_p_value({"beta": 0.1, "se": 0.05, "p_t_G1": 0.3})
+        if not (abs(_r2["p_value"] - 2 * _st2.norm.sf(2.0)) < 1e-12) or "p_value" in _r3: bad(f"_ensure_p_value: normal fall-back / an existing p left alone ({_r2}, {_r3})")
+        if "_ensure_p_value(" not in _i.getsource(_C.save_results) or "HEADLINES_ALL_VARIABLES.csv" not in _i.getsource(_C.headline): bad("save_results / headline do not carry the p-value guarantee and the all-variables table")
+        if "d.copy()" in _i.getsource(_P2._registry_aggregate) or "MemoryError" not in _i.getsource(_P2.pixel_registry) or "read_row_group" not in _i.getsource(_P2._registry_one_shard): bad("the pixel registry still copies whole shards / has no memory fall-back")
+        _dfr = _pd.DataFrame({"pixel_id": [1, 1, 2], "latitude": [10.0, 10.2, 11.0], "longitude": [70.0, 70.0, 71.0], "file_mtime": [1.0, 2.0, 1.0], "src_file": ["a", "b", "c"], "NDVI": [0.1, _np.nan, 0.3], "LAI": [1.0, 2.0, _np.nan]})
+        _g = _P2._registry_combine([_P2._registry_aggregate(_dfr.iloc[:2]), _P2._registry_aggregate(_dfr.iloc[2:])])
+        if not (_g.loc[1, "n_rows"] == 2 and _g.loc[1, "n_ok"] == 3 and _g.loc[1, "src"] == "b" and abs(_g.loc[1, "lat_sum"] / 2 - 10.1) < 1e-12 and _g.loc[2, "n_ok"] == 1): bad(f"the registry's per-pixel sums are wrong ({_g.to_dict()})")
+        if "P.PANEL_FLOAT_DTYPE" not in open(p00[0], encoding="utf-8").read() or "panel_precision_report" not in open(p00[0], encoding="utf-8").read(): bad("P00 lacks PANEL_FLOAT_DTYPE / the precision report")
+        note("2 Oct (your rules): outcomes stored at full precision (float64; a float32 panel is rebuilt; panel_precision_report.csv tracks the smallest differences), "
+             "a p-value beside every beta and SE (save_results; HEADLINES_ALL_VARIABLES.csv across variables), the pixel registry without shard copies and with a memory fall-back")
         note("specs 1-3 (your validation request): DONUT_RINGS, LANDUSE_KEEP, BASELINE_NDVI_MIN, CONTROL_SELECT_ON 'rmse' + select_optimal_control_rings, PRECISION_TOLERANCE, MIN_PIXEL_COVERAGE_PCT, DROP_SINGLETONS, "
              "outcome_range_check; the surrogate / synthetic DiD module (two-level SDiD, surrogate index); config/analysis_config.yaml + orchestrator.py / orchestrator.R -- present, refusing wrong settings, in both languages")
         miss = [os.path.basename(p) for p in nbs + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) if not all(k in open(p, encoding="utf-8").read() for k in ("CONTROL_SELECTION", "control_selection=CONTROL_SELECTION", "cluster=CLUSTER", "CONTROL_SELECT_ON"))]
@@ -3048,6 +3081,16 @@ def check_validation_report():
     note(f"model validation report: {int((d.honours_scenario == 'yes').sum())} honour the scenario, "
          f"{int((d.honours_scenario == 'data_gap').sum())} blocked by documented data gaps, {len(d)} total")
 
+def _rguard(fn, *a):
+    """2 Oct: the R track is kept outside the delivered module (R_separate_track/ in the repository) -- a check that reads the R library runs
+    where that folder is present and is reported as skipped where it is not, instead of stopping the self-check."""
+    try: return fn(*a)
+    except FileNotFoundError as e:
+        p_ = str(getattr(e, "filename", "") or e).replace("\\", "/")
+        if "/R/lib/" in p_ or "R_separate_track" in p_ or p_.endswith(".R") or "/R/" in p_:
+            print(f"[INFO]    {fn.__name__}: its R-library part skipped -- the R track is kept outside this module ({os.path.basename(p_)})"); return None
+        raise
+
 def run():
     print(f"=== bundle self-check: {HERE}")
     try:                                   # v20.49: a private instance registry -- other pipelines running on this machine
@@ -3056,67 +3099,67 @@ def run():
     except Exception:
         pass
     mods = check_engines()
-    check_notebook_locks(mods)
-    check_syntax_and_calls(mods)
-    check_rules(mods)
-    check_validation_report()
-    check_pixel_id_string_ops()
-    check_pass_b_parallel()
-    check_full_machine()
-    check_atomic_panel_write()
-    check_dedup_semantics()
-    check_file_handles()
-    check_missing_value_policy()
-    check_universal_missing_policy()
-    check_ingestion_and_paths()
-    check_path_import_orders()
-    check_demeaner_and_event_study()
-    check_zero_policy_and_readiness()
-    check_readiness()
-    check_missingness_report()
-    check_honest_and_group_missingness()
-    check_pretrends_spec()
-    check_no_placeholders()
-    check_frozen_guard()
-    check_multisite_and_prebuilt()
-    check_speed_and_accuracy()
-    check_yearly_first()
-    check_near_duplicate_pixels()
-    check_treatment_timing()
-    check_panel_design_rules()
-    check_sws_geometry()
-    check_v20_29()
-    check_v20_30_gpu_and_barrier()
-    check_v20_32()
-    check_v20_34()
-    check_v20_36()
-    check_v20_37()
-    check_v20_38()
-    check_v20_39()
-    check_v20_40()
-    check_v20_41()
-    check_v20_42()
-    check_v20_43()
-    check_v20_44()
-    check_v20_45()
-    check_r_library()
-    check_v20_46()
-    check_v20_47()
-    check_v20_54()
-    check_v20_55()
-    check_v20_56()
-    check_v20_57()
-    check_v20_58()
-    check_v20_58_out_of_core()
-    check_v20_58_repeated_rows()
-    check_v20_58_memory_batches()
-    check_v20_59()
-    check_v20_58_m13_port()
-    check_v20_35_structure()
-    check_v20_35()
-    check_v20_30()
-    check_ground_inputs_and_notebook_locks()
-    check_dedup_vectorised()
+    _rguard(check_notebook_locks, mods)
+    _rguard(check_syntax_and_calls, mods)
+    _rguard(check_rules, mods)
+    _rguard(check_validation_report)
+    _rguard(check_pixel_id_string_ops)
+    _rguard(check_pass_b_parallel)
+    _rguard(check_full_machine)
+    _rguard(check_atomic_panel_write)
+    _rguard(check_dedup_semantics)
+    _rguard(check_file_handles)
+    _rguard(check_missing_value_policy)
+    _rguard(check_universal_missing_policy)
+    _rguard(check_ingestion_and_paths)
+    _rguard(check_path_import_orders)
+    _rguard(check_demeaner_and_event_study)
+    _rguard(check_zero_policy_and_readiness)
+    _rguard(check_readiness)
+    _rguard(check_missingness_report)
+    _rguard(check_honest_and_group_missingness)
+    _rguard(check_pretrends_spec)
+    _rguard(check_no_placeholders)
+    _rguard(check_frozen_guard)
+    _rguard(check_multisite_and_prebuilt)
+    _rguard(check_speed_and_accuracy)
+    _rguard(check_yearly_first)
+    _rguard(check_near_duplicate_pixels)
+    _rguard(check_treatment_timing)
+    _rguard(check_panel_design_rules)
+    _rguard(check_sws_geometry)
+    _rguard(check_v20_29)
+    _rguard(check_v20_30_gpu_and_barrier)
+    _rguard(check_v20_32)
+    _rguard(check_v20_34)
+    _rguard(check_v20_36)
+    _rguard(check_v20_37)
+    _rguard(check_v20_38)
+    _rguard(check_v20_39)
+    _rguard(check_v20_40)
+    _rguard(check_v20_41)
+    _rguard(check_v20_42)
+    _rguard(check_v20_43)
+    _rguard(check_v20_44)
+    _rguard(check_v20_45)
+    _rguard(check_r_library)
+    _rguard(check_v20_46)
+    _rguard(check_v20_47)
+    _rguard(check_v20_54)
+    _rguard(check_v20_55)
+    _rguard(check_v20_56)
+    _rguard(check_v20_57)
+    _rguard(check_v20_58)
+    _rguard(check_v20_58_out_of_core)
+    _rguard(check_v20_58_repeated_rows)
+    _rguard(check_v20_58_memory_batches)
+    _rguard(check_v20_59)
+    _rguard(check_v20_58_m13_port)
+    _rguard(check_v20_35_structure)
+    _rguard(check_v20_35)
+    _rguard(check_v20_30)
+    _rguard(check_ground_inputs_and_notebook_locks)
+    _rguard(check_dedup_vectorised)
     if not os.path.exists(os.path.join(HERE, "validate_preprocessing.py")):
         bad("validate_preprocessing.py missing -- the PASS A path would be untested")
     else:

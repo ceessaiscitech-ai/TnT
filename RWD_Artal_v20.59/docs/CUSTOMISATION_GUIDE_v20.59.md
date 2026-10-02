@@ -1,7 +1,7 @@
 # Customisation guide — every option, what it does, and its USE_ switch (v20.59, 1 Oct)
 
-Every model notebook (Python: CELL 1; R: the first chunk of `R_Mxx`) and the panel notebooks (P00_Settings, R_P00) carry the same options with
-the same names. They come in three sections. **Section A is the standard DiD design and is always in force. Sections B and C are optional
+Every model notebook (CELL 1) and P00_Settings carry the same options with the same names (the R track, kept outside this module since
+2 Oct in `R_separate_track/`, uses the same names with `<-` and `TRUE` / `FALSE`). They come in three sections. **Section A is the standard DiD design and is always in force. Sections B and C are optional
 customisations: every one has a `USE_...` switch, and every switch is OFF (`False` / `FALSE`) by default.** With a switch OFF the option is not
 applied at all, whatever the value written beside it says; the notebook runs the standard design of section A. With a switch ON the option is
 applied exactly as set. `DESIGN IN EFFECT` (printed by every run, saved as `DESIGN_IN_EFFECT.csv` beside the results) shows each option with
@@ -72,6 +72,13 @@ The range-safety check (the outcome within its physical bounds, no no-data code)
 The same switches, all `false`, with `CONTROL_SELECTION_METHOD: all` (= the selection OFF; `pre_bias_min` / `closest_1` / `closest_2` turn
 it on) and `SEASON_FILTER: All`. The comparison report's own specs set what they need (the donut spec turns the donut on, the matched spec
 the control selection, both for that spec only); every other spec follows the file's switches.
+
+## Precision and p-values (2 Oct)
+
+`P.PANEL_FLOAT_DTYPE = "float64"` (P00_Settings): the outcomes, covariates and dose are stored at full precision, so differences at the 8th to
+10th decimal survive (float32 kept ~7 significant digits); `panel_precision_report.csv` lists per variable the smallest difference present
+and whether it survived. Every result row with an estimate and its SE carries `p_value` (and `p_how`); `results/HEADLINES_ALL_VARIABLES.csv`
+collects beta, SE and p of every variable and model of the run.
 
 ## Where a switch is checked in the code
 

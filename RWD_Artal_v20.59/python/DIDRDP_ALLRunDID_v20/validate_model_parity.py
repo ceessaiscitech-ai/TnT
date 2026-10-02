@@ -24,6 +24,9 @@ headline), and a missing SE on one side only.
                                                             model's engine against R; without it a Python model whose verified primary
                                                             is an R route is R through the bridge on Python's data)
 """
+import os as _os0, sys as _sys0
+if not _os0.path.isdir(_os0.path.join(_os0.path.dirname(_os0.path.dirname(_os0.path.dirname(_os0.path.abspath(__file__)))), "R", "lib")):
+    print("[INFO]    this validator compares R with Python; the R track is kept outside this module (R_separate_track/) -- nothing to compare here"); _sys0.exit(0)
 import os, sys, json, glob, shutil, subprocess, tempfile
 import numpy as np, pandas as pd
 

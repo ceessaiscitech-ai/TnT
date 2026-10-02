@@ -54,6 +54,7 @@ def write_synthetic_exports(root, n_files=6, n_pix=40, years=(2022, 2023, 2024),
             d.loc[_r.random(len(d)) < 0.05, "LAI"] = np.nan
             if s == seasons[0]:                              # two rows with NO usable outcome at all -> must be dropped
                 d.loc[d.index[:2], [c for c in d.columns if c in ("NDVI", "LAI", "SAVI", "EVI", "LSWI", "NDWI", "NDMI", "NDRE", "AGB", "RUSLE", "ESI", "WSSI", "WSI", "SMDI", "VCI", "TCI", "VHI")]] = 0.0
+            if y == years[0] and s == seasons[0]: d.loc[d.index[5], "NDVI"] = 0.4123456789      # 2 Oct (your rule): a value with 10 decimals must survive the build exactly
             if y == years[-1] and s == seasons[0]:          # a duplicated pixel row, as real exports contain
                 d = pd.concat([d, d.iloc[[0]].assign(NDVI=d.NDVI.iloc[0] + 0.01)], ignore_index=True)
             f = os.path.join(root, f"Artal_{y}_{'Yearly' if s == 0 else 'S' + str(s)}.csv")
@@ -198,6 +199,15 @@ def main():
             d = P.pq.read_table(fp).to_pandas()
             panels[nw] = d
             ok(f"PASS B {label}: {len(d):,} rows, {len(d.columns)} columns")
+            if nw == 1:                                                  # 2 Oct (your rule): the 8th-10th decimals are kept by the panel
+                _sch = P.pq.ParquetFile(fp).schema_arrow; _t = str(_sch.field("NDVI").type)
+                _hit = int(np.sum(d["NDVI"].to_numpy(dtype=np.float64) == 0.4123456789))
+                _prt = os.path.join(odir, "panel_precision_report.csv")
+                try: _rep = P.panel_precision_report(fp, odir, verbose=False); _nd = _rep[_rep.variable == "NDVI"].iloc[0]
+                except Exception as _e: _rep = None; _nd = None; bad(f"panel_precision_report failed: {type(_e).__name__}: {_e}")
+                if _t != "double" or _hit != 1: bad(f"precision: NDVI stored as {_t}, the planted 0.4123456789 found {_hit} time(s) (expected double, exactly once)")
+                elif _nd is None or not _nd.full_precision_kept or not os.path.exists(_prt): bad(f"precision report: {None if _nd is None else _nd.to_dict()}")
+                else: ok(f"precision: NDVI stored as {_t}; the planted 0.4123456789 survived exactly; panel_precision_report.csv: {int(_nd.distinct_values):,} distinct NDVI values, smallest difference {_nd.smallest_difference:.3g}")
         if len(panels) == 2:
             a_, b_ = panels[1], panels[2]
             same_shape = a_.shape == b_.shape

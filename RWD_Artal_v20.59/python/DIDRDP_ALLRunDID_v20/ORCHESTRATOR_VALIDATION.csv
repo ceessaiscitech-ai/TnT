@@ -1,0 +1,29 @@
+check,verdict,detail
+Python refuses CONTROL_SELECTION_METHOD = 'post_means',PASS,configuration refused: CONTROL_SELECTION_METHOD 'post_means': all | pre_bias_min | closest_1 | closest_2
+Python refuses SEASON_FILTER = 'Monsoon',PASS,configuration refused: SEASON_FILTER 'Monsoon': Rabi | Kharif | Zaid | Yearly | All
+Python refuses DONUT_RINGS = [7],PASS,configuration refused: DONUT_RINGS must name rings 1..5
+Python refuses ESTIMATOR = 'OLS',PASS,configuration refused: ESTIMATOR 'OLS': TWFE_CANONICAL | SYNTHETIC_DID | SURROGATE_INDEX | SURROGATE_DID
+Python refuses MIN_PIXEL_COVERAGE_PCT = 1.5,PASS,"configuration refused: MIN_PIXEL_COVERAGE_PCT must be in [0, 1)"
+Python refuses CLUSTER_VAR = 'pixel',PASS,configuration refused: CLUSTER_VAR 'pixel': subwshed_id | year | block
+Python: every spec of the report estimated,PASS,"[{'spec': 'canonical', 'estimator': 'TWFE (two-way FE, CR1)'}, {'spec': 'donut', 'estimator': 'TWFE (two-way FE, CR1)'}, {'spec': 'matched', 'estimator': 'TWFE (two-way FE, CR1)'}, {'spec': 'synthetic_did', 'estimator': 'synthetic DiD (two-level; pixel WLS beside)'}, {'spec': 'surrogate_index', 'est"
+"Python: the report CSV written with beta, se, p_value, pretrend_p, n, clusters",PASS,
+"Python: every spec passed the pre-flight (panel integrity, singletons, range safety)",PASS,"['ok', 'ok', 'ok', 'ok', 'ok']"
+"donut spec: no ring-1 control, the Rabi-style donut tag",PASS,"rings 2+3+4+5, tag ctrl1-5_treat2022_all_clSite_donut1_no2017_covAll4_yr2015-2025"
+"matched spec: exactly 2 control rings (pre_bias_min), tagged _ctrlPre2rL",PASS,"rings 2+5, tag ctrl1-5_treat2022_all_clSite_ctrlPre2rL_no2017_covAll4_yr2015-2025"
+"canonical spec: rings 1-5, every season",PASS,1+2+3+4+5 | Yearly+Kharif+Rabi+Zaid
+the TWFE specs recover the planted effect (+0.05 on the treated core from 2022) within 2 SE,PASS,"{'beta': {'canonical': 0.014358193044655312, 'donut': 0.01444356836928087, 'matched': 0.014550511284335259, 'synthetic_did': 0.01460739465092216, 'surrogate_index': 0.017949628843038145}, 'se': {'canonical': 0.0105997886802176, 'donut': 0.010668054515044488, 'matched': 0.010656542574896469, 'synthet"
+the pre-flight refuses control pixels that differ between pre and post,PASS,"PRE-FLIGHT FAILED: panel integrity: the control pixels are the same in pre and post (120 pre / 117 post pixels, 3 differ)"
+the pre-flight refuses a no-data code in the outcome (range safety),PASS,"PRE-FLIGHT FAILED: panel integrity: the control pixels are the same in pre and post (120 pre / 117 post pixels, 3 differ) | range safety: the outcome within its"
+R refuses CONTROL_SELECTION_METHOD = 'post_means',PASS,"rror in validate_config_R(out) : 
+  configuration refused: CONTROL_SELECTION_METHOD 'post_means': all | pre_bias_min | closest_1 | closest_2
+Calls: load_config_R -> validate_config_R
+Execution halted
+"
+R: every spec of the report estimated,PASS,"[{'spec': 'canonical', 'estimator': 'TWFE (two-way FE, CR1)'}, {'spec': 'donut', 'estimator': 'TWFE (two-way FE, CR1)'}, {'spec': 'matched', 'estimator': 'TWFE (two-way FE, CR1)'}, {'spec': 'synthetic_did', 'estimator': 'synthetic DiD (two-level; pixel WLS beside)'}, {'spec': 'surrogate_index', 'est"
+Python == R on beta for every spec (1e-6),PASS,max |py - R| = 1.77e-07
+Python == R on se for every spec (1e-6),PASS,max |py - R| = 4.22e-08
+Python == R on p_value for every spec (1e-6),PASS,max |py - R| = 8.4e-09
+Python == R on pretrend_p for every spec (1e-6),PASS,max |py - R| = 1.22e-10
+Python == R on n for every spec,PASS,"[{'spec': 'canonical', 'n_py': 5600, 'n_R': 5600}, {'spec': 'donut', 'n_py': 4664, 'n_R': 4664}, {'spec': 'matched', 'n_py': 2791, 'n_R': 2791}, {'spec': 'synthetic_did', 'n_py': 5600, 'n_R': 5600}, {'spec': 'surrogate_index', 'n_py': 5600, 'n_R': 5600}]"
+Python == R on clusters for every spec,PASS,"[{'spec': 'canonical', 'clusters_py': 10, 'clusters_R': 10}, {'spec': 'donut', 'clusters_py': 10, 'clusters_R': 10}, {'spec': 'matched', 'clusters_py': 10, 'clusters_R': 10}, {'spec': 'synthetic_did', 'clusters_py': 5, 'clusters_R': 5}, {'spec': 'surrogate_index', 'clusters_py': 10, 'clusters_R': 10"
+R pre-flight rows written and passed,PASS,

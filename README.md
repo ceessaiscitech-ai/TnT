@@ -2,12 +2,14 @@
 
 | folder | what it is |
 |---|---|
-| `RWD_Artal_v20.59/` | the full Python pipeline (P00 + all 45 models), with the R library beside it |
-| `RWDR_v20.59/` | the full R pipeline (R_P00 + all 45 models; RStudio and Jupyter) |
+| `RWD_Artal_v20.59/` | the full Python pipeline (P00 + all 45 models) -- THE delivered module (Python only since 2 Oct) |
+| `R_separate_track/` | the R pipeline (`RWDR_v20.59`) and the R library, kept outside the delivered module since 2 Oct (continued in its own chat); not in the zip |
 | `CHANGELOG_v20.59.md` | what changed in this version and why (also in each bundle's `docs/`) |
 
-The engines (`python/DIDRDP_*/_common.py`, `_prep_common.py`, `_outofcore.py`, `_ooc_models.py`; `R/lib/*.R` / `lib/*.R`) are the same files in
-both bundles, byte for byte; each bundle's `docs/VALIDATION_v20.59.md` says which gates ran on this code and where.
+The engine (`python/DIDRDP_*/_common.py`, `_prep_common.py`, `_outofcore.py`, `_ooc_models.py`); `docs/VALIDATION_v20.59.md` says which gates
+ran on this code and where. **2 Oct:** every result row carries a p-value beside its beta and SE and `results/HEADLINES_ALL_VARIABLES.csv`
+collects them across variables; the panel stores the outcomes at full precision (`P.PANEL_FLOAT_DTYPE = "float64"`, the 8th-10th decimals
+survive; `panel_precision_report.csv`); PASS B's pixel registry has a memory fall-back.
 The four-model bundle (`RWD_4Models`) is discontinued at your request: its four models (M01, M02, M16, M34) are part of both
 remaining pipelines, and the validators that ran on it (`selfcheck.py`, `validate_preprocessing.py`, `validate_known_answers.py`,
 `validate_design_options.py`) are the same scripts in `RWD_Artal_v20.59/python/DIDRDP_ALLRunDID_v20/`.
@@ -30,6 +32,9 @@ evidence in `CONTROL_SELECTION_<outcome>.csv`; a post- or outcome-based rule is 
 blocks. `SAME_PIXELS` (`"pre_post"` default | `"all"` | `"off"`) keeps the treated and control groups the same pixels in pre and post
 (or in every year-season), confirmed on every sample. What to change when the estimate is not significant, and what never to change:
 `ECONOMETRIC_ADVICE_v20.59.md`.
+**Every optional customisation has a USE_ switch and is OFF by default (1 Oct):** `CUSTOMISATION_GUIDE_v20.59.md` explains each option of
+SECTION A (the standard design), SECTION B (the pre-period control group, the same pixels) and SECTION C (the panel-preparation enhancements).
+`build_panel.py --input <exports>` / `Rscript build_panel.R input=<exports>` build the panel from a path without a notebook.
 **The three specifications** (panel preparation, the surrogate / synthetic DiD engine, the configuration and orchestrator) are integrated in both
 languages: `DONUT_RINGS`, `CONTROL_SELECT_ON = "rmse"` + `select_optimal_control_rings`, `PRECISION_TOLERANCE`, `LANDUSE_KEEP`, `BASELINE_NDVI_MIN`,
 `MIN_PIXEL_COVERAGE_PCT`, `DROP_SINGLETONS`, the range-safety check; `surrogate_did_estimator.py` / `lib/surrogate_did_estimator.R` (the

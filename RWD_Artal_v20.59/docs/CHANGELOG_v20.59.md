@@ -206,6 +206,48 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
 `control_selection_decide_R` / `record_control_selection_R`, `select_controls_R` (in `load_panel_R`), `reward_outofcore.R`
 `ooc_task_presel`, `ctx$ctrl_sel`; `reward_paths.R` defaults.
 
+## Your rule of 1 Oct — every optional customisation behind a USE_ switch, OFF by default; sections B and C
+
+The customisations of 30 Sep (the pre-period control group, the same pixels across the panel, the donut, the land-use and baseline masks,
+the coverage threshold, the singleton pre-flight, the precision tolerance) were on in the notebooks' defaults, and a value such as
+`DONUT_RINGS = [1]` was itself the switch. Now every one of them has an explicit switch and the three are separated:
+
+- **SECTION A** (always in force): the standard DiD design as before.
+- **SECTION B -- the control group chosen on the PRE period** (your request of 30 Sep): `USE_CONTROL_SELECTION` (`CONTROL_SELECTION`,
+  `CONTROL_SELECT_K`, `CONTROL_SELECT_RATIO`, `CONTROL_SELECT_ON`) and `USE_SAME_PIXELS` (`SAME_PIXELS`).
+- **SECTION C -- the panel-preparation enhancements** (the three specifications): `USE_DONUT` (`DONUT_RINGS`), `USE_LANDUSE_MASK`
+  (`LANDUSE_KEEP`), `USE_BASELINE_NDVI_MASK` (`BASELINE_NDVI_MIN`), `USE_COVERAGE_THRESHOLD` (`MIN_PIXEL_COVERAGE_PCT`), `USE_DROP_SINGLETONS`,
+  `USE_PRECISION_TOLERANCE` (`PRECISION_TOLERANCE`).
+
+All switches are `False` / `FALSE` by default in every notebook of both languages (46 Python model notebooks + MS01 + P00; 45 R notebooks in
+RStudio and Jupyter form + R_P00), in the engines' own defaults, in `config/analysis_config.yaml` (`CONTROL_SELECTION_METHOD: all`,
+`SEASON_FILTER: All`, every `USE_...: false`) and in `lib/reward_paths.R`. With a switch OFF the option is not applied at all, whatever the
+value beside it says; with it ON the option is applied exactly as set. `DESIGN IN EFFECT` shows each option with its setting, `-- switch OFF`
+when it is not applied, and the value in force; the sample-integrity line confirms the same pixels only when that switch is on. The results
+folder is tagged only by rules in force (`_pixPP` / `_pixAll` for the same-pixels rule; no tag when it is off -- `_pixAny` is gone).
+`CUSTOMISATION_GUIDE_v20.59.md` (root and both `docs/`) explains every option, its values, its default and its switch in one place.
+
+Where: Python `_common.opt(key)` (the value in force), the switches in `ACTIVE` / `set_scenario` / `SCENARIO_KEYS` / `_design_key`, every rule
+reads through `opt`; `_prep_common.USE_PRECISION_TOLERANCE`; `orchestrator.py` (the `USE_` keys of the configuration). R `design_settings()`
+(the `*_set` settings and the values in force), `.tol_R()` / `.cov_R()` / `.same_pixels_opt_R()` in `reward_paths.R`, `fe_fit`
+(`USE_DROP_SINGLETONS`), `orchestrator.R`. The validators run every rule with its switch on and confirm that a switch off changes nothing
+(`selfcheck.py` on a ten-pixel frame; `validate_design_options.py` variants `same_pixels_off` -- `SAME_PIXELS = "all"` with the switch off
+gives the base sample -- and `singletons_dropped`; `tests/run_all_tests.R` E `pix_switch_off`, `pix_pp`).
+
+## Your R_P00 run of 1 Oct — an hour without a line after the duplicate step; and a panel builder with a path, in both languages
+
+After `repeated rows DROPPED WHOLE ...` R_P00 ran the confirmations on the 86.6 M rows in memory with no message: `drop_rows_without_outcome`
+built an 86 M x 14 matrix, the pixel-consistency check ran `uniqueN(paste(latitude, longitude))` as R code per pixel (3.3 M groups), the
+pixel registry ran `src_file[.N]` per pixel, and the inside-polygon subset was taken three times. On an 8 M-row stand-in here these took
+17 s + 72 s + 23 s + 12 s; at your size, tens of minutes each, all silent. Now: the outcome rows column by column (no matrix), the
+consistency counts from `unique()` + `.N` (seconds; the same counts, checked), `last()` in the registry (GForce), the mask once, and a
+progress line with its time after every step (`duplicates checked on the result`, `pixel consistency checked`, `near-duplicate pixels
+checked on the result`, `design columns added`, `pixel-variation report written`).
+
+`build_panel.py --input <exports> [--output <folder>] [--workers N] [--force]` and `Rscript build_panel.R input=<exports> [output=<folder>]`
+build the panel from a path with the same steps as P00 / R_P00 (the audit, PASS A / B or `run_prep()`, the integrity and readiness report,
+the season report, the default scenario, the estimator files and the screen), without a notebook. Nothing of the design is set there.
+
 ## Your validation request — the three specifications (panel preparation, the surrogate / synthetic DiD engine, the configuration and orchestrator), checked against the code and integrated where missing
 
 What the three specifications asked for was compared item by item with the code as delivered after the fifth request. Already there

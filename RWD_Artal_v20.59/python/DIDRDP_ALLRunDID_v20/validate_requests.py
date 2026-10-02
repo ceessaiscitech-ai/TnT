@@ -19,6 +19,8 @@ import numpy as np, pandas as pd
 
 ROWS = []
 def rule(no, text, where, fn):
+    if not R_HERE and re.search(r"(^|[^A-Za-z])R([^A-Za-z]|$)", where):      # 2 Oct: the R track is kept outside this module
+        ROWS.append({"no": no, "your rule": text, "where": where, "status": "NOT HERE", "proof": "its R half is not in this module (R_separate_track/ in the repository); the Python half is checked by the other rules"}); return
     try:
         status, proof = fn()
     except Exception as e:
@@ -26,8 +28,8 @@ def rule(no, text, where, fn):
     ROWS.append({"no": no, "your rule": text, "where": where, "status": status, "proof": proof})
 
 import _common as C, _prep_common as P, _hardware as H, _paths as PP, _names as N
-RLIB = os.path.dirname(C.r_bridge_script())
-def rsrc(f): return open(os.path.join(RLIB, f), encoding="utf-8").read()
+RLIB = os.path.dirname(C.r_bridge_script()); R_HERE = os.path.isdir(RLIB)                   # 2 Oct: False in the delivered (Python-only) module
+def rsrc(f): return open(os.path.join(RLIB, f), encoding="utf-8").read() if R_HERE else ""
 def rconst(src, name):
     m = re.search(rf"^{name}\s*<-\s*(.+?)(\s+#.*)?$", src, re.M); return m.group(1).strip() if m else None
 RP, RPREP, RDES = rsrc("reward_paths.R"), rsrc("reward_prep.R"), rsrc("reward_design.R")
@@ -122,7 +124,7 @@ def r08():
     f = pd.DataFrame({"NDVI": [0.4, np.nan, 0.0, 0.4], "Rain": [0.0, 10.0, 12.0, 11.0], "buff_km": [0, 0, 1, 1]})
     g, _ = P.apply_missing_policy(f.copy(), stage="file")        # rows 2 and 3 (NaN / 0 outcome) leave; the exported Rain 0 is missing
     ok = (not C._usable([0.0], "NDVI")[0]) and (not C._usable([np.nan], "NDVI")[0]) and len(g) == 2 and np.isnan(g.Rain.iloc[0]) and g.Rain.iloc[1] == 11.0
-    _rb = RPREP.split("apply_missing_policy <- function")[1].split("\n}")[0]; r_ok = "x[x == 0] <- NA" in _rb or 'abs(x) <= .opt("PRECISION_TOLERANCE"' in _rb   # v20.55: R's apply_missing_policy; spec 1: |x| <= the tolerance
+    _rb = RPREP.split("apply_missing_policy <- function")[1].split("\n}")[0]; r_ok = "x[x == 0] <- NA" in _rb or 'abs(x) <= .opt("PRECISION_TOLERANCE"' in _rb or "abs(x) <= .tol_R()" in _rb   # v20.55: R's apply_missing_policy; spec 1: |x| <= the tolerance
     return ("PASS" if ok and r_ok else "FAIL", "an exact 0 or NaN is no-data in outcomes AND covariates (Python and, since v20.54, R); the row without an "
             "outcome is dropped; load_panel blocks both from every model (validate_all_models: no placeholder value in any result)")
 rule(8, "NaN and exact-zero cells are no-data: dropped in preparation, blocked from every model; no placeholder results", "_prep_common.apply_missing_policy, _common._usable; R apply_missing_policy", r08)

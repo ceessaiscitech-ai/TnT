@@ -42,7 +42,8 @@ Your instinct is right and it has a name — **matched difference-in-differences
 3. **The control pixels must be the same in every year and season** — exactly as you wrote. The choice is made once per outcome on
    the pre period and applied to the whole panel; a control set that changes across periods is a different estimand in every period.
 
-This is now in both pipelines (`CONTROL_SELECTION`, CELL 1 of every model notebook and `R_Mxx`):
+This is now in both pipelines -- SECTION B of CELL 1 of every model notebook and `R_Mxx`, behind `USE_CONTROL_SELECTION` and
+`USE_SAME_PIXELS`, both OFF by default (1 Oct): set a switch to True / TRUE and the rule runs exactly as the lines beside it say.
 
 | Setting | Meaning |
 |---|---|
@@ -76,3 +77,22 @@ CLUSTER          = "block"
 and M02 (event study) with the same settings: the leads are the test of the design; a flat pre-period with a rising post-period is
 the evidence a reader will believe. Report the `"rings"` estimate (all rings) and the donut `2:4` beside it, with the same clusters,
 so the reader sees that the choice of controls moved the estimate for the reason the evidence file shows, not by search.
+
+## 3. The three specifications you sent, mapped to the settings (what each one is for) -- SECTION C, each behind its USE_ switch, OFF by default
+
+| Specification item | Setting (both languages) | Why it helps a credible, and possibly significant, estimate |
+|---|---|---|
+| donut: exclude ring 1 | `DONUT_RINGS = [1]` (every notebook's default; `config`: `DONUT_RINGS: [1]`) | the ring next to the core shares the works' hydrology (spillover): keeping it as a control subtracts part of the effect from itself |
+| the Rabi season | `SEASONS = "Rabi"` / `config`: `SEASON_FILTER: Rabi` | the dry season is where stored water shows; pooling seasons mixes a null Kharif with the effect and dilutes it |
+| control rings by pre-treatment bias / RMSE | `CONTROL_SELECTION = "pre_rings"`, `CONTROL_SELECT_ON = "rmse"` (or `"trend"`), `CONTROL_SELECT_K = 2`; `select_optimal_control_rings(...)`; `config`: `CONTROL_SELECTION_METHOD: pre_bias_min` / `closest_1` / `closest_2` | the closest rings on the PRE period only, locked across the panel; the choice is written to the evidence file |
+| the pixel universe locked across years | `SAME_PIXELS = "pre_post"` (or `"all"`), the pre-flight `panel integrity` check | a control set that changes between pre and post is a different estimand in every period |
+| a land-use / baseline mask | `LANDUSE_KEEP = [2]`, `BASELINE_NDVI_MIN = 0.25` (decided on the pre period per pixel) | non-agricultural pixels carry no irrigation response and only add noise |
+| the floating-point tolerance | `PRECISION_TOLERANCE = 1e-6` | an index in [-1, 1] is never compared with exact equality; the no-data zero is `|v| <= 1e-6` |
+| the coverage threshold | `MIN_PIXEL_COVERAGE_PCT = 0.70` | a year-season where a group nearly vanished (clouds) is not a comparison of the same pixels |
+| the singleton pre-flight | `DROP_SINGLETONS = True` | a series seen once identifies nothing and only inflates N |
+| synthetic DiD (two-level) | M11 CELL 3b / `m11_sdid`; `config`: `ESTIMATOR: SYNTHETIC_DID` | the unit and time weights re-weight the control rings to the treated core's pre-period path -- the design that survives a failed parallel-trends test; the pixel-level WLS gives the clustered SE |
+| the surrogate index | M07 CELL 3b / `m07_surrogate_index`; `ESTIMATOR: SURROGATE_INDEX` | a lower-variance outcome built from the Kharif proxies of the Rabi / Zaid outcome (the control pool learns the map; the treated pixels never do) |
+| the comparison report | `orchestrator.py` / `orchestrator.R` -> `SPEC_COMPARISON_<outcome>.csv` | the four specifications beside each other with their pre-trend p: the reader sees what moved the estimate and why |
+
+What the orchestrator never does: it does not pick the specification with the smallest p. Every spec is estimated once, on a control
+set fixed by the pre period, and all of them are reported.

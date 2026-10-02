@@ -42,7 +42,8 @@ Your instinct is right and it has a name — **matched difference-in-differences
 3. **The control pixels must be the same in every year and season** — exactly as you wrote. The choice is made once per outcome on
    the pre period and applied to the whole panel; a control set that changes across periods is a different estimand in every period.
 
-This is now in both pipelines (`CONTROL_SELECTION`, CELL 1 of every model notebook and `R_Mxx`):
+This is now in both pipelines -- SECTION B of CELL 1 of every model notebook and `R_Mxx`, behind `USE_CONTROL_SELECTION` and
+`USE_SAME_PIXELS`, both OFF by default (1 Oct): set a switch to True / TRUE and the rule runs exactly as the lines beside it say.
 
 | Setting | Meaning |
 |---|---|
@@ -77,7 +78,7 @@ and M02 (event study) with the same settings: the leads are the test of the desi
 the evidence a reader will believe. Report the `"rings"` estimate (all rings) and the donut `2:4` beside it, with the same clusters,
 so the reader sees that the choice of controls moved the estimate for the reason the evidence file shows, not by search.
 
-## 3. The three specifications you sent, mapped to the settings (what each one is for)
+## 3. The three specifications you sent, mapped to the settings (what each one is for) -- SECTION C, each behind its USE_ switch, OFF by default
 
 | Specification item | Setting (both languages) | Why it helps a credible, and possibly significant, estimate |
 |---|---|---|
