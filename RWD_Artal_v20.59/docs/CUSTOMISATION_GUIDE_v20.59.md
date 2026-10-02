@@ -76,9 +76,15 @@ the control selection, both for that spec only); every other spec follows the fi
 ## Precision and p-values (2 Oct)
 
 `P.PANEL_FLOAT_DTYPE = "float64"` (P00_Settings): the outcomes, covariates and dose are stored at full precision, so differences at the 8th to
-10th decimal survive (float32 kept ~7 significant digits); `panel_precision_report.csv` lists per variable the smallest difference present
-and whether it survived. Every result row with an estimate and its SE carries `p_value` (and `p_how`); `results/HEADLINES_ALL_VARIABLES.csv`
-collects beta, SE and p of every variable and model of the run.
+10th decimal survive (float32 kept ~7 significant digits); `panel_precision_report.csv` lists per variable the stored dtype, the distinct
+values, the smallest difference present, the decimals needed to tell two values apart, whether float32 would have merged them
+(`float32_would_merge_values`), whether the panel kept them (`full_precision_kept`) and whether every value is exactly a float32 number
+(`all_values_float32_representable` -- True means the rounding happened BEFORE the panel: in the export, or in an older float32 panel that
+sat inside the exports folder and was read as an input; since 2 Oct the file discovery recognises the pipeline's own products -- a folder
+with a `did_panel_full.parquet`, shard / part files, any Parquet with the panel's own columns -- and never reads them as exports). A panel
+on disk with float32 outcomes is rebuilt once by P00 / `build_panel.py`. Every result row with an estimate and its SE carries `p_value` (and
+`p_how`: t with clusters - 1 df when the row knows its clusters, else normal); `results/HEADLINES_ALL_VARIABLES.csv` collects beta, SE and p of
+every variable and model of the run.
 
 ## Where a switch is checked in the code
 

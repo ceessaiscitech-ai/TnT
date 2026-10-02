@@ -186,6 +186,26 @@ def main():
     except Exception as e:
         bad(f"site ingestion check raised {type(e).__name__}: {e}"); traceback.print_exc(limit=2)
 
+    # ---- 4b. (2 Oct) an EARLIER run's products inside INPUT_DIR are never read as exports --------------------
+    #   your OUTPUT_DIR sits inside the exports folder; build_panel.py may write elsewhere, so the previous run's did_panel_full.parquet
+    #   (float32 in every version before this one), its shards and a stray product with the panel's own columns would otherwise be
+    #   ingested -- and, being newer, win the de-duplication against the real exports with their 7-digit values
+    try:
+        import pyarrow as _pa
+        _old = os.path.join(inp, "output_of_an_earlier_run"); os.makedirs(os.path.join(_old, "TEMP"), exist_ok=True)
+        _d0 = pd.read_csv(files[0]).iloc[:20]
+        _decoy = _pa.table({"pixel_id": np.arange(20, dtype=np.int64), "latitude": _d0["latitude"].to_numpy(np.float64), "longitude": _d0["longitude"].to_numpy(np.float64),
+                            "Year": _d0["Year"].to_numpy(np.int16), "Season": _d0["Season"].to_numpy(np.int8), "buff_km": _d0["buff_km"].to_numpy(np.int8),
+                            "did_term": np.zeros(20, np.int8), "schema_vintage": ["2015_2025"] * 20, "NDVI": _d0["NDVI"].to_numpy(np.float32)})
+        _paths = [os.path.join(_old, "did_panel_full.parquet"), os.path.join(_old, "TEMP", "shard_2016_Yearly.parquet"), os.path.join(inp, "a_copy_of_the_panel.parquet")]
+        for _p in _paths: P.pq.write_table(_decoy, _p)
+        _disc = P.discover_input_files(inp, out, tempd, verbose=False)[0]
+        _in = [os.path.relpath(x, inp) for x in _paths if os.path.abspath(x) in {os.path.abspath(y) for y in _disc}]
+        if _in or len(_disc) != len(files): bad(f"an earlier run's products inside INPUT_DIR were taken as exports: {_in} ({len(_disc)} files found, {len(files)} real exports)")
+        else: ok(f"an earlier run's output folder, its shard and a stray panel copy inside INPUT_DIR are recognised as the pipeline's own products ({len(_disc)} real exports to process)")
+    except Exception as e:
+        bad(f"own-products check raised {type(e).__name__}: {e}"); traceback.print_exc(limit=2)
+
     # ---- 5. PASS B: parallel and sequential must give the SAME panel ---------------------------------------
     try:
         shutil.rmtree(tempd, ignore_errors=True); os.makedirs(tempd, exist_ok=True)
@@ -206,7 +226,7 @@ def main():
                 try: _rep = P.panel_precision_report(fp, odir, verbose=False); _nd = _rep[_rep.variable == "NDVI"].iloc[0]
                 except Exception as _e: _rep = None; _nd = None; bad(f"panel_precision_report failed: {type(_e).__name__}: {_e}")
                 if _t != "double" or _hit != 1: bad(f"precision: NDVI stored as {_t}, the planted 0.4123456789 found {_hit} time(s) (expected double, exactly once)")
-                elif _nd is None or not _nd.full_precision_kept or not os.path.exists(_prt): bad(f"precision report: {None if _nd is None else _nd.to_dict()}")
+                elif _nd is None or not _nd.full_precision_kept or not os.path.exists(_prt) or _nd.all_values_float32_representable is None or bool(_nd.all_values_float32_representable): bad(f"precision report: {None if _nd is None else _nd.to_dict()}")
                 else: ok(f"precision: NDVI stored as {_t}; the planted 0.4123456789 survived exactly; panel_precision_report.csv: {int(_nd.distinct_values):,} distinct NDVI values, smallest difference {_nd.smallest_difference:.3g}")
         if len(panels) == 2:
             a_, b_ = panels[1], panels[2]

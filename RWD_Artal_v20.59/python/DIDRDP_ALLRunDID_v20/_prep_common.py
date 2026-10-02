@@ -862,6 +862,23 @@ def _input_ext(path):
         if low.endswith(e): return e
     return None
 
+_PRODUCT_NAME_RE = re.compile(r"^(did_panel_full.*\.parquet|shard_\d{4}_[A-Za-z]+(_part\d+)?\.parquet|part_\d{4}_[A-Za-z]+\.parquet)$", re.I)
+_PANEL_SIGNATURE = ("pixel_id", "did_term", "schema_vintage")      # columns only this pipeline's own panel / shards carry
+
+def _is_pipeline_product(path):
+    """2 Oct: True for a file this pipeline wrote itself -- the panel, a PASS A shard, a PASS B part, or any Parquet / Feather
+    file carrying the panel's own columns (pixel_id + did_term + schema_vintage). Reading one as an export would let an older
+    (float32) panel win the de-duplication against the real exports and silently replace the 8th-10th decimals."""
+    n = os.path.basename(path)
+    if _PRODUCT_NAME_RE.match(n): return True
+    if n.lower().endswith((".parquet", ".feather")):
+        try:
+            names = set(pq.read_schema(path).names) if n.lower().endswith(".parquet") else set(pa.ipc.open_file(path).schema.names)
+        except Exception:
+            return False
+        return all(k in names for k in _PANEL_SIGNATURE)
+    return False
+
 def discover_input_files(input_dir, output_dir=None, temp_dir=None, verbose=True):
     """v20.14: EVERY readable export under INPUT_DIR, any depth, any name -- csv / csv.gz / tsv / parquet /
     feather / xlsx / xlsm / xls -- minus anything that lives under the output or temp folders (generated, never
@@ -870,9 +887,14 @@ def discover_input_files(input_dir, output_dir=None, temp_dir=None, verbose=True
     input_dir = os.path.abspath(input_dir)
     excl = [os.path.abspath(x) for x in (output_dir, temp_dir) if x]
     side = {os.path.abspath(x) for x in (SUBWSHED_CROSSWALK_PATH, FUND_RELEASE_PATH) if x}
-    files, n_excl, n_seen = [], 0, 0
+    files, n_excl, n_seen, products = [], 0, 0, []
     for root, dirs, names in os.walk(input_dir):
         dirs[:] = [d for d in dirs if not d.startswith(".")]          # generated folders are walked, then counted out
+        if root != input_dir and "did_panel_full.parquet" in names:   # 2 Oct: an EARLIER run's output folder inside INPUT_DIR (your
+            for r2, d2, n2 in os.walk(root):                           #   OUTPUT_DIR is one; build_panel.py may write elsewhere) -- its
+                for n in n2:                                           #   panel, shards and estimator files are products, never source data
+                    if _input_ext(os.path.join(r2, n)) is not None and not n.startswith((".", "~$")): n_seen += 1; products.append(os.path.join(r2, n))
+            dirs[:] = []; continue
         for n in names:
             p = os.path.join(root, n)
             if _input_ext(p) is None or n.startswith((".", "~$")): continue
@@ -880,12 +902,15 @@ def discover_input_files(input_dir, output_dir=None, temp_dir=None, verbose=True
             ap = os.path.abspath(p)
             if any(ap == e or ap.startswith(e + os.sep) for e in excl): n_excl += 1; continue
             if ap in side: continue
+            if _is_pipeline_product(p): products.append(p); continue
             files.append(p)
     if verbose:
         by = {}
         for f in files: by[_input_ext(f)] = by.get(_input_ext(f), 0) + 1
-        print(f"Found {n_seen:,} readable files under {input_dir} ({n_excl} excluded as living under OUTPUT_DIR/TEMP_DIR) "
-              f"-- {len(files):,} to process: " + ", ".join(f"{v} {k}" for k, v in sorted(by.items())))
+        print(f"Found {n_seen:,} readable files under {input_dir} ({n_excl} excluded as living under OUTPUT_DIR/TEMP_DIR"
+              + (f"; {len(products)} are this pipeline's own products from an earlier run -- a did_panel_full.parquet, its shards, parts or "
+                 f"estimator files, or the folder holding them -- and are never read as source data, e.g. {os.path.relpath(products[0], input_dir)}" if products else "")
+              + f") -- {len(files):,} to process: " + ", ".join(f"{v} {k}" for k, v in sorted(by.items())))
         named = sum(1 for f in files if parse_filename(f) is not None)
         if named < len(files):
             print(f"[INFO]    {len(files) - named} file name(s) carry no Year/Season -- those keys will be read from the "
@@ -2254,15 +2279,18 @@ def panel_precision_report(final_path, output_dir=None, columns=None, verbose=Tr
             for c in cols:
                 v = t.column(c).to_numpy(zero_copy_only=False).astype(np.float64, copy=False); fin = np.isfinite(v); a = acc[c]
                 a["n"] += int(len(v)); a["n_fin"] += int(fin.sum())
-                if fin.any(): a["amax"] = max(a["amax"], float(np.abs(v[fin]).max())); a["uniq"].append(np.unique(v[fin]))
+                if fin.any():
+                    a["amax"] = max(a["amax"], float(np.abs(v[fin]).max())); a["uniq"].append(np.unique(v[fin]))
+                    a["on32"] = a.get("on32", True) and bool(np.array_equal(v[fin].astype(np.float32).astype(np.float64), v[fin]))
         for c in cols:
             a = acc[c]; u = np.unique(np.concatenate(a["uniq"])) if a["uniq"] else np.array([], float)
             gaps = np.diff(u); gaps = gaps[gaps > 0]; gmin = float(gaps.min()) if len(gaps) else float("nan")
-            dec = int(min(15, max(0, np.ceil(-np.log10(gmin))))) if np.isfinite(gmin) and gmin > 0 else None
+            dec = int(min(15, max(0, np.ceil(round(-np.log10(gmin), 6))))) if np.isfinite(gmin) and gmin > 0 else None   # 1e-10 -> 10, not 11
             f32_eps = a["amax"] * 2.0 ** -23                                             # one float32 step at the largest magnitude
             rows.append({"variable": c, "stored_dtype": str(pf.schema_arrow.field(c).type), "rows": a["n"], "finite": a["n_fin"], "distinct_values": int(len(u)),
                          "smallest_difference": gmin, "decimals_needed": dec, "largest_abs": a["amax"], "float32_step_at_max": f32_eps,
-                         "float32_would_merge_values": bool(np.isfinite(gmin) and gmin < f32_eps), "full_precision_kept": str(pf.schema_arrow.field(c).type) == "double"})
+                         "float32_would_merge_values": bool(np.isfinite(gmin) and gmin < f32_eps), "full_precision_kept": str(pf.schema_arrow.field(c).type) == "double",
+                         "all_values_float32_representable": bool(a.get("on32", False)) if a["n_fin"] else None})
     finally:
         try: pf.close()
         except Exception: pass
@@ -2274,7 +2302,11 @@ def panel_precision_report(final_path, output_dir=None, columns=None, verbose=Tr
                                   + (f"; {len(lost)} are stored as float32 although their data differ below one float32 step: {lost.variable.tolist()[:6]} -- rebuild with PANEL_FLOAT_DTYPE = 'float64'" if len(lost) else "")
                                   + f" -> {out}")
         for r in tab.itertuples():
-            if r.decimals_needed is not None: info(f"  {r.variable:<8s} {r.stored_dtype:<7s} {r.distinct_values:>12,} distinct | smallest difference {r.smallest_difference:.3g} ({r.decimals_needed} decimals needed)")
+            if r.decimals_needed is not None: info(f"  {r.variable:<8s} {r.stored_dtype:<7s} {r.distinct_values:>12,} distinct | smallest difference {r.smallest_difference:.3g} ({int(r.decimals_needed)} decimals needed)")
+        grid = tab[(tab.all_values_float32_representable == True) & (tab.distinct_values > 1000)]      # noqa: E712 -- None-able column
+        if len(grid): warn(f"{len(grid)} variable(s) hold ONLY values a float32 number can represent ({grid.variable.tolist()[:8]}): they were rounded to 7 significant "
+                           f"digits BEFORE this panel (in the exports themselves, or by an older run's float32 panel read as an input -- see the "
+                           f"'own products' line of the file discovery); the panel keeps what it was given, nothing finer exists to recover")
     return tab
 
 def confirm_pixel_consistency(final_path, output_dir=None, verbose=True):

@@ -2773,7 +2773,14 @@ def check_v20_59():
         _n64 = _r64[_r64.variable == "NDVI"].iloc[0]; _n32 = _r32[_r32.variable == "NDVI"].iloc[0]
         if not (_n64.full_precision_kept and _n64.decimals_needed == 10 and abs(_n64.smallest_difference - 1e-10) < 1e-13 and _n64.distinct_values == 5 and _n64.float32_would_merge_values):
             bad(f"panel_precision_report misses the 10th-decimal differences of a float64 column ({_n64.to_dict()})")
-        if _n32.full_precision_kept or _n32.distinct_values > 3: bad(f"panel_precision_report does not show the float32 loss ({_n32.to_dict()})")
+        if _n32.full_precision_kept or _n32.distinct_values > 3 or not bool(_n32.all_values_float32_representable) or _n64.all_values_float32_representable is None or bool(_n64.all_values_float32_representable):
+            bad(f"panel_precision_report does not show the float32 loss ({_n32.to_dict()})")
+        import shutil as _sh3; _pr = os.path.join(_td, "an_old_run"); os.makedirs(_pr, exist_ok=True); _sh3.copy(os.path.join(_td, "p32.parquet"), os.path.join(_pr, "did_panel_full.parquet"))
+        _pq2.write_table(_pa2.table({"pixel_id": [1], "did_term": [0], "schema_vintage": ["x"], "NDVI": [0.1]}), os.path.join(_td, "stray_panel_copy.parquet"))
+        _pq2.write_table(_pa2.table({"latitude": [16.1], "longitude": [77.1], "NDVI": [0.1]}), os.path.join(_td, "a_real_export.parquet"))
+        _found = [os.path.basename(x) for x in _P2.discover_input_files(_td, verbose=False)[0]]
+        if "a_real_export.parquet" not in _found or "did_panel_full.parquet" in _found or "stray_panel_copy.parquet" in _found or not _P2._is_pipeline_product(os.path.join(_pr, "did_panel_full.parquet")) or not _P2._is_pipeline_product("shard_2016_Yearly_part2.parquet"):
+            bad(f"discover_input_files reads the pipeline's own products (an earlier run's panel inside INPUT_DIR) as exports: {_found}")
         if os.path.exists(os.path.join(_td, "panel_precision_report.csv")) is False: bad("panel_precision_report.csv not written")
         _saved_fp = _P2.FINAL_PANEL_COLUMNS
         try:

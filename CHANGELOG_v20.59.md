@@ -222,6 +222,17 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
   float32 would have merged them -- the function that keeps track of that sensitivity, as you asked. PASS A reads the exports with
   pyarrow (float64) and the GPU demeaning runs in float64, so nothing else in the chain rounds. The no-data zero stays an EXACT 0 unless
   `USE_PRECISION_TOLERANCE` is on.
+  Found while proving it on a rebuilt panel: **an earlier run's output inside the exports folder was read as an export.** Your OUTPUT_DIR
+  sits inside INPUT_DIR; P00 excluded only the CURRENT run's output and temp folders, so a panel built elsewhere (`build_panel.py
+  --output ...`, or a second output folder) ingested the previous run's `did_panel_full.parquet` (float32 in every earlier version) and
+  its shards as if they were exports -- and, being the newer files, their 7-digit values won the de-duplication against the real
+  exports. Now `discover_input_files` recognises the pipeline's own products wherever they sit under INPUT_DIR: a folder holding a
+  `did_panel_full.parquet` (an earlier run's output, skipped whole), `shard_<year>_<season>*.parquet` / `part_*.parquet` files, and any
+  Parquet / Feather file carrying the panel's own columns (`pixel_id` + `did_term` + `schema_vintage`); the discovery line counts them
+  (`N are this pipeline's own products from an earlier run ... never read as source data`). `panel_precision_report.csv` also gained
+  `all_values_float32_representable`: True means every value of that variable is exactly a float32 number, i.e. it was rounded to 7
+  digits BEFORE this panel (in the export itself or by an older panel read as input) -- the report warns when that holds for a variable
+  with more than 1,000 distinct values, so a precision loss upstream of P00 is visible and not mistaken for one the panel caused.
 - **`Unable to allocate 881 MiB ... (13, 8886488)` in PASS B's pixel registry.** `_registry_aggregate` copied every shard (13 outcome columns
   x 8.9 M rows) inside each of up to 60 threads and built an N x K float64 matrix of it; with PASS A's blocks still in RAM that passed the
   memory Windows would commit. Now the registry takes one row group at a time, counts the usable cells column by column (no copy, no
@@ -410,6 +421,17 @@ is gone. The warning also confirms the GPU path is in use on your machine.
   `validate_design_options.py` (`design_panel`, `design_panel_fixed_2023`, R == Python); `validate_preprocessing.py` (the shapefile case's
   consistency); `tests/run_all_tests.R` E (`Treat` absent, `design_panel`, `panel_pixel_consistency_R.csv` with 0 offenders).
 
+- The requests of 1-2 Oct: `selfcheck.py` (block 11: the panel schema and the estimator files at float64; `final_panel_is_valid` rejects
+  a float32 panel; `load_panel` warns; `panel_precision_report` on a planted float64 column with three values 1e-10 apart reports 10
+  decimals, 5 distinct values, `float32_would_merge_values`, and on its float32 copy shows the merge and `all_values_float32_representable`;
+  `discover_input_files` on a folder holding an earlier run's `did_panel_full.parquet`, a stray panel copy and a real export finds only the
+  export; `_ensure_p_value` fills `p_value` / `p_how` from beta and SE with t(clusters - 1) or normal and never overwrites a p that is there;
+  `HEADLINES_ALL_VARIABLES.csv` upserted by model x outcome x scenario; the registry's `_registry_aggregate` / `_registry_combine` give the
+  old numbers without a shard copy and the MemoryError fall-back runs with fewer threads; every switch False in the engine, the notebooks
+  and the configuration), `validate_preprocessing.py` (a 10-decimal value planted in an export survives the build exactly, NDVI stored
+  `double`, the report written; an earlier run's output folder, its shard and a stray panel copy inside INPUT_DIR are recognised as the
+  pipeline's own products and the build reads the 12 real exports only), `validate_did_spec.py`, `validate_design_options.py`,
+  `validate_out_of_core.py`, `validate_orchestrator.py`, `validate_requests.py` re-run on the final code (numbers in `VALIDATION_v20.59.md`).
 - The three specifications: `selfcheck.py` (the rules present and in order in `build_treatment_columns`; a ten-pixel frame where
   `DONUT_RINGS [1]` removes ring 1, `LANDUSE_KEEP [1]` and `BASELINE_NDVI_MIN` keep the right pixels, `"rmse"` picks rings 2 and 3,
   `select_optimal_control_rings` agrees, `outcome_range_check` flags 1.7 and -9999, `DROP_SINGLETONS` drops the one series seen once;

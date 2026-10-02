@@ -9,7 +9,9 @@
 The engine (`python/DIDRDP_*/_common.py`, `_prep_common.py`, `_outofcore.py`, `_ooc_models.py`); `docs/VALIDATION_v20.59.md` says which gates
 ran on this code and where. **2 Oct:** every result row carries a p-value beside its beta and SE and `results/HEADLINES_ALL_VARIABLES.csv`
 collects them across variables; the panel stores the outcomes at full precision (`P.PANEL_FLOAT_DTYPE = "float64"`, the 8th-10th decimals
-survive; `panel_precision_report.csv`); PASS B's pixel registry has a memory fall-back.
+survive; `panel_precision_report.csv`, with `all_values_float32_representable` showing a rounding that happened before the panel); an
+earlier run's output inside the exports folder is recognised as the pipeline's own product and never read as an export; PASS B's pixel
+registry has a memory fall-back.
 The four-model bundle (`RWD_4Models`) is discontinued at your request: its four models (M01, M02, M16, M34) are part of both
 remaining pipelines, and the validators that ran on it (`selfcheck.py`, `validate_preprocessing.py`, `validate_known_answers.py`,
 `validate_design_options.py`) are the same scripts in `RWD_Artal_v20.59/python/DIDRDP_ALLRunDID_v20/`.
