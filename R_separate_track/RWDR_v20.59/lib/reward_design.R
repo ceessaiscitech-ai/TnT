@@ -469,6 +469,11 @@ is_data_opt <- function(v) is.character(v) && length(v) == 1 && tolower(trimws(v
 is_all_opt  <- function(v) length(v) == 1 && (is.na(v) || (is.character(v) && tolower(trimws(v)) %in% c("all", "every", "none")))
 DOSE_VARIABLES <- c("dose_intensity_per_ha", "dose_amount_sws", "dose_share_of_target")
 .opt <- function(k, default) { v <- get0(k, envir = globalenv(), ifnotfound = NULL); if (is.null(v)) get0(k, ifnotfound = default) else v }
+# 3 Oct: the USE_ switch helpers of 1 Oct live in reward_paths.R, which the out-of-core WORKER processes (lib/reward_ooc_task.R) do not source --
+# every partition of M01 / M02 / M16 / M34 failed with "could not find function .same_pixels_opt_R" (scenario H). Defined here too, the same bodies.
+if (!exists(".tol_R", mode = "function")) .tol_R <- function() if (isTRUE(.opt("USE_PRECISION_TOLERANCE", FALSE))) as.numeric(.opt("PRECISION_TOLERANCE", 1e-6)) else 0
+if (!exists(".cov_R", mode = "function")) .cov_R <- function() if (isTRUE(.opt("USE_COVERAGE_THRESHOLD", FALSE))) as.numeric(.opt("MIN_PIXEL_COVERAGE_PCT", get0("SCREEN_MIN_COVERAGE", ifnotfound = 0.05))) else get0("SCREEN_MIN_COVERAGE", ifnotfound = 0.05)
+if (!exists(".same_pixels_opt_R", mode = "function")) .same_pixels_opt_R <- function() if (isTRUE(.opt("USE_SAME_PIXELS", FALSE))) .opt("SAME_PIXELS", "pre_post") else "off"
 .one_of <- function(k, v, allowed) { v <- tolower(trimws(as.character(v)[1])); if (!v %in% allowed) stop(k, " must be ", paste(sprintf("\"%s\"", allowed), collapse = " | "), " (got \"", v, "\")"); v }
 design_settings <- function() {
   s <- list(design_mode = .one_of("DESIGN_MODE", .opt("DESIGN_MODE", "recommended"), c("recommended", "manual")),

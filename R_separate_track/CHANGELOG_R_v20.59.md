@@ -92,7 +92,11 @@ conflict is left for OVERLAP_ROWS to act on; the check now asserts one ring in t
 `panel_pixel_consistency_R.csv`), scenario F's poison test (the three "flipping" pixels are ring-1 CONTROL rows of the panel under that rule,
 so they are data and are no longer poisoned; with PIXEL_ONE_SITE FALSE they leave whole, as before), and scenario E's `pix_switch_off`
 check, added on 1 Oct and never run (a fixed-2022 design was compared with the fund-timing base; it is now compared with the same design
-without the pixel rule, `cluster_block`, and must have more rows than `pix_all`). The de-duplication and the registry were proved
+without the pixel rule, `cluster_block`, and must have more rows than `pix_all`). Scenario H found a fourth, real one: the USE_ switch
+helpers of 1 Oct (`.tol_R`, `.cov_R`, `.same_pixels_opt_R`) were defined in `lib/reward_paths.R`, which the out-of-core WORKER processes
+(`lib/reward_ooc_task.R`, run by Dask / Spark) do not source -- every partition of M01 / M02 / M16 / M34 failed with "could not find function
+.same_pixels_opt_R" and the parent's merge of the partitions' facts then stopped; the in-session `batches` engine was not affected. The
+helpers are now defined in `lib/reward_design.R` as well (the same bodies). The de-duplication and the registry were proved
 unchanged against their old bodies before any test was touched (section 3). The known M13 gap (`polars` not installable here) stays.
 
 ## 3b. The adversarial review of the diff (3 Oct) and what it changed
