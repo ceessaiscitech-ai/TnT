@@ -28,6 +28,7 @@
 #    of this machine (Dask, Spark, R batches) give the in-memory numbers (fixest's to its convergence, 1e-8) and each other's exactly; a budget
 #    below the need switches by itself; R_P00 block by block (lib/reward_prep_ooc.R) writes the SAME panel row for row and the same reports;
 #    the design from the data and the outcome identities out of core are the in-memory ones.
+# I  (3 Oct) the rewritten R_P00 steps (the hang) give their old bodies' numbers; the 1-2 Oct corrections ported from Python (tests/test_3oct_additions.R).
 args <- commandArgs(trailingOnly = TRUE); QUICK <- "quick" %in% args
 # v20.58: "only=F" (or "only=B,F") runs those scenarios only -- the loop of fixes re-runs what it changed; a full run has no "only="
 ONLY <- toupper(unlist(strsplit(sub("^only=", "", grep("^only=", args, value = TRUE)), ",")))
@@ -704,6 +705,12 @@ tryCatch({
 }, error = function(e) add("H", "scenario H", "FAIL", conditionMessage(e)), finally = { for (k in c("REWARD_FORCE_OUT_OF_CORE", "REWARD_OOC_PARTITIONS", "REWARD_RAM_BUDGET_BYTES")) Sys.unsetenv(k)
                                                                            try(ooc_stop_all(), silent = TRUE) })
 }
+
+# ---------------------------------------------------------------- I (3 Oct): the rewritten R_P00 steps against their old bodies, and the ported 1-2 Oct corrections
+if (RUN("I")) tryCatch({
+  source(file.path(R_HOME_DIR, "tests", "test_3oct_additions.R"), local = FALSE)       # 27 checks; it points the session at its own folder and restores the paths
+  RES <- c(RES, RES3)
+}, error = function(e) add("I", "scenario I", "FAIL", conditionMessage(e)))
 
 # ---------------------------------------------------------------- the notebooks on B: RStudio's Knit and Jupyter (IRkernel)
 find_jupyter <- function() {

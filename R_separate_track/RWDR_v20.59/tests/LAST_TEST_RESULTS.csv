@@ -1,113 +1,12 @@
 scenario,step,status,detail
-D,"preparation (two sub-watersheds, Rabi in some years only, a shifted 2025 grid, an annual composite without weather)",PASS,ctrl3-5_treat2022_siteyrs2022_fundMissing_all_feSitePeriod_covAll4_yr2016-2025
-D,SEASONS = 'all' kept by the recommended design (the data-driven choice would be yearly: Rabi missing in some years),PASS,design all | data-driven yearly
-D,"common-shock rule: 2023 reported as a common shock, post window keeps 2022-2025; shifted 2025 grid merged (pixel history kept)",PASS,"shocks 2023,2024 | breaks | post 2022,2023,2024,2025 | linkage 2025 1"
-D,near-duplicate merge one-to-one (every canonical pixel receives one shifted pixel),PASS,144 merged onto 144 canonical pixels
-D,season modes: all = annual + Kharif + Rabi rows | seasonal | yearly | a named season,PASS,rows all 2397 = seasonal 1437 + yearly 960; kharif 957
-D,unbalanced panel: 3 cells with NDVI missing leave the NDVI estimation only (their pixels keep every other period; EVI keeps the cells); Rabi years present where exported,PASS,"cells only in EVI 3, only in NDVI 0, Rabi years 2018,2019,2020,2021,2023"
-D,annual rows: weather the composite lacks filled with the same pixel-year's seasonal mean (as Python),PASS,"480 annual rows filled, max |fill - seasonal mean| 0"
-D,"OVERLAP_ROWS under PIXEL_ONE_SITE: the pixel the export calls core from 2023 has ONE ring in the panel (the polygon's: ring 1), drop and keep agree on it, 'keep' is tagged _keepOverlap; the pixel outside every polygon never enters",PASS,"flip pixel(s) 1, ring(s) in the panel 1: rows under drop 0, keep 0 | two-ring pixels in the consistency file 0 | outside pixel(s) "
-D,POOLED_FE = site_period: period FE = sub-watershed x year x season in the pooled panel,PASS,1_2016_0 7_2016_0 1_2016_1
-D,"M01 on annual + seasonal rows (pixel x season, site x year x season FE) recovers +0.05",PASS,"did 0.0490 (SE 0.0008, fixest::feols)"
-D,"packages confirmed at run time (confirm_packages: every R package, its version and route)",DATA GAP,39 of 40 installed -- missing: polars
-E,"preparation (fragments coded per export file, nothing of the design baked in)",PASS,"7,560 rows; fragment codes 0:7320 1:240"
-E,base           only the major sub-watershed (Artal) -- Beguru's core fragment and the stray file dropped,PASS,1
-E,"base           fund timing: Rabi rows from 2024, every other series from 2025 (back-cast start 2024-07)",PASS,""
-E,base           dose: Rabi 2024 = 30 / 4632.3 per ha (released by Sep 2024 on the back-cast line); 0 on the rings,PASS,""
-E,frag_keep      fragments kept with FRAGMENT_RULE = 'keep',PASS,"1,2,4"
-E,registry       registry timing: cohort 2022 (sites.csv),PASS,""
-E,fixed_2023     fixed timing: cohort = TREATMENT_YEAR 2023,PASS,""
-E,share          share rule: 10 % of the target reached Nov 2024 -> first treated Zaid 2025 (every series 2025),PASS,""
-E,rings_1_3      CONTROL_RINGS <- 1:3 used although DESIGN_MODE = 'recommended',PASS,"0,1,2,3"
-E,pre4_post2     PRE_YEARS 4 / POST_YEARS 2 from the first treated year (2024): 2020-2025,PASS,2020-2025
-E,pre_cal        PRE_YEARS 2018 / POST_YEARS 2024 as CALENDAR years (v20.59): 2018-2024,PASS,2018-2024
-E,"pre_at_start   PRE_YEARS 2022 = the start (v20.58: 'USED: from 0'): said, every year before the start used",PASS,2016-2025
-E,"screen_keep    OUTCOME_SCREEN = 'keep': the same rows as base here (no fill year in E), the results folder tagged _screenKept",PASS,ctrl1-5_treatFund_all_screenKept_covAll4_yr2016-2025
-E,"panel          the panel carries treat / control / pre / post / did (v20.59): post = the exports' Treat flag (the Year rule here: Year >= 2022), pre = 1 - post, did = treat x post; Treat itself used and NOT kept",PASS,"treat,control,pre,post,did (46 columns)"
-E,"design_panel   DESIGN_SOURCE = 'panel' under TREATMENT_YEAR 2023: post = the panel's post (Year >= 2022) on every row, cohort 2022, the results folder tagged _panelDesign",PASS,ctrl3-5_treat2023_all_panelDesign_covAll4_yr2016-2025
-E,"ctrl_pre2      CONTROL_SELECTION = 'pre_rings', K = 2 (v20.59): exactly 2 control rings, the same control pixels in every year-season, the folder tagged _ctrlPre2r, CONTROL_SELECTION_NDVI_R.csv with 5 rings and 2 selected",PASS,"rings 1,5 | tag ctrl1-5_treat2022_all_ctrlPre2r_covAll4_yr2016-2025 | evidence 5"
-E,"cluster_block  CLUSTER = 'block' (v20.59): ~1 km blocks as the clusters (many), the folder tagged _clBlock",PASS,87 clusters | ctrl3-5_treat2022_all_clBlock_covAll4_yr2016-2025
-E,"pix_pp         USE_SAME_PIXELS <- TRUE, 'pre_post' (v20.59): every pixel of the sample is observed in pre and post, the folder tagged _pixPP",PASS,0 pixel(s) on one side only
-E,"pix_switch_off USE_SAME_PIXELS <- FALSE with SAME_PIXELS <- 'all' (1 Oct): NOT applied -- the same rows as the same fixed-2022 design without the rule (cluster_block), more rows than pix_all, no _pix tag",PASS,4768 rows vs 4768 (cluster_block) and 3520 (pix_all) | ctrl3-5_treat2022_all_covAll4_yr2016-2025
-E,"pix_all        SAME_PIXELS = 'all' (v20.59): every pixel of the sample in every year-season (a balanced pixel set), the folder tagged _pixAll",PASS,0 pixel(s) short | ctrl3-5_treat2022_all_pixAll_covAll4_yr2016-2025
-E,"donut1         DONUT_RINGS <- 1L (spec 1): no control row of ring 1, rings 2-5 stay, the folder tagged _donut1",PASS,"rings 2,3,4,5 | ctrl1-5_treat2022_all_donut1_covAll4_yr2016-2025"
-E,"ctrl_rmse      CONTROL_SELECT_ON <- 'rmse' (spec 1): the 2 of 5 rings with the smallest pre-period RMSE gap of the evidence table, the folder tagged _ctrlPre2rR",PASS,"rings 1,3 | evidence says 1,3 | ctrl1-5_treat2022_all_ctrlPre2rR_covAll4_yr2016-2025"
-E,"ndvi_base      BASELINE_NDVI_MIN <- 0.30 (spec 1): every pixel of the sample has a pre-period mean NDVI above 0.30 (recomputed from the panel), fewer pixels than base, tagged _ndviPre0.3",PASS,"91 pixels (base 180), min pre mean 0.3015 | ctrl3-5_treat2022_all_ndviPre0.3_covAll4_yr2016-2025"
-E,"no_single_on   DROP_SINGLETONS <- TRUE (spec 1, the notebooks' default): the folder tagged _noSingle; the library's default (FALSE) is not",PASS,ctrl3-5_treat2022_all_noSingle_covAll4_yr2016-2025 vs base ctrl1-5_treatFund_all_covAll4_yr2016-2025
-E,"range          outcome_range_check_R (spec 3): a value outside [-1, 1] and a no-data code are counted and the check fails",PASS,"outside 2, nodata 1"
-E,"panel          R_P00 confirmed the pixel consistency (v20.59): panel_pixel_consistency_R.csv written with 0 offenders (one sub-watershed and one ring per pixel, once per year-season)",PASS,0 offenders
-E,panel          R_P00 wrote panel_design_check_R.csv and panel_variation_by_block.csv (v20.59),PASS,""
-E,"panel          R_P00 confirmed every input file (input_design_audit_R.csv): Treat 1 / 0 on every row (these test exports carry no Treat column: the Year rule, said), buff_km 0 / 1-5 on every row, PERIOD_RULE 'treat' recorded in panel_build_settings_R.csv",PASS,"80 files, post 3024, pre 4536, buff0 1480, buff1-5 6080"
-E,"panel          SITE_GEOMETRY_CHECK <- FALSE trusts the file's id (site_check 4, no overlay); BUFF_FROM_GEOMETRY <- TRUE takes the polygon ring on confirmed rows too; PIXEL_ONE_SITE (the default) on every row, FALSE on the corrected / assigned rows only (v20.59)",PASS,"checks 4,4 | ids 7,0 | codes 0,1,2 | one-site off 1,2"
-E,panel          N_THREADS counts every logical processor (all_logical_cores_R >= detectCores) (v20.59),PASS,4 vs 4
-E,panel          PERIOD_RULE 'treat' | 'year' | 'both' on a small frame: the flag / the rule / the disagreeing row leaves (v20.59),PASS,treat 00011 | year 01011 | both 0011 (4 rows)
-E,rabi           SEASONS = 'Rabi': Rabi rows only,PASS,""
-E,"manual         DESIGN_MODE = 'manual': 'data' = rings 1-5, every year",PASS,""
-E,transition     EXCLUDE_TRANSITION_YEAR: no first treated year of a treated series,PASS,""
-E,gapfilled_kept EXCLUDE_GAPFILLED = FALSE keeps the history-filled rows (more rows than base),PASS,7200 vs 7156
-E,dose_amount    DOSE_VARIABLE = 'dose_amount_sws': Kharif 2025 = 110 (released by May 2025),PASS,""
-E,all            the panel file is unchanged by every option (md5),PASS,""
-E,covariates_all COVARIATES <- 'all' = the four weather covariates in every model (covs_in),PASS,"Rain,Tmax,Tmean,Tmin"
-E,design_vs_panel DESIGN vs PANEL: the fund timing differs from the panel's post (the exports' 2022 flag) on some rows and says so,PASS,1980 of 7156
-E,design_vs_panel DESIGN vs PANEL: fixed 2022 = the exports' flag on every row (0 differ),PASS,0 of 4768
-E,"screen_evidence the outcome screen wrote its evidence (OUTCOME_SCREEN_NDVI.csv: rows, pixels, mean, SD, min, max per year-season)",PASS,""
-F,"POISON: every model's estimate, SE and p identical with the excluded rows at +5 (no other location, overlap, repeat, ring, year or season leaks)",PASS,45 model results identical
-F,POISON (every number): every cell of every file written identical in the clean and the poisoned run,FAIL,1 file(s) differ: HEADLINES_ALL_VARIABLES_R.csv | e.g. HEADLINES_ALL_VARIABLES_R.csv written[1] 1791015561 vs 1791015982; HEADLINE
-F,M01,PASS,effect 0.0484 | SE 0.000576 | p 4.5e-09 | clean == poison: TRUE
-F,M02,PASS,effect 0.0498 | SE 0.00101 | p 1.85e-05 | clean == poison: TRUE
-F,M03,PASS,effect 0.0485 | SE 0.000952 | p 5.49e-08 | clean == poison: TRUE
-F,M04,PASS,effect 0.0492 | SE 0.00107 | p 9.35e-08 | clean == poison: TRUE
-F,M05,PASS,effect 0.0490 | SE 0.00107 | p 9.13e-08 | clean == poison: TRUE
-F,M06,PASS,effect 2.7175 | SE 0.191 | p 3.09e-05 | clean == poison: TRUE
-F,M07,DATA GAP,expected on one sub-watershed: BM means (ground data of >= 6 sub-watershed x seasons)
-F,M08,DATA GAP,expected on one sub-watershed: instrument
-F,M09,PASS,effect 0.0498 | SE 0.00101 | p 1.85e-05 | clean == poison: TRUE
-F,M10,PASS,effect 0.0015 | SE 0.00207 | p 0.509 | clean == poison: TRUE
-F,M11,PASS,effect 0.0484 | SE 0.00236 | p 5.12e-06 | clean == poison: TRUE
-F,M12,PASS,effect 0.0499 | SE 0.00029 | p 6.87e-09 | clean == poison: TRUE
-F,M13,FAIL,unexpected data gap
-F,M14,PASS,effect 0.0500 | SE 0.000756 | p 1.5e-08 | clean == poison: TRUE
-F,M15,PASS,effect -0.0010 | SE 0.00075 | p 0.266 | clean == poison: TRUE
-F,M16,PASS,test 0.0007 | SE NA | p 0.981 | clean == poison: TRUE
-F,M17,PASS,statistic 0.5143 | SE 0.0365 | p 4.43e-46 | clean == poison: TRUE
-F,M18,PASS,statistic 0.5143 | SE 0.0365 | p 4.43e-46 | clean == poison: TRUE
-F,M19,PASS,diagnostic 0.0472 | SE NA | p NA | clean == poison: TRUE
-F,M20,DATA GAP,expected on one sub-watershed: >= 2 sub-watersheds
-F,M21,PASS,effect 0.0486 | SE 0.00104 | p 8.36e-08 | clean == poison: TRUE
-F,M22,PASS,effect 0.0473 | SE 0.00032 | p 2.7e-10 | clean == poison: TRUE
-F,M23,PASS,effect 0.0484 | SE 0.000523 | p 2e-04 | clean == poison: TRUE
-F,M24,PASS,effect 0.0050 | SE 0.000957 | p 0.00325 | clean == poison: TRUE
-F,M25,PASS,effect 0.0484 | SE 0.0026 | p 0.001 | clean == poison: TRUE
-F,M26,PASS,effect 0.0483 | SE 0.000599 | p 5.59e-09 | clean == poison: TRUE
-F,M27,PASS,effect 0.0482 | SE 0.000887 | p 3.98e-08 | clean == poison: TRUE
-F,M28,PASS,effect 0.0483 | SE 0.00101 | p 2.02e-05 | clean == poison: TRUE
-F,M29,PASS,effect 0.0484 | SE 0.000524 | p 2.84e-09 | clean == poison: TRUE
-F,M30,PASS,effect 0.0491 | SE 0.00117 | p 1.45e-07 | clean == poison: TRUE
-F,M31,PASS,effect 0.0486 | SE 0.000357 | p 4.03e-10 | clean == poison: TRUE
-F,M32,PASS,effect 0.0473 | SE 0.000313 | p 2.4e-10 | clean == poison: TRUE
-F,M33,PASS,effect 0.0487 | SE 0.000545 | p 3.3e-09 | clean == poison: TRUE
-F,M34,PASS,effect 0.0498 | SE 0.00101 | p 1.85e-05 | clean == poison: TRUE
-F,M35,PASS,effect 0.0486 | SE 0.000924 | p 1.51e-05 | clean == poison: TRUE
-F,M36,PASS,effect 0.0471 | SE 0.000896 | p 4.69e-08 | clean == poison: TRUE
-F,M37,PASS,effect 0.0471 | SE 0.000896 | p 4.69e-08 | clean == poison: TRUE
-F,M38,PASS,effect 0.0471 | SE 0.00278 | p 1.31e-05 | clean == poison: TRUE
-F,M39,PASS,effect 0.0487 | SE 0.000976 | p 0 | clean == poison: TRUE
-F,M40,PASS,effect 0.0481 | SE 0.00108 | p 0 | clean == poison: TRUE
-F,M41,PASS,effect 0.0484 | SE 0.000924 | p 1.54e-05 | clean == poison: TRUE
-F,M42,PASS,effect 0.0487 | SE 0.00101 | p 0 | clean == poison: TRUE
-F,M43,PASS,effect 0.0487 | SE 0.000976 | p 0 | clean == poison: TRUE
-F,M44,PASS,effect 0.0480 | SE 0.00174 | p 1.28e-168 | clean == poison: TRUE
-F,M45,PASS,effect 0.0475 | SE 0.000924 | p 1.63e-05 | clean == poison: TRUE
-F,the location rule reported (LOCATION_RULE_<outcome>.csv beside every result),PASS,41 file(s)
-G,"M04 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.05084 vs all at once 0.04916
-G,"M17 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the same answer to 1e-12",PASS,batches 0.51426 vs all at once 0.51426
-G,"M18 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the same answer to 1e-12",PASS,batches 0.51426 vs all at once 0.51426
-G,"M19 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04417 vs all at once 0.04716
-G,"M35 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04833 vs all at once 0.04865
-G,"M40 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04846 vs all at once 0.04814
-G,"M42 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04846 vs all at once 0.04866
-G,"M43 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04848 vs all at once 0.04869
-G,"M44 in BATCHES (beyond 98 % of the RAM; forced here): every unit used, the answer within tolerance",PASS,batches 0.04440 vs all at once 0.04803
-G,Moran's I / LISA formulas on the k-NN index == spdep (the path used beyond 98 % of the RAM),PASS,largest difference 1.8e-15
-G,k-NN from the kd-tree == spdep's exhaustive search,PASS,""
-G,M35 cluster-robust quantile SE: one row per cluster == quantreg's own kernel SE,PASS,0.0007946646 vs 0.0007946646
+H,M01 M02 M16 M34 out of core on Dask (5 pixel partitions) == in memory,PASS,431 numbers in 17 files; largest difference 5.7e-11 (relative 1.1e-08: fixest converges to 1e-8)
+H,M01 M02 M16 M34 out of core on Apache Spark (5 pixel partitions) == in memory,PASS,431 numbers in 17 files; largest difference 5.7e-11 (relative 1.1e-08: fixest converges to 1e-8)
+H,M01 M02 M16 M34 out of core on R batches (5 pixel partitions) == in memory,PASS,431 numbers in 17 files; largest difference 5.7e-11 (relative 1.1e-08: fixest converges to 1e-8)
+H,Apache Spark == Dask: every number identical (the same R code on every engine),PASS,431 numbers
+H,R batches == Dask: every number identical (the same R code on every engine),PASS,431 numbers
+H,"the switch at 98 %: a RAM budget below the need -> out of core BY ITSELF, the in-memory numbers",PASS,"run_mode_R: out_of_core (the sample needs ~0.01 GB in RAM and 0.00 GB are free below 98 %); 431 numbers, largest difference 5.7e-1"
+H,the design from the data out of core (pixel partitions) == in memory: the same cells and the same choice,PASS,"pre 2016,2017,2018,2019,2020,2021,2022,2023, post 2024,2025, rings 1,2,3,4,5, seasons all"
+H,the outcome identities row group by row group == all rows at once,PASS,4 identities: NDMI = -0.1 +0.6 x NDVI; LSWI = -0.1 +0.6 x NDVI; LSWI = 0 +1 x NDMI; WSSI = 1 -1 x ESI
+H,"R_P00 block by block on R batches, every block in 3 pixel groups == in memory: the panel row for row (schema too) and every report",PASS,"9,812 rows x 45 columns"
+H,R_P00 block by block on Dask == in memory: the panel row for row (schema too) and every report,PASS,"9,812 rows x 45 columns"
+H,R_P00 block by block on Apache Spark == in memory: the panel row for row (schema too) and every report,PASS,"9,812 rows x 45 columns"

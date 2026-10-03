@@ -92,12 +92,62 @@ panel_plain_attrs <- function(x) {
   invisible(x)
 }
 panel_write <- function(dt) {
-  panel_plain_attrs(dt)
-  if (HAS_ARROW) { arrow::write_parquet(dt, PANEL_PATH); return(invisible(PANEL_PATH)) }
+  panel_plain_attrs(dt); invisible(gc(FALSE))
+  # 3 Oct: written BESIDE the panel and renamed into place -- on Windows a did_panel_full.parquet still open in another R / Python session (or an
+  # arrow dataset of an earlier model run in this session) made the write fail after hours of work; now the finished file is there under its
+  # .writing name and the message says what to close
+  if (HAS_ARROW) {
+    tmp <- paste0(PANEL_PATH, ".writing"); if (file.exists(tmp)) unlink(tmp)
+    arrow::write_parquet(dt, tmp)
+    if (file.exists(PANEL_PATH) && !file.remove(PANEL_PATH)) stop("the new panel is complete in ", tmp, " but ", PANEL_PATH, " cannot be replaced -- it is open in another R or Python session (or RStudio's viewer): close it, then rename the file by hand or run R_P00 again (it skips the build when the panel is valid)")
+    if (!file.rename(tmp, PANEL_PATH)) stop("cannot rename ", tmp, " to ", PANEL_PATH)
+    return(invisible(PANEL_PATH))
+  }
   fwrite(dt, panel_file()); info("arrow is not installed: the panel is written as ", panel_file(), " (install arrow: faster and smaller)")
   invisible(panel_file())
 }
 panel_names <- function() if (HAS_ARROW) names(arrow::open_dataset(PANEL_PATH)) else names(fread(panel_file(), nrows = 0))
+# 3 Oct (as Python's final_panel_is_valid): is the panel on disk one this library can use as it is? FALSE, with the reason, when there is no
+# panel, when a required column is missing, when it is empty, when an outcome column is stored as float32 (R never writes one: another writer's
+# panel -- the 8th-10th decimals are gone; rebuild), or when no panel_build_settings_R.csv sits beside it (a panel built before v20.58's rules).
+# R_P00 and build_panel.R skip the hours-long build when this is TRUE and FORCE_REBUILD is FALSE.
+panel_is_valid_R <- function(path = PANEL_PATH, required_cols = c("pixel_id", "site_id", "Year", "Season", "latitude", "longitude", "buff_km", "site_check", "fragment", PANEL_DESIGN_COLS), min_rows = 1L, say = TRUE) {
+  why <- NULL; f <- if (HAS_ARROW) path else panel_file()
+  if (!file.exists(f)) why <- sprintf("no panel at %s", f)
+  else {
+    nm <- tryCatch(if (HAS_ARROW) names(arrow::open_dataset(path)$schema) else names(fread(f, nrows = 0)), error = function(e) NULL)
+    if (is.null(nm)) why <- sprintf("%s cannot be opened", f)
+    else {
+      miss <- setdiff(required_cols, nm)
+      if (length(miss)) why <- sprintf("the panel lacks %s (built by an older R_P00)", paste(miss, collapse = ", "))
+      else {
+        n <- tryCatch(if (HAS_ARROW) arrow::open_dataset(path)$num_rows else nrow(fread(f, select = 1L)), error = function(e) 0L)
+        if (!isTRUE(n >= min_rows)) why <- sprintf("the panel holds %s rows", format(n, big.mark = ","))
+        else if (HAS_ARROW) {
+          sch <- arrow::open_dataset(path)$schema
+          f32 <- Filter(function(v) identical(sch$GetFieldByName(v)$type$ToString(), "float"), intersect(c(OUTCOME_VARS, WEATHER_VARS), nm))
+          if (length(f32)) why <- sprintf("%d outcome column(s) are stored as float32 (7 significant digits; e.g. %s) -- not written by R_P00; the 8th-10th decimals are gone", length(f32), paste(head(f32, 4), collapse = ", "))
+        }
+        if (is.null(why) && !file.exists(file.path(dirname(path), "panel_build_settings_R.csv"))) why <- "no panel_build_settings_R.csv beside it (built before v20.58: repeated rows filled the kept rows' gaps)"
+      }
+    }
+  }
+  if (!is.null(why) && say && file.exists(f)) warn("the panel on disk is not usable as it is: ", why, " -> it will be rebuilt")
+  is.null(why)
+}
+# 3 Oct (as Python's load_panel): a panel whose outcome columns are float32 is said ONCE per session -- R reads it as double, but the decimals
+# were lost when it was built (another writer: the Python pipeline before 2 Oct, or a converted file)
+.PANEL_PRECISION_NOTED <- new.env()
+panel_precision_note_R <- function(path = PANEL_PATH, verbose = TRUE) {
+  if (!HAS_ARROW || !file.exists(path)) return(invisible(character(0)))
+  sch <- tryCatch(arrow::open_dataset(path)$schema, error = function(e) NULL); if (is.null(sch)) return(invisible(character(0)))
+  f32 <- Filter(function(v) identical(sch$GetFieldByName(v)$type$ToString(), "float"), intersect(c(OUTCOME_VARS, WEATHER_VARS, "dose_intensity_per_ha", "dose_amount_sws"), sch$names))
+  if (length(f32) && verbose && is.null(.PANEL_PRECISION_NOTED[[path]])) {
+    assign(path, TRUE, envir = .PANEL_PRECISION_NOTED)
+    warn(sprintf("this panel stores %d column(s) as float32 (7 significant digits; e.g. %s): differences at the 8th-10th decimal were lost when it was built (not by R_P00, which writes double) -- re-run R_P00 to rebuild it; the estimates run in double from here on", length(f32), paste(head(f32, 4), collapse = ", ")))
+  }
+  invisible(f32)
+}
 panel_read <- function(cols, rings = NULL) {
   cols <- intersect(unique(cols), panel_names())
   if (HAS_ARROW) {
@@ -419,6 +469,11 @@ is_data_opt <- function(v) is.character(v) && length(v) == 1 && tolower(trimws(v
 is_all_opt  <- function(v) length(v) == 1 && (is.na(v) || (is.character(v) && tolower(trimws(v)) %in% c("all", "every", "none")))
 DOSE_VARIABLES <- c("dose_intensity_per_ha", "dose_amount_sws", "dose_share_of_target")
 .opt <- function(k, default) { v <- get0(k, envir = globalenv(), ifnotfound = NULL); if (is.null(v)) get0(k, ifnotfound = default) else v }
+# 3 Oct: the USE_ switch helpers of 1 Oct live in reward_paths.R, which the out-of-core WORKER processes (lib/reward_ooc_task.R) do not source --
+# every partition of M01 / M02 / M16 / M34 failed with "could not find function .same_pixels_opt_R" (scenario H). Defined here too, the same bodies.
+if (!exists(".tol_R", mode = "function")) .tol_R <- function() if (isTRUE(.opt("USE_PRECISION_TOLERANCE", FALSE))) as.numeric(.opt("PRECISION_TOLERANCE", 1e-6)) else 0
+if (!exists(".cov_R", mode = "function")) .cov_R <- function() if (isTRUE(.opt("USE_COVERAGE_THRESHOLD", FALSE))) as.numeric(.opt("MIN_PIXEL_COVERAGE_PCT", get0("SCREEN_MIN_COVERAGE", ifnotfound = 0.05))) else get0("SCREEN_MIN_COVERAGE", ifnotfound = 0.05)
+if (!exists(".same_pixels_opt_R", mode = "function")) .same_pixels_opt_R <- function() if (isTRUE(.opt("USE_SAME_PIXELS", FALSE))) .opt("SAME_PIXELS", "pre_post") else "off"
 .one_of <- function(k, v, allowed) { v <- tolower(trimws(as.character(v)[1])); if (!v %in% allowed) stop(k, " must be ", paste(sprintf("\"%s\"", allowed), collapse = " | "), " (got \"", v, "\")"); v }
 design_settings <- function() {
   s <- list(design_mode = .one_of("DESIGN_MODE", .opt("DESIGN_MODE", "recommended"), c("recommended", "manual")),
@@ -1179,7 +1234,7 @@ panel_dedup_note_R <- function(verbose = TRUE) {
 }
 
 load_panel_R <- function(outcome, d = load_design(), extra = character(0), integrity = TRUE) {
-  panel_dedup_note_R()                                                                              # v20.58
+  panel_dedup_note_R(); panel_precision_note_R()                                                   # v20.58; 3 Oct: a float32 panel is said once
   cols <- panel_names()
   if (!outcome %in% cols) stop(sprintf("%s is not in the panel: no export carries this variable", outcome))   # v20.51
   lc_ <- load_columns_R(outcome, d, extra, cols); covs <- lc_$covs
@@ -1384,6 +1439,39 @@ sample_facts <- function(dt, outcome) {
        years = range(dt$Year), baseline_mean = mean(dt[treat == 1 & post == 0][[outcome]], na.rm = TRUE),
        integrity = attr(dt, "integrity"), location_report = attr(dt, "location_report"), post_vs_panel = attr(dt, "post_vs_panel"))   # v20.59
 }
+# 3 Oct (your rule, as Python's _ensure_p_value in save_results): EVERY result row that carries an estimate and its SE gets a p-value when it
+# has none -- the headline row had one since v20.58 (below); the models' TABLES (event studies, placebo rows, quantiles, dose terms, the package
+# tables) now too: t with G - 1 df when the sample's clusters are known (G >= 2), else normal; p_how says which. A p that is there is never touched.
+P_KEYS_R   <- c("p_value", "p_t_G1", "p", "pval", "p_wild", "p.value", "p_ri")
+EST_KEYS_R <- c("beta", "att", "coef", "estimate", "effect", "ATT", "DDD", "PSM_DID", "QTE", "att_avg", "ate")
+SE_KEYS_R  <- c("se", "std.error", "SE")
+ensure_p_value_R <- function(x, G = NA_integer_) {
+  if (is.null(x) || !is.data.frame(x) || !nrow(x)) return(x)
+  x <- as.data.table(x)
+  pk <- intersect(P_KEYS_R, names(x)); has_p <- if (length(pk)) Reduce(`|`, lapply(pk, function(k) is.finite(suppressWarnings(as.numeric(x[[k]]))))) else rep(FALSE, nrow(x))
+  ek <- Filter(function(k) is.numeric(x[[k]]), intersect(EST_KEYS_R, names(x))); sk <- Filter(function(k) is.numeric(x[[k]]), intersect(SE_KEYS_R, names(x)))
+  if (!length(ek) || !length(sk) || all(has_p)) return(x)
+  b <- as.numeric(x[[ek[1]]]); se <- as.numeric(x[[sk[1]]]); fill <- !has_p & is.finite(b) & is.finite(se) & se > 0
+  if (!any(fill)) return(x)
+  G <- suppressWarnings(as.integer(G)); use_t <- isTRUE(is.finite(G) && G >= 2)
+  p <- if (use_t) 2 * pt(abs(b / se), G - 1L, lower.tail = FALSE) else 2 * pnorm(-abs(b / se))
+  how <- if (use_t) sprintf("t with %d df (clusters - 1) from %s / %s", G - 1L, ek[1], sk[1]) else sprintf("normal from %s / %s", ek[1], sk[1])
+  if (!"p_value" %in% names(x)) x[, p_value := NA_real_] else if (!is.double(x$p_value)) set(x, j = "p_value", value = suppressWarnings(as.numeric(x$p_value)))   # a logical NA column would take TRUE
+  if (!"p_how" %in% names(x)) x[, p_how := NA_character_] else if (!is.character(x$p_how)) set(x, j = "p_how", value = as.character(x$p_how))
+  set(x, which(fill), "p_value", p[fill]); set(x, which(fill & (is.na(x$p_how) | !nzchar(x$p_how))), "p_how", how)
+  x
+}
+# 3 Oct (as Python's headline() upsert of HEADLINES_ALL_VARIABLES.csv): ONE table across variables and models -- beta, SE and p of every outcome
+# read from one file, kept up to date at every run (the row of the same model x outcome x scenario is replaced) -> results/HEADLINES_ALL_VARIABLES_R.csv
+headlines_all_R <- function(row, scenario, path = file.path(RESULTS_DIR, "HEADLINES_ALL_VARIABLES_R.csv")) {
+  keep <- c("model", "outcome", "kind", "estimate", "se", "p_value", "p_how", "se_how", "engine", "engine_version", "n_clusters", "n_obs")
+  new <- as.data.table(row)[, intersect(keep, names(row)), with = FALSE]; new[, scenario := scenario]; new[, written := format(Sys.time(), "%Y-%m-%dT%H:%M:%S")]
+  setcolorder(new, c("model", "outcome", "scenario", setdiff(names(new), c("model", "outcome", "scenario"))))
+  old <- tryCatch(if (file.exists(path)) fread(path, colClasses = "character") else NULL, error = function(e) NULL)   # every column as text: the timestamp and "20.60" stay as written
+  if (!is.null(old)) for (k in intersect(c("estimate", "se", "p_value", "n_clusters", "n_obs"), names(old))) set(old, j = k, value = suppressWarnings(as.numeric(old[[k]])))
+  if (!is.null(old) && nrow(old)) { old <- old[!(model == new$model[1] & outcome == new$outcome[1] & scenario == new$scenario[1])]; new <- rbind(old, new, fill = TRUE) }
+  setorder(new, model, outcome, scenario); dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE); fwrite(new, path); invisible(new)
+}
 save_result <- function(model, outcome, res, dt, d = load_design()) {
   tag <- scenario_tag(d); od <- file.path(RESULTS_DIR, model, tag); dir.create(od, recursive = TRUE, showWarnings = FALSE)
   if (!is.null(d$choices)) fwrite(d$choices, file.path(od, "DESIGN_IN_EFFECT.csv"))        # v20.57: the design of this run, even for a gap
@@ -1400,7 +1488,8 @@ save_result <- function(model, outcome, res, dt, d = load_design()) {
     pv <- ds$p_estimate_design; p_how <- sprintf("t with %g df against the design-based SE", ds$df_design)
   }
   if (is.finite(est) && is.finite(se) && se > 0 && !is.finite(pv) && kind %in% c("effect", "statistic")) {
-    dfp <- res$df %||% max(1, G - 1); pv <- 2 * pt(abs(est / se), dfp, lower.tail = FALSE); if (!nzchar(p_how)) p_how <- sprintf("t with %g df from the estimate and its SE", dfp)
+    if (!is.null(res$df) || isTRUE(is.finite(G) && G >= 2)) { dfp <- res$df %||% (G - 1); pv <- 2 * pt(abs(est / se), dfp, lower.tail = FALSE); if (!nzchar(p_how)) p_how <- sprintf("t with %g df from the estimate and its SE", dfp) }
+    else { pv <- 2 * pnorm(-abs(est / se)); if (!nzchar(p_how)) p_how <- "normal from the estimate and its SE (fewer than 2 clusters)" }   # 3 Oct: as Python's _ensure_p_value
   }
   if (!nzchar(se_how) && is.finite(se)) se_how <- r_se_how(model, fx, res$engine %||% "R")
   row <- data.table(model = model, outcome = outcome, kind = kind, estimate = est, se = se, p_value = pv, se_how = se_how, p_how = p_how,
@@ -1424,7 +1513,8 @@ save_result <- function(model, outcome, res, dt, d = load_design()) {
   if (kind == "effect" && !is.finite(row$se)) warn(model, " x ", outcome, ": NO standard error could be computed (", res$se_note %||% "the model gave none and the design-based SE is not identified", ") -- read the estimate with care")
   row[, `:=`(timing = d$timing %||% "", dose_variable = d$dose_variable %||% "", fragment_rule = d$fragment_rule %||% "", overlap_rows = d$overlap_rows %||% "", engine_version = R_ENGINE_VERSION)]
   fwrite(row, file.path(od, sprintf("%s_%s.csv", model, outcome)))
-  if (!is.null(res$table)) fwrite(as.data.table(res$table), file.path(od, sprintf("%s_%s_table.csv", model, outcome)))
+  headlines_all_R(row, tag)                                                                                     # 3 Oct: beta, SE, p of every variable in one file
+  if (!is.null(res$table)) fwrite(ensure_p_value_R(as.data.table(res$table), G), file.path(od, sprintf("%s_%s_table.csv", model, outcome)))   # 3 Oct: a p on every row
   if (!is.null(d$choices)) fwrite(d$choices, file.path(od, "DESIGN_IN_EFFECT.csv"))        # v20.57: what this run used, next to its results
   integ <- fx$integrity; if (!is.null(integ)) fwrite(integ, file.path(od, sprintf("SAMPLE_INTEGRITY_%s.csv", outcome)))   # v20.58
   lr <- fx$location_report; if (!is.null(lr) && nrow(lr)) { lr <- copy(lr); lr[, text := LOCATION_TEXT[as.character(code)]]; fwrite(lr, file.path(od, sprintf("LOCATION_RULE_%s.csv", outcome))) }
