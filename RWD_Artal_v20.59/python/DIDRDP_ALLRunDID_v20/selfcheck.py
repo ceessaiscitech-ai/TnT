@@ -1247,7 +1247,7 @@ def check_v20_38():
     import json as _j, numpy as _np, pandas as _pd
     sys.path.insert(0, HERE)
     prep = sorted(os.path.basename(f) for f in glob.glob(os.path.join(HERE, "01_Panel_Preparation", "*.ipynb")))
-    if prep != ["P00_RUN_ALL_Panel_Preparation.ipynb"]: bad(f"01_Panel_Preparation must hold P00 only, holds {prep}")
+    if sorted(prep) != ["P00_RUN_ALL_Panel_Preparation.ipynb", "P00b_Build_Panel_From_Path.ipynb"]: bad(f"01_Panel_Preparation must hold P00 and P00b (the path-driven builder, 3 Oct) only, holds {prep}")
     p00 = _j.load(open(os.path.join(HERE, "01_Panel_Preparation", "P00_RUN_ALL_Panel_Preparation.ipynb"), encoding="utf-8"))
     code = ["".join(c["source"]) for c in p00["cells"] if c["cell_type"] == "code"]
     MODS = ["P00_Settings", "P01_File_Inventory_and_Audit", "P02_Column_Harmonization_Check", "P02b_SWS_Tagging_Audit",
