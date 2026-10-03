@@ -559,7 +559,7 @@ all_numbers <- function(root) {
     x <- tryCatch(fread(f), error = function(e) NULL); if (is.null(x) || !nrow(x)) return(NULL)
     rel <- substring(normalizePath(f, winslash = "/"), nchar(normalizePath(root, winslash = "/")) + 2L)
     rbindlist(lapply(names(x), function(c) { v <- suppressWarnings(as.numeric(x[[c]]))
-      if (!any(is.finite(v)) || grepl("^(secs|seconds|elapsed|elapsed_s|n_jobs_used|cores)$", c)) return(NULL)
+      if (!any(is.finite(v)) || grepl("^(secs|seconds|elapsed|elapsed_s|n_jobs_used|cores|written)$", c)) return(NULL)   # 3 Oct: HEADLINES_ALL_VARIABLES_R.csv's write time is not a number of the result
       data.table(file = rel, col = c, row = seq_along(v), v = v) }))
   })
   rbindlist(out)
