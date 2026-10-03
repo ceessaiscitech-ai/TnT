@@ -29,6 +29,12 @@ changes; P00 / R_P00 is never re-run for a design choice.
 | `DESIGN_SOURCE` | `"panel"` (default) / `"model"` | estimate on the panel's `treat / post / did` (the exports' Treat flag) or on the design built from the timing settings |
 | `COVARIATES`, `NONNEGATIVE` | see the notebook | the weather covariates; the no-negative-values option |
 
+**`PRE_YEARS` / `POST_YEARS` (Section A), the forms (3 Oct):** `"data"` (the recommendation's window), `"all"`, a count (`4` = the 4 years
+before the start / `2` = the start year + 1), a calendar year (`2015` = the first pre year / `2025` = the last post year), or a LIST of
+calendar years -- `[2015, 2017, 2018, 2019, 2020, 2021]`, `"2015, 2017, 2018"`, `"2015, 2017-2021"` -- which means EXACTLY these years and no
+other on that side of the start (tag `_preY...` / `_postY...`). The start is `TREATMENT_YEAR` (plus one with `EXCLUDE_TRANSITION_YEAR`); a
+listed year on the wrong side of it is refused with the reason.
+
 ## Section B — the control group chosen on the PRE period (your request of 30 Sep) — OFF by default
 
 What it is for: when the estimate is not significant, the usual culprit is a control group that does not move like the treatment area before
@@ -85,6 +91,13 @@ with a `did_panel_full.parquet`, shard / part files, any Parquet with the panel'
 on disk with float32 outcomes is rebuilt once by P00 / `build_panel.py`. Every result row with an estimate and its SE carries `p_value` (and
 `p_how`: t with clusters - 1 df when the row knows its clusters, else normal); `results/HEADLINES_ALL_VARIABLES.csv` collects beta, SE and p of
 every variable and model of the run.
+
+**R (3 Oct).** R stores doubles end to end, so there is no `PANEL_FLOAT_DTYPE`; `output/panel_precision_report_R.csv` (R_P00, `build_panel.R`)
+has the same columns as the Python report and proves it, and `all_values_float32_representable` flags a rounding that happened before the
+panel. `panel_is_valid_R` rejects a float32 panel (another writer's); `FORCE_REBUILD <- FALSE` in R_P00's build chunk keeps a valid panel on
+disk. Every result table row with an estimate and an SE gets `p_value` / `p_how` (`ensure_p_value_R`, t with clusters − 1 df when the clusters
+are known, else normal); `results/HEADLINES_ALL_VARIABLES_R.csv` collects beta, SE and p of every variable and model. An earlier run's
+output inside the exports folder is recognised as the pipeline's own product (`is_pipeline_product_R`) and never read as an export.
 
 ## Where a switch is checked in the code
 
