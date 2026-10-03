@@ -1,7 +1,7 @@
 # RWDR v20.59 — the R track, 3 Oct: your R_P00 run that hung for hours, and the 1–2 Oct corrections ported from Python
 
 This bundle is the R pipeline only (`RWDR_v20.59/`). The Python module is delivered apart (`DIDVALIDATION_v20.59.zip`); the two no longer
-share a zip. Everything below is in `RWDR_v20.59/lib/` and is proved by `tests/test_3oct_additions.R` (24 checks) and `tests/run_all_tests.R`.
+share a zip. Everything below is in `RWDR_v20.59/lib/` and is proved by `tests/test_3oct_additions.R` (27 checks) and `tests/run_all_tests.R`.
 
 ## 1. Your R_P00 run: hours without a line after the duplicate step — what it was, what changed
 
@@ -82,6 +82,17 @@ report on a double column with values 1e-10 apart and on its float32 copy, `pane
 exports folder, `is_pipeline_product_R` by name, `pool_cap_R`, `FORCE_REBUILD`, and `build_panel.R` run twice on that folder (the products
 counted, the panel built with its precision report, the second run keeps it; at least 12 start and 12 end progress lines).
 `tests/run_all_tests.R quick`: every model and scenario as before. `tests/benchmark_prep_scale.R`: the timings above.
+
+## 3b. The adversarial review of the diff (3 Oct) and what it changed
+
+A second reading, set to refute every claim above, held on the numbers (the three rewrites against their old bodies on 16 variants with NA
+keys, mtime ties, all-NA donors, fill rule and priority both ways; the no-copy path; the discovery rules; the Windows rename) and found six
+things, all fixed and covered by `test_3oct_additions.R`: the precision report after the write is wrapped so an error in it can never cost the
+panel's valid status (and it no longer needs dplyr); `ensure_p_value_R` coerces a logical-NA `p_value` column and a factor `p_how` before
+filling (a bare `p_value = NA` column would have taken TRUE); `headlines_all_R` re-reads its file as text so `20.60` and the ISO timestamp
+survive; the registry's block fall-back breaks file-time ties by the original row order, exactly as the one pass; `FORCE_REBUILD` is
+documented as the notebook's own setting (the library value is the default); the package tables written by `wr()` get a normal p (they do
+not know the clusters) and say so in `p_how`.
 
 ## 4. Where each change lives
 

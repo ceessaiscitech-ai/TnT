@@ -102,8 +102,8 @@ N_THREADS           <- max(1L, all_logical_cores_R())           # v20.52: EVERY 
 # are capped at 60 on Windows (the OS waits on at most 63 handles; R 4.3 opens at most 128 connections). THREADS (data.table, fixest) stay N_THREADS.
 WINDOWS_POOL_LIMIT_R <- 60L
 pool_cap_R <- function(n = N_THREADS) if (.Platform$OS.type == "windows") min(as.integer(n), WINDOWS_POOL_LIMIT_R) else as.integer(n)
-FORCE_REBUILD       <- FALSE                                    # 3 Oct: R_P00 / build_panel.R skip the hours-long build when a valid panel is there (panel_is_valid_R);
-                                                                #   TRUE = build it again whatever is on disk
+FORCE_REBUILD       <- FALSE                                    # 3 Oct: the library's default -- R_P00's build chunk sets ITS OWN value (as every notebook setting; that one
+                                                                #   wins); build_panel.R takes force=TRUE. FALSE = a valid panel on disk is kept (panel_is_valid_R), TRUE = built again
 SITE_GEOMETRY_CHECK <- TRUE                                     # v20.59 (as Python): every row's sub-watershed from its latitude / longitude in the shapefile
                                                                 #   (confirmed / corrected / assigned; the file's id only labels) | FALSE = trust the file's id
 BUFF_FROM_GEOMETRY  <- FALSE                                    # v20.59 (as Python): TRUE = buff_km always from the polygon ring | FALSE = only where the

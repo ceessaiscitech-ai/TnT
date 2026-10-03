@@ -1451,8 +1451,8 @@ ensure_p_value_R <- function(x, G = NA_integer_) {
   G <- suppressWarnings(as.integer(G)); use_t <- isTRUE(is.finite(G) && G >= 2)
   p <- if (use_t) 2 * pt(abs(b / se), G - 1L, lower.tail = FALSE) else 2 * pnorm(-abs(b / se))
   how <- if (use_t) sprintf("t with %d df (clusters - 1) from %s / %s", G - 1L, ek[1], sk[1]) else sprintf("normal from %s / %s", ek[1], sk[1])
-  if (!"p_value" %in% names(x)) x[, p_value := NA_real_]
-  if (!"p_how" %in% names(x)) x[, p_how := NA_character_]
+  if (!"p_value" %in% names(x)) x[, p_value := NA_real_] else if (!is.double(x$p_value)) set(x, j = "p_value", value = suppressWarnings(as.numeric(x$p_value)))   # a logical NA column would take TRUE
+  if (!"p_how" %in% names(x)) x[, p_how := NA_character_] else if (!is.character(x$p_how)) set(x, j = "p_how", value = as.character(x$p_how))
   set(x, which(fill), "p_value", p[fill]); set(x, which(fill & (is.na(x$p_how) | !nzchar(x$p_how))), "p_how", how)
   x
 }
@@ -1462,7 +1462,8 @@ headlines_all_R <- function(row, scenario, path = file.path(RESULTS_DIR, "HEADLI
   keep <- c("model", "outcome", "kind", "estimate", "se", "p_value", "p_how", "se_how", "engine", "engine_version", "n_clusters", "n_obs")
   new <- as.data.table(row)[, intersect(keep, names(row)), with = FALSE]; new[, scenario := scenario]; new[, written := format(Sys.time(), "%Y-%m-%dT%H:%M:%S")]
   setcolorder(new, c("model", "outcome", "scenario", setdiff(names(new), c("model", "outcome", "scenario"))))
-  old <- tryCatch(if (file.exists(path)) fread(path, colClasses = list(character = c("model", "outcome", "scenario"))) else NULL, error = function(e) NULL)
+  old <- tryCatch(if (file.exists(path)) fread(path, colClasses = "character") else NULL, error = function(e) NULL)   # every column as text: the timestamp and "20.60" stay as written
+  if (!is.null(old)) for (k in intersect(c("estimate", "se", "p_value", "n_clusters", "n_obs"), names(old))) set(old, j = k, value = suppressWarnings(as.numeric(old[[k]])))
   if (!is.null(old) && nrow(old)) { old <- old[!(model == new$model[1] & outcome == new$outcome[1] & scenario == new$scenario[1])]; new <- rbind(old, new, fill = TRUE) }
   setorder(new, model, outcome, scenario); dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE); fwrite(new, path); invisible(new)
 }

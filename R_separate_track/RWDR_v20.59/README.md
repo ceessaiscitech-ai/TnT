@@ -8,7 +8,7 @@
 > * **From the Python side (1–2 Oct):** a p-value on every result row (`ensure_p_value_R`), `results/HEADLINES_ALL_VARIABLES_R.csv` across
 >   variables, `output/panel_precision_report_R.csv` (R stores doubles; the report proves it and flags a rounding upstream), the pipeline's
 >   own products inside the exports folder never read as exports, worker processes capped at 60 on Windows.
-> * `tests/test_3oct_additions.R` (24 checks) and `tests/benchmark_prep_scale.R` (time R_P00 on your machine) are new.
+> * `tests/test_3oct_additions.R` (27 checks) and `tests/benchmark_prep_scale.R` (time R_P00 on your machine) are new.
 >
 > **v20.59 — what changed for you** (details: `docs/CHANGELOG_v20.59.md`; what ran here: `docs/VALIDATION_v20.59.md`)
 > * **The panel carries the DiD design columns** — `treat` (buffer 0), `control` (rings 1–5), `post` = the exports' `Treat` flag

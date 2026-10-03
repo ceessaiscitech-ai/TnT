@@ -94,7 +94,10 @@ rn <- pixel_registry(copy(syn)); ro <- pixel_registry_old(copy(syn))
 add3("pixel_registry: no frame copy and no N x K matrix -- the same registry (lat, lon, mtime, rows, usable cells, newest file, completeness)", same(rn, ro), sprintf("%d pixels", nrow(rn)))
 .keep_pass <- .pixel_registry_pass; .pixel_registry_pass <- function(dt, oc) stop("cannot allocate vector of size 9.9 Gb")
 rb <- suppressMessages(pixel_registry(copy(syn))); .pixel_registry_pass <- .keep_pass
-cmp <- function(x) setorder(copy(x)[, .(pixel_id, lat = round(lat, 9), lon = round(lon, 9), mtime, n_rows, n_ok, completeness)], pixel_id)
+cmp <- function(x) setorder(copy(x)[, .(pixel_id, lat = round(lat, 9), lon = round(lon, 9), mtime, n_rows, n_ok, src, completeness)], pixel_id)
+tie <- data.table(pixel_id = "p1", latitude = 16, longitude = 77, file_mtime = 1e9, src_file = c("CSV_Kharif_2021.csv", "CSV_Rabi_2020.csv", "CSV_Kharif_2021.csv", "CSV_Rabi_2020.csv"), Year = c(2021L, 2020L, 2021L, 2020L), Season = c(1L, 2L, 1L, 2L), NDVI = 0.3)
+.keep_pass <- .pixel_registry_pass; .pixel_registry_pass <- function(dt, oc) stop("cannot allocate vector of size 9.9 Gb"); tie_b <- suppressMessages(pixel_registry(copy(tie))); .pixel_registry_pass <- .keep_pass
+add3("pixel_registry: on equal file times the fall-back names the same file as the one pass (the original row order breaks the tie; review case)", identical(tie_b$src, pixel_registry_old(copy(tie))$src), tie_b$src)
 add3("pixel_registry: the block-by-block fall-back (a memory error in the one pass) gives the same numbers", same(cmp(rb), cmp(ro)) && nrow(near_duplicate_pairs(rb)) == nrow(near_duplicate_pairs(ro)), sprintf("%d pixels, %d near-duplicate pairs", nrow(rb), nrow(near_duplicate_pairs(rb))))
 add3("drop_rows_without_outcome: nothing to drop -> the same table (no copy), the count attribute 0", { x <- copy(syn); y <- drop_rows_without_outcome(x); identical(attr(y, "rows_dropped_no_outcome"), 0L) && nrow(y) == nrow(x) }, "")
 add3("the design columns can be set on a table that went through the no-copy path (column slots kept)", { x <- drop_rows_without_outcome(resolve_duplicates(copy(syn), say = FALSE)); y <- panel_design_columns_R(x, say = FALSE); all(c("treat", "control", "pre", "post", "did") %in% names(y)) }, "")
@@ -107,11 +110,16 @@ add3("ensure_p_value_R: p = 2 pt(|beta / se|, G - 1) where none was there, the e
 e2 <- ensure_p_value_R(copy(tb)[, p_value := NULL]); add3("ensure_p_value_R: without clusters the normal p", same(e2$p_value, 2 * pnorm(-abs(tb$beta / tb$se))) && all(grepl("^normal", e2$p_how)), "")
 e3 <- ensure_p_value_R(data.table(term = "x", estimate = "0.12 (text)", beta = 0.12, se = 0.04), G = 5L); add3("ensure_p_value_R: a character 'estimate' column is skipped, the numeric beta is used (M21's table)", is.finite(e3$p_value) && grepl("beta / se", e3$p_how), "")
 e4 <- ensure_p_value_R(data.table(a = 1:3)); add3("ensure_p_value_R: a table without an estimate or SE is returned as it is", identical(names(e4), "a"), "")
+e5 <- ensure_p_value_R(data.table(term = c("a", "b"), beta = c(.1, .2), se = c(.05, .05), p_value = c(NA, NA), p_how = factor(c(NA, NA))), G = 4L)
+add3("ensure_p_value_R: a logical-NA p_value column and a factor p_how column (review case) -> numeric p, text p_how", is.double(e5$p_value) && all(is.finite(e5$p_value)) && is.character(e5$p_how) && all(grepl("t with 3 df", e5$p_how)), paste(signif(e5$p_value, 3), collapse = " "))
 # (b) the cross-variable headline file
 hp <- file.path(.T3, "HEADLINES_ALL_VARIABLES_R.csv"); unlink(hp)
 rw <- data.table(model = "M01", outcome = "NDVI", kind = "effect", estimate = 0.05, se = 0.01, p_value = 1e-6, p_how = "t", se_how = "cluster", engine = "fixest", engine_version = "20.59", n_clusters = 8L, n_obs = 1000L)
 headlines_all_R(rw, "_s1", hp); headlines_all_R(copy(rw)[, estimate := 0.06], "_s1", hp); headlines_all_R(copy(rw)[, outcome := "LAI"], "_s1", hp); headlines_all_R(rw, "_s2", hp)
-h <- fread(hp); add3("headlines_all_R: one row per model x outcome x scenario, replaced at every run (3 rows: M01 NDVI _s1 = the latest estimate, M01 LAI _s1, M01 NDVI _s2)", nrow(h) == 3 && h[outcome == "NDVI" & scenario == "_s1", estimate] == 0.06 && all(c("model", "outcome", "scenario", "estimate", "se", "p_value", "p_how", "written") %in% names(h)), paste(names(h), collapse = ","))
+headlines_all_R(copy(rw)[, `:=`(outcome = "EVI", engine_version = "20.60")], "_s1", hp); hl <- readLines(hp)
+add3("headlines_all_R: an engine version '20.60' and the ISO timestamp survive the re-read of the file (review case)", any(grepl(",20.60,", hl)) && all(grepl("T[0-9]{2}:[0-9]{2}:[0-9]{2}$", hl[-1])), "")
+headlines_all_R(copy(rw)[, estimate := 0.06], "_s1", hp)
+h <- fread(hp)[outcome != "EVI"]; add3("headlines_all_R: one row per model x outcome x scenario, replaced at every run (3 rows: M01 NDVI _s1 = the latest estimate, M01 LAI _s1, M01 NDVI _s2)", nrow(h) == 3 && h[outcome == "NDVI" & scenario == "_s1", estimate] == 0.06 && all(c("model", "outcome", "scenario", "estimate", "se", "p_value", "p_how", "written") %in% names(h)), paste(names(h), collapse = ","))
 # (c) the precision report and the float32 guard
 if (HAS_ARROW) {
   vals <- rep(c(0.4123456789, 0.4123456790, 0.4123456791, 0.41, 0, NA), 4)

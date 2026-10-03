@@ -313,13 +313,13 @@ pixel_registry <- function(dt) {
   invisible(gc(FALSE)); blocks <- unique(dt[, .(Year, Season)]); setorder(blocks, Year, Season); parts <- vector("list", nrow(blocks))
   for (b in seq_len(nrow(blocks))) {
     i_ <- which(dt$Year == blocks$Year[b] & dt$Season == blocks$Season[b])
-    d <- data.table(pixel_id = dt$pixel_id[i_], latitude = dt$latitude[i_], longitude = dt$longitude[i_], file_mtime = dt$file_mtime[i_], src_file = dt$src_file[i_], n_ok = n_finite_R(dt[i_, oc, with = FALSE], oc))
-    setorder(d, file_mtime)
-    parts[[b]] <- d[, .(lat_sum = sum(latitude), lon_sum = sum(longitude), mtime = max(file_mtime), n_rows = .N, n_ok = sum(n_ok), src = last(src_file)), by = pixel_id]
+    d <- data.table(pixel_id = dt$pixel_id[i_], latitude = dt$latitude[i_], longitude = dt$longitude[i_], file_mtime = dt$file_mtime[i_], src_file = dt$src_file[i_], n_ok = n_finite_R(dt[i_, oc, with = FALSE], oc), .i = i_)
+    setorder(d, file_mtime, .i)                                                    # the one pass's stable mtime sort: ties by the original row order
+    parts[[b]] <- d[, .(lat_sum = sum(latitude), lon_sum = sum(longitude), mtime = max(file_mtime), n_rows = .N, n_ok = sum(n_ok), src = last(src_file), .i = last(.i)), by = pixel_id]
     if (b %% 5 == 0 || b == nrow(blocks)) info(sprintf("  pixel registry: block %d of %d done", b, nrow(blocks)))
     rm(d, i_); invisible(gc(FALSE))
   }
-  a <- rbindlist(parts); setorder(a, mtime)                                      # the newest block's file name wins, as last() after the mtime sort did
+  a <- rbindlist(parts); setorder(a, mtime, .i)                                  # the newest row's file name wins, ties by the original row order -- exactly as the one pass
   a[, .(lat = sum(lat_sum) / sum(n_rows), lon = sum(lon_sum) / sum(n_rows), mtime = max(mtime), n_rows = sum(n_rows), n_ok = sum(n_ok), src = last(src)), by = pixel_id][
     , completeness := n_ok / pmax(n_rows, 1)][]
 }
@@ -604,7 +604,7 @@ panel_precision_report_R <- function(path = PANEL_PATH, output_dir = OUTPUT_DIR,
   nm <- if (has_pq) names(arrow::open_dataset(path)$schema) else names(fread(src, nrows = 0)); cols <- intersect(cols, nm); if (!length(cols)) return(invisible(NULL))
   types <- if (has_pq) { sch <- arrow::open_dataset(path)$schema; setNames(vapply(cols, function(v) sch$GetFieldByName(v)$type$ToString(), ""), cols) } else setNames(rep("csv text", length(cols)), cols)
   rows <- lapply(cols, function(v) {
-    x <- if (has_pq) as.numeric(arrow::read_parquet(path, col_select = dplyr::all_of(v))[[1]]) else as.numeric(fread(src, select = v)[[1]])
+    x <- if (has_pq) as.numeric(arrow::read_parquet(path, col_select = v)[[1]]) else as.numeric(fread(src, select = v)[[1]])
     fin <- is.finite(x); xf <- x[fin]; u <- sort(unique(xf)); gaps <- diff(u); gaps <- gaps[gaps > 0]
     gmin <- if (length(gaps)) min(gaps) else NA_real_; amax <- if (length(xf)) max(abs(xf)) else 0
     dec <- if (is.finite(gmin) && gmin > 0) as.integer(min(15, max(0, ceiling(round(-log10(gmin), 6))))) else NA_integer_
@@ -845,7 +845,7 @@ run_prep <- function() {
   panel_write(dt)                                                                                 # arrow, else CSV; 3 Oct: written beside, then renamed into place
   .said("panel written")
   .doing("precision report: the smallest difference present per variable, and whether the panel kept it")
-  panel_precision_report_R(verbose = TRUE)                                                        # 3 Oct (your rule: the 8th-10th decimals are data) -> panel_precision_report_R.csv
+  tryCatch(panel_precision_report_R(verbose = TRUE), error = function(e) warn("precision report: ", conditionMessage(e), " (the panel itself is complete)"))   # 3 Oct (your rule: the 8th-10th decimals are data) -> panel_precision_report_R.csv; never fails the build
   .said("precision report written")
   # v20.58: how this panel was built (as Python's panel_build_settings.json) -- load_panel_R says so when a panel's repeated rows filled gaps
   fwrite(data.table(setting = c("engine_policy", "dedup_priority", "dedup_fill_from_duplicates", "dedup_values_filled", "dedup_values_not_used",
