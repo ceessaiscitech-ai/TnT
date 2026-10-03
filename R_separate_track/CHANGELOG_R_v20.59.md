@@ -83,6 +83,18 @@ exports folder, `is_pipeline_product_R` by name, `pool_cap_R`, `FORCE_REBUILD`, 
 counted, the panel built with its precision report, the second run keeps it; at least 12 start and 12 end progress lines).
 `tests/run_all_tests.R quick`: every model and scenario as before. `tests/benchmark_prep_scale.R`: the timings above.
 
+## 3a. `tests/run_all_tests.R` on this code: three expectations were stale since 1 Oct
+
+The full suite had not been re-run after the 1 Oct commits (the USE_ switches, the R_P00 speed-up, and PIXEL_ONE_SITE letting the polygon
+decide a pixel's ring for confirmed rows too). Run on 3 Oct it failed three groups of checks that encode the OLD ring rule, not the library:
+scenario D's OVERLAP_ROWS case (the pixel Haligeri's export calls "core" from 2023 is ring 1 in every year of the panel now -- no ring
+conflict is left for OVERLAP_ROWS to act on; the check now asserts one ring in the panel, drop == keep, no two-ring pixel in
+`panel_pixel_consistency_R.csv`), scenario F's poison test (the three "flipping" pixels are ring-1 CONTROL rows of the panel under that rule,
+so they are data and are no longer poisoned; with PIXEL_ONE_SITE FALSE they leave whole, as before), and scenario E's `pix_switch_off`
+check, added on 1 Oct and never run (a fixed-2022 design was compared with the fund-timing base; it is now compared with the same design
+without the pixel rule, `cluster_block`, and must have more rows than `pix_all`). The de-duplication and the registry were proved
+unchanged against their old bodies before any test was touched (section 3). The known M13 gap (`polars` not installable here) stays.
+
 ## 3b. The adversarial review of the diff (3 Oct) and what it changed
 
 A second reading, set to refute every claim above, held on the numbers (the three rewrites against their old bodies on 16 variants with NA

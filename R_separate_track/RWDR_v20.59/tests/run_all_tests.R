@@ -258,10 +258,17 @@ if (!inherits(tD, "error")) {
   pid_out <- unique(xy_D6[abs(latitude - D$out_pt[["lat"]]) < 1e-6, pixel_id]); rm(xy_D6)
   dk <- dD; dk$overlap_rows <- "keep"; xk <- load_panel_R("NDVI", dk)
   n_drop <- nrow(xs$all[pixel_id %in% pid_flip]); n_keep <- nrow(xk[pixel_id %in% pid_flip]); n_out <- nrow(xs$all[pixel_id %in% pid_out]) + nrow(xk[pixel_id %in% pid_out])
-  add("D", "OVERLAP_ROWS: a pixel whose ring differs between rows leaves whole by default, stays with 'keep' (tag _keepOverlap); the pixel outside every polygon never enters",
-      if (length(pid_flip) == 1 && n_drop == 0 && n_keep > 0 && length(pid_out) >= 1 && n_out == 0 && grepl("_keepOverlap", scenario_tag(dk), fixed = TRUE) &&
-          !grepl("_keepOverlap", scenario_tag(dD), fixed = TRUE)) "PASS" else "FAIL",
-      sprintf("ring-conflict pixel(s) %d: rows under drop %d, keep %d | outside pixel(s) %d: rows %d", length(pid_flip), n_drop, n_keep, length(pid_out), n_out))
+  # 1 Oct (PIXEL_ONE_SITE, your rule: the polygon that holds the point decides the ring, whatever the file carried): the pixel Haligeri's export calls
+  # "core" from 2023 is ring 1 in EVERY year of the panel -- there is no ring conflict left for OVERLAP_ROWS to act on, so drop and keep give the
+  # same rows (none here: the recommended rings are 3-5), and panel_pixel_consistency_R.csv lists no pixel with two rings. (Until 30 Sep the file's
+  # ring stood and the test expected the 7 "core" rows to stay under keep.) The outside pixel still never enters.
+  rings_flip <- sort(unique(panel_read(c("pixel_id", "buff_km"))[pixel_id %in% pid_flip, buff_km]))
+  cons <- tryCatch(fread(file.path(OUTPUT_DIR, "panel_pixel_consistency_R.csv")), error = function(e) NULL)
+  add("D", "OVERLAP_ROWS under PIXEL_ONE_SITE: the pixel the export calls core from 2023 has ONE ring in the panel (the polygon's: ring 1), drop and keep agree on it, 'keep' is tagged _keepOverlap; the pixel outside every polygon never enters",
+      if (length(pid_flip) == 1 && identical(rings_flip, 1L) && n_drop == n_keep && (is.null(cons) || !nrow(cons[rings > 1])) && length(pid_out) >= 1 && n_out == 0 &&
+          grepl("_keepOverlap", scenario_tag(dk), fixed = TRUE) && !grepl("_keepOverlap", scenario_tag(dD), fixed = TRUE)) "PASS" else "FAIL",
+      sprintf("flip pixel(s) %d, ring(s) in the panel %s: rows under drop %d, keep %d | two-ring pixels in the consistency file %s | outside pixel(s) %d: rows %d",
+              length(pid_flip), paste(rings_flip, collapse = ","), n_drop, n_keep, if (is.null(cons)) "no file" else nrow(cons[rings > 1]), length(pid_out), n_out))
   # D7 pooled design: the period fixed effect is sub-watershed x year x season (POOLED_FE = "site_period"), as Python
   add("D", "POOLED_FE = site_period: period FE = sub-watershed x year x season in the pooled panel", if (all(grepl("^[0-9]+_[0-9]{4}_[0-9]$", head(xs$all$period, 50)))) "PASS" else "FAIL", paste(head(unique(xs$all$period), 3), collapse = " "))
   # D8 M01 on the seasons-and-years sample recovers the effect with year x season and pixel x season FE
@@ -388,8 +395,10 @@ if (!inherits(tE, "error")) {
   gb <- if (!is.null(b)) b[, .(mn = min(post), mx = max(post)), by = pixel_id] else NULL
   pp_ <- rd("pix_pp"); ppj <- tryCatch(fromJSON(file.path(od, "pix_pp.json")), error = function(e) NULL); gb <- if (!is.null(pp_)) pp_[, .(mn = min(post), mx = max(post)), by = pixel_id] else NULL
   chkE("pix_pp", "USE_SAME_PIXELS <- TRUE, 'pre_post' (v20.59): every pixel of the sample is observed in pre and post, the folder tagged _pixPP", !is.null(gb) && all(gb$mn == 0L & gb$mx == 1L) && !is.null(ppj$tag) && grepl("_pixPP", ppj$tag, fixed = TRUE), if (is.null(gb)) "no sample" else sprintf("%d pixel(s) on one side only", sum(gb$mn != 0L | gb$mx != 1L)))
-  so_ <- rd("pix_switch_off"); soj <- tryCatch(fromJSON(file.path(od, "pix_switch_off.json")), error = function(e) NULL)
-  chkE("pix_switch_off", "USE_SAME_PIXELS <- FALSE with SAME_PIXELS <- 'all' (1 Oct): NOT applied -- the same rows as base, no _pix tag", !is.null(so_) && nrow(so_) == nrow(b) && !is.null(soj$tag) && !grepl("_pix", soj$tag, fixed = TRUE), if (is.null(so_)) "no sample" else sprintf("%d vs base %d rows | %s", nrow(so_), nrow(b), soj$tag))
+  pa_ <- rd("pix_all"); so_ <- rd("pix_switch_off"); soj <- tryCatch(fromJSON(file.path(od, "pix_switch_off.json")), error = function(e) NULL)
+  chkE("pix_switch_off", "USE_SAME_PIXELS <- FALSE with SAME_PIXELS <- 'all' (1 Oct): NOT applied -- the same rows as the same fixed-2022 design without the rule (cluster_block), more rows than pix_all, no _pix tag",
+       !is.null(so_) && !is.null(cb) && nrow(so_) == nrow(cb) && !is.null(pa_) && nrow(so_) > nrow(pa_) && !is.null(soj$tag) && !grepl("_pix", soj$tag, fixed = TRUE),
+       if (is.null(so_)) "no sample" else sprintf("%d rows vs %d (cluster_block) and %d (pix_all) | %s", nrow(so_), if (is.null(cb)) NA else nrow(cb), if (is.null(pa_)) NA else nrow(pa_), soj$tag))
   pa <- rd("pix_all"); paj <- tryCatch(fromJSON(file.path(od, "pix_all.json")), error = function(e) NULL)
   pc_ <- if (!is.null(pa)) pa[, .(k = uniqueN(paste(Year, Season))), by = pixel_id] else NULL
   chkE("pix_all", "SAME_PIXELS = 'all' (v20.59): every pixel of the sample in every year-season (a balanced pixel set), the folder tagged _pixAll",
@@ -502,7 +511,10 @@ make_F <- function(root, poison, seed = 58L) {
     # ring before the window (2020 = the Rabi 2024 start - PRE_YEARS 4), the annual composite of every ring (SEASONS "seasonal"), the flipping
     # pixels in ALL their rows (a pixel whose ring differs between exports leaves whole), Kodihalli always. The first v20.58 test poisoned only
     # post-period rings 4-5, the core's early years / composite and the flipped "core" rows; a leak elsewhere would have passed it
-    excl <- (bk %in% 4:5) | (y < 2020) | (sc == 0L) | (K$kind == "flip")
+    # 1 Oct (PIXEL_ONE_SITE, your rule): the polygon decides a pixel's ring, whatever the file carried -- the three ring-1 pixels the named files call
+    # "core" from 2023 are ring-1 CONTROL rows of the panel (R_P00 corrects buff_km), so they are DATA and are not poisoned; with PIXEL_ONE_SITE
+    # FALSE (the v20.58 rule) their ring flips and they leave whole, as before
+    excl <- (bk %in% 4:5) | (y < 2020) | (sc == 0L) | (K$kind == "flip" & !isTRUE(get0("PIXEL_ONE_SITE", ifnotfound = TRUE)))
     v <- v + P5 * excl
     ov <- val(O, O$buff_km, 0L) + P5
     named <- rbind(data.table(latitude = lat, longitude = K$longitude, buff_km = bk, v = v, x = as.integer(excl)),
