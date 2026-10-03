@@ -29,6 +29,12 @@ changes; P00 / R_P00 is never re-run for a design choice.
 | `DESIGN_SOURCE` | `"panel"` (default) / `"model"` | estimate on the panel's `treat / post / did` (the exports' Treat flag) or on the design built from the timing settings |
 | `COVARIATES`, `NONNEGATIVE` | see the notebook | the weather covariates; the no-negative-values option |
 
+**`PRE_YEARS` / `POST_YEARS` (Section A), the forms (3 Oct):** `"data"` (the recommendation's window), `"all"`, a count (`4` = the 4 years
+before the start / `2` = the start year + 1), a calendar year (`2015` = the first pre year / `2025` = the last post year), or a LIST of
+calendar years -- `[2015, 2017, 2018, 2019, 2020, 2021]`, `"2015, 2017, 2018"`, `"2015, 2017-2021"` -- which means EXACTLY these years and no
+other on that side of the start (tag `_preY...` / `_postY...`). The start is `TREATMENT_YEAR` (plus one with `EXCLUDE_TRANSITION_YEAR`); a
+listed year on the wrong side of it is refused with the reason.
+
 ## Section B — the control group chosen on the PRE period (your request of 30 Sep) — OFF by default
 
 What it is for: when the estimate is not significant, the usual culprit is a control group that does not move like the treatment area before

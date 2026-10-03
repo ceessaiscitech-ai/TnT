@@ -206,6 +206,26 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
 `control_selection_decide_R` / `record_control_selection_R`, `select_controls_R` (in `load_panel_R`), `reward_outofcore.R`
 `ooc_task_presel`, `ctx$ctrl_sel`; `reward_paths.R` defaults.
 
+## Your requests of 3 Oct — the pre and post years of your choice, and the panel built from a folder named in the first cell
+
+- **`PRE_YEARS` / `POST_YEARS` take a LIST of calendar years.** Your `PRE_YEARS = '2015, 2017, 2018, 2019, 2020, 2021'` was refused
+  (`_year_option` knew counts and single calendar years only). Now a list -- `[2015, 2017, 2018, 2019, 2020, 2021]`, the same as text
+  `"2015, 2017, 2018, 2019, 2020, 2021"`, or with ranges `"2015, 2017-2021"` -- means EXACTLY these pre years enter the estimation (2016
+  leaves); `POST_YEARS = [2023, 2025]` likewise for the post period (a list for one side and `"all"`, a count or a calendar year for the
+  other is fine). The window's bounds follow the list, the rows outside it leave (`year_mask`, in memory and out of core), the sample
+  integrity confirms it, the results folder is tagged `_preY2015.2017-2021` / `_postY2023.2025`, DESIGN IN EFFECT shows `[2015,
+  2017-2021] (exactly these pre years)`, and the lists are saved with the scenario. A year on the wrong side of the start (`PRE_YEARS`
+  listing 2023 with the start in 2022), a word in the list or an empty list are refused with the reason. The configuration file takes the
+  same forms (`PRE_YEARS: [2015, 2017, 2018]` or `"2015, 2017-2021"`); every model notebook's comment names them.
+- **`P00b_Build_Panel_From_Path.ipynb`** (`01_Panel_Preparation`): the panel built from a folder you name in the FIRST cell (`INPUT_DIR`;
+  `OUTPUT_DIR`, workers, force, the fund and crosswalk paths, the readiness steps and the outcomes beside it). One cell per step, in
+  sequence; every step keeps what it produced on the object `B` instead of hiding it -- `B.files`, `B.input_audit`, `B.site_tagging`,
+  `B.registry`, `B.shard_paths`, `B.parse_errors`, `B.dose_table`, `B.manifest`, `B.stats`, `B.validity`, `B.precision_report`,
+  `B.identities`, `B.season_report`, `B.design`, `B.timing_table`, `B.baselines`, `B.screen`, `B.readiness_table`, `B.timings` -- and
+  `B.summary()` lists them all; print any of them between the steps, or run `B.run_all()`. `build_panel.py` is the same class behind the
+  command line (`python build_panel.py --input <folder>`), nothing of its behaviour changed. The R twin stays `build_panel.R input=<folder>`
+  (the R notebook form belongs to the R chat).
+
 ## Your requests of 1-2 Oct — p-values beside every beta and SE, the 8th-10th decimals kept, the PASS B memory fall-back, the R track outside this module
 
 - **p-values for every variable.** Every model already computed a p for its headline (`HEADLINE_<outcome>.csv`); now (1) `save_results`

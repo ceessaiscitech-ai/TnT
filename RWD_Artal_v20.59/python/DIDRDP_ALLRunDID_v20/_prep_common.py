@@ -2302,7 +2302,7 @@ def panel_precision_report(final_path, output_dir=None, columns=None, verbose=Tr
                                   + (f"; {len(lost)} are stored as float32 although their data differ below one float32 step: {lost.variable.tolist()[:6]} -- rebuild with PANEL_FLOAT_DTYPE = 'float64'" if len(lost) else "")
                                   + f" -> {out}")
         for r in tab.itertuples():
-            if r.decimals_needed is not None: info(f"  {r.variable:<8s} {r.stored_dtype:<7s} {r.distinct_values:>12,} distinct | smallest difference {r.smallest_difference:.3g} ({int(r.decimals_needed)} decimals needed)")
+            if r.decimals_needed is not None and pd.notna(r.decimals_needed): info(f"  {r.variable:<8s} {r.stored_dtype:<7s} {r.distinct_values:>12,} distinct | smallest difference {r.smallest_difference:.3g} ({int(r.decimals_needed)} decimals needed)")   # 3 Oct: a variable with one value has no gap (NaN)
         grid = tab[(tab.all_values_float32_representable == True) & (tab.distinct_values > 1000)]      # noqa: E712 -- None-able column
         if len(grid): warn(f"{len(grid)} variable(s) hold ONLY values a float32 number can represent ({grid.variable.tolist()[:8]}): they were rounded to 7 significant "
                            f"digits BEFORE this panel (in the exports themselves, or by an older run's float32 panel read as an input -- see the "

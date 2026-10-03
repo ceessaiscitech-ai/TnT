@@ -1404,7 +1404,7 @@ def _control_selection_key():
     return json.dumps({"k": ACTIVE.get("control_select_k"), "r": ACTIVE.get("control_select_ratio"), "on": ACTIVE.get("control_select_on"), "deg": ACTIVE.get("control_block_deg"),
                        "dn": list(opt("donut_rings") or []), "lu": opt("landuse_keep"), "bn": opt("baseline_ndvi_min"),
                        "z": list(ACTIVE.get("control_zones", ())), "ty": ACTIVE.get("treatment_year"), "pc": ACTIVE.get("post_cutoff"), "t": ACTIVE.get("timing"),
-                       "ds": ACTIVE.get("design_source"), "s": ACTIVE.get("seasons"), "y": [ACTIVE.get("year_min"), ACTIVE.get("year_max")]}, sort_keys=True, default=str)
+                       "ds": ACTIVE.get("design_source"), "s": ACTIVE.get("seasons"), "y": [ACTIVE.get("year_min"), ACTIVE.get("year_max"), ACTIVE.get("pre_year_list"), ACTIVE.get("post_year_list")]}, sort_keys=True, default=str)
 
 def record_control_selection(tab, chosen, outcome, say=True):
     """The decision of this run: kept in ACTIVE (the workers receive it), written beside the results, said once."""
@@ -2300,8 +2300,8 @@ def sample_integrity(frame, control_zones=None, label=None, verbose=True):
     add("the rings of the design", set(rg) <= ({0} | set(int(x) for x in cz)) and 0 in rg and any(r > 0 for r in rg), f"rings in the sample {rg} | design {[0] + sorted(int(x) for x in cz)}")
     if "Year" in d.columns and len(d):
         yr = pd.to_numeric(d["Year"], errors="coerce").values; lo_, hi_ = scenario_years()
-        ok_y = (lo_ is None or yr.min() >= lo_) and (hi_ is None or yr.max() <= hi_) and not np.isin(yr, ACTIVE.get("drop_years") or []).any()
-        add("the years of the design", ok_y, f"years {int(yr.min())}-{int(yr.max())} | window {lo_ or 'start'}-{hi_ or 'end'}")
+        ok_y = (lo_ is None or yr.min() >= lo_) and (hi_ is None or yr.max() <= hi_) and not np.isin(yr, ACTIVE.get("drop_years") or []).any() and year_list_mask(yr).all()
+        add("the years of the design", ok_y, f"years {int(yr.min())}-{int(yr.max())} | window {lo_ or 'start'}-{hi_ or 'end'}" + year_list_tag_text())
     if "Season" in d.columns and len(d):
         sc = season_codes(seasons_mode(verbose=False)); ss = sorted(int(x) for x in pd.unique(d["Season"]))
         add("the seasons of the design", sc is None or set(ss) <= set(sc), f"seasons {[SEASON_LABEL.get(x, x) for x in ss]} | {seasons_mode(verbose=False)}")
@@ -3608,6 +3608,7 @@ ACTIVE = {"control_zones": tuple(DEFAULT_CONTROL_ZONES), "treatment_year": TREAT
           "post_cutoff": POST_CUTOFF, "exclude_transition_year": EXCLUDE_TRANSITION_YEAR,
           # v20.2 -- how many YEARS enter the estimation. None = every year present in the panel.
           "pre_years": None, "post_years": None, "year_min": None, "year_max": None,
+          "pre_year_list": None, "post_year_list": None,   # 3 Oct (your rule): EXACTLY these calendar years form the pre / post period (PRE_YEARS = [2015, 2017, ...])
           # v20.3: staggered models take their cohorts from the panel's first_treat_agri_year (P05, fund file).
           # cohort_offset shifts EVERY cohort by N years, so "shift the timing" also works for those designs.
           "cohort_offset": 0,
@@ -3780,9 +3781,9 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
         ACTIVE["seasons_setting"] = seasons if isinstance(seasons, str) else list(seasons)
     ACTIVE["data_keys"] = sorted(_dk)
     if _is_data(pre_years) or _is_all(pre_years):                 # "data" -> resolve_design; "all" -> every year before
-        ACTIVE["pre_years"] = None; ACTIVE["year_min"] = None; pre_years = None
+        ACTIVE["pre_years"] = None; ACTIVE["year_min"] = None; ACTIVE["pre_year_list"] = None; pre_years = None
     if _is_data(post_years) or _is_all(post_years):
-        ACTIVE["post_years"] = None; ACTIVE["year_max"] = None; post_years = None
+        ACTIVE["post_years"] = None; ACTIVE["year_max"] = None; ACTIVE["post_year_list"] = None; post_years = None
     if design_mode is not None:
         _m = str(design_mode).strip().lower()
         if _m not in ("recommended", "manual"): raise InsufficientDataError(f"design_mode must be 'recommended' or 'manual' (got {design_mode!r})")
@@ -3956,22 +3957,36 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
         o_ = str(overlap_rows).strip().lower()
         if o_ not in ("drop", "keep"): raise InsufficientDataError(f"overlap_rows must be 'drop' or 'keep' (got {overlap_rows!r})")
         ACTIVE["overlap_rows"] = o_
-    if all_years: ACTIVE.update({"pre_years": None, "post_years": None, "year_min": None, "year_max": None, "drop_years": []})
+    if all_years: ACTIVE.update({"pre_years": None, "post_years": None, "year_min": None, "year_max": None, "pre_year_list": None, "post_year_list": None, "drop_years": []})
     # v20.59: PRE_YEARS / POST_YEARS take a NUMBER OF YEARS (4 = the 4 years before / from the start) OR a CALENDAR YEAR (2015 = the first pre
     # year, 2025 = the last post year). v20.58 read every number as a count (R too): PRE_YEARS = 2022 became year_min = 2022 - 2022 = 0.
+    # 3 Oct (your rule): OR a LIST of calendar years -- PRE_YEARS = [2015, 2017, 2018, 2019, 2020, 2021] (or "2015, 2017-2021") means EXACTLY these
+    # pre years enter the estimation (2016 leaves); POST_YEARS = [2023, 2025] likewise for the post period. The window's bounds follow the list.
     if pre_years is not None:
-        _n = _year_option("PRE_YEARS", pre_years)
-        if _n >= 1900: ACTIVE.update({"year_min": _n, "pre_years": None}); _EXPLICIT_KEYS.add("year_min")
-        else: ACTIVE.update({"pre_years": _n, "year_min": None})
+        _yl = _year_list_option("PRE_YEARS", pre_years)
+        if _yl is not None: ACTIVE.update({"pre_year_list": _yl, "year_min": _yl[0], "pre_years": None}); _EXPLICIT_KEYS.update({"year_min", "pre_year_list"})
+        else:
+            ACTIVE["pre_year_list"] = None; _n = _year_option("PRE_YEARS", pre_years)
+            if _n >= 1900: ACTIVE.update({"year_min": _n, "pre_years": None}); _EXPLICIT_KEYS.add("year_min")
+            else: ACTIVE.update({"pre_years": _n, "year_min": None})
     if post_years is not None:
-        _n = _year_option("POST_YEARS", post_years)
-        if _n >= 1900: ACTIVE.update({"year_max": _n, "post_years": None}); _EXPLICIT_KEYS.add("year_max")
-        else: ACTIVE.update({"post_years": _n, "year_max": None})
+        _yl = _year_list_option("POST_YEARS", post_years)
+        if _yl is not None: ACTIVE.update({"post_year_list": _yl, "year_max": _yl[-1], "post_years": None}); _EXPLICIT_KEYS.update({"year_max", "post_year_list"})
+        else:
+            ACTIVE["post_year_list"] = None; _n = _year_option("POST_YEARS", post_years)
+            if _n >= 1900: ACTIVE.update({"year_max": _n, "post_years": None}); _EXPLICIT_KEYS.add("year_max")
+            else: ACTIVE.update({"post_years": _n, "year_max": None})
     if year_min is not None: ACTIVE.update({"year_min": int(year_min), "pre_years": None})
     if year_max is not None: ACTIVE.update({"year_max": int(year_max), "post_years": None})
     lo, hi = scenario_years()
     if lo is not None and hi is not None and lo > hi:
         raise InsufficientDataError(f"the year window is empty ({lo} > {hi}): check pre_years / post_years / year_min / year_max")
+    _cut = int(ACTIVE["post_cutoff"])
+    if ACTIVE.get("pre_year_list") and any(y >= _cut for y in ACTIVE["pre_year_list"]):
+        raise InsufficientDataError(f"PRE_YEARS lists {[y for y in ACTIVE['pre_year_list'] if y >= _cut]}, which is not before the start {_cut} (TREATMENT_YEAR"
+                                    f"{' + the transition year' if ACTIVE.get('exclude_transition_year') else ''}): the pre list may hold years before {_cut} only")
+    if ACTIVE.get("post_year_list") and any(y < _cut for y in ACTIVE["post_year_list"]):
+        raise InsufficientDataError(f"POST_YEARS lists {[y for y in ACTIVE['post_year_list'] if y < _cut]}, which is before the start {_cut}: the post list may hold years from {_cut} on only")
     if hi is not None and hi < int(ACTIVE["post_cutoff"]):
         warn(f"the window ends at {hi}, before the post cutoff {ACTIVE['post_cutoff']}: there would be no POST period")
     if lo is not None and lo >= int(ACTIVE["post_cutoff"]):
@@ -3991,24 +4006,65 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
              "results go to the scenario sub-folder so runs never overwrite each other")
     return dict(ACTIVE)
 
+def _year_list_option(name, v):
+    """3 Oct (your rule): PRE_YEARS / POST_YEARS as a LIST of calendar years -- exactly these years form the period, the others leave the sample.
+    Accepted: a list / tuple / set / range / array of years ([2015, 2017, 2018]); text with commas, semicolons or spaces ("2015, 2017, 2018, 2019,
+    2020, 2021"), ranges ("2015-2021", "2015, 2017-2021"). None when `v` is not a list (a single number or word takes the other forms)."""
+    import re as _re
+    yrs = None
+    if isinstance(v, (list, tuple, set, frozenset, range, np.ndarray, pd.Series, pd.Index)):
+        yrs = [x for x in (list(v) if not isinstance(v, (pd.Series, pd.Index)) else v.tolist())]
+    elif isinstance(v, str):
+        t = v.strip()
+        if _re.search(r"[,; ]", t) or _re.fullmatch(r"\s*\d{4}\s*-\s*\d{4}\s*", t):
+            yrs = []
+            for tok in [x for x in _re.split(r"[,;\s]+", t) if x]:
+                m = _re.fullmatch(r"(\d{4})\s*-\s*(\d{4})", tok)
+                if m: a_, b_ = int(m.group(1)), int(m.group(2)); yrs.extend(range(min(a_, b_), max(a_, b_) + 1))
+                else: yrs.append(tok)
+        else: return None
+    else: return None
+    out = []
+    for x in yrs:
+        try: n = int(x)
+        except Exception:
+            raise InsufficientDataError(f"{name}: every entry of the list must be a calendar year (1900-2100) -- got {x!r} in {v!r}")
+        if not (1900 <= n <= 2100) or (isinstance(x, float) and x != n):
+            raise InsufficientDataError(f"{name}: every entry of the list must be a calendar year (1900-2100) -- got {x!r} in {v!r}")
+        out.append(n)
+    if not out: raise InsufficientDataError(f"{name}: the list of years is empty ({v!r})")
+    return sorted(set(out))
+
+def year_list_text(years):
+    """[2015, 2017, 2018, 2019, 2020, 2021] -> '2015, 2017-2021' (runs of consecutive years as ranges)."""
+    ys = sorted(set(int(y) for y in (years or []))); runs = []
+    for y in ys:
+        if runs and y == runs[-1][1] + 1: runs[-1][1] = y
+        else: runs.append([y, y])
+    return ", ".join(f"{a}-{b}" if b > a else f"{a}" for a, b in runs)
+
 def _year_option(name, v):
     """v20.59: PRE_YEARS / POST_YEARS as an integer -- a count of years (1..200) or a calendar year (1900..2100); anything else is refused."""
     try:
         n = int(v)
     except Exception:
-        raise InsufficientDataError(f"{name} must be 'data', 'all', a number of years (e.g. 4) or a calendar year (e.g. "
-                                    f"{'2015 = the FIRST pre year' if name == 'PRE_YEARS' else '2025 = the LAST post year'}) -- got {v!r}")
+        raise InsufficientDataError(f"{name} must be 'data', 'all', a number of years (e.g. 4), a calendar year (e.g. "
+                                    f"{'2015 = the FIRST pre year' if name == 'PRE_YEARS' else '2025 = the LAST post year'}) or a LIST of calendar years "
+                                    "(e.g. " + ("[2015, 2017, 2018] or '2015, 2017-2021'" if name == "PRE_YEARS" else "[2023, 2025] or '2023, 2025'") + f") -- got {v!r}")
     if n < 1 or (200 < n < 1900) or n > 2100:
-        raise InsufficientDataError(f"{name} must be 'data', 'all', a number of years (e.g. 4) or a calendar year (e.g. "
-                                    f"{'2015 = the FIRST pre year' if name == 'PRE_YEARS' else '2025 = the LAST post year'}) -- got {v!r}")
+        raise InsufficientDataError(f"{name} must be 'data', 'all', a number of years (e.g. 4), a calendar year (e.g. "
+                                    f"{'2015 = the FIRST pre year' if name == 'PRE_YEARS' else '2025 = the LAST post year'}) or a LIST of calendar years "
+                                    "(e.g. " + ("[2015, 2017, 2018] or '2015, 2017-2021'" if name == "PRE_YEARS" else "[2023, 2025] or '2023, 2025'") + f") -- got {v!r}")
     return n
 
 def year_window_setting_text(scn=None):
     """v20.59: PRE_YEARS / POST_YEARS as set, in words (for DESIGN IN EFFECT): (pre_text, post_text)."""
     a = scn or ACTIVE; dk = set(a.get("data_keys") or [])
-    pre = ("data" if "pre_years" in dk else f"{a['pre_years']} (years before the start)" if a.get("pre_years") is not None
+    pre = ("data" if "pre_years" in dk else f"[{year_list_text(a['pre_year_list'])}] (exactly these pre years)" if a.get("pre_year_list")
+           else f"{a['pre_years']} (years before the start)" if a.get("pre_years") is not None
            else f"{a['year_min']} (calendar year)" if a.get("year_min") is not None else "all")
-    post = ("data" if "post_years" in dk else f"{a['post_years']} (years from the start)" if a.get("post_years") is not None
+    post = ("data" if "post_years" in dk else f"[{year_list_text(a['post_year_list'])}] (exactly these post years)" if a.get("post_year_list")
+            else f"{a['post_years']} (years from the start)" if a.get("post_years") is not None
             else f"{a['year_max']} (calendar year)" if a.get("year_max") is not None else "all")
     return pre, post
 
@@ -4047,6 +4103,17 @@ def year_mask(years, scn=None):
     if hi is not None: m &= (y <= hi).values
     _dy = (scn or ACTIVE).get("drop_years") or []
     if _dy: m &= ~y.isin([int(v) for v in _dy]).values
+    m &= year_list_mask(y.values, scn)                                                      # 3 Oct: the explicit pre / post year lists
+    return m
+
+def year_list_mask(years, scn=None):
+    """3 Oct: rows whose Year is in the explicit pre list (years before the start) / post list (years from the start on), when one is set."""
+    a = scn or ACTIVE; pl, pu = a.get("pre_year_list"), a.get("post_year_list")
+    y = np.asarray(years, dtype=float); m = np.ones(len(y), dtype=bool)
+    if not pl and not pu: return m
+    cut = int(a["post_cutoff"])
+    if pl: m &= ~((y < cut) & ~np.isin(y, [int(v) for v in pl]))
+    if pu: m &= ~((y >= cut) & ~np.isin(y, [int(v) for v in pu]))
     return m
 
 _SEASON_SCAN = {}
@@ -4220,7 +4287,7 @@ def season_rows(t_or_seasons):
     return np.isin(s, sorted(codes))
 
 def has_year_window(scn=None):
-    return scenario_years(scn) != (None, None) or bool((scn or ACTIVE).get("drop_years"))
+    return scenario_years(scn) != (None, None) or bool((scn or ACTIVE).get("drop_years")) or bool((scn or ACTIVE).get("pre_year_list")) or bool((scn or ACTIVE).get("post_year_list"))
 
 def _fund_rule_tag(a=None):
     """'' for the default back-cast start, else the rule (the results of another start rule get their own folder)."""
@@ -4293,13 +4360,21 @@ def scenario_tag(scn=None):
     lo, hi = scenario_years(a)
     if lo is not None or hi is not None:
         t += f"_yr{lo if lo is not None else 'start'}-{hi if hi is not None else 'end'}"
+    if a.get("pre_year_list"): t += "_preY" + year_list_text(a["pre_year_list"]).replace(", ", ".").replace(" ", "")     # 3 Oct: exactly these pre years
+    if a.get("post_year_list"): t += "_postY" + year_list_text(a["post_year_list"]).replace(", ", ".").replace(" ", "")
+    return t
+
+def year_list_tag_text(scn=None):
+    a = scn or ACTIVE; t = ""
+    if a.get("pre_year_list"): t += f" | pre years exactly {year_list_text(a['pre_year_list'])}"
+    if a.get("post_year_list"): t += f" | post years exactly {year_list_text(a['post_year_list'])}"
     return t
 
 _EXPLICIT_KEYS = set()     # v20.34: scenario keys the notebook's CELL 1 set explicitly (they win)
 PANEL_SCENARIO_OVERRIDES_CELL1 = False   # v20.34: False = CELL 1 wins (default). True = the saved panel scenario is
                                          # FORCED on every notebook (the pre-v20.34 behaviour; used by the model gate)
 SCENARIO_KEYS = ("control_zones", "treatment_year", "post_cutoff", "exclude_transition_year",
-                 "pre_years", "post_years", "year_min", "year_max", "cohort_offset", "seasons",
+                 "pre_years", "post_years", "year_min", "year_max", "pre_year_list", "post_year_list", "cohort_offset", "seasons",   # 3 Oct: the explicit year lists
                  "site_years", "use_site_years", "cluster", "pooled_fe", "unit_fe",
                  "nonnegative", "nonnegative_mode", "nonnegative_scope", "overlap_rows",   # v20.30: covariates are per model; v20.55: overlap_rows
                  "timing", "site_start",                                                     # v20.57: the fund / registry / fixed timing
@@ -4754,7 +4829,7 @@ def _design_key(frame_sites=None):
     k = {x: ACTIVE.get(x) for x in keys}
     dk = set(ACTIVE.get("data_keys") or [])
     if "control_zones" not in dk: k["control_zones"] = list(ACTIVE["control_zones"])
-    for x in ("pre_years", "post_years", "year_min", "year_max"):
+    for x in ("pre_years", "post_years", "year_min", "year_max", "pre_year_list", "post_year_list"):   # 3 Oct: the explicit year lists
         if not (dk & {"pre_years", "post_years"}): k[x] = ACTIVE.get(x)
     k["panel"] = _panel_identity(); k["fund"] = _F.file_identity(_fund_path()) if _fund_path() else None
     k["sites"] = _site_list(); k["frame_sites"] = frame_sites
@@ -4890,8 +4965,8 @@ def resolve_design(verbose=True, force=False, frame=None):
         notes.append(f"POST_YEARS = {_dhi} leaves NO year from the start {_base_} on (a calendar year before it): every year from the start is used "
                      f"instead. Set POST_YEARS to the LAST post year (e.g. {_base_ + 3}), to a number of years from the start (e.g. 2) or 'all'")
         _how_hi = f"POST_YEARS {_dhi} is before the start {_base_} -> every year from it"
-    ch("PRE_YEARS", _pre_txt, f"from {lo_}" if lo_ is not None else "every year before the start", src_d if "pre_years" in dk else _how_lo)
-    ch("POST_YEARS", _post_txt, f"to {hi_}" if hi_ is not None else "every year from the start", src_d if "post_years" in dk else _how_hi)
+    ch("PRE_YEARS", _pre_txt, f"exactly {year_list_text(ACTIVE['pre_year_list'])}" if ACTIVE.get("pre_year_list") else f"from {lo_}" if lo_ is not None else "every year before the start", src_d if "pre_years" in dk else _how_lo)
+    ch("POST_YEARS", _post_txt, f"exactly {year_list_text(ACTIVE['post_year_list'])}" if ACTIVE.get("post_year_list") else f"to {hi_}" if hi_ is not None else "every year from the start", src_d if "post_years" in dk else _how_hi)
     if ACTIVE.get("drop_years"):
         ch("  years left out", "(from PRE_YEARS / POST_YEARS = data)", ACTIVE["drop_years"], "fill years of the data-driven window (not data)")
     ch("SEASONS", ACTIVE.get("seasons_setting"), ACTIVE.get("seasons"), src_d if "seasons" in dk else "your setting")

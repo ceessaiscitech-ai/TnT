@@ -72,7 +72,7 @@ def _integrity_part(d):
     if "Year" in d.columns and len(d):
         yr = _num(d["Year"]).values
         r["ymin"], r["ymax"] = float(yr.min()), float(yr.max())
-        r["ydrop"] = bool(np.isin(yr, C.ACTIVE.get("drop_years") or []).any())
+        r["ydrop"] = bool(np.isin(yr, C.ACTIVE.get("drop_years") or []).any()) or not bool(C.year_list_mask(yr).all())   # 3 Oct: the explicit year lists
     if "Season" in d.columns and len(d): r["ss"] = sorted(int(x) for x in pd.unique(d["Season"]))
     r["pixels"] = int(d["pixel_id"].nunique()) if "pixel_id" in d.columns else 0
     _spx = C.opt("same_pixels")                                                                           # v20.59: pixel partitions -- a pixel's rows are
@@ -119,7 +119,7 @@ def integrity_final(parts, control_zones=None, label=None, verbose=True):
         ymin = min(p["ymin"] for p in parts if "ymin" in p); ymax = max(p["ymax"] for p in parts if "ymax" in p)
         lo_, hi_ = C.scenario_years()
         ok_y = (lo_ is None or ymin >= lo_) and (hi_ is None or ymax <= hi_) and not any(p.get("ydrop") for p in parts)
-        add("the years of the design", ok_y, f"years {int(ymin)}-{int(ymax)} | window {lo_ or 'start'}-{hi_ or 'end'}")
+        add("the years of the design", ok_y, f"years {int(ymin)}-{int(ymax)} | window {lo_ or 'start'}-{hi_ or 'end'}" + C.year_list_tag_text())
     ss = sorted(set().union(*[set(p.get("ss", [])) for p in parts])) if parts else []
     if "Season" in cols and n:
         sc = C.season_codes(C.seasons_mode(verbose=False))

@@ -2379,6 +2379,26 @@ def check_v20_59():
             except _C.InsufficientDataError: pass
         _C.set_scenario(pre_years="all", post_years="all", verbose=False)
         if "_year_option(" not in _i.getsource(_C.set_scenario): bad("set_scenario does not read PRE_YEARS / POST_YEARS as counts OR calendar years")
+        # 3 Oct (your rule): PRE_YEARS / POST_YEARS as a LIST of calendar years -- exactly these years, the others leave
+        _C.set_scenario(timing="fixed", treatment_year=2022, pre_years="2015, 2017, 2018, 2019, 2020, 2021", post_years=[2023, 2025], verbose=False)
+        _yk = [int(y) for y in _np.arange(2013, 2027)[_C.year_mask(_np.arange(2013, 2027))]]
+        if _C.ACTIVE.get("pre_year_list") != [2015, 2017, 2018, 2019, 2020, 2021] or _C.ACTIVE.get("post_year_list") != [2023, 2025] or _C.scenario_years() != (2015, 2025):
+            bad(f"the year lists are not read: {_C.ACTIVE.get('pre_year_list')} / {_C.ACTIVE.get('post_year_list')} / {_C.scenario_years()}")
+        if _yk != [2015, 2017, 2018, 2019, 2020, 2021, 2023, 2025]: bad(f"year_mask with the lists keeps {_yk}")
+        if "_preY2015.2017-2021" not in _C.scenario_tag() or "_postY2023.2025" not in _C.scenario_tag(): bad(f"the year lists are not in the tag: {_C.scenario_tag()}")
+        if _C.year_window_setting_text()[0] != "[2015, 2017-2021] (exactly these pre years)": bad(f"DESIGN IN EFFECT text for a pre list: {_C.year_window_setting_text()}")
+        _C.set_scenario(pre_years=[2016, 2018], post_years="2023-2025", verbose=False)
+        if _C.ACTIVE.get("post_year_list") != [2023, 2024, 2025] or _C.ACTIVE.get("pre_year_list") != [2016, 2018]: bad("a year RANGE in the list is not expanded")
+        for v in ([2015, 2023], "2015, text", [], "2023, 2025"):
+            try: _C.set_scenario(pre_years=v, verbose=False); bad(f"PRE_YEARS = {v!r} was accepted as a pre list (a year at or after the start, a word, an empty list)")
+            except _C.InsufficientDataError: pass
+        _C.set_scenario(pre_years="all", post_years="all", verbose=False)
+        if _C.ACTIVE.get("pre_year_list") is not None or _C.ACTIVE.get("post_year_list") is not None or "_preY" in _C.scenario_tag(): bad("'all' does not clear the year lists")
+        if not all(k in _C.SCENARIO_KEYS for k in ("pre_year_list", "post_year_list")): bad("the year lists are not saved with the scenario")
+        if "year_list_mask" not in open(os.path.join(HERE, "_ooc_models.py"), encoding="utf-8").read(): bad("the out-of-core integrity does not check the year lists")
+        _nb_ = [os.path.basename(f_) for f_ in _g.glob(os.path.join(HERE, "0[2-5]_*", "M*.ipynb")) if "EXACTLY these pre years" not in open(f_, encoding="utf-8").read()]
+        if _nb_: bad(f"model notebooks whose PRE_YEARS comment lacks the list form: {_nb_[:5]}")
+        note("PRE_YEARS / POST_YEARS as a LIST of calendar years (3 Oct): exactly these years enter, the tag says _preY / _postY, a year on the wrong side of the start is refused")
         note("PRE_YEARS / POST_YEARS: a number of years OR a calendar year; a bound that leaves no year on its side of the start is said and set aside (never 'from 0')")
         # 2 the panel's DiD columns from the exports' flag (P00)
         for c in ("treat", "did", "post", "pre", "control", "treatment", "did_term"):

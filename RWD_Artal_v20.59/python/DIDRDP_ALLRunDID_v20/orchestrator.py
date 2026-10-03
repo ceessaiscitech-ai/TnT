@@ -51,16 +51,22 @@ def validate_config(cfg):
     if str(cfg["DESIGN_SOURCE"]).lower() not in ("panel", "model"): bad.append("DESIGN_SOURCE: panel | model")
     for k in ("PRE_YEARS", "POST_YEARS"):
         v = cfg[k]
-        if not (v is None or (isinstance(v, str) and v.lower() in ("data", "all")) or (isinstance(v, (int, float)) and not isinstance(v, bool) and v >= 1)): bad.append(f"{k}: data | all | a count of years | a calendar year")
+        if not (v is None or (isinstance(v, str) and (v.lower() in ("data", "all") or _year_list_text(v))) or (isinstance(v, (list, tuple)) and v and all(isinstance(x, int) and 1900 <= x <= 2100 for x in v))
+                or (isinstance(v, (int, float)) and not isinstance(v, bool) and v >= 1)): bad.append(f"{k}: data | all | a count of years | the first / last calendar year | a list of calendar years, e.g. [2015, 2017, 2018] or '2015, 2017-2021'")
     unknown = [s for s in cfg["REPORT_SPECS"] if s not in ("canonical", "donut", "matched", "synthetic_did", "surrogate_index")]
     if unknown: bad.append(f"REPORT_SPECS unknown: {unknown}")
     if bad: raise C.InsufficientDataError("configuration refused: " + "; ".join(bad))
     return cfg
 
+def _year_list_text(v):
+    """3 Oct: '2015, 2017, 2018' / '2015-2021' / '2015, 2017-2021' -- a list of calendar years written as text (the engine parses it)."""
+    import re as _re
+    return isinstance(v, str) and bool(_re.fullmatch(r"\s*(19|20)\d\d(\s*-\s*(19|20)\d\d)?(\s*[,; ]\s*(19|20)\d\d(\s*-\s*(19|20)\d\d)?)+\s*|\s*(19|20)\d\d\s*-\s*(19|20)\d\d\s*", v))
+
 def scenario_kwargs(cfg, spec="config"):
     """The engine's set_scenario arguments for a spec of the report; 'config' = the configuration as it stands."""
     method, k = METHODS[str(cfg["CONTROL_SELECTION_METHOD"]).lower()]
-    yrs = lambda v: "all" if v is None else (v.lower() if isinstance(v, str) else int(v))
+    yrs = lambda v: "all" if v is None else (list(v) if isinstance(v, (list, tuple)) else (v if (isinstance(v, str) and _year_list_text(v)) else v.lower() if isinstance(v, str) else int(v)))   # 3 Oct: a LIST of calendar years passes through
     kw = dict(timing=cfg["TREATMENT_TIMING"], treatment_year=int(cfg["TREATMENT_YEAR"]), pre_years=yrs(cfg["PRE_YEARS"]), post_years=yrs(cfg["POST_YEARS"]), design_source=cfg["DESIGN_SOURCE"], exclude_transition_year=bool(cfg["EXCLUDE_TRANSITION_YEAR"]),
               outcome_screen=cfg["OUTCOME_SCREEN"], exclude_gapfilled=bool(cfg["EXCLUDE_GAPFILLED"]), covariates=(list(cfg["COVARIATES"]) if cfg["COVARIATES"] else "none"),
               control_zones=(cfg["CONTROL_RINGS"] if isinstance(cfg["CONTROL_RINGS"], str) else tuple(int(x) for x in cfg["CONTROL_RINGS"])),

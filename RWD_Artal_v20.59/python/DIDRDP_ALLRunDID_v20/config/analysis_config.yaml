@@ -24,8 +24,8 @@ USE_PRECISION_TOLERANCE: false   # true = PRECISION_TOLERANCE above is the no-da
 USE_DROP_SINGLETONS: false       # true = series seen once leave before the demeaning (the pre-flight)
 TREATMENT_TIMING: fixed          # fund | registry | fixed
 TREATMENT_YEAR: 2022
-PRE_YEARS: data                  # data (the recommendation's window) | all | a count of pre years | the first calendar year
-POST_YEARS: data                 # data | all | a count of post years | the last calendar year
+PRE_YEARS: data                  # data (the recommendation's window) | all | a count of pre years | the first calendar year | a list: [2015, 2017, 2018] or "2015, 2017-2021" (exactly these)
+POST_YEARS: data                 # data | all | a count of post years | the last calendar year | a list: [2023, 2025] (exactly these)
 DESIGN_SOURCE: model             # panel (the panel's post / pre / did are estimated on) | model (the timing above builds them)
 EXCLUDE_TRANSITION_YEAR: false
 OUTCOME_SCREEN: drop             # drop | keep | off

@@ -141,6 +141,8 @@ VARIANTS = {
     "pre4_post2":             {"PRE_YEARS": 4, "POST_YEARS": 2},
     "pre2018_post2024":       {"PRE_YEARS": 2018, "POST_YEARS": 2024},                                     # v20.59: calendar years
     "pre_at_start_2022":      {"TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022, "PRE_YEARS": 2022},   # v20.59: no pre year -> every year before the start, said
+    "pre_list_post_list":     {"TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022, "PRE_YEARS": [2015, 2018, 2019, 2020, 2021], "POST_YEARS": [2023, 2025]},   # 3 Oct (your rule): EXACTLY these years
+    "pre_list_text":          {"TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022, "PRE_YEARS": "2015, 2018-2021", "POST_YEARS": "all"},                     # 3 Oct: the same list written as text
     "screen_keep":            {"OUTCOME_SCREEN": "keep"},                                                  # v20.59: the fill year kept, tagged _screenKept
     "design_panel":           {"DESIGN_SOURCE": "panel"},                                                  # v20.59: the PANEL's post (2022) estimated on, not the fund timing
     "design_panel_fixed_2023": {"DESIGN_SOURCE": "panel", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2023},   # v20.59: the panel's 2022 wins over TREATMENT_YEAR 2023
@@ -355,7 +357,14 @@ def expect(panel, name, o, py, meta, full):
     rec(panel, name, "seasons = the choice", sea == want_s, f"used {sorted(sea)}, setting {o['SEASONS']}")
     yrs = sorted(py.Year.unique())
     base_y = min(v[0] for v in meta["site_start"].values()) if meta["site_start"] else (min(meta["site_years"].values()) if meta["site_years"] else int(o["TREATMENT_YEAR"]))
-    if isinstance(o["PRE_YEARS"], int) and o["PRE_YEARS"] >= 1900:                 # v20.59: a CALENDAR year = the first pre year (a year at /
+    if isinstance(o["PRE_YEARS"], (list, tuple)) or (isinstance(o["PRE_YEARS"], str) and "," in o["PRE_YEARS"]):   # 3 Oct: a LIST of calendar years = exactly these
+        import re as _re
+        _pl = list(o["PRE_YEARS"]) if isinstance(o["PRE_YEARS"], (list, tuple)) else [y for tok in _re.split(r"[,;\s]+", o["PRE_YEARS"].strip()) if tok for y in (range(int(tok.split("-")[0]), int(tok.split("-")[1]) + 1) if "-" in tok else [int(tok)])]
+        _po = list(o["POST_YEARS"]) if isinstance(o["POST_YEARS"], (list, tuple)) else [y for y in range(2022, 2026)]
+        want_y = set(int(y) for y in _pl) | set(int(y) for y in _po)
+        rec(panel, name, "years = EXACTLY the listed pre years (and the listed post years, or every year from the start): the others leave; the folder tagged _preY / _postY",
+            set(yrs) == want_y and "_preY" in meta["tag"] and (("_postY" in meta["tag"]) == isinstance(o["POST_YEARS"], (list, tuple))), f"{yrs} (want {sorted(want_y)}); tag {meta['tag']}")
+    elif isinstance(o["PRE_YEARS"], int) and o["PRE_YEARS"] >= 1900:               # v20.59: a CALENDAR year = the first pre year (a year at /
         lo = o["PRE_YEARS"] if o["PRE_YEARS"] < base_y else 2015                     #   after the start leaves no pre year: every year before it)
         hi = o["POST_YEARS"] if isinstance(o["POST_YEARS"], int) and o["POST_YEARS"] >= 1900 else 2025
         rec(panel, name, "years = the calendar years PRE_YEARS / POST_YEARS (a bound at / after the start -> every year before it, said)",
