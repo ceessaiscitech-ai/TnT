@@ -219,6 +219,7 @@ run_prep_ooc <- function(files, t0 = Sys.time(), why = "") {
     sites_all <- unique(c(sites_all, unlist(lapply(p2[ks], `[[`, "sites")))); for (k in ks) unlink(p2[[k]]$file)
   }
   if (!is.null(writer)) { writer$Close(); sink$close() }
+  if (exists("panel_precision_report_R", mode = "function")) tryCatch(panel_precision_report_R(verbose = TRUE), error = function(e) warn("precision report: ", conditionMessage(e)))   # 3 Oct
   if (!HAS_ARROW) info("arrow is not installed: the panel is written as ", panel_file(), " (install arrow: faster and smaller)")
   fwrite(data.table(setting = c("engine_policy", "dedup_priority", "dedup_fill_from_duplicates", "dedup_values_filled", "dedup_values_not_used",
                                 "near_duplicate_pixels", "pixel_overlap_min", "period_rule", "period_rows_dropped", "written"),

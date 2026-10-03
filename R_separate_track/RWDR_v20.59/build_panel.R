@@ -21,7 +21,7 @@ cat("[INFO]    exports:", ROOT, "| output:", OUTPUT_DIR, "| threads:", N_THREADS
 invisible(confirm_packages())
 t0 <- Sys.time()
 if (!isTRUE(as.logical(opt$force %||% "FALSE")) && file.exists(PANEL_PATH) && exists("panel_is_valid_R", mode = "function") && isTRUE(tryCatch(panel_is_valid_R(), error = function(e) FALSE))) {
-  ok(sprintf("a valid panel is already there: %s (force=TRUE rebuilds it)", PANEL_PATH))
+  ok(sprintf("a valid panel is already there: %s (force=TRUE rebuilds it)", PANEL_PATH)); panel_precision_report_R(verbose = TRUE)   # 3 Oct: the report in both branches (as build_panel.py)
 } else panel <- run_prep()
 design <- prepare_design(); str(design[setdiff(names(design), c("choices", "notes"))])      # the design the defaults give (every optional customisation OFF)
 if (!identical(tolower(opt$screen %||% "TRUE"), "false")) {

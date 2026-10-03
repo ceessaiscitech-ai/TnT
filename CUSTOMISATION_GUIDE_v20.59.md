@@ -86,6 +86,13 @@ on disk with float32 outcomes is rebuilt once by P00 / `build_panel.py`. Every r
 `p_how`: t with clusters - 1 df when the row knows its clusters, else normal); `results/HEADLINES_ALL_VARIABLES.csv` collects beta, SE and p of
 every variable and model of the run.
 
+**R (3 Oct).** R stores doubles end to end, so there is no `PANEL_FLOAT_DTYPE`; `output/panel_precision_report_R.csv` (R_P00, `build_panel.R`)
+has the same columns as the Python report and proves it, and `all_values_float32_representable` flags a rounding that happened before the
+panel. `panel_is_valid_R` rejects a float32 panel (another writer's); `FORCE_REBUILD <- FALSE` in R_P00's build chunk keeps a valid panel on
+disk. Every result table row with an estimate and an SE gets `p_value` / `p_how` (`ensure_p_value_R`, t with clusters − 1 df when the clusters
+are known, else normal); `results/HEADLINES_ALL_VARIABLES_R.csv` collects beta, SE and p of every variable and model. An earlier run's
+output inside the exports folder is recognised as the pipeline's own product (`is_pipeline_product_R`) and never read as an export.
+
 ## Where a switch is checked in the code
 
 Python: `_common.opt(key)` returns the value in force (the setting when its switch is on, else the "do not use" value); every rule

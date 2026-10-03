@@ -54,12 +54,33 @@ parse_export_name <- function(base) {
   list(Year = if (length(ys) == 1) as.integer(ys) else NA_integer_, Season = if (length(ss) == 1) unname(SEASON_CODE[ss]) else NA_integer_, site = NA_character_, how = "loose")
 }
 season_of <- function(x) vapply(x, function(z) parse_export_name(z)$Season, integer(1), USE.NAMES = FALSE)   # kept (v20.45 name)
+# 3 Oct (as Python's _is_pipeline_product / discover_input_files): a file THIS pipeline wrote -- the panel, a PASS A shard, a PASS B part, an
+# out-of-core partition, or any Parquet / Feather file carrying the panel's own columns -- is never an export. Your OUTPUT_DIR sits inside the
+# exports folder: only the CURRENT run's output was excluded, so a panel built elsewhere (build_panel.R output=..., a second output folder, the
+# Python pipeline's) read the previous run's did_panel_full.parquet as if it were an export, and its newer rows won the de-duplication.
+PRODUCT_NAME_RE_R <- "^(did_panel_full.*\\.(parquet|csv|csv\\.gz)|shard_[0-9]{4}_[A-Za-z]+(_part[0-9]+)?\\.parquet|part_[0-9]{4}_[A-Za-z]+\\.parquet|part_[0-9]+\\.(parquet|csv))$"
+PANEL_SIGNATURE_R <- list(c("pixel_id", "did_term", "schema_vintage"), c("pixel_id", "did", "site_check"))   # Python's panel | R's panel
+is_pipeline_product_R <- function(path) {
+  n <- basename(path)
+  if (grepl(PRODUCT_NAME_RE_R, n, ignore.case = TRUE)) return(TRUE)
+  if (grepl("\\.(parquet|pq|feather)$", n, ignore.case = TRUE) && requireNamespace("arrow", quietly = TRUE)) {
+    nm <- tryCatch(if (grepl("\\.feather$", n, ignore.case = TRUE)) names(arrow::read_feather(path, as_data_frame = FALSE)) else names(arrow::open_dataset(path)$schema), error = function(e) character(0))
+    return(any(vapply(PANEL_SIGNATURE_R, function(k) all(k %in% nm), logical(1))))
+  }
+  FALSE
+}
 discover_exports <- function() {
   f <- list.files(ROOT, recursive = TRUE, full.names = TRUE, all.files = FALSE)
   f <- f[!is.na(vapply(f, input_ext, character(1))) & !grepl("^(\\.|~\\$)", basename(f))]
   out_n <- normalizePath(OUTPUT_DIR, winslash = "/", mustWork = FALSE)
-  f <- f[!startsWith(normalizePath(f, winslash = "/", mustWork = FALSE), out_n)]
+  f <- f[!startsWith(normalizePath(f, winslash = "/", mustWork = FALSE), paste0(out_n, "/"))]    # 3 Oct: the folder itself (a sibling "output_old" is not the current output)
   f <- f[!normalizePath(f, winslash = "/", mustWork = FALSE) %in% normalizePath(c(CROSSWALK_PATH, FUND_RELEASE_PATH), winslash = "/", mustWork = FALSE)]
+  root_n <- normalizePath(ROOT, winslash = "/", mustWork = FALSE)
+  old_out <- unique(dirname(f[tolower(basename(f)) == "did_panel_full.parquet"]))                    # an EARLIER run's output folder: skipped whole
+  old_out <- old_out[normalizePath(old_out, winslash = "/", mustWork = FALSE) != root_n]
+  in_old <- Reduce(`|`, lapply(old_out, function(d) startsWith(normalizePath(f, winslash = "/", mustWork = FALSE), paste0(normalizePath(d, winslash = "/", mustWork = FALSE), "/"))), rep(FALSE, length(f)))
+  prod <- in_old | vapply(f, is_pipeline_product_R, logical(1))
+  products <- f[prod]; f <- f[!prod]
   b <- basename(f); pm <- lapply(b, parse_export_name)
   rel <- substring(normalizePath(f, winslash = "/", mustWork = FALSE), nchar(normalizePath(ROOT, winslash = "/", mustWork = FALSE)) + 2L)
   x <- data.table(file = f, Year = vapply(pm, function(z) z$Year, integer(1)), Season = vapply(pm, function(z) z$Season, integer(1)),
@@ -67,8 +88,11 @@ discover_exports <- function() {
   ids <- sws_names(); nm <- match_sws_name(x$sws_hint); nm[is.na(nm)] <- match_sws_name(x$relpath[is.na(nm)])   # v20.49: the 80 % rule
   x[, sws_file := as.integer(names(ids)[match(nm, ids)])]
   by <- table(vapply(f, input_ext, character(1)))
-  ok(sprintf("%d export files under %s (%s)%s", nrow(x), ROOT, paste(sprintf("%d %s", by, names(by)), collapse = ", "),
-             if (any(is.na(x$Year) | is.na(x$Season))) sprintf(" -- %d file name(s) carry no Year/Season: read from the columns inside", sum(is.na(x$Year) | is.na(x$Season))) else ""))
+  ok(sprintf("%d export files under %s (%s)%s%s", nrow(x), ROOT, paste(sprintf("%d %s", by, names(by)), collapse = ", "),
+             if (any(is.na(x$Year) | is.na(x$Season))) sprintf(" -- %d file name(s) carry no Year/Season: read from the columns inside", sum(is.na(x$Year) | is.na(x$Season))) else "",
+             if (length(products)) sprintf(" -- %d file(s) are this pipeline's own products from an earlier run (a did_panel_full.parquet, its shards, parts or partitions, or the folder holding them) and are never read as exports, e.g. %s",
+                                           length(products), substring(normalizePath(products[1], winslash = "/", mustWork = FALSE), nchar(root_n) + 2L)) else ""))
+  setattr(x, "products", products)
   x
 }
 
@@ -113,7 +137,7 @@ drop_rows_without_outcome <- function(dt) {                                     
   oc <- intersect(OUTCOME_VARS, names(dt))
   if (!length(oc)) return(dt)
   any_ok <- rep(FALSE, nrow(dt)); for (v in oc) any_ok <- any_ok | is.finite(dt[[v]])     # 1 Oct: column by column (no N x K matrix of 86 M rows; 2.5 x faster)
-  attr_n <- sum(!any_ok); out <- dt[any_ok]; attr(out, "rows_dropped_no_outcome") <- attr_n; out
+  attr_n <- sum(!any_ok); out <- if (attr_n) dt[any_ok] else dt; setattr(out, "rows_dropped_no_outcome", attr_n); out   # 3 Oct: no 30 GB copy when nothing drops (setattr: by reference, the table keeps its column slots)
 }
 apply_missing_policy <- function(dt, drop_empty = TRUE) {                            # _prep_common.apply_missing_policy (stage "file")
   # v20.58 (second pass, the poison test with cloud gaps): drop_empty = FALSE keeps the rows with no usable outcome -- run_prep drops them only
@@ -268,12 +292,35 @@ overlay_sws <- function(px) {                                                   
 # every pixel (mean coordinates, newest file, rows, usable outcome cells); every pair of different pixels whose 10 m squares
 # overlap >= the threshold (3 x 3 neighbouring bins); a greedy, chain-free assignment in priority order (DEDUP_PRIORITY
 # "newer": newest file, then completeness, then rows, then id) -- a pixel is merged only into a pixel it overlaps directly.
-pixel_registry <- function(dt) {
-  oc <- intersect(OUTCOME_VARS_CORE, names(dt))
-  d <- dt[, c("pixel_id", "latitude", "longitude", "file_mtime", "src_file", oc), with = FALSE]
-  d[, n_ok := rowSums(is.finite(as.matrix(.SD))), .SDcols = oc]
+n_finite_R    <- function(dt, cols) { n <- integer(nrow(dt)); for (v in cols) n <- n + is.finite(dt[[v]]); n }      # 3 Oct: counts column by column -- no N x K matrix, no copy
+n_nonfinite_R <- function(dt, cols) { n <- integer(nrow(dt)); for (v in cols) n <- n + !is.finite(dt[[v]]); n }
+.pixel_registry_pass <- function(dt, oc) {                              # one pass over the six columns the registry needs (~50 bytes/row, not the whole frame)
+  d <- data.table(pixel_id = dt$pixel_id, latitude = dt$latitude, longitude = dt$longitude, file_mtime = dt$file_mtime, src_file = dt$src_file, n_ok = n_finite_R(dt, oc))
   setorder(d, file_mtime)
   d[, .(lat = mean(latitude), lon = mean(longitude), mtime = max(file_mtime), n_rows = .N, n_ok = sum(n_ok), src = last(src_file)), by = pixel_id][     # 1 Oct: last() (GForce), not src_file[.N]
+    , completeness := n_ok / pmax(n_rows, 1)][]
+}
+pixel_registry <- function(dt) {
+  # 3 Oct (as Python's _registry_aggregate / its MemoryError fall-back): until now this copied 15 columns of the whole frame and built an N x 10
+  # matrix of the outcomes (~10 GB + 7 GB + 3.5 GB at your 86.6 M rows). Now the usable cells are counted column by column and only six
+  # columns are grouped; when even that cannot be allocated, the registry is built one year-season block at a time and the parts are
+  # combined exactly (sums, counts, the newest file's name) -- said when it happens.
+  oc <- intersect(OUTCOME_VARS_CORE, names(dt))
+  reg <- tryCatch(.pixel_registry_pass(dt, oc), error = function(e) {
+    if (!grepl("cannot allocate|memory|vector size", conditionMessage(e), ignore.case = TRUE)) stop(e)
+    warn(sprintf("pixel registry: the one-pass build did not fit in memory (%s) -- building it one year-season block at a time (the same numbers)", conditionMessage(e))); NULL })
+  if (!is.null(reg)) return(reg)
+  invisible(gc(FALSE)); blocks <- unique(dt[, .(Year, Season)]); setorder(blocks, Year, Season); parts <- vector("list", nrow(blocks))
+  for (b in seq_len(nrow(blocks))) {
+    i_ <- which(dt$Year == blocks$Year[b] & dt$Season == blocks$Season[b])
+    d <- data.table(pixel_id = dt$pixel_id[i_], latitude = dt$latitude[i_], longitude = dt$longitude[i_], file_mtime = dt$file_mtime[i_], src_file = dt$src_file[i_], n_ok = n_finite_R(dt[i_, oc, with = FALSE], oc))
+    setorder(d, file_mtime)
+    parts[[b]] <- d[, .(lat_sum = sum(latitude), lon_sum = sum(longitude), mtime = max(file_mtime), n_rows = .N, n_ok = sum(n_ok), src = last(src_file)), by = pixel_id]
+    if (b %% 5 == 0 || b == nrow(blocks)) info(sprintf("  pixel registry: block %d of %d done", b, nrow(blocks)))
+    rm(d, i_); invisible(gc(FALSE))
+  }
+  a <- rbindlist(parts); setorder(a, mtime)                                      # the newest block's file name wins, as last() after the mtime sort did
+  a[, .(lat = sum(lat_sum) / sum(n_rows), lon = sum(lon_sum) / sum(n_rows), mtime = max(mtime), n_rows = sum(n_rows), n_ok = sum(n_ok), src = last(src)), by = pixel_id][
     , completeness := n_ok / pmax(n_rows, 1)][]
 }
 near_duplicate_pairs <- function(reg, size_m = PIXEL_SIZE_M, overlap_min = PIXEL_OVERLAP_MIN) {
@@ -359,21 +406,27 @@ resolve_duplicates <- function(dt, keys = c("site_id", "pixel_id", "Year", "Seas
   if ("site_id" %in% keys && "site_check" %in% names(dt)) {
     dt[, .site_key := fifelse(!is.na(site_check) & site_check == 3L, -1L, as.integer(site_id))]; keys[keys == "site_id"] <- ".site_key"
   }
-  dup <- duplicated(dt, by = keys) | duplicated(dt, by = keys, fromLast = TRUE)
-  if (!any(dup)) { if (".site_key" %in% names(dt)) dt[, .site_key := NULL]; attr(dt, "dedup") <- list(groups = 0L, removed = 0L, filled = 0L, not_used = 0L); return(dt) }
+  if (say) info(sprintf("duplicates: finding the repeated (sub-watershed, pixel, year, season) keys among %s rows ...", format(nrow(dt), big.mark = ",")))
+  dt[, .n_ := .N, by = keys]; dup <- dt$.n_ > 1L; dt[, .n_ := NULL]              # 3 Oct: ONE radix pass (GForce .N) instead of two duplicated() sorts of 86 M rows
+  if (!any(dup)) { if (".site_key" %in% names(dt)) dt[, .site_key := NULL]; setattr(dt, "dedup", list(groups = 0L, removed = 0L, filled = 0L, not_used = 0L)); if (say) ok("duplicates: none -- every (sub-watershed, pixel, year, season) appears once"); return(dt) }
+  if (say) info(sprintf("duplicates: %s repeated rows -- ranking them (the newer file, then the more complete row) ...", format(sum(dup), big.mark = ",")))
   g <- dt[dup]; r <- dt[!dup]
   g[, `:=`(.gmax = max(file_mtime)), by = keys]
   g[, .newest := as.integer(.gmax - file_mtime <= recency_margin_seconds)]
-  g[, .nmiss := rowSums(!is.finite(as.matrix(.SD))), .SDcols = oc]
+  set(g, j = ".nmiss", value = n_nonfinite_R(g, oc))                            # 3 Oct: column by column (no 31 M x 10 matrix)
   g[, .nobs := if ("NObsV" %in% names(g)) fifelse(is.finite(suppressWarnings(as.numeric(NObsV))), suppressWarnings(as.numeric(NObsV)), -1) else -1]
   g[, .vr := if ("schema_vintage" %in% names(g)) fifelse(schema_vintage == "2026plus", 2L, fifelse(schema_vintage == "2015_2025", 1L, 0L)) else 0L]
   if (DEDUP_PRIORITY == "complete") setorderv(g, c(keys, ".nmiss", ".newest", ".nobs", ".vr", "src_file"), c(rep(1L, length(keys)), 1L, -1L, -1L, -1L, 1L))
   else setorderv(g, c(keys, ".newest", ".nmiss", ".nobs", ".vr", "src_file"), c(rep(1L, length(keys)), -1L, 1L, -1L, -1L, 1L))
-  first <- g[, .SD[1L], by = keys]
+  first <- unique(g, by = keys)                                                   # 3 Oct: g is sorted by keys + priority, so the first row per key IS the kept row
+  #   (the same row .SD[1L] kept; one radix pass on every data.table version -- without the GForce rewrite .SD[1L] was 15 M `[` calls, 35-50 min)
   if ("fragment" %in% names(g)) first[g[, .(.fm = min(fragment)), by = keys], on = keys, fragment := i..fm]   # v20.57: any file's own data -> major
+  setkeyv(first, keys)                                                              # 3 Oct: keyed once, so the ten donor joins below do not re-sort it
   n_fill <- 0L; n_unused <- 0L; by_var <- integer(0); fill <- isTRUE(DEDUP_FILL_FROM_DUPLICATES)
+  if (say) info(sprintf("duplicates: %s groups kept -- the donor values of the dropped rows per outcome (%d outcomes) ...", format(nrow(first), big.mark = ","), length(oc)))
   for (v in oc) {                                                                    # first finite value per group, in priority order
-    don <- g[is.finite(get(v)), .(.don = get(v)[1L]), by = keys]
+    fin <- is.finite(g[[v]])                                                         # 3 Oct: no get() in j (that gathered every column per group: ~50 min at 15 M groups)
+    don <- unique(g[fin, c(keys, v), with = FALSE], by = keys); setnames(don, v, ".don")   # g is in key + priority order: the first finite value per key
     first[don, on = keys, .don := i..don]
     gap <- !is.finite(first[[v]]) & is.finite(first$.don)
     if (any(gap)) {
@@ -384,7 +437,7 @@ resolve_duplicates <- function(dt, keys = c("site_id", "pixel_id", "Year", "Seas
   }
   first[, c(".gmax", ".newest", ".nmiss", ".nobs", ".vr") := NULL]
   out <- rbind(r, first, fill = TRUE); if (".site_key" %in% names(out)) out[, .site_key := NULL]
-  attr(out, "dedup") <- list(groups = nrow(first), removed = nrow(g) - nrow(first), filled = n_fill, not_used = n_unused, not_used_by_variable = by_var)
+  setattr(out, "dedup", list(groups = nrow(first), removed = nrow(g) - nrow(first), filled = n_fill, not_used = n_unused, not_used_by_variable = by_var))   # 3 Oct: by reference (attr<- copied the table and dropped its column slots)
   if (say) ok(sprintf("%s rows shared a (sub-watershed, pixel, year, season) with another file (a pixel outside every polygon: the same pixel, year and season, whatever id the files gave it) -> %s kept (the %s file wins, then the more complete row)%s",
              format(nrow(g), big.mark = ","), format(nrow(first), big.mark = ","), if (DEDUP_PRIORITY == "complete") "more complete" else "newer",
              if (fill) sprintf("; %s missing values FILLED from the dropped rows (DEDUP_FILL_FROM_DUPLICATES = TRUE)", format(n_fill, big.mark = ",")) else "; each kept AS IT IS, the repeated rows dropped whole"))
@@ -452,7 +505,7 @@ input_audit_report_R <- function(aud, write = TRUE) {
   invisible(aud)
 }
 panel_design_columns_R <- function(dt, treatment_year = TREATMENT_YEAR, say = TRUE) {
-  pr <- period_rule_R(); n0 <- nrow(dt)
+  dt <- setalloccol(dt); pr <- period_rule_R(); n0 <- nrow(dt)                                            # 3 Oct: column slots for the five set() calls below, whatever path the table took
   if (identical(pr, "both") && "Treat" %in% names(dt)) {              # the column and the rule must AGREE (read_export already dropped these; confirmed here)
     tv0 <- suppressWarnings(as.numeric(dt$Treat)); drop <- !(tv0 %in% c(0, 1)) | as.integer(tv0) != as.integer(dt$Year >= as.integer(treatment_year)); drop[is.na(drop)] <- TRUE
     if (any(drop)) dt <- dt[!drop]
@@ -499,11 +552,19 @@ panel_design_report_R <- function(chk, write = TRUE) {
 # panel_variation_by_block.csv. A year-season whose value is the same for every pixel is a FILL value, not a measurement: the outcome screen of
 # every model leaves it out (OUTCOME_SCREEN), and this table shows it right after R_P00 -- before any model runs. The parts are exact moments
 # (n, mean, M2 about it, min, max) so R_P00's blocks and pixel groups (out of core) merge to the same numbers as one pass in memory.
-panel_variation_R <- function(dt, vars = OUTCOME_VARS) {
+panel_variation_R <- function(dt, vars = OUTCOME_VARS, say = FALSE) {
   vs <- intersect(vars, names(dt)); if (!length(vs)) return(NULL)
-  rbindlist(lapply(vs, function(v) {
-    x <- dt[is.finite(get(v)), { z <- as.numeric(get(v)); mu <- mean(z); .(finite = .N, mean = mu, m2 = sum((z - mu)^2), min = min(z), max = max(z)) }, by = .(Year, Season)]
-    x[, variable := rep(v, nrow(x))]; x }), use.names = TRUE, fill = TRUE)      # an outcome with no finite value: an empty part with the same columns
+  # 3 Oct -- THE HANG of your R_P00 run (hours without a line after the duplicate step): `dt[is.finite(get(v)), { ... get(v) ... }, by = .(Year, Season)]`
+  # makes data.table gather EVERY column of every row into .SD, group by group, single-threaded, once per outcome (an i-subset plus get() in j):
+  # 7-30 min per outcome at 71 M rows x 60 columns, 2-8 hours for the 17 outcomes, nothing printed. Now only the three columns the moments need
+  # are taken -- the same expressions on the same values, so finite / mean / m2 / min / max are bit-identical -- ~6 s per outcome at that size,
+  # and each outcome is said when it is done (say = TRUE in run_prep).
+  rbindlist(lapply(seq_along(vs), function(i) {
+    v <- vs[i]; y <- dt[[v]]; f <- is.finite(y)
+    x <- data.table(Year = dt$Year[f], Season = dt$Season[f], z = as.numeric(y[f]))[, { mu <- mean(z); .(finite = .N, mean = mu, m2 = sum((z - mu)^2), min = min(z), max = max(z)) }, by = .(Year, Season)]
+    x[, variable := rep(v, nrow(x))]
+    if (say) info(sprintf("  pixel variation: %s done (%d of %d outcomes, %s finite rows)", v, i, length(vs), format(sum(f), big.mark = ",")))
+    x }), use.names = TRUE, fill = TRUE)      # an outcome with no finite value: an empty part with the same columns
 }
 # v20.59 -- YOUR RULE: the panel KEEPS every row and value. Fill cells (one value for every pixel) and gap-filled rows stay IN the panel; what a
 # MODEL estimates on is ITS decision (OUTCOME_SCREEN, EXCLUDE_GAPFILLED in its notebook), never R_P00's. Said once, with the counts.
@@ -527,6 +588,42 @@ panel_variation_report_R <- function(parts, write = TRUE) {
                             nrow(k), nrow(vt), paste(sprintf("%s %d %s = %s", k$variable, k$Year, SEASON_LABEL[as.character(k$Season)], formatC(k$mean, digits = 6, format = "g"))[seq_len(min(8, nrow(k)))], collapse = "; "), if (nrow(k) > 8) "; ..." else ""))
   else ok(sprintf("pixel variation CONFIRMED in every outcome x year-season cell (%d cells, no fill value) -> panel_variation_by_block.csv", nrow(vt)))
   invisible(vt)
+}
+
+# 3 Oct (your rule: values that differ at the 8th-10th decimal are data) -- the twin of Python's panel_precision_report: per variable the stored
+# type, the rows, the finite values, the distinct values, the SMALLEST difference between two values present, the decimals needed to tell them
+# apart, the largest magnitude and one float32 step at it, whether float32 would have merged two values, whether the panel kept full precision
+# (Parquet DOUBLE -- R's writer always does; a `float` column can only come from another writer and is said), and whether EVERY value is exactly a
+# float32 number (TRUE = the rounding happened BEFORE this panel: in the export itself or in an older float32 panel read as an input).
+# One column at a time from the Parquet file (~0.7 GB per column at 86.6 M rows), never the whole panel. -> OUTPUT_DIR/panel_precision_report_R.csv
+.as_float32_R <- function(x) readBin(writeBin(as.double(x), raw(), size = 4L), "double", n = length(x), size = 4L)   # R has no float32: round-trip through 4-byte floats
+panel_precision_report_R <- function(path = PANEL_PATH, output_dir = OUTPUT_DIR, columns = NULL, verbose = TRUE) {
+  cols <- columns %||% c(OUTCOME_VARS, WEATHER_VARS, "dose_intensity_per_ha", "dose_amount_sws", "dose_per_subwshed")
+  has_pq <- HAS_ARROW && file.exists(path); src <- if (has_pq) path else panel_file()
+  if (!file.exists(src)) { warn("precision report: no panel at ", path); return(invisible(NULL)) }
+  nm <- if (has_pq) names(arrow::open_dataset(path)$schema) else names(fread(src, nrows = 0)); cols <- intersect(cols, nm); if (!length(cols)) return(invisible(NULL))
+  types <- if (has_pq) { sch <- arrow::open_dataset(path)$schema; setNames(vapply(cols, function(v) sch$GetFieldByName(v)$type$ToString(), ""), cols) } else setNames(rep("csv text", length(cols)), cols)
+  rows <- lapply(cols, function(v) {
+    x <- if (has_pq) as.numeric(arrow::read_parquet(path, col_select = dplyr::all_of(v))[[1]]) else as.numeric(fread(src, select = v)[[1]])
+    fin <- is.finite(x); xf <- x[fin]; u <- sort(unique(xf)); gaps <- diff(u); gaps <- gaps[gaps > 0]
+    gmin <- if (length(gaps)) min(gaps) else NA_real_; amax <- if (length(xf)) max(abs(xf)) else 0
+    dec <- if (is.finite(gmin) && gmin > 0) as.integer(min(15, max(0, ceiling(round(-log10(gmin), 6))))) else NA_integer_
+    f32 <- amax * 2^-23
+    data.table(variable = v, stored_dtype = unname(types[v]), rows = length(x), finite = sum(fin), distinct_values = length(u), smallest_difference = gmin, decimals_needed = dec,
+               largest_abs = amax, float32_step_at_max = f32, float32_would_merge_values = is.finite(gmin) && gmin < f32,
+               full_precision_kept = types[[v]] %in% c("double", "csv text"), all_values_float32_representable = if (length(xf)) isTRUE(all(.as_float32_R(xf) == xf)) else NA)
+  })
+  tab <- rbindlist(rows); dir.create(output_dir, recursive = TRUE, showWarnings = FALSE); out <- file.path(output_dir, "panel_precision_report_R.csv"); fwrite(tab, out)
+  if (verbose && nrow(tab)) {
+    lost <- tab[!full_precision_kept & float32_would_merge_values]; fine <- tab[full_precision_kept & float32_would_merge_values]
+    (if (nrow(lost)) warn else ok)(sprintf("precision of the stored panel: %d of %d variables at full precision (Parquet DOUBLE); %d carry differences finer than a float32 step and are kept as they are%s -> %s",
+                                           sum(tab$full_precision_kept), nrow(tab), nrow(fine),
+                                           if (nrow(lost)) sprintf("; %d are stored as float32 although their data differ below one float32 step: %s -- this panel was not written by R_P00: rebuild it", nrow(lost), paste(head(lost$variable, 6), collapse = ", ")) else "", out))
+    for (i in seq_len(nrow(tab))) if (!is.na(tab$decimals_needed[i])) info(sprintf("  %-8s %-8s %12s distinct | smallest difference %.3g (%d decimals needed)", tab$variable[i], tab$stored_dtype[i], format(tab$distinct_values[i], big.mark = ","), tab$smallest_difference[i], tab$decimals_needed[i]))
+    grid <- tab[all_values_float32_representable %in% TRUE & distinct_values > 1000]
+    if (nrow(grid)) warn(sprintf("%d variable(s) hold ONLY values a float32 number can represent (%s): they were rounded to 7 significant digits BEFORE this panel (in the exports themselves, or an older float32 panel read as an input -- see the 'own products' part of the discovery line); the panel keeps what it was given", nrow(grid), paste(head(grid$variable, 8), collapse = ", ")))
+  }
+  invisible(tab)
 }
 
 # ---------------------------------------------------------------- 9. the dose: funds released to a sub-watershed, from the NEXT season
@@ -626,16 +723,25 @@ run_prep <- function() {
   # lib/reward_prep_ooc.R -- the same rules, the same panel row for row); below 98 % everything is read at once, exactly as before
   pm <- prep_mode_R(files)
   if (identical(pm$mode, "out_of_core")) return(invisible(run_prep_ooc(files, t0, pm$why)))
-  info("reading ", nrow(files), " files (", N_THREADS, " threads)")
-  parts <- lapply(seq_len(nrow(files)), function(i) with(files[i], tryCatch(read_export(file, Year, Season, sws_hint, folder, sws_file, mtime),
-                  error = function(e) { warn(basename(file), ": ", conditionMessage(e)); NULL })))
+  # 3 Oct (your R_P00 run: hours without a line): every step from here on is SAID before it starts and when it ends, with its seconds -- a
+  # step that is silent for long is one that is still running, never one that is stuck; the steps themselves were rewritten (see each one)
+  .t_step <- Sys.time(); .t_all <- Sys.time()
+  .doing <- function(what) { info(sprintf("%s ...", what)); .t_step <<- Sys.time() }
+  .said  <- function(what) { info(sprintf("%s (%.0f s; %.1f min since the start)", what, as.numeric(difftime(Sys.time(), .t_step, units = "secs")), as.numeric(difftime(Sys.time(), .t_all, units = "mins")))); .t_step <<- Sys.time() }
+  info("reading ", nrow(files), " files (data.table threads: ", getDTthreads(), " of N_THREADS = ", N_THREADS, "; the files one after another)")
+  parts <- lapply(seq_len(nrow(files)), function(i) {
+    if (i %% 50 == 0 || i == nrow(files)) info(sprintf("  read %d of %d files (%.0f s)", i, nrow(files), as.numeric(difftime(Sys.time(), .t_step, units = "secs"))))
+    with(files[i], tryCatch(read_export(file, Year, Season, sws_hint, folder, sws_file, mtime), error = function(e) { warn(basename(file), ": ", conditionMessage(e)); NULL })) })
   n_bad <- sum(vapply(parts, is.null, logical(1)))
   aud <- rbindlist(Filter(Negate(is.null), lapply(parts, function(p) if (is.null(p)) NULL else attr(p, "input_audit"))), fill = TRUE)   # v20.59
-  dt <- rbindlist(parts, fill = TRUE)
+  .doing("binding the files into one table")
+  dt <- rbindlist(parts, fill = TRUE); rm(parts); invisible(gc(FALSE))                            # 3 Oct: the per-file list is freed (it doubled the memory of the whole run)
   if (!nrow(dt)) stop("no export could be read under ", ROOT)
   input_audit_report_R(aud)                                                                      # v20.59: Treat 1 / 0 and buff_km 0 / 1-5 CONFIRMED per file
   ok(sprintf("%s rows read from %d files%s", format(nrow(dt), big.mark = ","), nrow(files) - n_bad, if (n_bad) sprintf(" (%d unreadable, see above)", n_bad) else ""))
+  .doing("pixel ids from the coordinates")
   dt[, pixel_id := pixel_ids(latitude, longitude)]                                                 # PASS A: the id from the coordinates
+  .said("pixel ids assigned")
   ids <- sws_names()
   dt[, sws_export := suppressWarnings(as.integer(if ("SWSiD_All" %in% names(dt)) SWSiD_All else NA_integer_))]
   dt[is.na(sws_hint), sws_hint := ""]
@@ -644,8 +750,10 @@ run_prep <- function() {
   info("sub-watershed named by the export files (>= 80 % rule): ", paste(sprintf("%s %d file(s)", fifelse(is.na(nm_tab$sws_file), "none", ids[as.character(nm_tab$sws_file)]), nm_tab$files), collapse = " | "))
   px <- unique(dt[, .(pixel_id, latitude, longitude, sws_export)], by = c("pixel_id", "sws_export"))
   info("overlaying ", format(nrow(px), big.mark = ","), " pixel locations on the 20 sub-watersheds x rings")
-  px <- overlay_or_trust(px)                                                                        # v20.59: SITE_GEOMETRY_CHECK
+  .t_step <- Sys.time(); px <- overlay_or_trust(px)                                                 # v20.59: SITE_GEOMETRY_CHECK
+  .said("overlay done")
   fwrite(px[, .N, by = .(site_id, site_check)][order(site_id)], file.path(OUTPUT_DIR, "site_tagging_by_sws.csv"))
+  .doing("joining every row to its sub-watershed and ring")
   dt <- merge(dt, px[, .(pixel_id, sws_export, site_id, ring_poly, site_check)], by = c("pixel_id", "sws_export"), all.x = TRUE)
   dt[site_check %in% ring_from_polygon_codes() & !is.na(ring_poly), buff_km := ring_poly]           # corrected / assigned: the ring of that SWS (BUFF_FROM_GEOMETRY: confirmed too)
   working_sws_line(dt)                                                                              # v20.59: your rule, said with the numbers
@@ -654,6 +762,7 @@ run_prep <- function() {
   # is coded per export file (reward_design.R file_codes, as python/_fragments.py): 0 its file's own sub-watershed, 1 inside another
   # one's polygon, 2 outside every polygon with another id. The panel keeps every row with its code; FRAGMENT_RULE is applied by the
   # MODELS (so it can be changed without re-running R_P00).
+  .said("rows joined to their sub-watershed; coding fragments per file")
   dt[, fragment := file_codes(site_id, site_check), by = src_file]
   ft <- dt[, .(rows = .N, file_sws = { m <- file_major(fifelse(is.na(site_id), 0L, as.integer(site_id)), fifelse(is.na(site_check), 4L, as.integer(site_check))); if (is.na(m)) 0L else m },
                fragment_rows_other_sws = sum(fragment == 1L), fragment_rows_outside_other_id = sum(fragment == 2L)), by = src_file]
@@ -662,16 +771,23 @@ run_prep <- function() {
   if (any(ft$fragment_rows_other_sws + ft$fragment_rows_outside_other_id > 0))
     info(sprintf("fragments of other sub-watersheds inside the export files: %s rows in %d file(s) (coded; FRAGMENT_RULE in the models drops them) -> site_tagging_by_file.csv",
                  format(sum(ft$fragment_rows_other_sws + ft$fragment_rows_outside_other_id), big.mark = ","), sum(ft$fragment_rows_other_sws + ft$fragment_rows_outside_other_id > 0)))
+  .said("fragments coded")
+  .doing(sprintf("near-duplicate pixels: the registry of %s rows and the footprint pairs", format(nrow(dt), big.mark = ",")))
   dt <- merge_near_duplicate_pixels(dt)                                                            # PASS B: >= PIXEL_OVERLAP_MIN = one pixel (before dedup)
+  .said("near-duplicate pixels merged")
+  .doing("duplicates: one row per (sub-watershed, pixel, year, season)")
   dt <- resolve_duplicates(dt)                                                                     # one row per (site, pixel, year, season)
   dd_stats <- attr(dt, "dedup")                                                                     # v20.58: recorded with the panel below
+  .said("duplicates resolved")
   if (DROP_ROWS_WITHOUT_OUTCOME) {                                                                 # v20.58: only NOW -- after the newer export's
+    .doing("rows without any outcome value")
     n0 <- nrow(dt); dt <- drop_rows_without_outcome(dt)                                            #   (empty) row claimed its pixel-year-season
-    if (n0 > nrow(dt)) info(sprintf("%s rows without any outcome left the panel (after the duplicates were resolved: a newer export's empty row is not replaced by an older repeated one)",
-                                    format(n0 - nrow(dt), big.mark = ",")))
+    info(sprintf("%s rows without any outcome left the panel (after the duplicates were resolved: a newer export's empty row is not replaced by an older repeated one)",
+                 format(n0 - nrow(dt), big.mark = ",")))                                           # 3 Oct: said also when it is 0
+    .said("rows without an outcome handled")
   }
   # v20.58 -- YOUR RULE: repeated rows and pixels are dropped AND CONFIRMED (checked on the result, never assumed)
-  .t_step <- Sys.time(); .said <- function(what) { info(sprintf("%s (%.0f s)", what, as.numeric(difftime(Sys.time(), .t_step, units = "secs")))); .t_step <<- Sys.time() }   # 1 Oct: progress lines
+  .doing("confirming the duplicate removal on the result")
   nk <- anyDuplicated(dt, by = c("site_id", "pixel_id", "Year", "Season"))
   if (nk) stop(sprintf("duplicate removal FAILED: (site %s, pixel %s, %s, season %s) is still repeated -- please report this", dt$site_id[nk], dt$pixel_id[nk], dt$Year[nk], dt$Season[nk]))
   no <- dt[site_check == 3L, anyDuplicated(.SD), .SDcols = c("pixel_id", "Year", "Season")]
@@ -679,26 +795,32 @@ run_prep <- function() {
   n2 <- nrow(dt) - uniqueN(dt, by = c("pixel_id", "Year", "Season"))
   if (n2) info(sprintf("%s pixel-year-season(s) lie in the polygons of TWO sub-watersheds (their zones overlap): kept once per sub-watershed -- the location rule of the models keeps each in its own sub-watershed only", format(n2, big.mark = ",")))
   .said("duplicates checked on the result")
+  .doing("pixel consistency: one sub-watershed and one ring per pixel")
   ins_ <- is.na(dt$site_check) | dt$site_check != 3L                                                                          # 1 Oct: the inside mask once (three 86 M-row subsets before)
   panel_pixel_consistency_R(unique(dt[ins_, .(pixel_id, site_id, buff_km, latitude, longitude)]),                               # v20.59: your rule, confirmed
                             sum(ins_) - uniqueN(dt[ins_, .(pixel_id, Year, Season)]), nrow(dt))
   .said("pixel consistency checked")
   if (isTRUE(NEAR_DUPLICATE_PIXELS)) {
-    reg2 <- pixel_registry(dt); left <- nrow(near_duplicate_pairs(reg2))
+    .doing("near-duplicate pixels confirmed on the result")
+    reg2 <- dt[, .(lat = mean(latitude), lon = mean(longitude)), by = pixel_id]; left <- nrow(near_duplicate_pairs(reg2))   # 3 Oct: the pairs need lat / lon per pixel only (GForce), not the 15-column registry
     (if (left) warn else ok)(sprintf("near-duplicate pixels CONFIRMED: %s pixel(s) remain whose footprints overlap >= %.0f %% among %s pixels%s", format(left, big.mark = ","),
                                      100 * PIXEL_OVERLAP_MIN, format(nrow(reg2), big.mark = ","), if (left) " (a chain the one-to-one merge cannot join) -- the models leave the smaller of each pair out (OVERLAP_ROWS)" else ""))
     .said("near-duplicate pixels checked on the result")
   }
   ok(sprintf("duplicates CONFIRMED removed: %s rows, every (sub-watershed, pixel, year, season) exactly once", format(nrow(dt), big.mark = ",")))
+  .doing("design columns (treat / control / pre / post / did) from the exports' flag")
   dt <- panel_design_columns_R(dt)                                                                  # v20.59: treat / control / pre / post / did in the panel
   .said("design columns added")
-  vt <- panel_variation_report_R(panel_variation_R(dt))                                             # v20.59: pixel variation per outcome x year-season
+  .doing("pixel variation per outcome x year-season (one line per outcome)")
+  vt <- panel_variation_report_R(panel_variation_R(dt, say = TRUE))                                 # v20.59: pixel variation per outcome x year-season; 3 Oct: the rewritten step (THE hang)
   .said("pixel-variation report written")
   panel_kept_report_R(vt, if ("GapFilled" %in% names(dt)) sum(dt$GapFilled > 0, na.rm = TRUE) else 0L)   # v20.59: the panel KEEPS every row and value
   keep_cols <- intersect(c("pixel_id", "site_id", "Year", "Season", "latitude", "longitude", "buff_km", "sws_export", "site_check", "sws_name",
                            "fragment", "SubwshedID", PANEL_DESIGN_COLS, OUTCOME_VARS, WEATHER_VARS, DESCRIPTOR_VARS, EXTRA_VARS), names(dt))   # v20.59: Treat used, not kept
   keep_cols <- setdiff(keep_cols, panel_columns_left_out_R())                                    # v20.58: the project's models' columns
-  dt <- dt[, ..keep_cols]
+  .doing(sprintf("keeping the panel's %d columns", length(keep_cols)))
+  dt <- dt[, ..keep_cols]; invisible(gc(FALSE))
+  .said("columns kept")
   # v20.57: NOTHING of the design a MODEL chooses is baked into the panel -- the timing (fund / registry / fixed), the unit and period fixed
   # effects (POOLED_FE), event_time / cohort and the dose are computed by every MODEL when it runs (reward_design.R model_design +
   # load_panel_R), from the settings in ITS notebook. Until v20.56 they were fixed here, so a change of TREATMENT_YEAR or POOLED_FE needed
@@ -710,12 +832,21 @@ run_prep <- function() {
   if (!is.null(ftab)) print(ftab$timing[, .(site_id, sws_name, area_ha, first_month, amount_first_month, backcast_start, first_treated_label, cohort_annual)])
   bm <- if (!exists("PIPELINE_MODELS") || !length(PIPELINE_MODELS) || "M07" %in% PIPELINE_MODELS) bm_sws_means() else NULL   # v20.58: M07's input only
   if (!is.null(bm)) {                                                                                  # BM sub-watershed means, per season
+    .doing("joining the benchmark-site means")
     bm[, bm_var := paste0("BM_", variable)]
     w <- dcast(bm, site_id + Year + Season ~ bm_var, value.var = "value")
     dt <- merge(dt, w, by = c("site_id", "Year", "Season"), all.x = TRUE)
+    .said("benchmark-site means joined")
   }
+  .doing("sorting the panel (year, season, sub-watershed, pixel)")
   setorder(dt, Year, Season, site_id, pixel_id)
-  panel_write(dt)                                                                                 # arrow, else CSV
+  .said("panel sorted")
+  .doing(sprintf("writing %s rows to %s", format(nrow(dt), big.mark = ","), PANEL_PATH))
+  panel_write(dt)                                                                                 # arrow, else CSV; 3 Oct: written beside, then renamed into place
+  .said("panel written")
+  .doing("precision report: the smallest difference present per variable, and whether the panel kept it")
+  panel_precision_report_R(verbose = TRUE)                                                        # 3 Oct (your rule: the 8th-10th decimals are data) -> panel_precision_report_R.csv
+  .said("precision report written")
   # v20.58: how this panel was built (as Python's panel_build_settings.json) -- load_panel_R says so when a panel's repeated rows filled gaps
   fwrite(data.table(setting = c("engine_policy", "dedup_priority", "dedup_fill_from_duplicates", "dedup_values_filled", "dedup_values_not_used",
                                 "near_duplicate_pixels", "pixel_overlap_min", "period_rule", "period_rows_dropped", "written"),
@@ -723,7 +854,7 @@ run_prep <- function() {
                               as.character(dd_stats$not_used %||% 0L), as.character(isTRUE(NEAR_DUPLICATE_PIXELS)), as.character(PIXEL_OVERLAP_MIN),
                               period_rule_R(), as.character(if (nrow(aud)) sum(aud$rows_dropped_period_disagree, na.rm = TRUE) else 0L),   # v20.59
                               format(Sys.time(), "%Y-%m-%d %H:%M:%S"))), file.path(OUTPUT_DIR, "panel_build_settings_R.csv"))
-  bal <- dt[, .(pixels = uniqueN(pixel_id)), by = .(Year, Season)][order(Year, Season)]
+  bal <- unique(dt[, .(Year, Season, pixel_id)])[, .(pixels = .N), by = .(Year, Season)][order(Year, Season)]   # 3 Oct: one radix pass (GForce), not a closure per block
   fwrite(bal, file.path(OUTPUT_DIR, "panel_balance_by_block.csv"))
   ok(sprintf("panel: %s rows, %s pixels, %d sub-watershed(s), %d year-seasons (pixels per year-season %s-%s: an unbalanced panel is kept as it is; a missing pixel-period leaves only the estimations that need it) -> %s (%.1f min)",
              format(nrow(dt), big.mark = ","), format(uniqueN(dt$pixel_id), big.mark = ","), uniqueN(dt$site_id[dt$site_id > 0]), nrow(bal), min(bal$pixels), max(bal$pixels),

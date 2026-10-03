@@ -105,7 +105,9 @@ cat("design defaults (a model notebook overrides each):", DESIGN_MODE, "| timing
 **Build the panel** -- exports, harmonised columns, masked zeros as missing, the sub-watershed from the shapefile (confirmed or corrected), every row coded for the fragment rule per export file, shifted grids linked, repeated rows dropped whole (the newer export's row kept as it is -- v20.58; DEDUP_FILL_FROM_DUPLICATES in lib/reward_prep.R), the BM means; the fund workbook's timing and dose tables (results/FUND) for you to read -- the models apply them when they run.
 
 ```{r}
-panel <- run_prep()
+FORCE_REBUILD <- FALSE   # 3 Oct: a valid panel on disk is KEPT (panel_is_valid_R: every required column, rows, Parquet DOUBLE, panel_build_settings_R.csv beside it);
+                         #   TRUE = build it again. Every step of the build is said before it starts and when it ends (a long silent step is still running, not stuck)
+panel <- if (!isTRUE(FORCE_REBUILD) && panel_is_valid_R()) { ok(sprintf("a valid panel is already there: %s (FORCE_REBUILD <- TRUE rebuilds it)", PANEL_PATH)); panel_precision_report_R(verbose = TRUE); invisible(NULL) } else run_prep()
 ```
 
 **The design the DEFAULTS give** (export breaks, fill years, spillover into inner rings; the fund timing per sub-watershed) -- what a model uses when its settings are left as in lib/reward_paths.R. Each model applies its own settings when it runs.

@@ -144,7 +144,7 @@ if (!exists("need", mode = "function")) need <- function(p, where = "CRAN") {   
   if (!requireNamespace(p, quietly = TRUE) && exists("install_package_chain", mode = "function") && isTRUE(get0("AUTO_INSTALL_PACKAGES", ifnotfound = FALSE))) install_package_chain(p)
   if (!requireNamespace(p, quietly = TRUE)) stop(sprintf("install '%s' (%s)", p, where))
 }
-wr <- function(model, tag, name, x) fwrite(as.data.table(x), file.path(out_dir(model, tag), paste0(name, ".csv")))
+wr <- function(model, tag, name, x) fwrite(if (exists("ensure_p_value_R", mode = "function")) ensure_p_value_R(as.data.table(x)) else as.data.table(x), file.path(out_dir(model, tag), paste0(name, ".csv")))   # 3 Oct: a p beside every beta / SE
 # v20.58: the headline of an event-type model (the mean of its post-period coefficients) ALWAYS with an SE and a p-value: the delta method on
 # the fit's cluster-robust covariance when the clusters are sub-watersheds; the design-based SE (years as the draws) when they are years --
 # one coefficient per year makes that covariance degenerate (v20.57 left these SEs NA)
@@ -574,7 +574,7 @@ m30_cohorts <- function(dt, outcome) {
   uy[, id := num_id(unit)]                                                           # v20.49: did needs a numeric id
   cl <- site_cluster(dt)
   res <- seeded(did::att_gt(yname = "y", tname = "Year", idname = "id", gname = "gvar", data = as.data.frame(uy), control_group = "nevertreated",
-                     clustervars = cl, bstrap = !is.null(cl), biters = 999, cband = FALSE, allow_unbalanced_panel = TRUE, pl = TRUE, cores = N_THREADS))
+                     clustervars = cl, bstrap = !is.null(cl), biters = 999, cband = FALSE, allow_unbalanced_panel = TRUE, pl = TRUE, cores = pool_cap_R()))
   g <- seeded(did::aggte(res, type = "group")); out <- data.table(cohort = g$egt, att = g$att.egt, se = g$se.egt, engine = "did::aggte(group)")
   wr("cohort_heterogeneity", attr(dt, "scenario"), paste0("cohort_att_", outcome), out)
   list(result = data.frame(estimate = g$overall.att, se = g$overall.se,
@@ -693,7 +693,7 @@ m36_38_factor <- function(dt, outcome, method = c("ife", "mc", "gsynth")) {
              else { info(sprintf("fect %s cohort %s: %d pre-period years / %d control series -- no cross-validation possible, %s", method[1], g, n_pre, uniqueN(s[treat == 0L, unit]), nocv_txt)); NULL }
     tune <- if (method[1] == "mc") list(lambda = cvfit$lambda.cv) else list(r = if (!is.null(cvfit$r.cv)) cvfit$r.cv else 0)
     r <- seeded(do.call(fect::fect, c(list(formula = y ~ D, data = as.data.frame(s), index = c("uid", "Year"), method = method[1], force = "two-way", CV = FALSE,
-                                           min.T0 = min_t0, se = TRUE, nboots = 200, parallel = TRUE, cores = N_THREADS, seed = 12345), Filter(Negate(is.null), tune))))   # every core
+                                           min.T0 = min_t0, se = TRUE, nboots = 200, parallel = TRUE, cores = pool_cap_R(), seed = 12345), Filter(Negate(is.null), tune))))   # every core (worker processes capped at 60 on Windows: pool_cap_R)
     ea <- r$est.avg
     list(estimate = if (!is.null(ea)) unname(ea[1, 1]) else r$att.avg, se = if (!is.null(ea) && ncol(ea) >= 2) unname(ea[1, 2]) else NA_real_,
          tuning = if (method[1] == "mc") (tune$lambda %||% NA_real_) else (tune$r %||% 0))

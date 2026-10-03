@@ -47,7 +47,7 @@ ooc_spill <- function(sub = "") {
   dir.create(d, recursive = TRUE, showWarnings = FALSE); normalizePath(d, winslash = "/", mustWork = FALSE)
 }
 ooc_hash <- function(s) { f <- tempfile(); on.exit(unlink(f)); writeLines(paste(s, collapse = "\n"), f); substr(unname(tools::md5sum(f)), 1, 12) }
-ooc_cores <- function() max(1L, as.integer(get0("N_THREADS", ifnotfound = parallel::detectCores())))
+ooc_cores <- function() { n <- max(1L, as.integer(get0("N_THREADS", ifnotfound = parallel::detectCores()))); if (exists("pool_cap_R", mode = "function")) pool_cap_R(n) else n }   # 3 Oct: worker PROCESSES capped at 60 on Windows
 ooc_budget <- function() { b <- ram_budget_bytes(); if (!is.finite(b) || b <= 0) 4e9 else b }
 ooc_rscript <- function() { b <- R.home("bin"); f <- file.path(b, if (.Platform$OS.type == "windows") "Rscript.exe" else "Rscript"); if (file.exists(f)) f else "Rscript" }
 ooc_helper <- function() file.path(R_HOME_DIR, "lib", "reward_ooc_engine.py")

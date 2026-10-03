@@ -1,5 +1,15 @@
 # RWDR — the REWARD DiD pipeline in R (RStudio and Jupyter) — v20.59
 
+> **3 Oct — this bundle is the R pipeline on its own** (details: `docs/CHANGELOG_R_v20.59.md`; what ran: `docs/VALIDATION_R_v20.59.md`).
+> * **Your R_P00 run that hung for hours after the duplicate step:** the pixel-variation step gathered every column per group per outcome
+>   (2–8 hours at 71 M rows, silent); it, the de-duplication and the pixel registry were rewritten (same numbers, checked against the old
+>   bodies), the per-file list is freed, and **every step prints a line before it starts and when it ends**. A valid panel on disk is kept
+>   (`FORCE_REBUILD <- FALSE`); the panel is written beside its name and renamed into place.
+> * **From the Python side (1–2 Oct):** a p-value on every result row (`ensure_p_value_R`), `results/HEADLINES_ALL_VARIABLES_R.csv` across
+>   variables, `output/panel_precision_report_R.csv` (R stores doubles; the report proves it and flags a rounding upstream), the pipeline's
+>   own products inside the exports folder never read as exports, worker processes capped at 60 on Windows.
+> * `tests/test_3oct_additions.R` (24 checks) and `tests/benchmark_prep_scale.R` (time R_P00 on your machine) are new.
+>
 > **v20.59 — what changed for you** (details: `docs/CHANGELOG_v20.59.md`; what ran here: `docs/VALIDATION_v20.59.md`)
 > * **The panel carries the DiD design columns** — `treat` (buffer 0), `control` (rings 1–5), `post` = the exports' `Treat` flag
 >   (1 = post, 0 = pre), `pre` = 1 − post, `did` = treat × post — from P00 / R_P00 (`PERIOD_RULE`: `"treat"` the exports' column,
