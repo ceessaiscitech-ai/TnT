@@ -2399,6 +2399,34 @@ def check_v20_59():
         _nb_ = [os.path.basename(f_) for f_ in _g.glob(os.path.join(HERE, "0[2-5]_*", "M*.ipynb")) if "EXACTLY these pre years" not in open(f_, encoding="utf-8").read()]
         if _nb_: bad(f"model notebooks whose PRE_YEARS comment lacks the list form: {_nb_[:5]}")
         note("PRE_YEARS / POST_YEARS as a LIST of calendar years (3 Oct): exactly these years enter, the tag says _preY / _postY, a year on the wrong side of the start is refused")
+        # 4 Oct (your deep check): headers read for what they are; statistics kept apart; the finished panel's columns and order confirmed row by row
+        _cases = {"NDVI_mean": "NDVI", "mean_NDVI": "NDVI", "NDVI (mean)": "NDVI", "Rain (mm)": "Rain", "Tmax (C)": "Tmax", "tmax_degc": "Tmax", "temp_max": "Tmax", "rainfall": "Rain", "dist_km": "buff_km", "Buffer (km)": "buff_km",
+                  "\ufefflatitude": "latitude", "LAT_DD": "latitude", "y_lat": "latitude", "landcover": "LandUse", "latitue": "latitude", "Sub Watershed Name": "SWS_Name", "swsid all": "SWSiD_All", " buff_km ": "buff_km", "NDVI2": "NDVI"}
+        _wrong = {k: _P.resolve_column_name(k)[0] for k, v in _cases.items() if _P.resolve_column_name(k)[0] != v}
+        if _wrong: bad(f"header spellings not read as the variable: {_wrong}")
+        _apart = {k: _P.resolve_column_name(k)[0] for k in ("NDVI_sd", "NDVI_std", "ndvi_count", "tmax_anom", "LAI_min", "rain_sum", "id", "notes", "post", "control") if _P.resolve_column_name(k)[0] is not None}
+        if _apart: bad(f"a statistic / unknown header was folded into a variable: {_apart}")
+        if _P._name_key("Haligeri SWS") != _P._name_key(" HALIGERI (sub-watershed) ") or _P._name_key("Vijayapura District") != _P._name_key("vijayapura"): bad("the name key does not unify spellings of one name")
+        _src_ = _i.getsource(_P.prepare_pass_b_block)
+        if "_name_key" not in _src_ or 'left_on="site_name"' in _src_: bad("PASS B joins the crosswalk on the raw site name, not on the name key")
+        if "_name_key" not in _i.getsource(_P.apply_subwshed_division): bad("the dose join does not use the district name key")
+        for _fn_, _what_ in ((_P.confirm_panel_columns, "confirm_panel_columns"), (_P.report_unresolved_columns, "report_unresolved_columns")):
+            if not callable(_fn_): bad(f"{_what_} missing")
+        if "report_unresolved_columns(" not in _i.getsource(_P.run_pass_a): bad("PASS A does not report the unresolved columns")
+        if "confirm_panel_columns" not in open(_g.glob(os.path.join(HERE, "01_Panel_Preparation", "P00_RUN*.ipynb"))[0], encoding="utf-8").read(): bad("P00 does not run the column audit")
+        if "confirm_panel_columns" not in open(os.path.join(HERE, "build_panel.py"), encoding="utf-8").read(): bad("build_panel / P00b do not run the column audit")
+        _tdx = _tf2.mkdtemp(prefix="reward_colaudit_"); _n_ = 12
+        _pnl = _pd.DataFrame({"pixel_id": _np.arange(_n_, dtype="int64") + 100, "subwshed_id": "SW_7", "Year": [2021] * 6 + [2023] * 6, "Season": [1, 1, 1, 2, 2, 2] * 2, "buff_km": [0, 1, 2] * 4})
+        _pnl["season_sort_rank"] = _pnl.Season.map(_P.SEASON_SORT_RANK); _pnl["treatment"] = (_pnl.buff_km == 0).astype("int8"); _pnl["control"] = _pnl.buff_km.between(1, 5).astype("int8")
+        _pnl["post"] = (_pnl.Year >= 2022).astype("int8"); _pnl["pre"] = (1 - _pnl.post).astype("int8"); _pnl["did_term"] = (_pnl.treatment * _pnl.post).astype("int8"); _pnl["treat"] = _pnl.treatment; _pnl["did"] = _pnl.did_term
+        _pnl["in_analysis_sample"] = ((_pnl.treatment == 1) | (_pnl.control == 1)).astype("int8"); _pnl["time_fe_year"] = _pnl.Year.astype(str); _pnl["time_fe_season"] = _pnl.Season.map(_P.SEASON_LABEL); _pnl["time_fe_yearseason"] = _pnl.time_fe_year + "_" + _pnl.time_fe_season
+        _pnl = _pnl.sort_values(["Year", "season_sort_rank", "subwshed_id", "pixel_id"]).reset_index(drop=True); _good = os.path.join(_tdx, "good.parquet"); _pnl.to_parquet(_good, index=False)
+        _t1 = _P.confirm_panel_columns(_good, _tdx, verbose=False); _rowchecks = _t1[~_t1.check.str.startswith(("every panel column", "no foreign", "every column stored"))]
+        if not _rowchecks.ok.all(): bad(f"the column audit flags a correct frame: {_rowchecks[~_rowchecks.ok][['check', 'detail']].to_dict('records')}")
+        _bp = _pnl.copy(); _bp.loc[2, "pre"] = 1 - _bp.loc[2, "pre"]; _bp.loc[5, "control"] = 0; _bp = _pd.concat([_bp.iloc[6:], _bp.iloc[:6]], ignore_index=True); _badp = os.path.join(_tdx, "bad.parquet"); _bp.to_parquet(_badp, index=False)
+        _t2 = _P.confirm_panel_columns(_badp, _tdx, verbose=False); _fl = set(_t2[~_t2.ok].check)
+        if not (any("pre = 1 - post" in c for c in _fl) and any("control = 1" in c for c in _fl) and any("natural order" in c for c in _fl)): bad(f"the column audit misses a planted fault: {sorted(_fl)}")
+        note("4 Oct deep check: every header spelling read as its variable (units, suffixes, aliases, a BOM, a typo), statistics kept apart, name-keyed joins, confirm_panel_columns catches a wrong pre / control and a broken order")
         note("PRE_YEARS / POST_YEARS: a number of years OR a calendar year; a bound that leaves no year on its side of the start is said and set aside (never 'from 0')")
         # 2 the panel's DiD columns from the exports' flag (P00)
         for c in ("treat", "did", "post", "pre", "control", "treatment", "did_term"):

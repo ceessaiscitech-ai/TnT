@@ -165,6 +165,7 @@ class PanelBuild:
             self._keep("validity", V, "the validity verdict with its failures and warnings (validity['VERDICT'])")
             self._keep("readiness_report", rp, "readiness_report.json (stats + validity)")
             self._keep("duplicates", P.confirm_panel_duplicates(P.FINAL_PANEL), "the duplicate check on the written panel")
+            self._keep("column_audit", P.confirm_panel_columns(P.FINAL_PANEL, P.OUTPUT_DIR), "every DiD / time column confirmed row by row and the natural row order (panel_column_audit.csv)")   # 4 Oct
             return V
         return self._timed("integrity", _run)
 

@@ -36,6 +36,11 @@ blocks. `SAME_PIXELS` (`"pre_post"` default | `"all"` | `"off"`) keeps the treat
 `ECONOMETRIC_ADVICE_v20.59.md`.
 **Every optional customisation has a USE_ switch and is OFF by default (1 Oct):** `CUSTOMISATION_GUIDE_v20.59.md` explains each option of
 SECTION A (the standard design), SECTION B (the pre-period control group, the same pixels) and SECTION C (the panel-preparation enhancements).
+**4 Oct:** headers are read for what they are whatever their writing style (units, suffixes, aliases, a BOM; a statistic such as `NDVI_sd`
+stays apart), `unresolved_columns.csv` says what PASS A did with every header, name-keyed joins for the crosswalk and the dose, and
+`panel_column_audit.csv` confirms every DiD / time column on every row and the natural row order (Year > Kharif, Rabi, Zaid, Yearly >
+sub-watershed > pixel) on the finished panel. **The two bundles are kept separately:** `DIDVALIDATION_v20.59.zip` (Python, this module) and
+`DIDVALIDATION_R_v20.59.zip` (R, `R_separate_track/RWDR_v20.59`).
 `build_panel.py --input <exports>` / `Rscript build_panel.R input=<exports>` build the panel from a path without a notebook; **3 Oct:**
 `01_Panel_Preparation/P00b_Build_Panel_From_Path.ipynb` does the same from a notebook whose FIRST cell names the folder, one cell per step,
 every step's result kept on `B` (`B.summary()`); and `PRE_YEARS` / `POST_YEARS` take a list of calendar years (`[2015, 2017, 2018]`,

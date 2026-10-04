@@ -292,9 +292,22 @@ ALIASES = {"lat":"latitude","lon":"longitude","long":"longitude","lng":"longitud
  "soil_moisture_drought_idx":"SMDI","soilmoisturedroughtindex":"SMDI",
  "distance":"buff_km",
  "seasons":"Season","season_code":"Season","years":"Year","yr":"Year",
- "buff":"buff_km","buffer":"buff_km","buffkms":"buff_km","lat_dd":"latitude","lon_dd":"longitude"}   # found in your real pre-converted Parquet files (DuckDB schema)
+ "buff":"buff_km","buffer":"buff_km","buffkms":"buff_km","lat_dd":"latitude","lon_dd":"longitude",   # found in your real pre-converted Parquet files (DuckDB schema)
+ # 4 Oct (your deep check: no column left out for a writing style): more spellings seen in exports of this kind
+ "distance_km":"buff_km","dist_km":"buff_km","dist":"buff_km","ring":"buff_km","ring_km":"buff_km","ring_no":"buff_km","buffer_ring":"buff_km",
+ "y_lat":"latitude","x_lon":"longitude","x_long":"longitude","latitude_deg":"latitude","longitude_deg":"longitude",
+ "rainfall":"Rain","rain_mm":"Rain","precip":"Rain","precipitation":"Rain","ppt":"Rain",
+ "temp_max":"Tmax","max_temp":"Tmax","maximum_temperature":"Tmax","tmax_c":"Tmax","temp_mean":"Tmean","mean_temp":"Tmean","avg_temp":"Tmean","average_temperature":"Tmean","tmean_c":"Tmean",
+ "temp_min":"Tmin","min_temp":"Tmin","minimum_temperature":"Tmin","tmin_c":"Tmin",
+ "landcover":"LandUse","land_cover":"LandUse","lulc":"LandUse","gap_fill":"GapFilled","gapfill":"GapFilled","coverage_pct":"Coverage","sws_id_all":"SWSiD_All",
+ "sub_watershed":"SWS_Name","subwatershed":"SWS_Name"}
 
 def _norm(s): return re.sub(r"[^a-z0-9]", "", s.lower())
+def _name_key(x):
+    """4 Oct: the key two NAMES are joined on -- lower case, brackets' content, 'sub-watershed' / 'SWS' / 'district' words and every non-letter removed."""
+    t = re.sub(r"\(.*?\)", " ", str(x if x is not None else "").lower())
+    t = re.sub(r"sub[\s\-_]*watershed|\bsws\b|\bdistrict\b|\bdist\b", " ", t)
+    return re.sub(r"[^a-z0-9]", "", t)
 _NORM_CANON = {_norm(c): c for c in CANONICAL}
 _NORM_ALIAS = {_norm(k): v for k, v in ALIASES.items()}
 
@@ -477,6 +490,47 @@ def validate_output_dir(create=True):
     ok(f"OUTPUT_DIR valid and ready: {p}")
     return p
 
+# 4 Oct (your deep check): a header is read for WHAT IT IS, whatever its writing style -- case, spaces, underscores, hyphens, a BOM, units
+# in brackets and value-like suffixes ("NDVI_mean", "Rain (mm)", "Tmax_C", "NDVI (mean)", "mean_NDVI") are the variable; a STATISTIC of
+# the variable ("NDVI_sd", "ndvi_count", "tmax_anom") is NOT the variable and stays apart (until now difflib mapped "NDVI_sd" onto NDVI);
+# a typo ("latitue", "longitute") is matched fuzzily only for names of 5+ letters, uniquely, at 85 % -- never a 2-3 letter name ("id").
+_VALUE_SUFFIXES = ("average", "mean", "avg", "median", "values", "value", "val", "composite", "comp", "index", "idx")
+_UNIT_SUFFIXES = ("percent", "perc", "pct", "degc", "deg", "mm", "km", "dd", "c", "m")
+_VALUE_PREFIXES = ("average", "mean", "avg", "median")
+_STAT_SUFFIXES = ("stdev", "std", "sd", "variance", "var", "count", "cnt", "anomaly", "anom", "zscore", "delta", "diff", "trend", "slope", "total", "sum",
+                  "range", "min", "max", "n", "z", "se", "ci", "lo", "hi", "p", "flag", "mask", "qa", "qc")
+def _canon_of(n):
+    if n in _NORM_CANON: return _NORM_CANON[n]
+    if n in _NORM_ALIAS: return _NORM_ALIAS[n]
+    return None
+def resolve_column_name(c):
+    """-> (canonical name or None, how). The rules above, in order: exact / alias; a value-like or unit suffix (or value-like prefix) dropped;
+    a trailing number dropped (NDVI2); a statistic suffix -> None with the reason; a typo of a long name -> fuzzy; else None."""
+    n = _norm(c)
+    if not n: return None, "empty"
+    t = _canon_of(n)
+    if t: return t, "exact" if n in _NORM_CANON else "alias"
+    base = n
+    for _ in range(2):                                                   # "NDVI (mean) mm" -> two suffixes
+        hit = None
+        for suf in sorted(_VALUE_SUFFIXES + _UNIT_SUFFIXES, key=len, reverse=True):
+            if base.endswith(suf) and len(base) > len(suf) + 1 and _canon_of(base[:-len(suf)]): hit = (base[:-len(suf)], suf, "suffix"); break
+        if hit is None:
+            for pre in _VALUE_PREFIXES:
+                if base.startswith(pre) and len(base) > len(pre) + 1 and _canon_of(base[len(pre):]): hit = (base[len(pre):], pre, "prefix"); break
+        if hit is None: break
+        return _canon_of(hit[0]), f"the '{hit[1]}' {hit[2]} dropped"
+    m = re.fullmatch(r"([a-z]+?)(\d{1,2})", n)
+    if m and _canon_of(m.group(1)): return _canon_of(m.group(1)), f"the number '{m.group(2)}' dropped (a second column of the same variable is kept apart)"
+    for suf in sorted(_STAT_SUFFIXES, key=len, reverse=True):
+        if n.endswith(suf) and len(n) > len(suf) and _canon_of(n[:-len(suf)]):
+            return None, f"a '{suf}' of {_canon_of(n[:-len(suf)])}, not the variable itself -- kept apart"
+    if len(n) >= 5:
+        close = difflib.get_close_matches(n, [k for k in _NORM_CANON if len(k) >= 5], n=2, cutoff=0.85)
+        if len(close) == 1 or (len(close) == 2 and difflib.SequenceMatcher(None, n, close[0]).ratio() - difflib.SequenceMatcher(None, n, close[1]).ratio() > 0.05):
+            return _NORM_CANON[close[0]], f"a spelling {difflib.SequenceMatcher(None, n, close[0]).ratio():.0%} close to {_NORM_CANON[close[0]]}"
+    return None, "not a known column"
+
 def harmonize_columns(cols, fname="", unresolved_log=None):
     mapping = {}
     for c in cols:
@@ -489,15 +543,13 @@ def harmonize_columns(cols, fname="", unresolved_log=None):
             # in the same files).
             mapping[c] = "external_uid_final"
             continue
-        n = _norm(c)
-        if n in _NORM_CANON: mapping[c] = _NORM_CANON[n]
-        elif n in _NORM_ALIAS: mapping[c] = _NORM_ALIAS[n]
+        t, how = resolve_column_name(c)
+        if t is not None:
+            mapping[c] = t
+            if how not in ("exact", "alias") and unresolved_log is not None: unresolved_log.append((fname, f"READ AS {t}: {c!r} ({how})"))
         else:
-            close = difflib.get_close_matches(n, list(_NORM_CANON.keys()), n=1, cutoff=0.8)
-            if close: mapping[c] = _NORM_CANON[close[0]]
-            else:
-                mapping[c] = c
-                if unresolved_log is not None: unresolved_log.append((fname, c))
+            mapping[c] = c
+            if unresolved_log is not None: unresolved_log.append((fname, c if how == "not a known column" else f"{c}: {how}"))
     return mapping
 
 
@@ -1874,6 +1926,45 @@ def _pa_worker(path):
     return df, unresolved, errors, dedup
 
 
+def report_unresolved_columns(unresolved_cols, output_dir, verbose=True):
+    """4 Oct (your deep check): one table of every column PASS A did not take as it was -- read under its canonical name because of its writing
+    style ("READ AS NDVI: 'NDVI_mean'"), kept apart as a statistic of a variable, or LEFT OUT as unknown -- per column with the number of files;
+    -> unresolved_columns.csv. Said loudly when a column was left out, with the way to keep it (an alias or a renamed header)."""
+    # one row per column: the most specific thing that happened to it (a statistic column is reported as that, not also as "left out")
+    RANK = {"A STATISTIC OF A VARIABLE (kept apart, not in the panel)": 0, "SECOND COLUMN OF ONE VARIABLE (kept apart as __dup_, not in the panel)": 1, "READ UNDER ITS CANONICAL NAME": 2, "LEFT OUT (unknown column)": 3}
+    rows = {}
+    def put(name, kind, f_, note=""):
+        r = rows.get(name)
+        if r is None or RANK[kind] < RANK[r["kind"]]: rows[name] = {"kind": kind, "column": name, "files": set([f_]), "example_file": f_, "note": note}
+        else: r["files"].add(f_)
+    for e in unresolved_cols or []:
+        if not (isinstance(e, (list, tuple)) and len(e) == 2): continue
+        f_, c_ = e; c_ = str(c_)
+        if c_.startswith("DROPPED:"):
+            name = c_[8:]
+            if "__dup_" in name: put(name.split("__dup_", 1)[1], "SECOND COLUMN OF ONE VARIABLE (kept apart as __dup_, not in the panel)", f_, f"a second column for {name.split('__dup_', 1)[0]}")
+            else: put(name, "LEFT OUT (unknown column)", f_)
+        elif c_.startswith("READ AS "): put(c_.split(": ", 1)[1].split(" (")[0].strip("'"), "READ UNDER ITS CANONICAL NAME", f_, c_)
+        elif ": a second column for" in c_: put(c_.split(":")[0], "SECOND COLUMN OF ONE VARIABLE (kept apart as __dup_, not in the panel)", f_, c_)
+        elif "kept apart" in c_: put(c_.split(":")[0], "A STATISTIC OF A VARIABLE (kept apart, not in the panel)", f_, c_)
+        elif c_.startswith("Treat not in") or c_.startswith("buff_km recoded") or " in name = " in c_: continue
+        else: put(c_, "LEFT OUT (unknown column)", f_)
+    for r in rows.values(): r["files"] = len(r["files"])
+    tab = pd.DataFrame(list(rows.values()), columns=["kind", "column", "files", "example_file", "note"]).sort_values(["kind", "files"], ascending=[True, False]) if rows else \
+          pd.DataFrame(columns=["kind", "column", "files", "example_file", "note"])
+    try:
+        os.makedirs(output_dir, exist_ok=True); tab.to_csv(os.path.join(output_dir, "unresolved_columns.csv"), index=False)
+    except Exception: pass
+    if not verbose: return tab
+    out_ = tab[tab.kind.str.startswith("LEFT OUT")]
+    rd_ = tab[tab.kind == "READ UNDER ITS CANONICAL NAME"]; st_ = tab[tab.kind.str.startswith("A STATISTIC")]
+    if len(rd_): info(f"columns read under their canonical name because of their writing style ({len(rd_)}): " + "; ".join(f"{r.column} ({r.files} file(s)): {r.note.split(': ', 1)[1] if ': ' in r.note else ''}" for r in rd_.head(8).itertuples()))
+    if len(st_): info(f"columns kept APART as a statistic of a variable, not the variable ({len(st_)}): " + ", ".join(f"{r.column} ({r.files})" for r in st_.head(8).itertuples()))
+    if len(out_): warn(f"{len(out_)} column name(s) were NOT recognised and are LEFT OUT of the panel: " + ", ".join(f"{r.column!r} ({r.files} file(s))" for r in out_.head(12).itertuples())
+                       + (" ..." if len(out_) > 12 else "") + " -- if one of them is an outcome, a covariate or a key under another spelling, add it to ALIASES in _prep_common.py (or rename the header) and run P00 again -> unresolved_columns.csv")
+    else: ok("every column of every export was recognised (none left out for its writing style) -> unresolved_columns.csv")
+    return tab
+
 def _n_file_errors(parse_errors):
     """v20.55: entries of the PASS A log that are real file problems (rejected, unreadable, skipped, key missing) --
     a note that an absent outcome column was filled NaN is not an error and is counted separately."""
@@ -2054,6 +2145,7 @@ def run_pass_a(input_dir, temp_dir, output_dir=None, n_workers=None, in_memory=N
 
     with open(os.path.join(temp_dir, "unresolved_columns.json"), "w") as fh:
         json.dump(unresolved_cols, fh, indent=2)
+    report_unresolved_columns(unresolved_cols, output_dir or temp_dir)                         # 4 Oct: what was read under another name, what was left out -- said
     # v20.59 -- YOUR RULE confirmed on the input files: Treat 1 = post / 0 = pre, buff_km 0 = treatment / 1-5 = control -> input_design_audit.csv
     try:
         input_audit_report(input_audit_rows, output_dir or os.path.dirname(os.path.abspath(temp_dir)))
@@ -2265,6 +2357,81 @@ def pixel_registry(shard_paths, verbose=True, n_threads=None):
     reg = reg[["lat", "lon", "mtime", "n_rows", "n_ok", "src"]]
     reg["completeness"] = reg["n_ok"] / reg["n_rows"].clip(lower=1)
     return reg
+
+def confirm_panel_columns(final_path=None, output_dir=None, verbose=True):
+    """4 Oct (your deep check), on the FINISHED panel, streamed row group by row group (never the whole panel in RAM):
+      1 every column of the panel schema is there, under its exact name and type; nothing foreign (a "__dup_" second column, an export's
+        raw column, Treat) slipped in;
+      2 the DiD columns on EVERY row: treatment = 1 where buff_km = 0; control = 1 where buff_km in 1-5; pre = 1 - post; did_term =
+        treatment x post; treat = treatment; did = did_term; post in {0, 1}; in_analysis_sample = treatment or control;
+      3 the time columns on every row: time_fe_year = the Year, time_fe_season = the season's name, time_fe_yearseason = Year_name,
+        season_sort_rank = Kharif 0 < Rabi 1 < Zaid 2 < Yearly 3;
+      4 the ROW ORDER: Year ascending, within a year the seasons in the agricultural sequence Kharif, Rabi, Zaid, then the annual composite,
+        within a year-season the sub-watershed, within it the pixel id ascending -- every row after the one before it.
+    -> panel_column_audit.csv (check, ok, detail); FAIL lines when something is off; returns the table."""
+    import pyarrow.parquet as pq
+    path = final_path or FINAL_PANEL; output_dir = output_dir or os.path.dirname(path)
+    pf = pq.ParquetFile(path); sch = pf.schema_arrow; names = list(sch.names); rows = []
+    def add(check, ok_, detail): rows.append({"check": check, "ok": bool(ok_), "detail": str(detail)})
+    want = {c: t for c, t in FINAL_PANEL_SCHEMA.items()}
+    missing = [c for c in want if c not in names]; foreign = [c for c in names if c not in want]
+    add("every panel column present under its exact name", not missing, f"missing: {missing}" if missing else f"{len(want)} columns")
+    add("no foreign column in the panel (a __dup_ second column, a raw export column, Treat)", not foreign, f"foreign: {foreign}" if foreign else "none")
+    _ARROW_OK = {"int8": ("int8",), "int16": ("int16",), "int64": ("int64",), "float32": ("float",), "float64": ("double",), "category": ("string", "dictionary", "large_string")}
+    bad_t = [f"{c}: {sch.field(c).type} (want {want[c]})" for c in want if c in names and not str(sch.field(c).type).startswith(_ARROW_OK.get(want[c], (want[c],)))]
+    add("every column stored with its schema type (float64 for the outcomes and the dose)", not bad_t, "; ".join(bad_t[:8]) if bad_t else "all as the schema says")
+    need = [c for c in ("Year", "Season", "season_sort_rank", "buff_km", "treatment", "control", "pre", "post", "did_term", "treat", "did", "in_analysis_sample",
+                        "time_fe_year", "time_fe_season", "time_fe_yearseason", "subwshed_id", "pixel_id") if c in names]
+    viol = {k: 0 for k in ("treatment", "control", "pre", "post", "did_term", "treat", "did", "in_analysis_sample", "season_sort_rank", "time_fe_year", "time_fe_season", "time_fe_yearseason", "order")}
+    first_bad = {}; n = 0; prev = None; lab = {k: v for k, v in SEASON_LABEL.items()}; rank = dict(SEASON_SORT_RANK)
+    for i_ in range(pf.num_row_groups):
+        d = pf.read_row_group(i_, columns=need).to_pandas()
+        if not len(d): continue
+        n += len(d); bk = pd.to_numeric(d["buff_km"], errors="coerce").values; yr = pd.to_numeric(d["Year"], errors="coerce").values; se = pd.to_numeric(d["Season"], errors="coerce").values
+        def chk(key, bad_mask, what):
+            k_ = int(np.count_nonzero(bad_mask))
+            if k_:
+                viol[key] += k_
+                if key not in first_bad:
+                    j = int(np.flatnonzero(bad_mask)[0]); first_bad[key] = f"{what}; e.g. row group {i_} row {j}: " + ", ".join(f"{c}={d[c].iloc[j]!r}" for c in need if c in d.columns and c not in ("time_fe_yearseason",))
+        if "treatment" in d: chk("treatment", (d["treatment"].values != (bk == TREAT_CORE_BUFFKM).astype(int)), "treatment != (buff_km == 0)")
+        if "control" in d: chk("control", (d["control"].values != np.isin(bk, list(DEFAULT_CONTROL_ZONES)).astype(int)), "control != (buff_km in 1-5)")
+        if "post" in d: chk("post", ~np.isin(d["post"].values, [0, 1]), "post not 0 / 1")
+        if {"pre", "post"} <= set(d.columns): chk("pre", (d["pre"].values != 1 - d["post"].values), "pre != 1 - post")
+        if {"did_term", "treatment", "post"} <= set(d.columns): chk("did_term", (d["did_term"].values != d["treatment"].values * d["post"].values), "did_term != treatment x post")
+        if {"treat", "treatment"} <= set(d.columns): chk("treat", (d["treat"].values != d["treatment"].values), "treat != treatment")
+        if {"did", "did_term"} <= set(d.columns): chk("did", (d["did"].values != d["did_term"].values), "did != did_term")
+        if {"in_analysis_sample", "treatment", "control"} <= set(d.columns): chk("in_analysis_sample", (d["in_analysis_sample"].values != ((d["treatment"].values == 1) | (d["control"].values == 1)).astype(int)), "in_analysis_sample != treatment or control")
+        if "season_sort_rank" in d: chk("season_sort_rank", (d["season_sort_rank"].values != pd.Series(se).map(rank).fillna(-1).values), "season_sort_rank != Kharif 0 / Rabi 1 / Zaid 2 / Yearly 3")
+        if "time_fe_year" in d: chk("time_fe_year", (d["time_fe_year"].astype(str).values != pd.Series(yr).astype("Int64").astype(str).values), "time_fe_year != Year")
+        if "time_fe_season" in d: chk("time_fe_season", (d["time_fe_season"].astype(str).values != pd.Series(se).map(lab).astype(str).values), "time_fe_season != the season's name")
+        if "time_fe_yearseason" in d: chk("time_fe_yearseason", (d["time_fe_yearseason"].astype(str).values != (pd.Series(yr).astype("Int64").astype(str) + "_" + pd.Series(se).map(lab).astype(str)).values), "time_fe_yearseason != Year_season")
+        # the order: (Year, season_sort_rank, subwshed_id, pixel_id) non-decreasing, across row groups too
+        R = pd.Series(se).map(rank).fillna(99).values.astype(int); S = d["subwshed_id"].astype(str).values if "subwshed_id" in d else np.zeros(len(d), dtype="<U1"); Pid = d["pixel_id"].values.astype(np.int64)
+        Y = np.nan_to_num(yr, nan=-1).astype(int)
+        if prev is not None:
+            Y = np.concatenate([[prev[0]], Y]); R = np.concatenate([[prev[1]], R]); S = np.concatenate([[prev[2]], S.astype(str)]); Pid = np.concatenate([[prev[3]], Pid])
+        y_dec = Y[1:] < Y[:-1]; eq_y = Y[1:] == Y[:-1]; r_dec = eq_y & (R[1:] < R[:-1]); eq_r = eq_y & (R[1:] == R[:-1])
+        s_dec = eq_r & (S[1:] < S[:-1]); eq_s = eq_r & (S[1:] == S[:-1]); p_dec = eq_s & (Pid[1:] < Pid[:-1])
+        bad_o = y_dec | r_dec | s_dec | p_dec
+        if bad_o.any():
+            viol["order"] += int(bad_o.sum())
+            if "order" not in first_bad:
+                j = int(np.flatnonzero(bad_o)[0]); first_bad["order"] = f"row group {i_}: ({Y[j]}, rank {R[j]}, {S[j]}, pixel {Pid[j]}) is followed by ({Y[j+1]}, rank {R[j+1]}, {S[j+1]}, pixel {Pid[j+1]})"
+        prev = (int(Y[-1]), int(R[-1]), str(S[-1]), int(Pid[-1]))
+    texts = {"treatment": "treatment = 1 exactly where buff_km = 0", "control": "control = 1 exactly where buff_km is 1-5", "post": "post is 0 / 1 on every row",
+             "pre": "pre = 1 - post on every row", "did_term": "did_term = treatment x post on every row", "treat": "treat = treatment on every row", "did": "did = did_term on every row",
+             "in_analysis_sample": "in_analysis_sample = treatment or control on every row", "season_sort_rank": "season_sort_rank = Kharif 0 < Rabi 1 < Zaid 2 < Yearly 3",
+             "time_fe_year": "time_fe_year = the Year", "time_fe_season": "time_fe_season = the season's name", "time_fe_yearseason": "time_fe_yearseason = Year_season",
+             "order": "rows in the natural order: Year, then Kharif < Rabi < Zaid < Yearly, then sub-watershed, then pixel id"}
+    for k, t in texts.items():
+        if k in ("subwshed_id",) : continue
+        add(t, viol[k] == 0, f"{n:,} rows checked" if viol[k] == 0 else f"{viol[k]:,} row(s) violate: {first_bad.get(k, '')}")
+    tab = pd.DataFrame(rows); os.makedirs(output_dir, exist_ok=True); out = os.path.join(output_dir, "panel_column_audit.csv"); tab.to_csv(out, index=False)
+    if verbose:
+        for r in tab.itertuples(): (ok if r.ok else fail)(f"column audit: {r.check} -- {r.detail}")
+        (ok if tab.ok.all() else fail)(f"PANEL COLUMN AUDIT: {'CLEAN' if tab.ok.all() else str(int((~tab.ok).sum())) + ' check(s) FAILED'} -- {n:,} rows, every DiD and time column confirmed row by row, the row order confirmed -> {out}")
+    return tab
 
 def panel_precision_report(final_path, output_dir=None, columns=None, verbose=True):
     """2 Oct (your rule): what precision the panel HOLDS, per variable -- the stored dtype, the finite values, the distinct values, the smallest
@@ -2638,8 +2805,10 @@ def prepare_pass_b_block(yr, se, shard_path, dose_table=None, crosswalk=None):
         if _o.any() and block.loc[_o].duplicated(subset=["pixel_id", "Year", "Season"]).any():
             raise RuntimeError(f"INTERNAL: a pixel outside every polygon is still repeated in {yr}/{SEASON_LABEL[se]} after dedup -- refusing to write a corrupt panel")
     if dose_table is not None and crosswalk is not None:
-        if "District" not in block.columns:
-            block = block.merge(crosswalk, left_on="site_name", right_on="Sub Watershed Name", how="left")
+        if "District" not in block.columns:                                 # 4 Oct: joined on a normalised NAME KEY (case, spaces, "SWS", brackets ignored), never on the raw spelling
+            _xw = crosswalk.copy(); _xw["_nk"] = _xw["Sub Watershed Name"].map(_name_key)
+            block["_nk"] = block["site_name"].astype(str).map(_name_key)
+            block = block.merge(_xw.drop_duplicates("_nk"), on="_nk", how="left").drop(columns=["_nk"])
         dsub = dose_table[(dose_table["target_agri_year"] == yr) & (dose_table["target_season"] == se)]
         dsub = dsub[[c_ for c_ in ("District", "dose_per_subwshed", "dose_amount_sws", "dose_intensity_per_ha",
                                    "first_treat_agri_year", "first_treat_season") if c_ in dsub.columns]].drop_duplicates("District")
@@ -3436,7 +3605,17 @@ def apply_subwshed_division(dose_df, crosswalk_df, threshold_pct=None):
     district). Also derives first_treat_year/season -- first (target_agri_year, target_season)
     where dose crosses threshold_pct, if given -- a candidate Template A input, at whatever
     grain the crosswalk supports (district here; sub-watershed once it's finer than 1:1)."""
+    # 4 Oct (your deep check): the fund workbook's District and the crosswalk's District are joined on a normalised key (case, spaces,
+    # punctuation ignored); a district of the fund file that no crosswalk row matches is SAID, never silently a NaN dose
+    dose_df = dose_df.copy(); crosswalk_df = crosswalk_df.copy()
+    dose_df["_dk"] = dose_df["District"].map(_name_key); crosswalk_df["_dk"] = crosswalk_df["District"].map(_name_key)
+    _miss = sorted(set(dose_df.loc[~dose_df["_dk"].isin(set(crosswalk_df["_dk"])), "District"].astype(str).unique()))
+    if _miss: warn(f"fund file: {len(_miss)} district(s) match NO row of the crosswalk (their sub-watersheds get no dose): {_miss[:8]} -- crosswalk districts: {sorted(crosswalk_df['District'].astype(str).unique())[:10]}")
+    _miss2 = sorted(set(crosswalk_df.loc[~crosswalk_df["_dk"].isin(set(dose_df["_dk"])), "District"].astype(str).unique()))
+    if _miss2: info(f"crosswalk: {len(_miss2)} district(s) have no fund rows (no dose): {_miss2[:8]}")
+    dose_df["District"] = dose_df["_dk"].map(dict(zip(crosswalk_df["_dk"], crosswalk_df["District"]))).fillna(dose_df["District"])   # the crosswalk's spelling from here on
     n_per_district = crosswalk_df.groupby("District").size().rename("n_subwsheds_in_district")
+    dose_df = dose_df.drop(columns=["_dk"]); crosswalk_df = crosswalk_df.drop(columns=["_dk"])
     merged = dose_df.merge(n_per_district, on="District", how="left")
     merged["dose_per_subwshed"] = merged["dose_asof_season_end"] / merged["n_subwsheds_in_district"]
     # v20.38: your rule -- the funds released to a sub-watershed are its dose from the NEXT season, applied to its whole

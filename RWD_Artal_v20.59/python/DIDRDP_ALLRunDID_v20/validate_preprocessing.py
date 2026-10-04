@@ -228,6 +228,9 @@ def main():
                 if _t != "double" or _hit != 1: bad(f"precision: NDVI stored as {_t}, the planted 0.4123456789 found {_hit} time(s) (expected double, exactly once)")
                 elif _nd is None or not _nd.full_precision_kept or not os.path.exists(_prt) or _nd.all_values_float32_representable is None or bool(_nd.all_values_float32_representable): bad(f"precision report: {None if _nd is None else _nd.to_dict()}")
                 else: ok(f"precision: NDVI stored as {_t}; the planted 0.4123456789 survived exactly; panel_precision_report.csv: {int(_nd.distinct_values):,} distinct NDVI values, smallest difference {_nd.smallest_difference:.3g}")
+                _ca = P.confirm_panel_columns(fp, odir, verbose=False)                                   # 4 Oct (your deep check)
+                if not _ca.ok.all(): bad(f"column audit: {_ca[~_ca.ok][['check', 'detail']].to_dict('records')}")
+                else: ok(f"column audit: {len(_ca)} checks -- every DiD / time column right on every row, rows in the natural order (Year > Kharif, Rabi, Zaid, Yearly > sub-watershed > pixel)")
         if len(panels) == 2:
             a_, b_ = panels[1], panels[2]
             same_shape = a_.shape == b_.shape
