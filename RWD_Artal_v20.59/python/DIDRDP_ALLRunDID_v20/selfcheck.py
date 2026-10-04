@@ -2415,7 +2415,7 @@ def check_v20_59():
         if "report_unresolved_columns(" not in _i.getsource(_P.run_pass_a): bad("PASS A does not report the unresolved columns")
         if "confirm_panel_columns" not in open(_g.glob(os.path.join(HERE, "01_Panel_Preparation", "P00_RUN*.ipynb"))[0], encoding="utf-8").read(): bad("P00 does not run the column audit")
         if "confirm_panel_columns" not in open(os.path.join(HERE, "build_panel.py"), encoding="utf-8").read(): bad("build_panel / P00b do not run the column audit")
-        _tdx = _tf2.mkdtemp(prefix="reward_colaudit_"); _n_ = 12
+        import tempfile as _tfx; _tdx = _tfx.mkdtemp(prefix="reward_colaudit_"); _n_ = 12
         _pnl = _pd.DataFrame({"pixel_id": _np.arange(_n_, dtype="int64") + 100, "subwshed_id": "SW_7", "Year": [2021] * 6 + [2023] * 6, "Season": [1, 1, 1, 2, 2, 2] * 2, "buff_km": [0, 1, 2] * 4})
         _pnl["season_sort_rank"] = _pnl.Season.map(_P.SEASON_SORT_RANK); _pnl["treatment"] = (_pnl.buff_km == 0).astype("int8"); _pnl["control"] = _pnl.buff_km.between(1, 5).astype("int8")
         _pnl["post"] = (_pnl.Year >= 2022).astype("int8"); _pnl["pre"] = (1 - _pnl.post).astype("int8"); _pnl["did_term"] = (_pnl.treatment * _pnl.post).astype("int8"); _pnl["treat"] = _pnl.treatment; _pnl["did"] = _pnl.did_term
