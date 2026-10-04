@@ -1247,7 +1247,7 @@ def check_v20_38():
     import json as _j, numpy as _np, pandas as _pd
     sys.path.insert(0, HERE)
     prep = sorted(os.path.basename(f) for f in glob.glob(os.path.join(HERE, "01_Panel_Preparation", "*.ipynb")))
-    if sorted(prep) != ["P00_RUN_ALL_Panel_Preparation.ipynb", "P00b_Build_Panel_From_Path.ipynb"]: bad(f"01_Panel_Preparation must hold P00 and P00b (the path-driven builder, 3 Oct) only, holds {prep}")
+    if prep != ["P00_RUN_ALL_Panel_Preparation.ipynb"]: bad(f"01_Panel_Preparation must hold P00 only (4 Oct: no separate path module -- PARENT_DIR is P00's first cell), holds {prep}")
     p00 = _j.load(open(os.path.join(HERE, "01_Panel_Preparation", "P00_RUN_ALL_Panel_Preparation.ipynb"), encoding="utf-8"))
     code = ["".join(c["source"]) for c in p00["cells"] if c["cell_type"] == "code"]
     MODS = ["P00_Settings", "P01_File_Inventory_and_Audit", "P02_Column_Harmonization_Check", "P02b_SWS_Tagging_Audit",
@@ -2414,7 +2414,7 @@ def check_v20_59():
             if not callable(_fn_): bad(f"{_what_} missing")
         if "report_unresolved_columns(" not in _i.getsource(_P.run_pass_a): bad("PASS A does not report the unresolved columns")
         if "confirm_panel_columns" not in open(_g.glob(os.path.join(HERE, "01_Panel_Preparation", "P00_RUN*.ipynb"))[0], encoding="utf-8").read(): bad("P00 does not run the column audit")
-        if "confirm_panel_columns" not in open(os.path.join(HERE, "build_panel.py"), encoding="utf-8").read(): bad("build_panel / P00b do not run the column audit")
+        if "confirm_panel_columns" not in open(os.path.join(HERE, "build_panel.py"), encoding="utf-8").read(): bad("build_panel does not run the column audit")
         import tempfile as _tfx; _tdx = _tfx.mkdtemp(prefix="reward_colaudit_"); _n_ = 12
         _pnl = _pd.DataFrame({"pixel_id": _np.arange(_n_, dtype="int64") + 100, "subwshed_id": "SW_7", "Year": [2021] * 6 + [2023] * 6, "Season": [1, 1, 1, 2, 2, 2] * 2, "buff_km": [0, 1, 2] * 4})
         _pnl["season_sort_rank"] = _pnl.Season.map(_P.SEASON_SORT_RANK); _pnl["treatment"] = (_pnl.buff_km == 0).astype("int8"); _pnl["control"] = _pnl.buff_km.between(1, 5).astype("int8")
@@ -2870,6 +2870,52 @@ def check_v20_59():
         _C.ACTIVE.clear(); _C.ACTIVE.update(saved); _C._RESOLVED["key"] = None
 
 
+def check_parent_dir_first_cell():
+    """4 Oct (your rule): no separate path module -- the FIRST cell of the main panel-preparation notebook sets PARENT_DIR, the parent
+    directory of the whole processing (output = <PARENT_DIR>/output), in Python and in R; it is remembered for the model notebooks."""
+    import json as _j, subprocess as _sp, tempfile as _tf, shutil as _sh
+    nbp = os.path.join(HERE, "01_Panel_Preparation", "P00_RUN_ALL_Panel_Preparation.ipynb")
+    cells = _j.load(open(nbp, encoding="utf-8"))["cells"]
+    if not cells or cells[0]["cell_type"] != "code": bad("P00's first cell is not the PARENT_DIR code cell"); return
+    c0 = "".join(cells[0]["source"])
+    if not c0.lstrip().startswith("# ===== P00 -- FIRST CELL: THE PARENT DIRECTORY") or "\nPARENT_DIR = r\"" not in c0 or "_paths.use_parent_dir(PARENT_DIR)" not in c0:
+        bad("P00's first cell does not set PARENT_DIR and apply it (_paths.use_parent_dir)")
+    if sum("PARENT_DIR = r\"" in "".join(c["source"]) for c in cells if c["cell_type"] == "code") != 1: bad("PARENT_DIR is set in more than one P00 cell")
+    if os.path.exists(os.path.join(HERE, "01_Panel_Preparation", "P00b_Build_Panel_From_Path.ipynb")): bad("the separate path module P00b is still there")
+    # functional: a copy of _paths.py in a temporary folder (the bundle is never written to)
+    td = _tf.mkdtemp(prefix="reward_parent_"); data = os.path.join(td, "my exports"); os.makedirs(data)
+    _sh.copy(os.path.join(HERE, "_paths.py"), td)
+    env = {k: v for k, v in os.environ.items() if k not in ("REWARD_INPUT_DIR", "REWARD_PARENT_DIR_SET")}
+    py = lambda code, e=env: _sp.run([sys.executable, "-c", code], cwd=td, env=e, capture_output=True, text=True, timeout=60)
+    r1 = py("import _paths, json; p = _paths.use_parent_dir(%r); print('@@' + json.dumps(p))" % data)
+    p1 = _j.loads([l for l in r1.stdout.splitlines() if l.startswith("@@")][-1][2:]) if "@@" in r1.stdout else {}
+    if os.path.normcase(p1.get("INPUT_DIR", "")) != os.path.normcase(os.path.abspath(data)) or os.path.normcase(p1.get("OUTPUT_DIR", "")) != os.path.normcase(os.path.join(os.path.abspath(data), "output")):
+        bad(f"PARENT_DIR does not become INPUT_DIR with output inside it: {p1 or r1.stderr[-300:]}")
+    if not os.path.exists(os.path.join(td, "reward_parent_dir.json")): bad("PARENT_DIR is not remembered for the model notebooks")
+    r2 = py("import _paths; print('@@' + _paths.derive()['INPUT_DIR'])")          # a later notebook (a new kernel) follows it
+    if os.path.normcase(r2.stdout.split("@@")[-1].strip()) != os.path.normcase(os.path.abspath(data)): bad(f"a model notebook does not follow the remembered PARENT_DIR: {r2.stdout[-200:]} {r2.stderr[-200:]}")
+    e3 = dict(env); e3["REWARD_INPUT_DIR"] = os.path.join(td, "test_root")             # a test run keeps its own folder and remembers nothing
+    r3 = py("import _paths; p = _paths.use_parent_dir(%r); print('@@' + p['INPUT_DIR'])" % os.path.join(td, "other"), e3)
+    if os.path.normcase(r3.stdout.split("@@")[-1].strip()) != os.path.normcase(os.path.join(td, "test_root")): bad("a test's REWARD_INPUT_DIR does not win over PARENT_DIR")
+    if _j.load(open(os.path.join(td, "reward_parent_dir.json"))).get("PARENT_DIR") != data: bad("a test run overwrote the remembered PARENT_DIR")
+    r4 = py("import _paths\ntry:\n    _paths.use_parent_dir('  ')\nexcept ValueError as e:\n    print('@@refused')")
+    if "@@refused" not in r4.stdout: bad("an empty PARENT_DIR is not refused")
+    _sh.rmtree(td, ignore_errors=True)
+    # R: the first chunk of R_P00 sets PARENT_DIR before the library is sourced; reward_paths.R makes it ROOT (output = ROOT/output)
+    top = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
+    rdirs = [d for d in (os.path.join(top, "R_separate_track", "RWDR_v20.59"), os.path.join(top, "RWDR_v20.59")) if os.path.isdir(d)]
+    for rd in rdirs:
+        rp = open(os.path.join(rd, "lib", "reward_paths.R"), encoding="utf-8").read()
+        if 'exists("PARENT_DIR")' not in rp or "reward_parent_dir.txt" not in rp: bad("reward_paths.R does not take ROOT from PARENT_DIR / the remembered folder")
+        rmd = open(os.path.join(rd, "rstudio", "R_P00_Prepare_Panel.Rmd"), encoding="utf-8").read()
+        first = rmd.split("```{r", 1)[1].split("```", 1)[0]
+        if "PARENT_DIR <- " not in first or first.index("PARENT_DIR <- ") > first.index("reward_paths.R"): bad("R_P00.Rmd's first chunk does not set PARENT_DIR before sourcing the library")
+        rnb = [c for c in _j.load(open(os.path.join(rd, "jupyter", "R_P00_Prepare_Panel.ipynb"), encoding="utf-8"))["cells"] if c["cell_type"] == "code"]
+        f2 = "".join(rnb[0]["source"]) if rnb else ""
+        if "PARENT_DIR <- " not in f2 or f2.index("PARENT_DIR <- ") > f2.index("reward_paths.R"): bad("R_P00.ipynb's first cell does not set PARENT_DIR before sourcing the library")
+    note("PARENT_DIR (4 Oct): the first cell of P00" + (" and of R_P00" if rdirs else "") + " is the parent directory of the whole processing (output inside it), remembered for the models; a test's folder wins; no separate path module")
+
+
 def check_v20_58_memory_batches():
     """v20.58 (found when a validation run was KILLED for memory): M25's permutations in batches were sized for 3 n-vectors per permutation
     while the peak was 5 (the demeaning's convergence test made two more n x k temporaries). The demeaning tests its convergence in place
@@ -3209,6 +3255,7 @@ def run():
     _rguard(check_v20_58_repeated_rows)
     _rguard(check_v20_58_memory_batches)
     _rguard(check_v20_59)
+    _rguard(check_parent_dir_first_cell)
     _rguard(check_v20_58_m13_port)
     _rguard(check_v20_35_structure)
     _rguard(check_v20_35)

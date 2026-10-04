@@ -3,17 +3,23 @@ title: "R_P00 -- Prepare the panel (data preparation, R)"
 output: html_notebook
 ---
 
-Reads every export under ROOT (default D:/LKT/RWDR/data; the old D:/LKT/TST_ArtalR until MIGRATE_DATA.bat has moved the data), builds the pixel panel with the SAME rules as the Python P00, averages the benchmark (BM) sites of each sub-watershed, codes every row for the fragment rule and reads your fund workbook. v20.57: it sets NO design -- each model notebook sets and applies its own (the options set to "data" are chosen FROM THE DATA, never from the effect).
+Reads every export under PARENT_DIR -- the folder you set in the FIRST chunk below (it becomes the parent directory of the whole processing; everything is written to PARENT_DIR/output), builds the pixel panel with the SAME rules as the Python P00, averages the benchmark (BM) sites of each sub-watershed, codes every row for the fragment rule and reads your fund workbook. v20.57: it sets NO design -- each model notebook sets and applies its own (the options set to "data" are chosen FROM THE DATA, never from the effect).
 
 ```{r setup}
+# ===== FIRST CHUNK -- THE PARENT DIRECTORY (4 Oct, your rule): the one path you set =====
+# Your exports live under PARENT_DIR (csv / parquet / xlsx, any depth of sub-folders). It becomes the parent directory of the whole
+# processing: the panel, the reports and the results are written to PARENT_DIR/output, and R_P00 remembers it (reward_parent_dir.txt)
+# so every model notebook reads the panel built here. Forward slashes, or doubled back-slashes: "D:/LKT/RWDR/data" or "D:\\LKT\\RWDR\\data".
+PARENT_DIR <- "D:/LKT/RWDR/data"
+# ---- nothing to edit below ----
 # the bundle's R folder (works from rstudio/, jupyter/ or the project root)
 R_HOME_DIR <- normalizePath(if (file.exists("lib/reward_paths.R")) "." else "..", winslash = "/")
 for (f in c("reward_paths.R", "reward_design.R", "reward_prep.R", "reward_models_core.R")) source(file.path(R_HOME_DIR, "lib", f), local = environment())
-cat("data root:", ROOT, "| output:", OUTPUT_DIR, "\n")
+cat("parent directory:", ROOT, "| output:", OUTPUT_DIR, "\n")
 invisible(confirm_packages())   # v20.55: are ALL R packages installed? (pre-built first; a missing one is installed now when AUTO_INSTALL_PACKAGES)
 ```
 
-**The design is NOT set here (v20.57).** R_P00 builds the panel ONCE with every row -- all rings, years and seasons, every sub-watershed and every fragment of another sub-watershed, each row coded (`fragment`) -- and never has to be re-run for a design choice. The timing (your fund workbook by default), the dose, the control rings, the years, the seasons, OVERLAP_ROWS, FRAGMENT_RULE and POOLED_FE are set in the settings cell of EACH MODEL notebook (R_M01 ... R_M45, R_RUN_ALL_MODELS, R_D01) and applied when that model runs. The defaults live in `lib/reward_paths.R`. Change `ROOT` there if your exports are elsewhere.
+**The design is NOT set here (v20.57).** R_P00 builds the panel ONCE with every row -- all rings, years and seasons, every sub-watershed and every fragment of another sub-watershed, each row coded (`fragment`) -- and never has to be re-run for a design choice. The timing (your fund workbook by default), the dose, the control rings, the years, the seasons, OVERLAP_ROWS, FRAGMENT_RULE and POOLED_FE are set in the settings cell of EACH MODEL notebook (R_M01 ... R_M45, R_RUN_ALL_MODELS, R_D01) and applied when that model runs. The defaults live in `lib/reward_paths.R`. The data folder is PARENT_DIR in the first chunk above.
 
 ```{r}
 # v20.57: nothing to set here for the design -- it is set in each MODEL notebook (defaults: lib/reward_paths.R).

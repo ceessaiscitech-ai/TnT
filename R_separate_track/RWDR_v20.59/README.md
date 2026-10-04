@@ -57,7 +57,8 @@ D:\LKT\RWDR\
    through IRkernel. (`Rscript tests/run_all_tests.R quick` = models only.)
 
 ## B. Your data
-1. Exports under `D:\LKT\RWDR\data` (any sub-folders). Fill each sub-watershed's implementation year in `RWDR_v20.59\data\sites\sites.csv` (the project's own
+1. Exports under one folder (any sub-folders). **4 Oct:** set it as `PARENT_DIR` in the FIRST chunk of `R_P00_Prepare_Panel` (default
+   `D:/LKT/RWDR/data`); it is the parent directory of the whole processing (output = `PARENT_DIR/output`) and the model notebooks follow it. Fill each sub-watershed's implementation year in `RWDR_v20.59\data\sites\sites.csv` (the project's own
    `data` folder — shapefile, sites, BM means — not your exports folder).
 2. `rstudio\R_P00_Prepare_Panel.Rmd` → Run All — builds the panel ONCE (v20.57: it takes no design setting; nothing of the design is
    written into the panel). It also reads your fund workbook (`results\FUND\FUND_TIMING_AND_DOSE.md`).
@@ -67,7 +68,7 @@ D:\LKT\RWDR\
    `POOLED_FE`, `EXCLUDE_GAPFILLED`, `COVARIATES` → Run All. A value you set is used exactly as set; `"data"` lets the data decide.
    The run prints DESIGN IN EFFECT (your setting, the value used, where it came from) and saves it as `DESIGN_IN_EFFECT.csv` beside
    the results. Change a setting and re-run that notebook only — never R_P00. 4. `R_V01_Results_Audit.Rmd`.
-Results: `D:\LKT\RWDR\data\output\results\<model>\<design tag>\` — each with the estimate, SE, the design-based SE and its p-value.
+Results: `<PARENT_DIR>\output\results\<model>\<design tag>\` — each with the estimate, SE, the design-based SE and its p-value.
 
 ## Jupyter
 The same 49 notebooks are in `jupyter\` (kernel **R**). RStudio is the recommended place for long runs.

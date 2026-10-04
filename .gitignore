@@ -12,3 +12,5 @@ VALIDATION_OUT_OF_CORE.csv
 VALIDATION_REQUESTS.csv
 VALIDATION_REQUESTS.md
 VALIDATION_MODEL_PARITY.csv
+reward_parent_dir.json
+reward_parent_dir.txt

@@ -1,12 +1,33 @@
 # reward_paths.R -- where the R pipeline reads and writes, and its design settings (v20.45; v20.57: the design is set in each MODEL notebook).
 R_ENGINE_VERSION <- "20.59"
-# The ONLY line you normally change is ROOT. The exports live under ROOT (any depth, like D:\LKT\TST_Artal for Python);
-# everything the pipeline writes goes to ROOT/output (the same layout as the Python pipeline).
-DEFAULT_ROOT      <- "D:/LKT/RWDR/data"                                          # v20.50: the RWDR project's data folder
-ROOT              <- Sys.getenv("REWARD_R_ROOT", DEFAULT_ROOT)
-if (nzchar(Sys.getenv("REWARD_R_ROOT")) && !nzchar(Sys.getenv("REWARD_TEST_RUN")))         # v20.51: a test's folder left behind
-  message("[WARNING] data root = ", ROOT, " -- taken from REWARD_R_ROOT, which a test sets. Your data: ", DEFAULT_ROOT,
-          ". Run  Sys.unsetenv('REWARD_R_ROOT')  (or Session -> Restart R) and run this notebook again.")
+# 4 Oct (your rule): the data folder is set in the FIRST chunk of R_P00 (rstudio/R_P00_Prepare_Panel.Rmd, jupyter/R_P00_Prepare_Panel.ipynb):
+#   PARENT_DIR <- "D:/LKT/RWDR/data". It becomes the parent directory of the whole processing: the exports are read under it (any depth,
+#   like D:\LKT\TST_Artal for Python) and everything the pipeline writes goes to PARENT_DIR/output (the same layout as the Python pipeline).
+#   R_P00 remembers it in reward_parent_dir.txt (the bundle's R folder), so every model notebook reads the panel R_P00 built there.
+#   Which one is used: PARENT_DIR set before this file is sourced > REWARD_R_ROOT (the tests set it; with REWARD_TEST_RUN it wins) >
+#   the folder R_P00 remembered > DEFAULT_ROOT.
+DEFAULT_ROOT      <- "D:/LKT/RWDR/data"                                          # v20.50: the RWDR project's data folder (when nothing above is set)
+PARENT_DIR_FILE   <- file.path(if (exists("R_HOME_DIR")) R_HOME_DIR else normalizePath(".", winslash = "/"), "reward_parent_dir.txt")
+ROOT_SOURCE       <- "default"
+.pd <- if (exists("PARENT_DIR") && is.character(PARENT_DIR) && length(PARENT_DIR) == 1L && !is.na(PARENT_DIR)) trimws(PARENT_DIR) else ""
+if (nzchar(.pd) && !(nzchar(Sys.getenv("REWARD_R_ROOT")) && nzchar(Sys.getenv("REWARD_TEST_RUN")))) {   # a test run keeps its own folder
+  ROOT <- .pd; ROOT_SOURCE <- "PARENT_DIR"
+  .old <- if (file.exists(PARENT_DIR_FILE)) tryCatch(readLines(PARENT_DIR_FILE, warn = FALSE)[1], error = function(e) NA_character_) else NA_character_
+  if (!identical(.old, ROOT)) tryCatch(writeLines(ROOT, PARENT_DIR_FILE), error = function(e)
+    message("[WARNING] could not remember the parent directory in ", PARENT_DIR_FILE, " (", conditionMessage(e), ") -- set PARENT_DIR in each notebook"))
+} else if (nzchar(Sys.getenv("REWARD_R_ROOT"))) {
+  ROOT <- Sys.getenv("REWARD_R_ROOT"); ROOT_SOURCE <- "REWARD_R_ROOT"
+  if (!nzchar(Sys.getenv("REWARD_TEST_RUN")))         # v20.51: a test's folder left behind
+    message("[WARNING] data root = ", ROOT, " -- taken from REWARD_R_ROOT, which a test sets. Your data: PARENT_DIR in R_P00's first chunk (",
+            DEFAULT_ROOT, " by default). Run  Sys.unsetenv('REWARD_R_ROOT')  (or Session -> Restart R) and run this notebook again.")
+} else {
+  .rem <- if (file.exists(PARENT_DIR_FILE)) tryCatch(trimws(readLines(PARENT_DIR_FILE, warn = FALSE)[1]), error = function(e) NA_character_) else NA_character_
+  if (!is.na(.rem) && nzchar(.rem)) {
+    ROOT <- .rem; ROOT_SOURCE <- "R_P00"
+    message("[INFO]    data root = ", ROOT, " -- the PARENT_DIR set in R_P00's first chunk (", PARENT_DIR_FILE, ")")
+  } else ROOT <- DEFAULT_ROOT
+}
+suppressWarnings(rm(list = intersect(c(".pd", ".old", ".rem"), ls(all.names = TRUE))))
 LEGACY_ROOT       <- "D:/LKT/TST_ArtalR"                                         # the data folder before MIGRATE_DATA.bat
 # v20.54: a Windows drive path on Linux / macOS (a test machine) is not a path there -- dir.create() below made a folder
 # literally named "D:" inside the project. There the root becomes ~/REWARD_data/<project>/data (as in Python; said once).
@@ -16,10 +37,10 @@ portable_root <- function(p, quiet = FALSE) {
   parts <- strsplit(sub("^[A-Za-z]:[/\\\\]+", "", p), "[/\\\\]+")[[1]]; parts <- parts[nzchar(parts)]
   keep <- if (length(parts) >= 2 && tolower(parts[length(parts)]) %in% c("data", "input", "inputs", "exports", "output")) tail(parts, 2) else tail(parts, 1)
   q <- do.call(file.path, as.list(c(path.expand("~"), "REWARD_data", keep)))
-  if (!quiet) message("[INFO]    ", p, " is a Windows path; on this system the data root is ", q, " (set REWARD_R_ROOT to change it)")
+  if (!quiet) message("[INFO]    ", p, " is a Windows path; on this system the data root is ", q, " (set PARENT_DIR in R_P00's first chunk to change it)")
   q
 }
-if (!nzchar(Sys.getenv("REWARD_R_ROOT")) && !dir.exists(portable_root(ROOT, TRUE)) && dir.exists(portable_root(LEGACY_ROOT, TRUE))) {
+if (identical(ROOT_SOURCE, "default") && !dir.exists(portable_root(ROOT, TRUE)) && dir.exists(portable_root(LEGACY_ROOT, TRUE))) {
   message("[INFO]    ", ROOT, " does not exist yet -- using the old data folder ", LEGACY_ROOT, " (run MIGRATE_DATA.bat to move it)")
   ROOT <- LEGACY_ROOT
 }

@@ -41,10 +41,11 @@ stays apart), `unresolved_columns.csv` says what PASS A did with every header, n
 `panel_column_audit.csv` confirms every DiD / time column on every row and the natural row order (Year > Kharif, Rabi, Zaid, Yearly >
 sub-watershed > pixel) on the finished panel. **The two bundles are kept separately:** `DIDVALIDATION_v20.59.zip` (Python, this module) and
 `DIDVALIDATION_R_v20.59.zip` (R, `R_separate_track/RWDR_v20.59`).
+**4 Oct (later):** the data folder is set in the FIRST cell of the main panel-preparation notebook — `PARENT_DIR` in
+`01_Panel_Preparation/P00_RUN_ALL_Panel_Preparation.ipynb` (Python) and in the first chunk of `R_P00_Prepare_Panel` (R). It is the parent
+directory of the whole processing (output = `<PARENT_DIR>/output`) and the model notebooks follow it; the separate path module is removed.
 `build_panel.py --input <exports>` / `Rscript build_panel.R input=<exports>` build the panel from a path without a notebook; **3 Oct:**
-`01_Panel_Preparation/P00b_Build_Panel_From_Path.ipynb` does the same from a notebook whose FIRST cell names the folder, one cell per step,
-every step's result kept on `B` (`B.summary()`); and `PRE_YEARS` / `POST_YEARS` take a list of calendar years (`[2015, 2017, 2018]`,
-`"2015, 2017-2021"`) = exactly these years.
+`PRE_YEARS` / `POST_YEARS` take a list of calendar years (`[2015, 2017, 2018]`, `"2015, 2017-2021"`) = exactly these years.
 **The three specifications** (panel preparation, the surrogate / synthetic DiD engine, the configuration and orchestrator) are integrated in both
 languages: `DONUT_RINGS`, `CONTROL_SELECT_ON = "rmse"` + `select_optimal_control_rings`, `PRECISION_TOLERANCE`, `LANDUSE_KEEP`, `BASELINE_NDVI_MIN`,
 `MIN_PIXEL_COVERAGE_PCT`, `DROP_SINGLETONS`, the range-safety check; `surrogate_did_estimator.py` / `lib/surrogate_did_estimator.R` (the

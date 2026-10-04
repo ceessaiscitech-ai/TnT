@@ -1,6 +1,7 @@
 """
-build_panel.py -- build the DID-ready panel from a folder of exports: from the command line, or step by step from a notebook
-(01_Panel_Preparation/P00b_Build_Panel_From_Path.ipynb) with every step's result kept in a named attribute you can print.
+build_panel.py -- build the DID-ready panel from a folder of exports: from the command line, or step by step from Python with every
+step's result kept in a named attribute you can print. In Jupyter the panel is prepared by the main notebook
+01_Panel_Preparation/P00_RUN_ALL_Panel_Preparation.ipynb, whose FIRST cell sets PARENT_DIR (4 Oct).
 
     python build_panel.py --input D:\LKT\RWD_Artal\data                      # output -> <input>\output (the P00 layout)
     python build_panel.py --input D:\exports\Jantapur --output D:\panels\Jantapur [--workers 60] [--force] [--fund PATH] [--crosswalk PATH]

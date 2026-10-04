@@ -14,3 +14,6 @@ Start the R chat from `RWDR_v20.59/`; `R_separate_track/RWD_Artal_R` is the same
 **3 Oct:** the R track received the 1–2 Oct Python corrections (a p beside every beta / SE, `HEADLINES_ALL_VARIABLES_R.csv`, the precision
 report and float32 guard, the own-products rule of the file discovery, the Windows worker cap) and the fix of the R_P00 run that hung for
 hours after the duplicate step (`CHANGELOG_R_v20.59.md`, `VALIDATION_R_v20.59.md`). The R-only zip is `DIDVALIDATION_R_v20.59.zip`.
+
+**4 Oct:** the data folder is `PARENT_DIR` in the first chunk of `R_P00_Prepare_Panel` (Rmd and Jupyter); it is the parent directory of
+the whole processing and the model notebooks follow it (`CHANGELOG_R_v20.59.md`, section 0).
