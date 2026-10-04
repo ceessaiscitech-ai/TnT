@@ -206,6 +206,32 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
 `control_selection_decide_R` / `record_control_selection_R`, `select_controls_R` (in `load_panel_R`), `reward_outofcore.R`
 `ooc_task_presel`, `ctx$ctrl_sel`; `reward_paths.R` defaults.
 
+## Your deep check of 4 Oct — no column mis-joined or left out for its writing style; every DiD column on every row; the rows in the natural order
+
+- **Headers are read for what they are, whatever the writing style.** Case, spaces, underscores, hyphens, a BOM, units in brackets
+  (`Rain (mm)`, `Tmax (C)`, `Latitude (deg)`), value-like suffixes and prefixes (`NDVI_mean`, `mean_NDVI`, `NDVI (mean)`, `NDVI_median`,
+  `NDVI_value`, `tmax_degc`), a trailing number (`NDVI2`) and the spellings other exporters use (`lat`, `lon`, `dist_km`, `ring`, `rainfall`,
+  `precip`, `temp_max`, `max_temp`, `landcover`, `LULC`, `gap_filled`, `coverage_pct`, `y_lat`, ...) all become the canonical column. A
+  STATISTIC of a variable (`NDVI_sd`, `ndvi_count`, `tmax_anom`, `LAI_min`, `rain_sum`) is NOT the variable and is kept apart -- until now
+  difflib folded `NDVI_sd` onto NDVI at 80 % similarity; the fuzzy match is now for typos of long names only (`latitue`, `longitute`), never
+  a two-letter `id`. A second column of one variable in one file stays apart as `<name>__dup_<its name>`.
+- **What PASS A did with every header is said and written**: `unresolved_columns.csv` (one row per column: READ UNDER ITS CANONICAL NAME
+  with the reason, A STATISTIC kept apart, a SECOND COLUMN, or LEFT OUT as unknown, with the number of files) and a WARNING naming every
+  column left out, with the way to keep it (an alias in `_prep_common.py`, or a renamed header).
+- **Name-keyed joins.** The crosswalk's sub-watershed name and the panel's `site_name`, and the fund file's district and the crosswalk's
+  district, are joined on a normalised key (case, spaces, brackets, the words "sub-watershed" / "SWS" / "district" ignored), never on the
+  raw spelling; a district of the fund file that no crosswalk row matches is said (it used to be a silent NaN dose).
+- **`confirm_panel_columns` -- the finished panel confirmed row by row, streamed** (P00 step 6, P00b step 6, `build_panel.py`):
+  every schema column present under its exact name and type and nothing foreign; on EVERY row `treatment = (buff_km == 0)`, `control =
+  (buff_km in 1-5)`, `post` 0 / 1, `pre = 1 - post`, `did_term = treatment x post`, `treat = treatment`, `did = did_term`,
+  `in_analysis_sample = treatment or control`, `season_sort_rank` Kharif 0 < Rabi 1 < Zaid 2 < Yearly 3, `time_fe_year` = the Year,
+  `time_fe_season` = the season's name, `time_fe_yearseason` = Year_season; and the ROW ORDER: Year ascending, within a year the seasons in
+  the agricultural sequence Kharif, Rabi, Zaid, then the annual composite, within a year-season the sub-watershed, within it the pixel id
+  ascending -- every row after the one before it -> `panel_column_audit.csv`, FAIL lines when anything is off.
+- **`validate_column_styles.py`** (new gate): the same rows written in five header styles, the panel built from them, every one of 6,300
+  values equal to the source value of its pixel-year-season (joined on the coordinates, never on a name), the report's verdict per
+  column, the audit CLEAN, the dose join across differently written districts, and a planted wrong `did_term` plus a broken order caught.
+
 ## Your requests of 3 Oct — the pre and post years of your choice, and the panel built from a folder named in the first cell
 
 - **`PRE_YEARS` / `POST_YEARS` take a LIST of calendar years.** Your `PRE_YEARS = '2015, 2017, 2018, 2019, 2020, 2021'` was refused
