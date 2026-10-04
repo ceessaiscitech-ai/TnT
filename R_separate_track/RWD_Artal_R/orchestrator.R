@@ -10,7 +10,7 @@ ONLY <- { o <- grep("^only=", args, value = TRUE); if (length(o)) strsplit(sub("
 DRY <- "dry_run" %in% args
 CFG_DEFAULTS <- list(ANALYSIS_VARIABLE = "NDVI", SEASON_FILTER = "All", DONUT_RINGS = 1L, CONTROL_RINGS = "data", CONTROL_SELECTION_METHOD = "all", CONTROL_SELECT_ON = "level",
                      PRECISION_TOLERANCE = 1e-6, MIN_PIXEL_COVERAGE_PCT = 0.70, CLUSTER_VAR = "subwshed_id", ESTIMATOR = "SURROGATE_DID", LANDUSE_KEEP = "all", BASELINE_NDVI_MIN = NA,
-                     SAME_PIXELS = "pre_post", USE_SAME_PIXELS = FALSE, USE_DONUT = FALSE, USE_LANDUSE_MASK = FALSE, USE_BASELINE_NDVI_MASK = FALSE, USE_COVERAGE_THRESHOLD = FALSE,
+                     SAME_PIXELS = "pre_post", USE_SAME_PIXELS = FALSE, BALANCED_PANEL = "drop", USE_BALANCED_PANEL = FALSE, USE_DONUT = FALSE, USE_LANDUSE_MASK = FALSE, USE_BASELINE_NDVI_MASK = FALSE, USE_COVERAGE_THRESHOLD = FALSE,
                      USE_DROP_SINGLETONS = FALSE, USE_PRECISION_TOLERANCE = FALSE, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022L, PRE_YEARS = "data", POST_YEARS = "data", DESIGN_SOURCE = "model", EXCLUDE_TRANSITION_YEAR = FALSE,
                      OUTCOME_SCREEN = "drop", EXCLUDE_GAPFILLED = TRUE, COVARIATES = c("Rain", "Tmax", "Tmean", "Tmin"), SURROGATES = c("NDWI", "LSWI", "NDMI", "Rain"), SURROGATE_SEASON = 1L,
                      OUTCOME_SEASONS = c(2L, 3L), REPORT_SPECS = c("canonical", "donut", "matched", "synthetic_did", "surrogate_index"))
@@ -34,6 +34,7 @@ validate_config_R <- function(cfg) {
   dn <- suppressWarnings(as.integer(unlist(cfg$DONUT_RINGS))); dn <- dn[is.finite(dn)]; if (length(dn) && any(!dn %in% 1:5)) bad <- c(bad, "DONUT_RINGS must name rings 1..5")
   if (!tolower(cfg$CONTROL_SELECT_ON) %in% c("level", "rmse", "trend", "both")) bad <- c(bad, "CONTROL_SELECT_ON: level | rmse | trend | both")
   if (!tolower(cfg$SAME_PIXELS) %in% c("pre_post", "all", "off")) bad <- c(bad, "SAME_PIXELS: pre_post | all | off")
+  if (!tolower(cfg$BALANCED_PANEL %||% "drop") %in% c("drop", "keep")) bad <- c(bad, "BALANCED_PANEL: drop | keep")       # 4 Oct
   for (k in c("PRE_YEARS", "POST_YEARS")) { v <- cfg[[k]]; if (!(is.null(v) || (length(v) == 1 && is.na(v)) || (is.character(v) && tolower(v) %in% c("data", "all")) || (is.numeric(v) && v >= 1))) bad <- c(bad, sprintf("%s: data | all | a count of years | a calendar year", k)) }
   unknown <- setdiff(cfg$REPORT_SPECS, c("canonical", "donut", "matched", "synthetic_did", "surrogate_index")); if (length(unknown)) bad <- c(bad, paste("REPORT_SPECS unknown:", paste(unknown, collapse = ",")))
   if (length(bad)) stop("configuration refused: ", paste(bad, collapse = "; "))
@@ -49,7 +50,7 @@ apply_config_R <- function(cfg, spec = "config") {
             CLUSTER = CLUSTERS[[tolower(cfg$CLUSTER_VAR)]], LANDUSE_KEEP = cfg$LANDUSE_KEEP, BASELINE_NDVI_MIN = cfg$BASELINE_NDVI_MIN, MIN_PIXEL_COVERAGE_PCT = cfg$MIN_PIXEL_COVERAGE_PCT,
             USE_DROP_SINGLETONS = isTRUE(cfg$USE_DROP_SINGLETONS), PRECISION_TOLERANCE = cfg$PRECISION_TOLERANCE, SAME_PIXELS = cfg$SAME_PIXELS, PRE_YEARS = yrs(cfg$PRE_YEARS), POST_YEARS = yrs(cfg$POST_YEARS),
             # 1 Oct (your rule): the USE_ switches -- an optional rule acts only when its switch is on
-            USE_CONTROL_SELECTION = !identical(m[[1]], "rings"), USE_SAME_PIXELS = isTRUE(cfg$USE_SAME_PIXELS), USE_DONUT = isTRUE(cfg$USE_DONUT), USE_LANDUSE_MASK = isTRUE(cfg$USE_LANDUSE_MASK),
+            USE_CONTROL_SELECTION = !identical(m[[1]], "rings"), USE_SAME_PIXELS = isTRUE(cfg$USE_SAME_PIXELS), USE_BALANCED_PANEL = isTRUE(cfg$USE_BALANCED_PANEL), BALANCED_PANEL = cfg$BALANCED_PANEL %||% "drop", USE_DONUT = isTRUE(cfg$USE_DONUT), USE_LANDUSE_MASK = isTRUE(cfg$USE_LANDUSE_MASK),
             USE_BASELINE_NDVI_MASK = isTRUE(cfg$USE_BASELINE_NDVI_MASK), USE_COVERAGE_THRESHOLD = isTRUE(cfg$USE_COVERAGE_THRESHOLD), USE_PRECISION_TOLERANCE = isTRUE(cfg$USE_PRECISION_TOLERANCE))
   if (spec == "canonical") { g$SEASONS <- "all"; g$USE_DONUT <- FALSE; g$CONTROL_SELECTION <- "rings"; g$USE_CONTROL_SELECTION <- FALSE }
   else if (spec == "donut") { g$CONTROL_SELECTION <- "rings"; g$USE_CONTROL_SELECTION <- FALSE; g$USE_DONUT <- TRUE }

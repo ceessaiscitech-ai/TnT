@@ -2916,6 +2916,93 @@ def check_parent_dir_first_cell():
     note("PARENT_DIR (4 Oct): the first cell of P00" + (" and of R_P00" if rdirs else "") + " is the parent directory of the whole processing (output inside it), remembered for the models; a test's folder wins; no separate path module")
 
 
+def check_balanced_panel():
+    """4 Oct (your request): BALANCED_PANEL ('drop' | 'keep', switch USE_BALANCED_PANEL, off by default) -- per variable, a pixel missing the
+    value in any year-season of the sample leaves the model's sample (a balanced panel) or stays (counted); in memory and out of core; P00's
+    per-variable report; every notebook (Python and R), the configuration and both orchestrators carry it."""
+    import json as _j, tempfile as _tf, inspect as _i, glob as _g, re as _re
+    import numpy as _np, pandas as _pd
+    sys.path.insert(0, HERE)
+    import _common as _C, _prep_common as _P, _ooc_models as _OM
+    saved = dict(_C.ACTIVE); _co = _C.CURRENT_OUTCOME
+    try:
+        for v, w in ((True, "drop"), (False, "keep"), (None, "keep"), ("drop", "drop"), ("Keep", "keep"), ("balanced", "drop"), ("unbalanced", "keep")):
+            if _C._balanced_panel_of(v) != w: bad(f"BALANCED_PANEL {v!r} -> {_C._balanced_panel_of(v)!r} (want {w!r})")
+        try: _C._balanced_panel_of("sometimes"); bad("an unknown BALANCED_PANEL is not refused")
+        except _C.InsufficientDataError: pass
+        if _C.ACTIVE.get("use_balanced_panel") is not False or _C.ACTIVE.get("balanced_panel") != "drop": bad("the engine's defaults are not USE_BALANCED_PANEL False / BALANCED_PANEL 'drop'")
+        # a planted frame: 40 pixels x 5 years x 2 seasons; pixels 0-4 miss NDVI in 2020 season 2, pixel 7 misses 2023 entirely
+        rows = []
+        for p_ in range(40):
+            for y in (2019, 2020, 2021, 2022, 2023):
+                for s_ in (1, 2):
+                    if p_ == 7 and y == 2023: continue
+                    rows.append({"pixel_id": p_, "Year": y, "Season": s_, "site_id": 1, "NDVI": (_np.nan if (p_ < 5 and y == 2020 and s_ == 2) else 0.3 + 0.001 * p_)})
+        fr = _pd.DataFrame(rows); m0 = _np.ones(len(fr), bool); _C.CURRENT_OUTCOME = "NDVI"
+        _C.set_scenario(use_balanced_panel=True, balanced_panel="drop", verbose=False)
+        m1, r1 = _C.balanced_panel_rule(fr, m0, "NDVI")
+        kept = sorted(set(fr.pixel_id[m1]))
+        if r1 is None or r1["pixels_left_out"] != 6 or r1["rows_left_out"] != 58 or any(x in kept for x in (0, 1, 2, 3, 4, 7)) or len(kept) != 34: bad(f"BALANCED_PANEL 'drop' does not drop exactly the 6 incomplete pixels ({r1})")
+        if "_balanced" not in _C.scenario_tag(): bad(f"BALANCED_PANEL 'drop' does not tag the results folder ({_C.scenario_tag()})")
+        if _C._pixels_unbalanced(fr[m1], "NDVI") != 0 or _C._pixels_unbalanced(fr, "NDVI") != 6: bad("the integrity's count of unbalanced pixels is wrong")
+        _C.set_scenario(balanced_panel="keep", verbose=False); m2, r2 = _C.balanced_panel_rule(fr, m0, "NDVI")
+        if m2.sum() != len(fr) or (r2 or {}).get("pixels_unbalanced") != 6 or "_balanced" in _C.scenario_tag(): bad(f"BALANCED_PANEL 'keep' drops pixels, does not count them, or tags the folder ({r2})")
+        _C.set_scenario(use_balanced_panel=False, balanced_panel="drop", verbose=False); m3, r3 = _C.balanced_panel_rule(fr, m0, "NDVI")
+        if m3.sum() != len(fr) or r3 is not None or "_balanced" in _C.scenario_tag(): bad("BALANCED_PANEL acts although USE_BALANCED_PANEL is False")
+        # two sub-watersheds: a pixel is judged on ITS sub-watershed's year-seasons (sub-watershed 2 has no 2019)
+        fr2 = _pd.concat([fr, fr.assign(pixel_id=fr.pixel_id + 1000, site_id=2)], ignore_index=True)
+        fr2 = fr2[~((fr2.site_id == 2) & (fr2.Year == 2019))].reset_index(drop=True)
+        _C.set_scenario(use_balanced_panel=True, balanced_panel="drop", verbose=False)
+        _, r4 = _C.balanced_panel_rule(fr2, _np.ones(len(fr2), bool), "NDVI")
+        if (r4 or {}).get("pixels_left_out") != 12: bad(f"BALANCED_PANEL does not judge each pixel on its own sub-watershed's year-seasons ({r4})")
+        # out of core: the parent's cells of the WHOLE sample decide (a partition alone may lack a year-season)
+        _C._OOC_WORKER = True
+        try:
+            _, rc = _C.balanced_panel_rule(fr, m0, "NDVI")
+            if not rc or "cells" not in rc or rc["cells"].get(1) is None or len(rc["cells"][1]) != 10: bad(f"the out-of-core first pass does not report the sample's cells ({rc})")
+            _C._BALANCE_CELLS = {1: [y * 10 + s_ for y in (2019, 2020, 2021, 2022, 2023) for s_ in (1, 2)]}
+            part = fr[fr.pixel_id == 7]; _, rp = _C.balanced_panel_rule(part, _np.ones(len(part), bool), "NDVI")
+            if (rp or {}).get("pixels_left_out") != 1: bad(f"a partition holding only pixel 7 keeps it although the whole sample has 2023 ({rp})")
+        finally:
+            _C._OOC_WORKER = False; _C._BALANCE_CELLS = None
+        src_b = _i.getsource(_C.build_treatment_columns)
+        if "balanced_panel_rule(" not in src_b or src_b.index("same_pixels_rule(") > src_b.index("balanced_panel_rule("): bad("build_treatment_columns does not apply BALANCED_PANEL after SAME_PIXELS")
+        if "a balanced panel (every pixel in every year-season)" not in _i.getsource(_C.sample_integrity) or "unbal" not in _i.getsource(_OM.integrity_final) or "balance_cells" not in _i.getsource(_OM.prepare_sample):
+            bad("the sample integrity (in memory / out of core) does not confirm BALANCED_PANEL, or the out-of-core path lacks the whole-sample cells")
+        if "BALANCED_PANEL" not in _i.getsource(_C.resolve_design): bad("DESIGN IN EFFECT lacks BALANCED_PANEL")
+        # P00's per-variable report on a planted panel
+        td = _tf.mkdtemp(prefix="reward_balance_"); pth = os.path.join(td, "p.parquet"); fr.assign(LAI=0.5).to_parquet(pth, index=False)
+        t = _P.panel_balance_report(pth, td, columns=["NDVI", "LAI"], verbose=False)
+        tn = t.set_index("variable")
+        if not (tn.loc["NDVI", "pixels_incomplete"] == 6 and tn.loc["NDVI", "pixels_complete"] == 34 and tn.loc["LAI", "pixels_incomplete"] == 1 and os.path.exists(os.path.join(td, "panel_balance_by_variable.csv"))):
+            bad(f"panel_balance_report miscounts the planted panel ({t.to_dict('records')})")
+        # the notebooks, P00, the configuration, the orchestrators
+        nbs = [q for q in _g.glob(os.path.join(HERE, "0[2-5]_*", "M*.ipynb")) + _g.glob(os.path.join(HERE, "08_*", "MS01_*.ipynb")) if "checkpoints" not in q]
+        miss = [os.path.basename(q) for q in nbs if not all(k in open(q, encoding="utf-8").read() for k in ("USE_BALANCED_PANEL = False", "use_balanced_panel=USE_BALANCED_PANEL", "balanced_panel=BALANCED_PANEL"))]
+        if miss or len(nbs) < 46: bad(f"model notebooks without USE_BALANCED_PANEL / BALANCED_PANEL passed to set_scenario ({len(nbs)} found): {miss[:6]}")
+        p00 = open(os.path.join(HERE, "01_Panel_Preparation", "P00_RUN_ALL_Panel_Preparation.ipynb"), encoding="utf-8").read()
+        if not all(k in p00 for k in ("USE_BALANCED_PANEL = False", "use_balanced_panel=USE_BALANCED_PANEL", "panel_balance_report(")): bad("P00 lacks the BALANCED_PANEL default or the per-variable report")
+        cfg = open(os.path.join(HERE, "config", "analysis_config.yaml"), encoding="utf-8").read(); orc = open(os.path.join(HERE, "orchestrator.py"), encoding="utf-8").read()
+        if "USE_BALANCED_PANEL: false" not in cfg or "use_balanced_panel=" not in orc: bad("the configuration / orchestrator.py lack BALANCED_PANEL")
+        top = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
+        for rd in [d for d in (os.path.join(top, "R_separate_track", "RWDR_v20.59"),) if os.path.isdir(d)]:
+            want = {"lib/reward_design.R": ("balanced_panel_R <- function", "balance_cells_R", "pixels_unbalanced_R", "_balanced", "BALANCED_PANEL = \"drop\", USE_BALANCED_PANEL = FALSE"),
+                    "lib/reward_outofcore.R": ("ooc_task_balcells", "balcells = ooc_task_balcells", "ctx$bal_cells", "n_unbalanced"),
+                    "lib/reward_paths.R": ("USE_BALANCED_PANEL  <- FALSE", 'BALANCED_PANEL      <- "drop"'),
+                    "lib/reward_prep.R": ("panel_balance_report_R <- function", "panel_balance_report_R(rule"), "orchestrator.R": ("USE_BALANCED_PANEL = isTRUE(cfg$USE_BALANCED_PANEL)",)}
+            for fn_, keys in want.items():
+                s_ = open(os.path.join(rd, fn_), encoding="utf-8").read(); m_ = [k for k in keys if k not in s_]
+                if m_: bad(f"R {fn_} lacks {m_}")
+            rnb = _g.glob(os.path.join(rd, "rstudio", "*.Rmd")) + _g.glob(os.path.join(rd, "jupyter", "*.ipynb"))
+            m_ = [os.path.basename(q) for q in rnb if _re.search(r"(^|\")\s*SAME_PIXELS\s*<-", open(q, encoding="utf-8").read(), flags=_re.M) and not _re.search(r"(^|\")\s*USE_BALANCED_PANEL <- FALSE", open(q, encoding="utf-8").read(), flags=_re.M)]
+            if m_: bad(f"R notebooks without USE_BALANCED_PANEL / BALANCED_PANEL: {m_[:6]}")
+        note("4 Oct (your request): BALANCED_PANEL 'drop' | 'keep' behind USE_BALANCED_PANEL (off by default) -- per variable, a pixel missing the value in any year-season of "
+             "its sub-watershed's sample leaves (tag _balanced) or stays (counted); confirmed by the sample integrity; out of core on the whole sample's cells; "
+             "P00's panel_balance_by_variable.csv; every notebook, the configuration and both orchestrators carry it, in Python and R")
+    finally:
+        _C.ACTIVE.clear(); _C.ACTIVE.update(saved); _C._RESOLVED["key"] = None; _C.CURRENT_OUTCOME = _co
+
+
 def check_v20_58_memory_batches():
     """v20.58 (found when a validation run was KILLED for memory): M25's permutations in batches were sized for 3 n-vectors per permutation
     while the peak was 5 (the demeaning's convergence test made two more n x k temporaries). The demeaning tests its convergence in place
@@ -3256,6 +3343,7 @@ def run():
     _rguard(check_v20_58_memory_batches)
     _rguard(check_v20_59)
     _rguard(check_parent_dir_first_cell)
+    _rguard(check_balanced_panel)
     _rguard(check_v20_58_m13_port)
     _rguard(check_v20_35_structure)
     _rguard(check_v20_35)

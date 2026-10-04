@@ -160,16 +160,26 @@ def check_ctrl(base, engines, rows):
     for label, extra in (("pre_rings", {"use_control_selection": True, "control_selection": "pre_rings", "control_select_k": 2, "control_select_on": "trend"}),
                          ("pre_blocks", {"use_control_selection": True, "control_selection": "pre_blocks", "control_select_ratio": 2.0}),
                          ("cluster_block", {"cluster": "block"}), ("same_pixels_all", {"use_same_pixels": True, "same_pixels": "all"}),
-                         ("donut_ring1", {"use_donut": True, "donut_rings": [1]}), ("baseline_ndvi", {"use_baseline_ndvi_mask": True, "baseline_ndvi_min": 0.30, "use_control_selection": True, "control_selection": "pre_rings", "control_select_k": 2, "control_select_on": "rmse"})):   # spec 1
+                         ("donut_ring1", {"use_donut": True, "donut_rings": [1]}),
+                         ("balanced_drop", {"use_balanced_panel": True, "balanced_panel": "drop"}),   # 4 Oct: holes planted below; the cells of the WHOLE sample decide
+                         ("baseline_ndvi", {"use_baseline_ndvi_mask": True, "baseline_ndvi_min": 0.30, "use_control_selection": True, "control_selection": "pre_rings", "control_select_k": 2, "control_select_on": "rmse"})):   # spec 1
         d = os.path.join(base, f"ctrl_{label}"); os.makedirs(d, exist_ok=True)
-        panel = os.path.join(d, "panel.parquet"); pq.write_table(pa.Table.from_pandas(df, preserve_index=False), panel)
+        dfx = df
+        if label == "balanced_drop":                                    # 4 Oct: some pixels miss NDVI in one year-season, others a whole year
+            dfx = df.copy(); _px = np.sort(dfx["pixel_id"].unique()); _rs = np.random.default_rng(4)
+            _h1 = _rs.choice(_px, max(3, len(_px) // 12), replace=False); _yy = sorted(dfx["Year"].unique())
+            _c1 = (dfx["pixel_id"].isin(_h1)) & (dfx["Year"] == _yy[len(_yy) // 3]) & (dfx["Season"] == sorted(dfx["Season"].unique())[1])
+            dfx.loc[_c1, "NDVI"] = np.nan
+            _h2 = _rs.choice(np.setdiff1d(_px, _h1), max(2, len(_px) // 20), replace=False)
+            dfx = dfx[~(dfx["pixel_id"].isin(_h2) & (dfx["Year"] == _yy[-1]))].reset_index(drop=True)
+        panel = os.path.join(d, "panel.parquet"); pq.write_table(pa.Table.from_pandas(dfx, preserve_index=False), panel)
         mem = os.path.join(d, "memory"); models = ["M01", "M02"]
         r = _run(["-c", KNOWN_RUNNER, HERE, "single", panel, mem, json.dumps(models), json.dumps({str(k): v for k, v in coh.items()}), json.dumps(extra)],
                  env={"REWARD_PREBUILT_MODE": "off", "REWARD_FORCE_OUT_OF_CORE": None})
         sm = _status(r)
         if "@@DONE@@" not in r.stdout or any(s["status"] != "ok" or s["error"] for s in sm):
             rows.append({"check": f"control selection: {label}", "engine": "memory", "files": 0, "differences": 1, "verdict": "FAILED", "detail": (r.stdout + r.stderr)[-300:]}); continue
-        ev = glob.glob(os.path.join(mem, "CONTROL_SELECTION_NDVI.csv")) if label not in ("cluster_block", "same_pixels_all", "donut_ring1") else ["-"]
+        ev = glob.glob(os.path.join(mem, "CONTROL_SELECTION_NDVI.csv")) if label not in ("cluster_block", "same_pixels_all", "donut_ring1", "balanced_drop") else ["-"]
         if not ev: rows.append({"check": f"control selection: {label}", "engine": "memory", "files": 0, "differences": 1, "verdict": "FAILED", "detail": "no CONTROL_SELECTION_NDVI.csv beside the results"}); continue
         for e in engines:
             out = os.path.join(d, f"ooc_{e}"); t0 = time.time()
@@ -178,7 +188,7 @@ def check_ctrl(base, engines, rows):
             st = _status(r)
             ran = "@@DONE@@" in r.stdout and all(s["status"] == "ok" and not s["error"] and s["out_of_core"] for s in st) and len(st) == len(models)
             n, diffs = compare(mem, out, models=models) if ran else (0, [f"the out-of-core run failed: {(r.stdout + r.stderr)[-300:]}"])
-            if ran and label not in ("cluster_block", "same_pixels_all", "donut_ring1"):
+            if ran and label not in ("cluster_block", "same_pixels_all", "donut_ring1", "balanced_drop"):
                 a_ = pd.read_csv(os.path.join(mem, "CONTROL_SELECTION_NDVI.csv")); b_ = glob.glob(os.path.join(out, "CONTROL_SELECTION_NDVI.csv"))
                 b_ = pd.read_csv(b_[0]) if b_ else None
                 if b_ is None or sorted(a_.loc[a_.selected, "unit"]) != sorted(b_.loc[b_.selected, "unit"]) or not np.allclose(a_.sort_values("unit").trend_distance.values, b_.sort_values("unit").trend_distance.values, atol=1e-9):

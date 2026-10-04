@@ -44,6 +44,8 @@ sub-watershed > pixel) on the finished panel. **The two bundles are kept separat
 **4 Oct (later):** the data folder is set in the FIRST cell of the main panel-preparation notebook — `PARENT_DIR` in
 `01_Panel_Preparation/P00_RUN_ALL_Panel_Preparation.ipynb` (Python) and in the first chunk of `R_P00_Prepare_Panel` (R). It is the parent
 directory of the whole processing (output = `<PARENT_DIR>/output`) and the model notebooks follow it; the separate path module is removed.
+**Balanced panel (4 Oct):** `USE_BALANCED_PANEL` / `BALANCED_PANEL = "drop" | "keep"` in P00, R_P00 and every model drop, per variable, the
+pixels missing a value in any year-season of the sample (or keep them); `panel_balance_by_variable.csv` shows what would leave.
 `build_panel.py --input <exports>` / `Rscript build_panel.R input=<exports>` build the panel from a path without a notebook; **3 Oct:**
 `PRE_YEARS` / `POST_YEARS` take a list of calendar years (`[2015, 2017, 2018]`, `"2015, 2017-2021"`) = exactly these years.
 **The three specifications** (panel preparation, the surrogate / synthetic DiD engine, the configuration and orchestrator) are integrated in both

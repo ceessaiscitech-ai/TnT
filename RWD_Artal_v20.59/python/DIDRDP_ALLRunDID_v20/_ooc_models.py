@@ -79,6 +79,8 @@ def _integrity_part(d):
     if _spx != "off" and {"pixel_id", "post"} <= set(d.columns):                                          #   all here, so the count adds exactly
         _o = C.CURRENT_OUTCOME; _fin = np.isfinite(_num(d[_o]).values) if _o and _o in d.columns else np.ones(len(d), bool)
         r["one_side"] = int(C._pixels_one_side(d[_fin], _spx))
+    if C.ACTIVE.get("use_balanced_panel") and C.opt("balanced_panel") == "drop" and "pixel_id" in d.columns:   # 4 Oct: against the WHOLE sample's cells
+        r["unbal"] = int(C._pixels_unbalanced(d, C.CURRENT_OUTCOME, C._BALANCE_CELLS))
     return r
 
 
@@ -110,6 +112,9 @@ def integrity_final(parts, control_zones=None, label=None, verbose=True):
         _one = int(sum(p.get("one_side", 0) for p in parts))
         add("the same pixels in pre and post" if _spx == "pre_post" else "the same pixels in every year-season", _one == 0,
             f"{_one} pixel(s) observed " + ("on one side only" if _spx == "pre_post" else "in some year-seasons only"), True)
+    if any("unbal" in p for p in parts):                                                                  # 4 Oct: BALANCED_PANEL = 'drop', confirmed
+        _ub = int(sum(p.get("unbal", 0) for p in parts))
+        add("a balanced panel (every pixel in every year-season)", _ub == 0, f"{_ub} pixel(s) miss the variable in some year-season", True)
     cz = tuple(control_zones) if control_zones is not None else tuple(C.ACTIVE["control_zones"])
     rg = sorted(set().union(*[set(p["rg"]) for p in parts])) if parts else []
     add("the rings of the design", set(rg) <= ({0} | set(int(x) for x in cz)) and 0 in rg and any(r > 0 for r in rg),
@@ -230,8 +235,11 @@ def _t_prep(p):
     C = _C()
     d = O.read_part(p["path"], p["bad"])
     res = {"rows": 0, "path": None}
+    _bc = p.get("balance_cells")                                        # 4 Oct: BALANCED_PANEL -- the whole sample's cells (None in the first pass)
+    C._BALANCE_CELLS = {int(k): [int(x) for x in v] for k, v in _bc.items()} if _bc is not None else None
     if not len(d): return res
     d = C.build_treatment_columns(d, control_zones=p["control_zones"])
+    res["bal_out"] = C.LAST_DESIGN_INFO.get("balanced_panel")                                                                                              # 4 Oct
     res["post_diff"] = C.LAST_DESIGN_INFO.get("post_rows_differ_from_panel"); res["post_n"] = int(C.LAST_DESIGN_INFO.get("post_rows_compared", 0) or 0)   # v20.59
     res["same_out"] = C.LAST_DESIGN_INFO.get("same_pixels")                                                                                                # v20.59
     if C.ACTIVE.get("cluster") == "block" and "pixel_id" in d.columns: d["block_id"] = C.block_ids(d)   # v20.59
@@ -332,6 +340,16 @@ def prepare_sample(panel, model, control_zones=None, ref=-1, pre_window=(-4, -2)
             "dropna": model in ("M16", "M34"), "ref": ref, "pre_window": tuple(pre_window)} for p in panel.paths]
     decide_controls_ooc(pool, pay, panel.outcome)                        # v20.59: CONTROL_SELECTION decided once by the parent, applied by every worker
     got = pool.map("prep", pay)
+    if C.ACTIVE.get("use_balanced_panel"):                              # 4 Oct: BALANCED_PANEL -- the cells of the WHOLE sample, then every partition
+        _cells = {}                                                     #   keeps / drops its pixels against them (a pixel's rows are all in one partition)
+        for g in got:
+            for k, v in ((g["result"].get("bal_out") or {}).get("cells") or {}).items(): _cells.setdefault(str(k), set()).update(int(x) for x in v)
+        for q in pay: q["balance_cells"] = {k: sorted(v) for k, v in _cells.items()}
+        got = pool.map("prep", pay)
+        C._BALANCE_CELLS = None                                         # the built-in batches run in this process: never left behind for an in-memory run
+        _bo = [g["result"].get("bal_out") for g in got if g["result"].get("bal_out") and "pixels_unbalanced" in g["result"]["bal_out"]]
+        if _bo:
+            C.say_balanced_panel({"rule": _bo[0]["rule"], **{k: sum(int(b.get(k, 0)) for b in _bo) for k in ("pixels_unbalanced", "pixels_total", "pixels_left_out", "rows_left_out", "pixels_kept")}}, panel.outcome)
     res = [g["result"] for g in got if g["result"]["rows"]]
     if balanced and res:                                                # the periods of the WHOLE sample, then the pixels observed in all
         n_per = len(set().union(*[set(r["years"]) for r in res]))

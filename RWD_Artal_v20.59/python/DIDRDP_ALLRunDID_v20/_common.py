@@ -1248,7 +1248,20 @@ def _pixels_one_side(frame, rule):
     c = _cells_of(frame); g = pd.DataFrame({"p": frame["pixel_id"].values, "c": c}).groupby("p")["c"].nunique()
     return int((g < len(np.unique(c))).sum())
 
-_SWITCH_OF = {"control_selection": ("use_control_selection", "rings"), "same_pixels": ("use_same_pixels", "off"), "donut_rings": ("use_donut", []),
+BALANCED_PANEL_RULES = ("drop", "keep")
+def _balanced_panel_of(v):
+    """4 Oct (your request): BALANCED_PANEL -- 'drop' (a pixel missing the variable in ANY year-season of the sample leaves: a balanced
+    panel per variable) | 'keep' (such pixels stay -- an unbalanced panel -- and are counted and said)."""
+    if v is True: return "drop"
+    if v is False or v is None: return "keep"
+    s = str(v).strip().lower().replace("-", "_").replace(" ", "_")
+    s = {"balanced": "drop", "balance": "drop", "yes": "drop", "true": "drop", "unbalanced": "keep", "no": "keep", "false": "keep", "off": "keep",
+         "none": "keep"}.get(s, s)
+    if s not in BALANCED_PANEL_RULES: raise InsufficientDataError(f"BALANCED_PANEL must be 'drop' or 'keep' (got {v!r})")
+    return s
+
+_SWITCH_OF = {"control_selection": ("use_control_selection", "rings"), "same_pixels": ("use_same_pixels", "off"), "balanced_panel": ("use_balanced_panel", "keep"),
+              "donut_rings": ("use_donut", []),
               "landuse_keep": ("use_landuse_mask", "all"), "baseline_ndvi_min": ("use_baseline_ndvi_mask", None),
               "min_pixel_coverage_pct": ("use_coverage_threshold", "SCREEN_MIN_COVERAGE"), "precision_tolerance": ("use_precision_tolerance", 0.0)}
 def opt(key, a=None):
@@ -1286,6 +1299,79 @@ def same_pixels_rule(out, in_grp, outcome=None):
              + ("only before or only after treatment" if rule == "pre_post" else "in some year-seasons only")
              + f"; the treated and control groups are the same {len(keep_p):,} pixels " + ("in pre and post" if rule == "pre_post" else "in every year and season"))
     return m, res
+
+_BALANCE_CELLS = None      # 4 Oct: out of core -- the (sub-watershed, year-season) cells of the WHOLE sample, sent by the parent to every worker
+
+def _balance_keys(out, mm):
+    """(sub-watershed, year*10 + season) of the rows mm -- the cells a pixel of that sub-watershed must be observed in."""
+    c = _cells_of(out)[mm]
+    st = pd.to_numeric(out["site_id"], errors="coerce").fillna(0).astype(np.int64).values[mm] if "site_id" in out.columns else np.zeros(int(mm.sum()), np.int64)
+    return st, c
+
+def balance_cells_of(out, in_grp, outcome=None):
+    """4 Oct: the cells of a frame's sample where the variable has a value -- {sub-watershed: [year*10 + season, ...]} (the out-of-core first pass)."""
+    o = outcome or CURRENT_OUTCOME
+    if not o or o not in out.columns or "pixel_id" not in out.columns: return {}
+    mm = np.asarray(in_grp, bool) & np.isfinite(pd.to_numeric(out[o], errors="coerce").values)
+    if not mm.any(): return {}
+    st, c = _balance_keys(out, mm)
+    g = pd.DataFrame({"s": st, "c": c}).drop_duplicates()
+    return {int(k): sorted(int(x) for x in v) for k, v in g.groupby("s")["c"]}
+
+def _pixels_unbalanced(frame, outcome=None, cells=None):
+    """4 Oct: how many pixels of the frame miss the variable in a year-season of their sub-watershed's sample (the integrity's count)."""
+    if not len(frame) or "pixel_id" not in frame.columns: return 0
+    o = outcome or CURRENT_OUTCOME
+    fin = np.isfinite(pd.to_numeric(frame[o], errors="coerce").values) if o and o in frame.columns else np.ones(len(frame), bool)
+    if not fin.any(): return 0
+    st, c = _balance_keys(frame, fin)
+    need = {k: len(v) for k, v in cells.items()} if cells else pd.DataFrame({"s": st, "c": c}).groupby("s")["c"].nunique().to_dict()
+    g = pd.DataFrame({"p": frame["pixel_id"].values[fin], "s": st, "c": c}).groupby(["s", "p"])["c"].nunique().reset_index()
+    return int((g["c"].values < g["s"].map(lambda k: need.get(int(k), 0)).values).sum())
+
+def balanced_panel_rule(out, in_grp, outcome=None):
+    """4 Oct (your request): BALANCED_PANEL -- per VARIABLE, a pixel that has no value of the outcome in some year-season of the sample (the
+    year-seasons in which its sub-watershed has the outcome, after the years, seasons, rings, screen, gap-filled rows and every rule above)
+    leaves the sample whole ('drop': a balanced panel), or stays and is counted ('keep'). The panel FILE keeps every row; the rule decides
+    what the model estimates on. Out of core the cells are those of the WHOLE sample (the parent's first pass), so the answer is the same."""
+    rule = opt("balanced_panel")
+    m = np.asarray(in_grp, bool).copy()
+    if not ACTIVE.get("use_balanced_panel") or "pixel_id" not in out.columns: return m, None
+    o = outcome or CURRENT_OUTCOME
+    if not o or o not in out.columns: return m, None
+    if _OOC_WORKER and _BALANCE_CELLS is None:                       # the first pass: the cells only, nothing leaves yet
+        return m, {"rule": rule, "cells": balance_cells_of(out, m, o)}
+    fin = np.isfinite(pd.to_numeric(out[o], errors="coerce").values)
+    mm = m & fin
+    if not mm.any(): return m, {"rule": rule, "pixels_left_out": 0, "rows_left_out": 0, "pixels_kept": 0, "pixels_unbalanced": 0}
+    st, c = _balance_keys(out, mm)
+    cells = _BALANCE_CELLS if _BALANCE_CELLS is not None else balance_cells_of(out, m, o)
+    need = {int(k): len(v) for k, v in cells.items()}
+    pid = out["pixel_id"].values
+    g = pd.DataFrame({"p": pid[mm], "s": st, "c": c}).groupby(["p", "s"])["c"].nunique().reset_index()
+    g["need"] = g["s"].map(lambda k: need.get(int(k), 0)).values
+    g["ok"] = g["c"].values >= g["need"].values
+    full = g.groupby("p")["ok"].all() if len(g) else pd.Series(dtype=bool)
+    bad_p = full.index[~full.values.astype(bool)] if len(full) else []
+    n_bad = int(len(bad_p)); n_all = int(len(full))
+    res = {"rule": rule, "pixels_unbalanced": n_bad, "pixels_total": n_all, "pixels_left_out": 0, "rows_left_out": 0, "pixels_kept": n_all}
+    if n_bad and rule == "drop":
+        lv = np.isin(pid, np.asarray(bad_p)) & m
+        res.update(pixels_left_out=n_bad, rows_left_out=int(lv.sum()), pixels_kept=n_all - n_bad)
+        m &= ~lv
+    if not _OOC_WORKER: say_balanced_panel(res, o)
+    return m, res
+
+def say_balanced_panel(res, o):
+    if not res or "pixels_unbalanced" not in res: return
+    n_bad, n_all = int(res["pixels_unbalanced"]), int(res.get("pixels_total", 0))
+    if res["rule"] == "drop":
+        if n_bad: info(f"BALANCED_PANEL = 'drop' ({o}): {n_bad:,} of {n_all:,} pixel(s) / {int(res['rows_left_out']):,} rows leave -- the variable is missing "
+                       f"in some year-season of the sample; the model estimates on a balanced panel of {int(res['pixels_kept']):,} pixels")
+        else: info(f"BALANCED_PANEL = 'drop' ({o}): every one of the {n_all:,} pixels has the variable in every year-season of the sample -- already balanced")
+    else:
+        info(f"BALANCED_PANEL = 'keep' ({o}): {n_bad:,} of {n_all:,} pixel(s) miss the variable in some year-season and are KEPT (an unbalanced panel)"
+             if n_bad else f"BALANCED_PANEL = 'keep' ({o}): the {n_all:,} pixels are balanced already")
 
 CONTROL_SELECTIONS = ("rings", "pre_rings", "pre_blocks")
 CONTROL_BLOCK_MIN_PIXELS = 30      # v20.59: a block with fewer control pixels in the pre period is not a candidate (its mean is noise)
@@ -2295,6 +2381,9 @@ def sample_integrity(frame, control_zones=None, label=None, verbose=True):
         _one = _pixels_one_side(d[_fin], _spx)
         add("the same pixels in pre and post" if _spx == "pre_post" else "the same pixels in every year-season", _one == 0,
             f"{_one} pixel(s) observed " + ("on one side only" if _spx == "pre_post" else "in some year-seasons only"), True)
+    if ACTIVE.get("use_balanced_panel") and opt("balanced_panel") == "drop" and "pixel_id" in d.columns:   # 4 Oct: your rule, confirmed on the sample
+        _ub = _pixels_unbalanced(d, CURRENT_OUTCOME, _BALANCE_CELLS)
+        add("a balanced panel (every pixel in every year-season)", _ub == 0, f"{_ub} pixel(s) miss the variable in some year-season", True)
     cz = tuple(control_zones) if control_zones is not None else tuple(ACTIVE["control_zones"])
     rg = sorted(int(x) for x in pd.unique(pd.to_numeric(d["buff_km"], errors="coerce").dropna())) if "buff_km" in d.columns else []
     add("the rings of the design", set(rg) <= ({0} | set(int(x) for x in cz)) and 0 in rg and any(r > 0 for r in rg), f"rings in the sample {rg} | design {[0] + sorted(int(x) for x in cz)}")
@@ -2317,7 +2406,8 @@ def sample_integrity(frame, control_zones=None, label=None, verbose=True):
            + (f"years {int(pd.to_numeric(d['Year']).min())}-{int(pd.to_numeric(d['Year']).max())} | " if "Year" in d.columns and len(d) else "")
            + (f"seasons {[SEASON_LABEL.get(int(x), x) for x in sorted(pd.unique(d['Season']))]} | " if "Season" in d.columns and len(d) else "")
            + "CONFIRMED: every (pixel, year, season) once, one ring per pixel, no pixel both treated and a control, nothing outside the processed sub-watershed(s)"
-           + {"pre_post": ", the same pixels in pre and post", "all": ", the same pixels in every year-season"}.get(opt("same_pixels"), ""))
+           + {"pre_post": ", the same pixels in pre and post", "all": ", the same pixels in every year-season"}.get(opt("same_pixels"), "")
+           + (", a balanced panel (every pixel in every year-season)" if ACTIVE.get("use_balanced_panel") and opt("balanced_panel") == "drop" else ""))
     return tab
 
 FORCE_BATCH_UNITS = None      # v20.58 (tests only): a batch size that forces the batch path of a model, to prove it gives the all-at-once answer
@@ -3645,6 +3735,8 @@ ACTIVE = {"control_zones": tuple(DEFAULT_CONTROL_ZONES), "treatment_year": TREAT
           "control_selected": None,
           "same_pixels": "pre_post",         # v20.59 (your rule): every treated and control pixel is observed in pre AND post ("pre_post"), or in every
                                              #   year-season ("all"), else it leaves the sample -- the groups are the same pixels across the panel | "off"
+          "balanced_panel": "drop",          # 4 Oct (your request): "drop" = per variable, a pixel missing the value in ANY year-season of the sample leaves
+                                             #   (a balanced panel) | "keep" = kept and counted (unbalanced). Applied only when use_balanced_panel is True
           "donut_rings": [],                 # spec 1: rings left OUT of the control pool (the spillover buffer next to the core), e.g. [1]; the notebooks set [1]
           "landuse_keep": "all",             # spec 1: "all" | the LandUse class codes a pixel's PRE-period (baseline) class must be in
           "baseline_ndvi_min": None,         # spec 1: a pixel's pre-period mean NDVI must exceed this (an agricultural mask), e.g. 0.25 | None (set_scenario: None resets it; _UNSET = not given)
@@ -3654,7 +3746,7 @@ ACTIVE = {"control_zones": tuple(DEFAULT_CONTROL_ZONES), "treatment_year": TREAT
           # 1 Oct (your rule): the USE_ switches -- an optional rule is applied ONLY when its switch is True, whatever its value says; all False by
           # default (the notebooks' SECTION B / C). opt(key) gives the value IN FORCE: the setting when its switch is on, else the "do not use" value.
           "use_control_selection": False, "use_same_pixels": False, "use_donut": False, "use_landuse_mask": False, "use_baseline_ndvi_mask": False,
-          "use_coverage_threshold": False, "use_precision_tolerance": False,
+          "use_coverage_threshold": False, "use_precision_tolerance": False, "use_balanced_panel": False,
           "design_source": "model",          # v20.59: "panel" = the PANEL's post / pre / did (the exports' Treat flag, PERIOD_RULE) are the design the model estimates
                                              #   on (the notebooks' default); "model" = the design in effect (timing, TREATMENT_YEAR ...) -- the design-based option
           # v20.12: which rows enter the estimation. "seasonal" = Kharif/Rabi/Zaid (Season 1-3, the default);
@@ -3720,7 +3812,8 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                  outcome_screen=None, design_source=None, control_selection=None, control_select_k=None, control_select_ratio=None,
                  control_select_on=None, control_block_deg=None, same_pixels=None, donut_rings=None, landuse_keep=None, baseline_ndvi_min=_UNSET,
                  min_pixel_coverage_pct=None, drop_singletons=None, precision_tolerance=None, use_control_selection=None, use_same_pixels=None, use_donut=None,
-                 use_landuse_mask=None, use_baseline_ndvi_mask=None, use_coverage_threshold=None, use_precision_tolerance=None, persist=False, verbose=True):
+                 use_landuse_mask=None, use_baseline_ndvi_mask=None, use_coverage_threshold=None, use_precision_tolerance=None,
+                 balanced_panel=None, use_balanced_panel=None, persist=False, verbose=True):
     """Set the run's control rings and treatment timing. Call it in CELL 1, BEFORE loading the panel.
     post_cutoff defaults to treatment_year (shifting the timing shifts the pre/post split with it).
 
@@ -3753,7 +3846,8 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
                    ("same_pixels", same_pixels), ("donut_rings", donut_rings), ("landuse_keep", landuse_keep), ("baseline_ndvi_min", baseline_ndvi_min),
                    ("min_pixel_coverage_pct", min_pixel_coverage_pct), ("drop_singletons", drop_singletons), ("precision_tolerance", precision_tolerance),
                    ("use_control_selection", use_control_selection), ("use_same_pixels", use_same_pixels), ("use_donut", use_donut), ("use_landuse_mask", use_landuse_mask),
-                   ("use_baseline_ndvi_mask", use_baseline_ndvi_mask), ("use_coverage_threshold", use_coverage_threshold), ("use_precision_tolerance", use_precision_tolerance)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule, the design's source, the control selection
+                   ("use_baseline_ndvi_mask", use_baseline_ndvi_mask), ("use_coverage_threshold", use_coverage_threshold), ("use_precision_tolerance", use_precision_tolerance),
+                   ("balanced_panel", balanced_panel), ("use_balanced_panel", use_balanced_panel)):   # v20.57: overlap_rows was missing; v20.58: the processing set; v20.59: the screen's rule, the design's source, the control selection
         if _v is not None and _v is not _UNSET: _EXPLICIT_KEYS.add(_k)
     # v20.57: which keys the notebook set, in the form load_scenario() respects (a "data" option is explicit too)
     for _k, _v in (("treatment_year_setting", treatment_year), ("post_cutoff_setting", post_cutoff), ("seasons_setting", seasons),
@@ -3839,6 +3933,7 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
         if not (0.001 <= float(control_block_deg) <= 1.0): raise InsufficientDataError("CONTROL_BLOCK_DEG must be between 0.001 and 1 degree")
         ACTIVE["control_block_deg"] = float(control_block_deg)
     if same_pixels is not None: ACTIVE["same_pixels"] = _same_pixels_of(same_pixels)                # v20.59: pre_post | all | off
+    if balanced_panel is not None: ACTIVE["balanced_panel"] = _balanced_panel_of(balanced_panel)     # 4 Oct: drop | keep
     if donut_rings is not None:                                                                       # spec 1: the spillover buffer
         _dn = [] if donut_rings in ("none", "", False, None) else ([int(donut_rings)] if isinstance(donut_rings, (int, np.integer)) else [int(x) for x in donut_rings])
         if any(x < 1 or x > 5 for x in _dn): raise InsufficientDataError(f"DONUT_RINGS must name rings 1..5 (got {donut_rings!r})")
@@ -3854,7 +3949,8 @@ def set_scenario(control_zones=None, treatment_year=None, post_cutoff=None, excl
         ACTIVE["min_pixel_coverage_pct"] = float(min_pixel_coverage_pct)
     if drop_singletons is not None: ACTIVE["drop_singletons"] = bool(drop_singletons)
     for _k, _v in (("use_control_selection", use_control_selection), ("use_same_pixels", use_same_pixels), ("use_donut", use_donut), ("use_landuse_mask", use_landuse_mask),
-                   ("use_baseline_ndvi_mask", use_baseline_ndvi_mask), ("use_coverage_threshold", use_coverage_threshold), ("use_precision_tolerance", use_precision_tolerance)):
+                   ("use_baseline_ndvi_mask", use_baseline_ndvi_mask), ("use_coverage_threshold", use_coverage_threshold), ("use_precision_tolerance", use_precision_tolerance),
+                   ("use_balanced_panel", use_balanced_panel)):
         if _v is not None: ACTIVE[_k] = bool(_v)                       # 1 Oct (your rule): the USE_ switches -- an optional rule acts only when its switch is True
     if precision_tolerance is not None:
         if not (0 <= float(precision_tolerance) <= 1e-2): raise InsufficientDataError("PRECISION_TOLERANCE must be in [0, 1e-2]")
@@ -4342,6 +4438,7 @@ def scenario_tag(scn=None):
     _spx = opt("same_pixels", a)                                                                                # v20.59: the same pixels across the panel
     if _spx == "all": t += "_pixAll"                                                                            #   (1 Oct: no tag when USE_SAME_PIXELS is off)
     elif _spx == "pre_post": t += "_pixPP"
+    if a.get("use_balanced_panel") and a.get("balanced_panel", "drop") == "drop": t += "_balanced"           # 4 Oct: no tag when off or 'keep'
     if opt("donut_rings", a): t += "_donut" + "-".join(str(int(x)) for x in opt("donut_rings", a))                    # spec 1
     if opt("landuse_keep", a) != "all": t += "_lu" + "-".join(str(int(x)) for x in opt("landuse_keep", a))
     if opt("baseline_ndvi_min", a) is not None: t += f"_ndviPre{float(opt('baseline_ndvi_min', a)):g}"
@@ -4384,7 +4481,7 @@ SCENARIO_KEYS = ("control_zones", "treatment_year", "post_cutoff", "exclude_tran
                  "design_source", "control_selection", "control_select_k", "control_select_ratio", "control_select_on", "control_block_deg",
                  "control_selected", "same_pixels", "donut_rings", "landuse_keep", "baseline_ndvi_min", "min_pixel_coverage_pct", "drop_singletons",
                  "precision_tolerance", "use_control_selection", "use_same_pixels", "use_donut", "use_landuse_mask", "use_baseline_ndvi_mask",
-                 "use_coverage_threshold", "use_precision_tolerance")   # v20.59 + spec 1 / 3; 1 Oct: the USE_ switches
+                 "use_coverage_threshold", "use_precision_tolerance", "balanced_panel", "use_balanced_panel")   # v20.59 + spec 1 / 3; 1 Oct: the USE_ switches; 4 Oct
 def scenario_file(path=None):
     """Where a scenario chosen during panel preparation is stored: next to the prepared panel."""
     return path or os.path.join(os.path.dirname(PREPARED_PANEL), "did_scenario.json")
@@ -4825,7 +4922,8 @@ def _design_key(frame_sites=None):
             "design_source", "outcome_screen", "exclude_gapfilled", "covariates", "cluster", "pooled_fe", "unit_fe", "cohort_offset", "nonnegative",
             "control_selection", "control_select_k", "control_select_ratio", "control_select_on", "control_block_deg", "same_pixels",
             "donut_rings", "landuse_keep", "baseline_ndvi_min", "min_pixel_coverage_pct", "drop_singletons", "precision_tolerance",
-            "use_control_selection", "use_same_pixels", "use_donut", "use_landuse_mask", "use_baseline_ndvi_mask", "use_coverage_threshold", "use_precision_tolerance")
+            "use_control_selection", "use_same_pixels", "use_donut", "use_landuse_mask", "use_baseline_ndvi_mask", "use_coverage_threshold", "use_precision_tolerance",
+            "balanced_panel", "use_balanced_panel")
     k = {x: ACTIVE.get(x) for x in keys}
     dk = set(ACTIVE.get("data_keys") or [])
     if "control_zones" not in dk: k["control_zones"] = list(ACTIVE["control_zones"])
@@ -5009,6 +5107,10 @@ def resolve_design(verbose=True, force=False, frame=None):
     _spx_ = opt("same_pixels")
     ch("SAME_PIXELS", f"{ACTIVE.get('same_pixels', 'pre_post')}{_sw('use_same_pixels', 'SAME_PIXELS')}", _spx_, _why("use_same_pixels", "SAME_PIXELS") + "your setting" + {"pre_post": " (every treated and control pixel is observed in pre AND post; a pixel seen on one side only leaves -- the groups are the same pixels across the panel)",
                                                        "all": " (every pixel is observed in every year-season of the sample: a balanced pixel set)", "off": " (a pixel may contribute to one side only -- the v20.58 sample)"}[_spx_])
+    _bp_ = opt("balanced_panel")
+    ch("BALANCED_PANEL", f"{ACTIVE.get('balanced_panel', 'drop')}{_sw('use_balanced_panel', 'BALANCED_PANEL')}", _bp_, _why("use_balanced_panel", "BALANCED_PANEL") + "your setting" + {
+        "drop": " (per variable, a pixel missing the value in any year-season of the sample leaves: a balanced panel)",
+        "keep": " (a pixel missing the value in some year-season stays: an unbalanced panel, counted)"}[_bp_])
     ch("CLUSTER", ACTIVE.get("cluster", "site"), ACTIVE.get("cluster", "site"), "your setting" + (" (~1 km spatial blocks of pixels -- many clusters, the spatial correlation of neighbouring pixels absorbed)" if ACTIVE.get("cluster") == "block" else " (the sub-watershed; fewer than %d sub-watersheds -> the years)" % MIN_SWS_CLUSTERS))
     ch("COVARIATES", ",".join(ACTIVE.get("covariates") or []) or "none", ",".join(ACTIVE.get("covariates") or []) or "none", "your setting")
     import copy as _cp
@@ -5372,6 +5474,7 @@ def build_treatment_columns(df, control_zones=None, treatment_year=None,
     in_grp, _bn = baseline_ndvi_rule(out, in_grp)                          # spec 1: BASELINE_NDVI_MIN on the pixel's pre-period mean NDVI
     in_grp, _csel = select_controls(out, in_grp, CURRENT_OUTCOME)         # v20.59: CONTROL_SELECTION -- the pre period's choice, fixed for the panel
     in_grp, _same = same_pixels_rule(out, in_grp, CURRENT_OUTCOME)        # v20.59: SAME_PIXELS -- the same pixels in pre and post (or every year-season)
+    in_grp, _bal = balanced_panel_rule(out, in_grp, CURRENT_OUTCOME)      # 4 Oct: BALANCED_PANEL -- a pixel missing the variable in a year-season leaves (drop) or stays (keep)
     LAST_DESIGN_INFO.clear()
     _site_col = "site_id" if "site_id" in out.columns else None
     # v20.58: the pooled overlap (a pixel TREATED in one processed sub-watershed is never a control of another; a pixel-year-season enters
@@ -5381,7 +5484,7 @@ def build_treatment_columns(df, control_zones=None, treatment_year=None,
                              "duplicate_rows_across_sites": int(sum(v for k, v in _lr.items() if str(k).startswith("3|1|"))),
                              "location_rows": dict(_lr),
                              "control_selection": ({"mode": _csel["mode"], "units": list(_csel["units"])} if _csel else None),
-                             "same_pixels": _same, "donut": _dnt, "landuse": _lu, "baseline_ndvi": _bn})
+                             "same_pixels": _same, "balanced_panel": _bal, "donut": _dnt, "landuse": _lu, "baseline_ndvi": _bn})
     design_vs_panel(out, _post_panel, _post_design)                      # v20.59: the design in effect against the panel's post column, said (after the
                                                                          #   info above is reset, so the count stays in LAST_DESIGN_INFO)
     out["in_analysis_sample"] = np.asarray(in_grp).astype("int8")

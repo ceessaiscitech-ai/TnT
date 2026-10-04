@@ -13,9 +13,11 @@ ESTIMATOR: SURROGATE_DID         # TWFE_CANONICAL | SYNTHETIC_DID | SURROGATE_IN
 LANDUSE_KEEP: [2]                # the LandUse class codes a pixel's PRE-period class must be in -- applied when USE_LANDUSE_MASK (all = every class)
 BASELINE_NDVI_MIN: 0.25          # a pixel's pre-period mean NDVI must exceed it (an agricultural mask) -- applied when USE_BASELINE_NDVI_MASK
 SAME_PIXELS: pre_post            # pre_post | all | off  -- the treated and control groups are the same pixels in pre and post (or every year-season)
+BALANCED_PANEL: drop             # drop | keep -- 4 Oct: per variable, a pixel missing the value in any year-season of the sample leaves (drop: a balanced panel) or stays (keep)
 # ---- the USE_ switches (1 Oct, your rule): an optional rule is applied ONLY when its switch is true; all false here. The report's own specs set what
 #      they need (the donut spec turns the donut on, the matched spec the control selection); every other spec follows these switches.
 USE_SAME_PIXELS: false           # true = SAME_PIXELS above is enforced
+USE_BALANCED_PANEL: false        # true = BALANCED_PANEL above is applied (false = every pixel kept, as before)
 USE_DONUT: false                 # true = DONUT_RINGS above leave the control pool in every spec (the donut spec does so regardless)
 USE_LANDUSE_MASK: false          # true = LANDUSE_KEEP below is applied
 USE_BASELINE_NDVI_MASK: false    # true = BASELINE_NDVI_MIN below is applied

@@ -597,6 +597,39 @@ panel_variation_report_R <- function(parts, write = TRUE) {
 # float32 number (TRUE = the rounding happened BEFORE this panel: in the export itself or in an older float32 panel read as an input).
 # One column at a time from the Parquet file (~0.7 GB per column at 86.6 M rows), never the whole panel. -> OUTPUT_DIR/panel_precision_report_R.csv
 .as_float32_R <- function(x) readBin(writeBin(as.double(x), raw(), size = 4L), "double", n = length(x), size = 4L)   # R has no float32: round-trip through 4-byte floats
+# 4 Oct (your request): per VARIABLE, how balanced the panel is -- the year-seasons each sub-watershed has the variable in, the pixels that have it
+# in EVERY one of them (complete) and the pixels missing it in some (incomplete), with their rows. The panel FILE keeps every row; BALANCED_PANEL
+# ("drop" | "keep", switch USE_BALANCED_PANEL) decides in each model what its sample keeps, on that model's own years / seasons / rings / screen.
+# The key columns once, then one variable at a time (as the precision report). As Python's panel_balance_report. -> panel_balance_by_variable_R.csv
+panel_balance_report_R <- function(path = PANEL_PATH, output_dir = OUTPUT_DIR, columns = NULL, rule = NULL, verbose = TRUE) {
+  if (!HAS_ARROW || !file.exists(path)) { warn("balance report: no Parquet panel at ", path); return(invisible(NULL)) }
+  nm <- names(arrow::open_dataset(path)$schema)
+  cols <- intersect(columns %||% OUTCOME_VARS, nm); if (!length(cols) || !all(c("pixel_id", "Year", "Season") %in% nm)) return(invisible(NULL))
+  key <- as.data.table(arrow::read_parquet(path, col_select = intersect(c("pixel_id", "site_id", "Year", "Season"), nm)))
+  if (!"site_id" %in% names(key)) key[, site_id := 0L]
+  key[, `:=`(site_id = as.integer(site_id), cell = as.integer(Year) * 10L + as.integer(Season))]; key[is.na(site_id), site_id := 0L]
+  rows <- lapply(cols, function(v) {
+    fin <- is.finite(as.numeric(arrow::read_parquet(path, col_select = v)[[1]]))
+    k <- key[fin]; need <- k[, .(need = uniqueN(cell)), by = site_id]
+    g <- k[, .(n = .N), by = .(pixel_id, site_id)][need, on = "site_id", nomatch = NULL]
+    full <- g[, .(full = all(n >= need), n = sum(n)), by = pixel_id]
+    all_p <- uniqueN(key$pixel_id)
+    data.table(variable = v, sub_watersheds = nrow(need), year_seasons_per_sub_watershed = paste(sprintf("%d:%d", need$site_id, need$need)[order(need$site_id)], collapse = ","),
+               pixels_with_values = nrow(full), pixels_complete = sum(full$full), pixels_incomplete = sum(!full$full),
+               share_incomplete = round(sum(!full$full) / max(1L, nrow(full)), 6), rows_of_incomplete_pixels = sum(full[full == FALSE, n]),
+               pixels_without_the_variable = all_p - nrow(full))
+  })
+  tab <- rbindlist(rows); dir.create(output_dir, recursive = TRUE, showWarnings = FALSE); out <- file.path(output_dir, "panel_balance_by_variable_R.csv"); fwrite(tab, out)
+  if (verbose && nrow(tab)) {
+    r_ <- rule %||% "keep"
+    ok(sprintf("panel balance per variable (the whole panel file, every year-season): %d of %d variables have pixels missing the value in some year-season -> %s. BALANCED_PANEL for the models: \"%s\" %s",
+               sum(tab$pixels_incomplete > 0), nrow(tab), out, r_, if (identical(r_, "drop")) "(such pixels leave each model's sample, judged on that model's own years / seasons / rings)" else "(such pixels stay: an unbalanced panel)"))
+    for (i in which(tab$pixels_with_values > 0)) with(tab[i], info(sprintf("  %-8s %10s pixels with values | complete %10s | incomplete %10s (%.1f %%, %s rows)", variable,
+         format(pixels_with_values, big.mark = ","), format(pixels_complete, big.mark = ","), format(pixels_incomplete, big.mark = ","), 100 * share_incomplete, format(rows_of_incomplete_pixels, big.mark = ","))))
+  }
+  invisible(tab)
+}
+.balance_rule_R <- function() if (isTRUE(.opt("USE_BALANCED_PANEL", FALSE))) balanced_panel_rule_of_R(.opt("BALANCED_PANEL", "drop")) else "keep"
 panel_precision_report_R <- function(path = PANEL_PATH, output_dir = OUTPUT_DIR, columns = NULL, verbose = TRUE) {
   cols <- columns %||% c(OUTCOME_VARS, WEATHER_VARS, "dose_intensity_per_ha", "dose_amount_sws", "dose_per_subwshed")
   has_pq <- HAS_ARROW && file.exists(path); src <- if (has_pq) path else panel_file()
@@ -845,7 +878,8 @@ run_prep <- function() {
   panel_write(dt)                                                                                 # arrow, else CSV; 3 Oct: written beside, then renamed into place
   .said("panel written")
   .doing("precision report: the smallest difference present per variable, and whether the panel kept it")
-  tryCatch(panel_precision_report_R(verbose = TRUE), error = function(e) warn("precision report: ", conditionMessage(e), " (the panel itself is complete)"))   # 3 Oct (your rule: the 8th-10th decimals are data) -> panel_precision_report_R.csv; never fails the build
+  tryCatch(panel_precision_report_R(verbose = TRUE), error = function(e) warn("precision report: ", conditionMessage(e), " (the panel itself is complete)"))
+  tryCatch(panel_balance_report_R(rule = .balance_rule_R(), verbose = TRUE), error = function(e) warn("balance report: ", conditionMessage(e), " (the panel itself is complete)"))   # 4 Oct (your request) -> panel_balance_by_variable_R.csv   # 3 Oct (your rule: the 8th-10th decimals are data) -> panel_precision_report_R.csv; never fails the build
   .said("precision report written")
   # v20.58: how this panel was built (as Python's panel_build_settings.json) -- load_panel_R says so when a panel's repeated rows filled gaps
   fwrite(data.table(setting = c("engine_policy", "dedup_priority", "dedup_fill_from_duplicates", "dedup_values_filled", "dedup_values_not_used",

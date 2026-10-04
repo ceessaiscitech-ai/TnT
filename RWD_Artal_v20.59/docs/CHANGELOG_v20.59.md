@@ -206,6 +206,45 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
 `control_selection_decide_R` / `record_control_selection_R`, `select_controls_R` (in `load_panel_R`), `reward_outofcore.R`
 `ooc_task_presel`, `ctx$ctrl_sel`; `reward_paths.R` defaults.
 
+## Your request of 4 Oct (later) — drop the pixels missing a variable in any year or season (a balanced panel), or keep them
+
+- **New option, at panel level and in every model, in Python and R:** `USE_BALANCED_PANEL` (switch, `False` by default) and
+  `BALANCED_PANEL = "drop" | "keep"`. With `"drop"`, per variable, a pixel without a value in ANY year-season of the model's sample leaves
+  that model's sample whole, so the estimate runs on a balanced panel; the results folder is tagged `_balanced`. With `"keep"` the pixels
+  stay and the log counts them. With the switch off nothing changes, so every earlier result stands as it was.
+- **Which year-seasons count:** those of the pixel's own sub-watershed, for that variable, after the years, seasons, rings, outcome screen,
+  gap-filled rows and the other sample rules. A pixel is never dropped for a period the design already excludes.
+- **Panel level:** P00 (`P00_Settings`) and R_P00 (settings chunk) carry the default every model inherits. Step 6 of P00 and the end of R_P00
+  write `panel_balance_by_variable.csv` (R: `panel_balance_by_variable_R.csv`): per variable, the pixels complete in every year-season,
+  the pixels incomplete and their rows. The panel file keeps every row, as your earlier rule requires.
+- **Model level:** every model notebook (45 Python + MS01, 45 R in RStudio and Jupyter) has the two settings in SECTION B beside
+  `SAME_PIXELS`. DESIGN IN EFFECT shows them, the sample integrity confirms a balanced sample when `"drop"` is in force, and the
+  configuration file and both orchestrators accept them.
+- **Out of core** (Python and R): the parent gathers the year-seasons of the WHOLE sample first, then every pixel partition keeps or drops
+  its pixels against them. A partition alone may lack a year-season, so this keeps the answer equal to the in-memory one.
+- Engine: Python `_common.balanced_panel_rule`, `_pixels_unbalanced`, `balance_cells_of`, `_ooc_models` (two passes);
+  `_prep_common.panel_balance_report`. R `reward_design.R` `balanced_panel_R`, `balance_cells_R`, `pixels_unbalanced_R`;
+  `reward_outofcore.R` task `balcells`; `reward_prep.R` `panel_balance_report_R`.
+
+## Your rule of 4 Oct (later) — the parent directory is set in the FIRST cell of the main panel-preparation notebook, in Python and in R; no separate path module
+
+- **Python, `01_Panel_Preparation/P00_RUN_ALL_Panel_Preparation.ipynb`:** its first cell is now `PARENT_DIR = r"D:\LKT\RWD_Artal\data"`.
+  That folder becomes the parent directory of the whole processing: the exports are read under it (any depth of sub-folders), and the
+  panel, the shards, the reports and the results are written to `<PARENT_DIR>\output`. Every later cell of P00 is unchanged and follows it.
+  The P02b audit (off by default) reads the same folder instead of its own hard-coded path.
+- **The model notebooks follow it.** P00 remembers the folder in `reward_parent_dir.json` beside `_paths.py`, so the 45 models and PASS A's
+  worker processes read the panel built there without a second path setting. Before P00 has run, `INPUT_DIR` in `_paths.py` is the default.
+  A test's `REWARD_INPUT_DIR` still wins and is never remembered.
+- **R, `rstudio/R_P00_Prepare_Panel.Rmd` and `jupyter/R_P00_Prepare_Panel.ipynb`:** the first chunk sets `PARENT_DIR <- "D:/LKT/RWDR/data"`
+  before the library is sourced. `lib/reward_paths.R` makes it `ROOT` (output = `PARENT_DIR/output`) and remembers it in
+  `reward_parent_dir.txt`, so every R model notebook uses it. A stale `REWARD_R_ROOT` no longer overrides your folder; only a test run
+  (`REWARD_TEST_RUN`) keeps its own.
+- **`P00b_Build_Panel_From_Path.ipynb` is removed** at your request. Nothing else changed: every step, setting and default of P00 and
+  R_P00 is as it was. `build_panel.py` / `build_panel.R` (the command-line builders) are unchanged.
+- Checked by `selfcheck.py` (new block: the first cell, the one-folder rule, a copy of `_paths.py` run in a temporary folder — the folder
+  becomes INPUT_DIR with output inside it, a new kernel follows it, a test's folder wins, an empty value is refused; R_P00's first chunk
+  in both notebook forms) and by a full run of P00 with only the first cell's path changed (see VALIDATION).
+
 ## Your deep check of 4 Oct — no column mis-joined or left out for its writing style; every DiD column on every row; the rows in the natural order
 
 - **Headers are read for what they are, whatever the writing style.** Case, spaces, underscores, hyphens, a BOM, units in brackets
@@ -221,7 +260,7 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
 - **Name-keyed joins.** The crosswalk's sub-watershed name and the panel's `site_name`, and the fund file's district and the crosswalk's
   district, are joined on a normalised key (case, spaces, brackets, the words "sub-watershed" / "SWS" / "district" ignored), never on the
   raw spelling; a district of the fund file that no crosswalk row matches is said (it used to be a silent NaN dose).
-- **`confirm_panel_columns` -- the finished panel confirmed row by row, streamed** (P00 step 6, P00b step 6, `build_panel.py`):
+- **`confirm_panel_columns` -- the finished panel confirmed row by row, streamed** (P00 step 6, `build_panel.py`):
   every schema column present under its exact name and type and nothing foreign; on EVERY row `treatment = (buff_km == 0)`, `control =
   (buff_km in 1-5)`, `post` 0 / 1, `pre = 1 - post`, `did_term = treatment x post`, `treat = treatment`, `did = did_term`,
   `in_analysis_sample = treatment or control`, `season_sort_rank` Kharif 0 < Rabi 1 < Zaid 2 < Yearly 3, `time_fe_year` = the Year,
@@ -243,7 +282,7 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
   2017-2021] (exactly these pre years)`, and the lists are saved with the scenario. A year on the wrong side of the start (`PRE_YEARS`
   listing 2023 with the start in 2022), a word in the list or an empty list are refused with the reason. The configuration file takes the
   same forms (`PRE_YEARS: [2015, 2017, 2018]` or `"2015, 2017-2021"`); every model notebook's comment names them.
-- **`P00b_Build_Panel_From_Path.ipynb`** (`01_Panel_Preparation`): the panel built from a folder you name in the FIRST cell (`INPUT_DIR`;
+- **`P00b_Build_Panel_From_Path.ipynb`** (`01_Panel_Preparation`; **removed on 4 Oct at your request** — the folder is now the first cell of P00): the panel built from a folder you name in the FIRST cell (`INPUT_DIR`;
   `OUTPUT_DIR`, workers, force, the fund and crosswalk paths, the readiness steps and the outcomes beside it). One cell per step, in
   sequence; every step keeps what it produced on the object `B` instead of hiding it -- `B.files`, `B.input_audit`, `B.site_tagging`,
   `B.registry`, `B.shard_paths`, `B.parse_errors`, `B.dose_table`, `B.manifest`, `B.stats`, `B.validity`, `B.precision_report`,

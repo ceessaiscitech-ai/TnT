@@ -50,6 +50,8 @@ area **on the pre period only**, and then keeps that control set fixed for the w
 | `CONTROL_SELECT_ON` | `"trend"` | what "closest" means. `"trend"` = the demeaned pre series' distance (what the parallel-trends assumption asks; recommended). `"level"` = the nearest pre-period mean (your "mean of the treatment area vs the buffer's mean"). `"rmse"` = the RMSE of the cell-wise pre differences. `"both"` = trend + level |
 | `USE_SAME_PIXELS` | `False` | OFF = a pixel may contribute to one side only (the v20.58 sample). ON = the treated and control groups are the same pixels across the panel |
 | `SAME_PIXELS` | `"pre_post"` | `"pre_post"`: every pixel must be observed before and after treatment, else it leaves. `"all"`: in every year-season (a balanced pixel set) |
+| `USE_BALANCED_PANEL` | `False` | 4 Oct (your request). OFF = a pixel missing a value in some year-season stays (an unbalanced panel, as before). ON = `BALANCED_PANEL` decides |
+| `BALANCED_PANEL` | `"drop"` | `"drop"`: per variable, a pixel without a value of the outcome in ANY year-season of the model's sample leaves the sample whole, so the model estimates on a balanced panel (tag `_balanced`). `"keep"`: such pixels stay and are counted in the run's log |
 
 Rules that always hold when the section is ON: the decision uses the pre period only (a rule named after the post period or the outcome's mean
 is refused, because it would select on the result); it is made once per outcome and applied to every year and season; the treated pixels are
@@ -69,6 +71,16 @@ the same set. `select_optimal_control_rings(df, outcome_var, treat_ring=0, candi
 | `USE_COVERAGE_THRESHOLD` / `MIN_PIXEL_COVERAGE_PCT` | `False` / `0.70` | OFF = the standard screen (a year-season below 5 % of the typical coverage leaves). ON = a year-season whose treated or control coverage is below this share of the typical one leaves (your log: 2023 Zaid, 2025 Kharif / Zaid). Tag `_cov70` |
 | `USE_DROP_SINGLETONS` | `False` | ON = series seen once leave before the demeaning (the pre-flight; pyfixest drops them itself). Tag `_noSingle` |
 | `USE_PRECISION_TOLERANCE` / `PRECISION_TOLERANCE` | `False` / `1e-6` | OFF = the no-data zero is an exact 0 (the v20.58 rule). ON = \|value\| <= the tolerance is the no-data zero (at panel build and at the model stage), and a year-season is "constant across pixels" within it — indices in [-1, 1] are never compared with exact equality |
+
+**`BALANCED_PANEL` in detail (4 Oct).** The year-seasons a pixel must have are those of its own sub-watershed's sample, for that variable,
+after the years, seasons, rings, outcome screen, gap-filled rows and every rule above. So a pixel is never dropped for a year your settings
+already leave out, or for a season its sub-watershed never has. The panel file itself keeps every row: the rule decides what each model
+estimates on, so another variable or another model can still use the pixel. P00's value is the default every model inherits; a model's own
+`USE_BALANCED_PANEL` / `BALANCED_PANEL` win for that model. P00 (and R_P00) write `panel_balance_by_variable.csv` (R: `_R.csv`) with, per variable,
+the pixels complete in every year-season, the pixels incomplete and their rows, so you can see what `"drop"` would remove before you choose.
+One sparse year-season can remove most pixels under `"drop"`; the outcome screen (or `USE_COVERAGE_THRESHOLD`) removes such a year-season
+first. Every run says how many pixels left, and the sample integrity confirms the balance. Out of core the whole sample's year-seasons are
+gathered first, then every partition applies them, so the numbers equal the in-memory ones.
 
 The seasonal isolation of the specifications is `SEASONS = "Rabi"` (section A); the block clusters are `CLUSTER = "block"` (section A).
 The range-safety check (the outcome within its physical bounds, no no-data code) always runs and is reported; it is not a customisation.

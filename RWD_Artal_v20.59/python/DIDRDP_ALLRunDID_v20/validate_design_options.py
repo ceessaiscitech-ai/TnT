@@ -153,6 +153,9 @@ VARIANTS = {
     "same_pixels_all":        {"USE_SAME_PIXELS": True, "SAME_PIXELS": "all", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: a balanced pixel set
     "same_pixels_pre_post":   {"USE_SAME_PIXELS": True, "SAME_PIXELS": "pre_post", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # v20.59: the same pixels in pre and post
     "same_pixels_off":        {"USE_SAME_PIXELS": False, "SAME_PIXELS": "all", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # 1 Oct: the switch off -> "all" is NOT applied
+    "balanced_drop":          {"USE_BALANCED_PANEL": True, "BALANCED_PANEL": "drop", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # 4 Oct: a balanced panel per variable
+    "balanced_keep":          {"USE_BALANCED_PANEL": True, "BALANCED_PANEL": "keep", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # 4 Oct: kept and counted
+    "balanced_off":           {"USE_BALANCED_PANEL": False, "BALANCED_PANEL": "drop", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},  # 4 Oct: the switch off -> nothing leaves
     "donut_ring1":            {"DONUT_RINGS": [1], "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},            # spec 1: ring 1 leaves the control pool
     "donut_rings12_rabi":     {"DONUT_RINGS": [1, 2], "SEASONS": "Rabi", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # spec 1: the Rabi donut spec (rings 3-5)
     "ctrl_pre_rmse":          {"CONTROL_SELECTION": "pre_rings", "CONTROL_SELECT_K": 2, "CONTROL_SELECT_ON": "rmse", "TREATMENT_TIMING": "fixed", "TREATMENT_YEAR": 2022},   # spec 1: the pre-period RMSE rule
@@ -200,7 +203,8 @@ def py_kwargs(o):
                 donut_rings=list(o.get("DONUT_RINGS", [1])), landuse_keep=o.get("LANDUSE_KEEP", "all"), baseline_ndvi_min=o.get("BASELINE_NDVI_MIN"),
                 min_pixel_coverage_pct=float(o.get("MIN_PIXEL_COVERAGE_PCT", 0.70)), drop_singletons=sw["USE_DROP_SINGLETONS"], precision_tolerance=float(o.get("PRECISION_TOLERANCE", 1e-6)),
                 use_control_selection=sw["USE_CONTROL_SELECTION"], use_same_pixels=sw["USE_SAME_PIXELS"], use_donut=sw["USE_DONUT"], use_landuse_mask=sw["USE_LANDUSE_MASK"],
-                use_baseline_ndvi_mask=sw["USE_BASELINE_NDVI_MASK"], use_coverage_threshold=sw["USE_COVERAGE_THRESHOLD"], use_precision_tolerance=sw["USE_PRECISION_TOLERANCE"])
+                use_baseline_ndvi_mask=sw["USE_BASELINE_NDVI_MASK"], use_coverage_threshold=sw["USE_COVERAGE_THRESHOLD"], use_precision_tolerance=sw["USE_PRECISION_TOLERANCE"],
+                use_balanced_panel=bool(o.get("USE_BALANCED_PANEL", False)), balanced_panel=o.get("BALANCED_PANEL", "drop"))   # 4 Oct
 
 def py_sample(C, o):
     C.set_scenario(verbose=False, all_years=True)
@@ -217,7 +221,8 @@ def py_sample(C, o):
                         "cohort": pd.to_numeric(d["first_treat_agri_year"], errors="coerce").values,
                         "event_time": np.where(tr == 1, pd.to_numeric(d["event_time"], errors="coerce").values, np.nan),
                         "dose": pd.to_numeric(d["dose"], errors="coerce").values, "unit": d["unit_id"].astype(str).values,
-                        "period": d["time_fe_yearseason"].astype(str).values, "cluster_id": d[ck].astype(str).values})
+                        "period": d["time_fe_yearseason"].astype(str).values, "cluster_id": d[ck].astype(str).values,
+                        "ndvi": pd.to_numeric(d["NDVI"], errors="coerce").values})                                  # 4 Oct: BALANCED_PANEL's check
     meta_ctrl = None
     if o.get("CONTROL_SELECTION", "rings") == "pre_rings":                             # v20.59: an independent recomputation on the rows the rule saw (every ring)
         C.set_scenario(verbose=False, use_control_selection=False); d0 = C.build_treatment_columns(C.load_panel(columns=C.columns_for("NDVI")))
@@ -301,8 +306,9 @@ def expect(panel, name, o, py, meta, full):
             f"planted pixels left in: {sorted(pids & planted) or 'none'}; sites in the sample {sorted(s)}")
         rec(panel, name, "only the major sub-watershed(s)", s == ({1} if panel.startswith("single") else {1, 2}), sorted(s))
         if panel.startswith("pooled"):
-            rec(panel, name, "a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files)" + (" -- up to the balanced pixel rule" if (o.get("SAME_PIXELS") == "all" and o.get("USE_SAME_PIXELS")) else ""),
-                (beguru_piece <= pids) if not (o.get("SAME_PIXELS") == "all" and o.get("USE_SAME_PIXELS")) else bool(beguru_piece & pids), f"kept {sorted(beguru_piece & pids)} of {sorted(beguru_piece)}")
+            _bal_ = bool((o.get("SAME_PIXELS") == "all" and o.get("USE_SAME_PIXELS")) or (o.get("USE_BALANCED_PANEL") and o.get("BALANCED_PANEL", "drop") == "drop"))   # 4 Oct: BALANCED_PANEL too
+            rec(panel, name, "a processed sub-watershed's rows kept whatever file they came from (Beguru's piece of Artal's files)" + (" -- up to the balanced pixel rule" if _bal_ else ""),
+                (beguru_piece <= pids) if not _bal_ else bool(beguru_piece & pids), f"kept {sorted(beguru_piece & pids)} of {sorted(beguru_piece)}")
     else:
         rec(panel, name, "fragments kept (FRAGMENT_RULE keep)", has_frag, f"planted pixels in the sample: {sorted(pids & planted)}; sites {sorted(s)}")
     rings = set(py.loc[py.buff_km > 0, "buff_km"].unique())
@@ -349,6 +355,17 @@ def expect(panel, name, o, py, meta, full):
         rec(panel, name, "SAME_PIXELS = 'all': every pixel of the sample is observed in every year-season (a balanced pixel set), tagged _pixAll", bool((cells_ == n_cells_).all()) and "_pixAll" in meta["tag"], f"{int((cells_ < n_cells_).sum())} pixel(s) short of {n_cells_} cells; tag {meta['tag']}")
     else:
         rec(panel, name, "USE_SAME_PIXELS False (the default): the v20.58 sample (a pixel may sit on one side), no _pix tag", "_pix" not in meta["tag"], f"{one_side} pixel(s) on one side only; tag {meta['tag']}")
+    bp_ = (o.get("BALANCED_PANEL", "drop") if o.get("USE_BALANCED_PANEL", False) else "off")    # 4 Oct (your request)
+    pf_ = py[np.isfinite(py["ndvi"].values)]
+    need_ = pf_.groupby("site_id").apply(lambda g_: len(set(zip(g_.Year, g_.Season))), include_groups=False)
+    have_ = pf_.groupby(["site_id", "pixel_id"]).apply(lambda g_: len(set(zip(g_.Year, g_.Season))), include_groups=False).reset_index(name="k")
+    unb_ = int((have_["k"].values < have_["site_id"].map(need_).values).sum())
+    if bp_ == "drop":
+        rec(panel, name, "USE_BALANCED_PANEL, 'drop': every pixel of the sample has NDVI in every year-season of its sub-watershed's sample (a balanced panel), tagged _balanced",
+            unb_ == 0 and "_balanced" in meta["tag"], f"{unb_} pixel(s) short of a year-season; tag {meta['tag']}")
+    elif name.startswith("balanced_"):                                                       # the option's own variants (another rule, e.g. SAME_PIXELS 'all', may balance the sample by itself)
+        rec(panel, name, f"BALANCED_PANEL {'keep' if bp_ == 'keep' else 'switch off'}: the pixels missing a year-season STAY (this panel is unbalanced by design), no _balanced tag",
+            unb_ > 0 and "_balanced" not in meta["tag"], f"{unb_} pixel(s) short of a year-season kept; tag {meta['tag']}")
     if o.get("CLUSTER") == "block":
         rec(panel, name, "CLUSTER = 'block': the ~1 km blocks are the clusters (this synthetic grid spans 3+ blocks), the folder tagged _clBlock", py.cluster_id.nunique() >= 3 and "_clBlock" in meta["tag"], f"{py.cluster_id.nunique()} clusters; tag {meta['tag']}")
     sea = set(py.Season.unique())

@@ -160,6 +160,10 @@ USE_PRECISION_TOLERANCE <- FALSE                               # TRUE = |value| 
 PRECISION_TOLERANCE <- 1e-6                                    # spec 1: |value| <= tolerance is the no-data zero (R_P00 and every model); never exact equality
 SAME_PIXELS         <- "pre_post"                              # v20.59 (your rule): every treated and control pixel is observed in pre AND post ("pre_post"), or in
                                                                #   every year-season ("all"), else it leaves -- the groups are the same pixels across the panel | "off"
+USE_BALANCED_PANEL  <- FALSE                                   # 4 Oct (your request): TRUE = BALANCED_PANEL below is applied | FALSE = not applied (every pixel kept)
+BALANCED_PANEL      <- "drop"                                  #   "drop" = per variable, a pixel missing the value in ANY year-season of the sample leaves the model's
+                                                               #   sample (a balanced panel; results tagged _balanced) | "keep" = kept and counted (an unbalanced panel).
+                                                               #   The panel FILE keeps every row; R_P00's value is the default, each model's own setting wins
 PIXEL_ONE_SITE      <- TRUE                                    # v20.59 (YOUR RULE): ONE sub-watershed and ONE ring per pixel in the whole panel -- the polygon that
                                                                #   holds the point (core first, then the lower id) decides, whatever the file carried; a pixel appears
                                                                #   once per year-season. FALSE = the v20.58 rule (a point in two zones kept once per sub-watershed)

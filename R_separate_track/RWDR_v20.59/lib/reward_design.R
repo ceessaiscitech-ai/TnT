@@ -475,6 +475,16 @@ if (!exists(".tol_R", mode = "function")) .tol_R <- function() if (isTRUE(.opt("
 if (!exists(".cov_R", mode = "function")) .cov_R <- function() if (isTRUE(.opt("USE_COVERAGE_THRESHOLD", FALSE))) as.numeric(.opt("MIN_PIXEL_COVERAGE_PCT", get0("SCREEN_MIN_COVERAGE", ifnotfound = 0.05))) else get0("SCREEN_MIN_COVERAGE", ifnotfound = 0.05)
 if (!exists(".same_pixels_opt_R", mode = "function")) .same_pixels_opt_R <- function() if (isTRUE(.opt("USE_SAME_PIXELS", FALSE))) .opt("SAME_PIXELS", "pre_post") else "off"
 .one_of <- function(k, v, allowed) { v <- tolower(trimws(as.character(v)[1])); if (!v %in% allowed) stop(k, " must be ", paste(sprintf("\"%s\"", allowed), collapse = " | "), " (got \"", v, "\")"); v }
+# 4 Oct (your request): BALANCED_PANEL -- "drop" (per variable, a pixel missing the value in ANY year-season of the sample leaves: a balanced
+# panel) | "keep" (kept, counted: unbalanced). TRUE / FALSE and a few spellings are read; anything else is refused with the two choices.
+balanced_panel_rule_of_R <- function(v) {
+  if (isTRUE(v)) return("drop"); if (isFALSE(v) || is.null(v)) return("keep")
+  s <- tolower(gsub("[- ]", "_", trimws(as.character(v)[1])))
+  s <- c(balanced = "drop", balance = "drop", yes = "drop", true = "drop", unbalanced = "keep", no = "keep", false = "keep", off = "keep", none = "keep")[s] %|NA|% s
+  if (!s %in% c("drop", "keep")) stop("BALANCED_PANEL must be \"drop\" or \"keep\" (got \"", v, "\")")
+  s
+}
+`%|NA|%` <- function(a, b) if (length(a) && !is.na(a)) unname(a) else b
 design_settings <- function() {
   s <- list(design_mode = .one_of("DESIGN_MODE", .opt("DESIGN_MODE", "recommended"), c("recommended", "manual")),
             timing = .one_of("TREATMENT_TIMING", .opt("TREATMENT_TIMING", "fund"), c("fund", "registry", "fixed")),
@@ -505,6 +515,9 @@ design_settings <- function() {
             control_block_deg = as.numeric(.opt("CONTROL_BLOCK_DEG", 0.01)),
             cluster = .one_of("CLUSTER", .opt("CLUSTER", "auto"), c("auto", "block")),                     # v20.59: ~1 km spatial blocks as clusters
             same_pixels_set = .one_of("SAME_PIXELS", .opt("SAME_PIXELS", "pre_post"), c("pre_post", "all", "off")),
+            use_balanced_panel = isTRUE(.opt("USE_BALANCED_PANEL", FALSE)),                              # 4 Oct (your request): drop | keep
+            balanced_panel_set = balanced_panel_rule_of_R(.opt("BALANCED_PANEL", "drop")),
+            balanced_panel = if (isTRUE(.opt("USE_BALANCED_PANEL", FALSE))) balanced_panel_rule_of_R(.opt("BALANCED_PANEL", "drop")) else "keep",
             same_pixels = if (isTRUE(.opt("USE_SAME_PIXELS", FALSE))) .one_of("SAME_PIXELS", .opt("SAME_PIXELS", "pre_post"), c("pre_post", "all", "off")) else "off",   # v20.59: the same pixels across the panel
             donut_rings_set = { v <- .opt("DONUT_RINGS", integer(0)); v <- suppressWarnings(as.integer(unlist(v))); v <- sort(unique(v[is.finite(v)])); if (length(v) && any(!v %in% 1:5)) stop("DONUT_RINGS must name rings 1..5"); v },   # spec 1
             donut_rings = if (isTRUE(.opt("USE_DONUT", FALSE))) { v <- suppressWarnings(as.integer(unlist(.opt("DONUT_RINGS", integer(0))))); sort(unique(v[is.finite(v)])) } else integer(0),
@@ -905,6 +918,8 @@ model_design <- function(verbose = TRUE, force = FALSE) {
   add_ch("PRECISION_TOLERANCE", paste0(s$precision_tolerance_set, .sw(s$use_precision_tolerance, "PRECISION_TOLERANCE")), s$precision_tolerance, paste0(.why(s$use_precision_tolerance, "PRECISION_TOLERANCE"), "your setting (|value| <= tolerance is the no-data zero; a year-season is constant within it)"))
   add_ch("SAME_PIXELS", paste0(s$same_pixels_set, .sw(s$use_same_pixels, "SAME_PIXELS")), s$same_pixels, paste0(.why(s$use_same_pixels, "SAME_PIXELS"), "your setting", c(pre_post = " (every treated and control pixel is observed in pre AND post; a pixel seen on one side only leaves -- the groups are the same pixels across the panel)",
                                                                    all = " (every pixel is observed in every year-season of the sample: a balanced pixel set)", off = " (a pixel may contribute to one side only -- the v20.58 sample)")[[s$same_pixels]]))
+  add_ch("BALANCED_PANEL", paste0(s$balanced_panel_set, .sw(s$use_balanced_panel, "BALANCED_PANEL")), s$balanced_panel, paste0(.why(s$use_balanced_panel, "BALANCED_PANEL"), "your setting",
+         c(drop = " (per variable, a pixel missing the value in any year-season of the sample leaves: a balanced panel)", keep = " (a pixel missing the value in some year-season stays: an unbalanced panel, counted)")[[s$balanced_panel]]))   # 4 Oct
   add_ch("CLUSTER", s$cluster, s$cluster, paste0("your setting", if (identical(s$cluster, "block")) " (~1 km spatial blocks of pixels -- many clusters, the spatial correlation of neighbouring pixels absorbed)" else sprintf(" (the sub-watershed; fewer than %d sub-watersheds -> the years)", MIN_SWS_CLUSTERS)))
   add_ch("COVARIATES", if (length(s$covariates)) s$covariates else "none", if (length(s$covariates)) s$covariates else "none", "your setting")
   d <- list(design_mode = s$design_mode, timing = s$timing, treatment_year = as.integer(base), treatment_year_setting = s$treatment_year,
@@ -916,6 +931,7 @@ model_design <- function(verbose = TRUE, force = FALSE) {
             outcome_screen = s$outcome_screen, design_source = s$design_source,                  # v20.59
             control_selection = s$control_selection, control_select_k = s$control_select_k, control_select_ratio = s$control_select_ratio,   # v20.59 (your fifth request)
             control_select_on = s$control_select_on, control_block_deg = s$control_block_deg, cluster = s$cluster, same_pixels = s$same_pixels,
+            use_balanced_panel = s$use_balanced_panel, balanced_panel = s$balanced_panel,                                 # 4 Oct
             donut_rings = s$donut_rings, landuse_keep = s$landuse_keep, baseline_ndvi_min = s$baseline_ndvi_min, min_pixel_coverage_pct = s$min_pixel_coverage_pct,   # spec 1 / 3
             drop_singletons = s$drop_singletons, precision_tolerance = s$precision_tolerance,
             fund = list(start_rule = s$fund_start_rule, start_share = s$fund_start_share, rate_months = s$fund_rate_months, before_file = s$fund_dose_before_file),
@@ -963,6 +979,7 @@ scenario_tag <- function(d) {
                                                       c(trend = "", level = "L", both = "B", rmse = "R")[[d$control_select_on %||% "trend"]])     # spec 1: R = the pre-period RMSE rule
   if (identical(d$cluster, "block")) t <- paste0(t, "_clBlock")                                  # v20.59: ~1 km spatial blocks as clusters (as Python)
   spx <- d$same_pixels %||% "off"; if (identical(spx, "all")) t <- paste0(t, "_pixAll") else if (identical(spx, "pre_post")) t <- paste0(t, "_pixPP")   # v20.59 (as Python; 1 Oct: no tag when off)
+  if (isTRUE(d$use_balanced_panel) && identical(d$balanced_panel %||% "keep", "drop")) t <- paste0(t, "_balanced")                                    # 4 Oct (as Python; no tag when off or keep)
   if (length(d$donut_rings %||% integer(0))) t <- paste0(t, "_donut", paste(d$donut_rings, collapse = "-"))                                          # spec 1 (as Python)
   if (!identical(d$landuse_keep %||% "all", "all")) t <- paste0(t, "_lu", paste(d$landuse_keep, collapse = "-"))
   if (is.finite(d$baseline_ndvi_min %||% NA)) t <- paste0(t, sprintf("_ndviPre%g", d$baseline_ndvi_min))
@@ -1099,6 +1116,58 @@ same_pixels_R <- function(x, o, d, say = TRUE) {
   ats <- attributes(x); y <- x[keep]
   for (a in setdiff(names(ats), c("names", "row.names", "class", ".internal.selfref"))) setattr(y, a, ats[[a]])
   setattr(y, "same_pixels", res); y
+}
+# 4 Oct (your request): BALANCED_PANEL -- per VARIABLE, a pixel without a value of the outcome in some year-season of the sample (the
+# year-seasons in which its sub-watershed has the outcome, after the years, seasons, rings, screen, gap-filled rows and every rule above) leaves
+# the sample whole ("drop": a balanced panel) or stays and is counted ("keep"). The panel FILE keeps every row. Out of core the cells are those of
+# the WHOLE sample (the parent's first pass), so the answer is the same as in memory. As Python's balanced_panel_rule.
+balance_cells_R <- function(x, o) {
+  if (!nrow(x) || !o %in% names(x) || !"pixel_id" %in% names(x)) return(data.table(site_id = integer(0), cell = integer(0)))
+  st <- if ("site_id" %in% names(x)) as.integer(x$site_id) else rep(0L, nrow(x)); st[is.na(st)] <- 0L
+  fin <- is.finite(x[[o]])
+  unique(data.table(site_id = st[fin], cell = as.integer(x$Year[fin]) * 10L + as.integer(x$Season[fin])))
+}
+pixels_unbalanced_R <- function(x, o, cells = NULL) {
+  if (!nrow(x) || !"pixel_id" %in% names(x) || !o %in% names(x)) return(0L)
+  if (is.null(cells)) cells <- balance_cells_R(x, o)
+  need <- cells[, .(need = .N), by = site_id]
+  st <- if ("site_id" %in% names(x)) as.integer(x$site_id) else rep(0L, nrow(x)); st[is.na(st)] <- 0L
+  fin <- is.finite(x[[o]])
+  g <- data.table(pixel_id = x$pixel_id[fin], site_id = st[fin], cell = as.integer(x$Year[fin]) * 10L + as.integer(x$Season[fin]))[, .(k = uniqueN(cell)), by = .(pixel_id, site_id)]
+  g <- need[g, on = "site_id"]; g[is.na(need), need := 0L]
+  as.integer(uniqueN(g[k < need, pixel_id]))
+}
+balanced_panel_say_R <- function(res, o) {
+  if (is.null(res) || is.null(res$pixels_unbalanced)) return(invisible(NULL))
+  f <- function(v) format(v, big.mark = ",")
+  if (identical(res$rule, "drop")) {
+    if (res$pixels_unbalanced > 0) info(sprintf("BALANCED_PANEL = \"drop\" (%s): %s of %s pixel(s) / %s rows leave -- the variable is missing in some year-season of the sample; the model estimates on a balanced panel of %s pixels",
+                                                o, f(res$pixels_unbalanced), f(res$pixels_total), f(res$rows_left_out), f(res$pixels_kept)))
+    else info(sprintf("BALANCED_PANEL = \"drop\" (%s): every one of the %s pixels has the variable in every year-season of the sample -- already balanced", o, f(res$pixels_total)))
+  } else info(if (res$pixels_unbalanced > 0) sprintf("BALANCED_PANEL = \"keep\" (%s): %s of %s pixel(s) miss the variable in some year-season and are KEPT (an unbalanced panel)", o, f(res$pixels_unbalanced), f(res$pixels_total))
+              else sprintf("BALANCED_PANEL = \"keep\" (%s): the %s pixels are balanced already", o, f(res$pixels_total)))
+  invisible(NULL)
+}
+balanced_panel_R <- function(x, o, d, cells = NULL, say = TRUE) {
+  if (!isTRUE(d$use_balanced_panel) || !"pixel_id" %in% names(x) || !o %in% names(x)) return(x)
+  rule <- d$balanced_panel %||% "keep"
+  if (is.null(cells)) cells <- balance_cells_R(x, o)
+  need <- cells[, .(need = .N), by = site_id]
+  st <- if ("site_id" %in% names(x)) as.integer(x$site_id) else rep(0L, nrow(x)); st[is.na(st)] <- 0L
+  fin <- is.finite(x[[o]])
+  g <- data.table(pixel_id = x$pixel_id[fin], site_id = st[fin], cell = as.integer(x$Year[fin]) * 10L + as.integer(x$Season[fin]))[, .(k = uniqueN(cell)), by = .(pixel_id, site_id)]
+  g <- need[g, on = "site_id"]; g[is.na(need), need := 0L]
+  bad_p <- unique(g[k < need, pixel_id]); n_all <- uniqueN(g$pixel_id)
+  res <- list(rule = rule, pixels_unbalanced = length(bad_p), pixels_total = n_all, pixels_left_out = 0L, rows_left_out = 0L, pixels_kept = n_all)
+  y <- x
+  if (length(bad_p) && identical(rule, "drop")) {
+    lv <- x$pixel_id %in% bad_p
+    res$pixels_left_out <- length(bad_p); res$rows_left_out <- sum(lv); res$pixels_kept <- n_all - length(bad_p)
+    ats <- attributes(x); y <- x[!lv]
+    for (a in setdiff(names(ats), c("names", "row.names", "class", ".internal.selfref"))) setattr(y, a, ats[[a]])
+  }
+  if (say) balanced_panel_say_R(res, o)
+  setattr(y, "balanced_panel", res); y
 }
 # spec 1: the top_k candidate rings whose PRE-treatment series is closest to the treatment ring's (as Python's select_optimal_control_rings)
 select_optimal_control_rings_R <- function(x, outcome_var, treat_ring = 0L, candidate_rings = 2:5, pre_years = 2015:2021, top_k = 2L, on = "level") {
@@ -1249,6 +1318,7 @@ load_panel_R <- function(outcome, d = load_design(), extra = character(0), integ
   x <- donut_rule_R(x, d); x <- landuse_rule_R(x, d); x <- baseline_ndvi_rule_R(x, d)   # spec 1: the spillover buffer, the land-use / baseline masks
   x <- select_controls_R(x, outcome, d)                                       # v20.59: CONTROL_SELECTION -- the pre period's choice, fixed for the panel
   x <- same_pixels_R(x, outcome, d)                                           # v20.59: SAME_PIXELS -- the same pixels in pre and post (or every year-season)
+  x <- balanced_panel_R(x, outcome, d)                                        # 4 Oct: BALANCED_PANEL -- a pixel missing the variable in a year-season leaves (drop) or stays (keep)
   if (identical(d$cluster, "block")) { x[, block_id := block_ids_R(x, d$control_block_deg %||% 0.01)]; x[, cluster_id := as.character(block_id)] }   # v20.59
   else x[, cluster_id := as.character(get(cluster_col_for(x)))]
   x <- attach_dose_R(x, d)                                                    # v20.57: the fund file's dose under the timing in force
@@ -1342,16 +1412,18 @@ load_rows_R <- function(x, outcome, d, covs, loc, S, fill_src, say = TRUE, fill_
 # After every filter, on the rows the model receives: only the processed sub-watersheds, nothing outside their polygons, no repeated
 # pixel-year-season, one ring per pixel, no pixel both treated and a control, and exactly the rings / years / seasons of the design.
 # Under the default rules (FRAGMENT_RULE / OVERLAP_ROWS "drop") a violation STOPS the model -- a leak is a bug, never a silent pass.
-sample_integrity_R <- function(x, d, outcome = "", S = d$processed) integrity_decide_R(integrity_parts_R(x), d, outcome, S)
+sample_integrity_R <- function(x, d, outcome = "", S = d$processed)
+  integrity_decide_R(integrity_parts_R(x, if (isTRUE(d$use_balanced_panel) && identical(d$balanced_panel %||% "keep", "drop") && nzchar(outcome)) outcome else NULL), d, outcome, S)
 # v20.58: the integrity facts of a sample (or of one pixel partition: every fact is a count, a set or a range -- merged exactly by
 # integrity_merge_R in reward_outofcore.R), and the verdict on them -- the SAME checks in memory and out of core
-integrity_parts_R <- function(x) {
+integrity_parts_R <- function(x, bal_o = NULL, bal_cells = NULL) {
   nd <- anyDuplicated(x, by = c("pixel_id", "Year", "Season"))
   list(sites = sort(unique(as.integer(x$site_id))), site_na = anyNA(x$site_id), has_check = "site_check" %in% names(x), n_outside = if ("site_check" %in% names(x)) sum(x$site_check %in% 3L) else 0L,
        dup = if (nd == 0L) "" else paste(x[nd, .(pixel_id, Year, Season)], collapse = " "),
        n_ring_multi = nrow(x[, .(nr = uniqueN(buff_km)), by = .(site_id, pixel_id)][nr > 1L]),
        n_both = length(intersect(x[treat == 1L, unique(pixel_id)], x[treat == 0L, unique(pixel_id)])),
        n_one_side = pixels_one_side_R(x, .same_pixels_opt_R()),                                    # v20.59: your rule (the rows here are finite)
+       n_unbalanced = if (!is.null(bal_o)) pixels_unbalanced_R(x, bal_o, bal_cells) else NULL,     # 4 Oct: BALANCED_PANEL = "drop", confirmed
        rings = sort(unique(x$buff_km)), years = if (nrow(x)) range(x$Year) else c(NA_integer_, NA_integer_),
        years_set = sort(unique(x$Year)), seasons = sort(unique(x$Season)),
        rows = nrow(x), pixels = uniqueN(x$pixel_id))
@@ -1369,6 +1441,8 @@ integrity_decide_R <- function(p, d, outcome = "", S = d$processed) {
   if (!identical(spx, "off") && !is.null(p$n_one_side))
     add(if (identical(spx, "pre_post")) "the same pixels in pre and post" else "the same pixels in every year-season", p$n_one_side == 0,
         sprintf("%d pixel(s) observed %s", as.integer(p$n_one_side), if (identical(spx, "pre_post")) "on one side only" else "in some year-seasons only"))
+  if (isTRUE(d$use_balanced_panel) && identical(d$balanced_panel %||% "keep", "drop") && !is.null(p$n_unbalanced))   # 4 Oct
+    add("a balanced panel (every pixel in every year-season)", p$n_unbalanced == 0, sprintf("%d pixel(s) miss the variable in some year-season", as.integer(p$n_unbalanced)))
   rg <- p$rings; want_r <- c(0L, as.integer(d$control_rings))
   add("the rings of the design", all(rg %in% want_r) && any(rg == 0L) && any(rg > 0L), sprintf("rings in the sample %s | design %s", paste(rg, collapse = ","), paste(want_r, collapse = ",")))
   yr <- p$years; y_ok <- (!is.finite(d$year_min %||% NA) || yr[1] >= d$year_min) && (!is.finite(d$year_max %||% NA) || yr[2] <= d$year_max) && !any(p$years_set %in% (d$drop_years %||% integer(0)))
@@ -1558,7 +1632,8 @@ DESIGN_DEFAULTS <- list(DESIGN_MODE = "recommended", TREATMENT_TIMING = "fund", 
                         SAME_PIXELS = "pre_post", DONUT_RINGS = 1L, LANDUSE_KEEP = "all", BASELINE_NDVI_MIN = 0.25, MIN_PIXEL_COVERAGE_PCT = 0.70,
                         USE_DROP_SINGLETONS = FALSE, PRECISION_TOLERANCE = 1e-6,   # spec 1 / 3
                         USE_CONTROL_SELECTION = FALSE, USE_SAME_PIXELS = FALSE, USE_DONUT = FALSE, USE_LANDUSE_MASK = FALSE, USE_BASELINE_NDVI_MASK = FALSE,
-                        USE_COVERAGE_THRESHOLD = FALSE, USE_PRECISION_TOLERANCE = FALSE)   # 1 Oct: the switches, all off
+                        USE_COVERAGE_THRESHOLD = FALSE, USE_PRECISION_TOLERANCE = FALSE,   # 1 Oct: the switches, all off
+                        BALANCED_PANEL = "drop", USE_BALANCED_PANEL = FALSE)                # 4 Oct
 design_variant_samples <- function(variants, out_dir, outcome = "NDVI") {
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
   for (nm in names(variants)) {

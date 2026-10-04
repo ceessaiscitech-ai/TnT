@@ -350,6 +350,9 @@ if (!inherits(tE, "error")) {
                pix_all = list(USE_SAME_PIXELS = TRUE, SAME_PIXELS = "all", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),            # v20.59: a balanced pixel set
                pix_pp = list(USE_SAME_PIXELS = TRUE, SAME_PIXELS = "pre_post", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),        # v20.59: the same pixels in pre and post
                pix_switch_off = list(USE_SAME_PIXELS = FALSE, SAME_PIXELS = "all", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # 1 Oct: the switch off -> nothing applied
+               bal_drop = list(USE_BALANCED_PANEL = TRUE, BALANCED_PANEL = "drop", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),     # 4 Oct: a balanced panel per variable
+               bal_keep = list(USE_BALANCED_PANEL = TRUE, BALANCED_PANEL = "keep", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),     # 4 Oct: kept and counted
+               bal_off = list(USE_BALANCED_PANEL = FALSE, BALANCED_PANEL = "drop", TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),     # 4 Oct: the switch off -> nothing applied
                donut1 = list(USE_DONUT = TRUE, DONUT_RINGS = 1L, CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                   # spec 1: ring 1 leaves the control pool (of rings 1-5)
                ctrl_rmse = list(USE_CONTROL_SELECTION = TRUE, CONTROL_SELECTION = "pre_rings", CONTROL_SELECT_K = 2L, CONTROL_SELECT_ON = "rmse", CONTROL_RINGS = 1:5, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),   # spec 1: the RMSE rule on the 5 rings
                ndvi_base = list(USE_BASELINE_NDVI_MASK = TRUE, BASELINE_NDVI_MIN = 0.30, TREATMENT_TIMING = "fixed", TREATMENT_YEAR = 2022),                              # spec 1: the pre-period mean NDVI mask
@@ -404,6 +407,16 @@ if (!inherits(tE, "error")) {
   pc_ <- if (!is.null(pa)) pa[, .(k = uniqueN(paste(Year, Season))), by = pixel_id] else NULL
   chkE("pix_all", "SAME_PIXELS = 'all' (v20.59): every pixel of the sample in every year-season (a balanced pixel set), the folder tagged _pixAll",
        !is.null(pa) && all(pc_$k == uniqueN(paste(pa$Year, pa$Season))) && !is.null(paj$tag) && grepl("_pixAll", paj$tag, fixed = TRUE), if (is.null(pa)) "no sample" else sprintf("%d pixel(s) short | %s", sum(pc_$k < uniqueN(paste(pa$Year, pa$Season))), paj$tag))
+  short_ <- function(z) if (is.null(z)) NA_integer_ else { nd <- z[, .(need = uniqueN(paste(Year, Season))), by = site_id]; k <- z[, .(k = uniqueN(paste(Year, Season))), by = .(site_id, pixel_id)][nd, on = "site_id"]; sum(k$k < k$need) }
+  bd_ <- rd("bal_drop"); bdj <- tryCatch(fromJSON(file.path(od, "bal_drop.json")), error = function(e) NULL); bk_ <- rd("bal_keep"); bkj <- tryCatch(fromJSON(file.path(od, "bal_keep.json")), error = function(e) NULL)
+  bo_ <- rd("bal_off"); boj <- tryCatch(fromJSON(file.path(od, "bal_off.json")), error = function(e) NULL)
+  chkE("bal_drop", "USE_BALANCED_PANEL <- TRUE, 'drop' (4 Oct): every pixel of the sample has the variable in every year-season of its sub-watershed (a balanced panel), the folder tagged _balanced",
+       !is.null(bd_) && short_(bd_) == 0L && !is.null(bdj$tag) && grepl("_balanced", bdj$tag, fixed = TRUE) && !is.null(cb) && nrow(bd_) <= nrow(cb),
+       if (is.null(bd_)) "no sample" else sprintf("%d pixel(s) short; %d rows (the same design without the rule: %s; that sample has %s pixel(s) short) | %s", short_(bd_), nrow(bd_), if (is.null(cb)) NA else nrow(cb), short_(cb), bdj$tag))
+  chkE("bal_keep", "BALANCED_PANEL <- 'keep' (4 Oct): every pixel stays -- the same rows as the same fixed-2022 design without the rule, no _balanced tag",
+       !is.null(bk_) && !is.null(cb) && nrow(bk_) == nrow(cb) && !is.null(bkj$tag) && !grepl("_balanced", bkj$tag, fixed = TRUE), if (is.null(bk_)) "no sample" else sprintf("%d rows | %s", nrow(bk_), bkj$tag))
+  chkE("bal_off", "USE_BALANCED_PANEL <- FALSE with 'drop' (4 Oct): NOT applied -- the same rows as without the rule, no _balanced tag",
+       !is.null(bo_) && !is.null(cb) && nrow(bo_) == nrow(cb) && !is.null(boj$tag) && !grepl("_balanced", boj$tag, fixed = TRUE), if (is.null(bo_)) "no sample" else sprintf("%d rows | %s", nrow(bo_), boj$tag))
   dn1 <- rd("donut1"); dn1j <- tryCatch(fromJSON(file.path(od, "donut1.json")), error = function(e) NULL)                     # spec 1
   chkE("donut1", "DONUT_RINGS <- 1L (spec 1): no control row of ring 1, rings 2-5 stay, the folder tagged _donut1",
        !is.null(dn1) && !any(dn1[treat == 0L, buff_km] == 1L) && setequal(unique(dn1[treat == 0L, buff_km]), 2:5) && !is.null(dn1j$tag) && grepl("_donut1", dn1j$tag, fixed = TRUE),
@@ -702,6 +715,25 @@ tryCatch({
         sprintf("%s rows x %d columns%s", format(nrow(pb_d), big.mark = ","), ncol(pb_d), if (length(dif)) paste(" | differ:", paste(dif, collapse = ", ")) else ""))
   }
   run_prep()                                                          # the panel of the other scenarios: built in memory again
+  # 4 Oct (your request): BALANCED_PANEL "drop" out of core == in memory -- holes planted in NDVI (a tenth of the pixels miss one year-season),
+  # M01 with the rule on, 5 pixel partitions (the parent's first pass gives every worker the WHOLE sample's year-seasons); fewer rows than without it
+  pp0 <- paste0(PANEL_PATH, ".before_holes"); file.copy(PANEL_PATH, pp0, overwrite = TRUE)
+  tryCatch({
+    tb <- as.data.table(arrow::read_parquet(PANEL_PATH)); set.seed(4); px_ <- sort(unique(tb$pixel_id)); hp_ <- sample(px_, max(3L, length(px_) %/% 10L)); yy_ <- sort(unique(tb$Year))
+    tb[pixel_id %in% hp_ & Year == yy_[ceiling(length(yy_) / 2)] & Season == min(Season), NDVI := NA_real_]; arrow::write_parquet(tb, PANEL_PATH); rm(tb)
+    run_B <- function(tag, use) { assign("USE_BALANCED_PANEL", use, envir = globalenv()); assign("BALANCED_PANEL", "drop", envir = globalenv())
+      d <- model_design(verbose = FALSE, force = TRUE); unlink(RESULTS_DIR, recursive = TRUE); dir.create(RESULTS_DIR, recursive = TRUE); run_model_R("M01", "NDVI", d)
+      dst <- file.path(TMP, "H_balanced", tag); unlink(dst, recursive = TRUE); dir.create(dst, recursive = TRUE); file.copy(list.files(RESULTS_DIR, full.names = TRUE), dst, recursive = TRUE)
+      list(cells = h_cells(dst), tag = scenario_tag(d)) }
+    Sys.unsetenv("REWARD_FORCE_OUT_OF_CORE"); bm_ <- run_B("memory", TRUE); none_ <- run_B("none", FALSE)
+    Sys.setenv(REWARD_FORCE_OUT_OF_CORE = "batches", REWARD_OOC_PARTITIONS = "5"); bo_ <- run_B("batches", TRUE); Sys.unsetenv("REWARD_FORCE_OUT_OF_CORE"); Sys.unsetenv("REWARD_OOC_PARTITIONS")
+    r <- h_cmp(bm_$cells, bo_$cells, 1e-8)
+    nobs_ <- function(z) { v <- z$cells[col == "n_obs", v]; if (length(v)) max(v) else NA_real_ }
+    add("H", "BALANCED_PANEL 'drop' (4 Oct) on a panel with planted holes: out of core (5 pixel partitions) == in memory, fewer observations than without the rule, the folder tagged _balanced",
+        if (r$ok && isTRUE(nobs_(bm_) < nobs_(none_)) && grepl("_balanced", bm_$tag, fixed = TRUE) && !grepl("_balanced", none_$tag, fixed = TRUE)) "PASS" else "FAIL",
+        sprintf("%d numbers, largest difference %.1e | n_obs %s with the rule, %s without | %s", r$n, r$worst_abs, format(nobs_(bm_)), format(nobs_(none_)), bm_$tag))
+  }, finally = { assign("USE_BALANCED_PANEL", FALSE, envir = globalenv()); file.copy(pp0, PANEL_PATH, overwrite = TRUE); unlink(pp0)
+                 Sys.unsetenv("REWARD_FORCE_OUT_OF_CORE"); Sys.unsetenv("REWARD_OOC_PARTITIONS") })
 }, error = function(e) add("H", "scenario H", "FAIL", conditionMessage(e)), finally = { for (k in c("REWARD_FORCE_OUT_OF_CORE", "REWARD_OOC_PARTITIONS", "REWARD_RAM_BUDGET_BYTES")) Sys.unsetenv(k)
                                                                            try(ooc_stop_all(), silent = TRUE) })
 }

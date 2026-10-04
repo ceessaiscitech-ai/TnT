@@ -3,6 +3,16 @@
 This bundle is the R pipeline only (`RWDR_v20.59/`). The Python module is delivered apart (`DIDVALIDATION_v20.59.zip`); the two no longer
 share a zip. Everything below is in `RWDR_v20.59/lib/` and is proved by `tests/test_3oct_additions.R` (27 checks) and `tests/run_all_tests.R`.
 
+## 0a. 4 Oct: BALANCED_PANEL — drop the pixels missing a variable in any year-season, or keep them
+
+- `USE_BALANCED_PANEL <- FALSE` and `BALANCED_PANEL <- "drop"` (`"keep"`) in `lib/reward_paths.R`, R_P00's settings chunk and every model
+  notebook (Rmd and Jupyter). `"drop"`: per variable, a pixel without a value in any year-season of its sub-watershed's sample leaves the
+  model's sample (tag `_balanced`); `"keep"`: kept and counted. Off by default: nothing changes until you switch it on.
+- `balanced_panel_R` runs after `same_pixels_R` in `load_panel_R` and in the out-of-core sample task; the out-of-core path first gathers the
+  whole sample's year-seasons (task `balcells`), then every partition applies them. The sample integrity confirms the balance.
+- R_P00 writes `panel_balance_by_variable_R.csv` (`panel_balance_report_R`): per variable, the complete and incomplete pixels and their rows.
+  The panel file keeps every row.
+
 ## 0. 4 Oct: the parent directory in R_P00's first chunk
 
 - `rstudio/R_P00_Prepare_Panel.Rmd` and `jupyter/R_P00_Prepare_Panel.ipynb` start with `PARENT_DIR <- "D:/LKT/RWDR/data"`, set before the

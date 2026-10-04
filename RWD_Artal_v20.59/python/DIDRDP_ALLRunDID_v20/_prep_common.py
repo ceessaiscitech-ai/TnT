@@ -2433,6 +2433,57 @@ def confirm_panel_columns(final_path=None, output_dir=None, verbose=True):
         (ok if tab.ok.all() else fail)(f"PANEL COLUMN AUDIT: {'CLEAN' if tab.ok.all() else str(int((~tab.ok).sum())) + ' check(s) FAILED'} -- {n:,} rows, every DiD and time column confirmed row by row, the row order confirmed -> {out}")
     return tab
 
+def panel_balance_report(final_path, output_dir=None, columns=None, rule=None, verbose=True):
+    """4 Oct (your request): per VARIABLE, how balanced the panel is -- the year-seasons each sub-watershed has the variable in, the pixels that
+    have it in EVERY one of them (complete) and the pixels missing it in some (incomplete), with their rows. The panel file keeps every row;
+    BALANCED_PANEL ('drop' | 'keep', switch USE_BALANCED_PANEL) decides in each model what its sample keeps -- on that model's own years,
+    seasons, rings and screen. Streamed row group by row group (one counter per pixel). -> panel_balance_by_variable.csv"""
+    output_dir = output_dir or os.path.dirname(final_path); pf = pq.ParquetFile(final_path); names = pf.schema_arrow.names
+    cols = [c for c in (columns or list(PANEL_OUTCOME_VARS_21)) if c in names]
+    if not cols or not {"pixel_id", "Year", "Season"} <= set(names): return pd.DataFrame()
+    has_site = "site_id" in names
+    try:
+        uq = []
+        for i_ in range(pf.num_row_groups):
+            uq.append(np.unique(pf.read_row_group(i_, columns=["pixel_id"]).column(0).to_numpy(zero_copy_only=False)))
+        uq = np.unique(np.concatenate(uq)) if uq else np.array([], np.int64); N = len(uq)
+        cnt = {c: np.zeros(N, np.int32) for c in cols}; site_of = np.zeros(N, np.int64); cells = {c: set() for c in cols}
+        base = ["pixel_id", "Year", "Season"] + (["site_id"] if has_site else [])
+        for i_ in range(pf.num_row_groups):
+            t = pf.read_row_group(i_, columns=base + cols)
+            idx = np.searchsorted(uq, t.column("pixel_id").to_numpy(zero_copy_only=False))
+            st = np.nan_to_num(t.column("site_id").to_numpy(zero_copy_only=False).astype(np.float64)).astype(np.int64) if has_site else np.zeros(len(idx), np.int64)
+            site_of[idx] = st
+            cell = t.column("Year").to_numpy(zero_copy_only=False).astype(np.int64) * 10 + t.column("Season").to_numpy(zero_copy_only=False).astype(np.int64)
+            for c in cols:
+                fin = np.isfinite(t.column(c).to_numpy(zero_copy_only=False).astype(np.float64, copy=False))
+                if fin.any():
+                    cnt[c] += np.bincount(idx[fin], minlength=N).astype(np.int32)
+                    cells[c].update(np.unique(st[fin] * 1_000_000 + cell[fin]).tolist())
+    finally:
+        try: pf.close()
+        except Exception: pass
+    rows = []
+    for c in cols:
+        need_s = pd.Series([k // 1_000_000 for k in cells[c]]).value_counts().to_dict() if cells[c] else {}
+        need = np.array([need_s.get(int(x), 0) for x in site_of], np.int64) if N else np.zeros(0, np.int64)
+        has = cnt[c] > 0; full = has & (cnt[c] >= need)
+        rows.append({"variable": c, "sub_watersheds": len(need_s), "year_seasons_per_sub_watershed": ",".join(f"{k}:{v}" for k, v in sorted(need_s.items())),
+                     "pixels_with_values": int(has.sum()), "pixels_complete": int(full.sum()), "pixels_incomplete": int((has & ~full).sum()),
+                     "share_incomplete": round(float((has & ~full).sum()) / max(1, int(has.sum())), 6),
+                     "rows_of_incomplete_pixels": int(cnt[c][has & ~full].sum()), "pixels_without_the_variable": int((~has).sum())})
+    tab = pd.DataFrame(rows); os.makedirs(output_dir, exist_ok=True); out = os.path.join(output_dir, "panel_balance_by_variable.csv"); tab.to_csv(out, index=False)
+    if verbose and len(tab):
+        r_ = rule or "keep"
+        ok(f"panel balance per variable (the whole panel file, every year-season): {int((tab.pixels_incomplete > 0).sum())} of {len(tab)} variables have pixels "
+           f"missing the value in some year-season -> {out}. BALANCED_PANEL for the models: '{r_}' "
+           + ("(such pixels leave each model's sample, judged on that model's own years / seasons / rings)" if r_ == "drop" else "(such pixels stay: an unbalanced panel)"))
+        for r in tab[tab.pixels_with_values > 0].itertuples():
+            info(f"  {r.variable:<8s} {r.pixels_with_values:>10,} pixels with values | complete {r.pixels_complete:>10,} | incomplete {r.pixels_incomplete:>10,} "
+                 f"({100 * r.share_incomplete:.1f} %, {r.rows_of_incomplete_pixels:,} rows)")
+    return tab
+
+
 def panel_precision_report(final_path, output_dir=None, columns=None, verbose=True):
     """2 Oct (your rule): what precision the panel HOLDS, per variable -- the stored dtype, the finite values, the distinct values, the smallest
     difference between two distinct values present in the data, the decimals needed to tell them apart, and whether float32 (7 significant

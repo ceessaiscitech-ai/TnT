@@ -219,7 +219,7 @@ ooc_read_part <- function(ctx, k, cols = NULL) {
 
 # ================================================================ 2. the engines: the same task function everywhere
 ooc_task_run <- function(task, ctx, k) {                                 # in this session (batches) or in a worker's R (reward_ooc_task.R)
-  fn <- switch(task, prep = ooc_task_prep, presel = ooc_task_presel, sample = ooc_task_sample, gram = ooc_task_gram, scores = ooc_task_scores, recommend = ooc_task_recommend,
+  fn <- switch(task, prep = ooc_task_prep, presel = ooc_task_presel, balcells = ooc_task_balcells, sample = ooc_task_sample, gram = ooc_task_gram, scores = ooc_task_scores, recommend = ooc_task_recommend,
                p00_read = ooc_task_p00_read, p00_block = ooc_task_p00_block, stop("unknown out-of-core task ", task))
   fn(ctx, k)
 }
@@ -334,6 +334,15 @@ ooc_task_presel <- function(ctx, k) {                                    # v20.5
   x <- donut_rule_R(x, ctx$d, say = FALSE); x <- landuse_rule_R(x, ctx$d, say = FALSE); x <- baseline_ndvi_rule_R(x, ctx$d, say = FALSE)   # spec 1
   control_selection_facts_R(x, ctx$outcome, ctx$d)
 }
+ooc_task_balcells <- function(ctx, k) {                                  # 4 Oct: one partition's (sub-watershed, year-season) cells of the variable
+  a <- file.path(ctx$run_dir, sprintf("a_%04d.rds", k)); x <- readRDS(a); o <- ctx$outcome
+  if (nrow(ctx$bad)) x <- x[!ctx$bad, on = .(Year, Season)]
+  x <- design_columns(x, ctx$d, site_period = ctx$site_period, say = FALSE)
+  x <- donut_rule_R(x, ctx$d, say = FALSE); x <- landuse_rule_R(x, ctx$d, say = FALSE); x <- baseline_ndvi_rule_R(x, ctx$d, say = FALSE)
+  x <- select_controls_R(x, o, ctx$d, sel = ctx$ctrl_sel, say = FALSE)
+  x <- same_pixels_R(x, o, ctx$d, say = FALSE)
+  balance_cells_R(x, o)
+}
 ooc_task_sample <- function(ctx, k) {
   a <- file.path(ctx$run_dir, sprintf("a_%04d.rds", k)); x <- readRDS(a); o <- ctx$outcome
   if (nrow(ctx$bad)) x <- x[!ctx$bad, on = .(Year, Season)]
@@ -341,6 +350,7 @@ ooc_task_sample <- function(ctx, k) {
   x <- donut_rule_R(x, ctx$d, say = FALSE); x <- landuse_rule_R(x, ctx$d, say = FALSE); x <- baseline_ndvi_rule_R(x, ctx$d, say = FALSE)   # spec 1
   x <- select_controls_R(x, o, ctx$d, sel = ctx$ctrl_sel, say = FALSE)     # v20.59: the parent's decision applied (the same pixels in every partition)
   x <- same_pixels_R(x, o, ctx$d, say = FALSE); spo <- attr(x, "same_pixels")   # v20.59: SAME_PIXELS per partition (a pixel's rows are all here), summed by the parent
+  x <- balanced_panel_R(x, o, ctx$d, cells = ctx$bal_cells, say = FALSE); bpo <- attr(x, "balanced_panel")   # 4 Oct: against the WHOLE sample's cells (the parent's first pass)
   if (identical(ctx$d$cluster, "block")) x[, block_id := block_ids_R(x, ctx$d$control_block_deg %||% 0.01)]   # v20.59
   n_tr <- attr(x, "n_transition_left_out") %||% 0L
   pvp <- attr(x, "post_vs_panel")                                       # v20.59: read BEFORE the column subset below (a subset drops the attributes)
@@ -355,7 +365,8 @@ ooc_task_sample <- function(ctx, k) {
   }
   pw <- ctx$m16_window
   tr <- x[post == 0L & treat == 1L & is.finite(event_time) & event_time >= pw[1] & event_time <= pw[2], .N, by = .(event_time, Year)]
-  list(n_transition = n_tr, integrity = integrity_parts_R(x), post_vs_panel = pvp, same_out = spo,          # v20.59: (rows, rows that differ) or NULL; SAME_PIXELS
+  list(n_transition = n_tr, integrity = integrity_parts_R(x, if (isTRUE(ctx$d$use_balanced_panel) && identical(ctx$d$balanced_panel, "drop")) o else NULL, ctx$bal_cells),
+       post_vs_panel = pvp, same_out = spo, bal_out = bpo,          # v20.59: (rows, rows that differ) or NULL; SAME_PIXELS; 4 Oct: BALANCED_PANEL
        facts = list(n_obs = nrow(x), n_pixels = uniqueN(x$pixel_id), n_units = uniqueN(x$unit), periods = unique(x$period), sites = sort(unique(x$site_id)),
                     rings = sort(unique(x$buff_km)), years = if (nrow(x)) range(x$Year) else c(NA_integer_, NA_integer_), years_set = sort(unique(x$Year)),
                     seasons = sort(unique(x$Season)), base_s = sum(x[treat == 1 & post == 0][[o]], na.rm = TRUE), base_n = sum(is.finite(x[treat == 1 & post == 0][[o]])),
@@ -534,7 +545,8 @@ integrity_merge_R <- function(ps) {
        rings = sort(unique(unlist(lapply(ps, `[[`, "rings")))), years = { y <- unlist(lapply(ps, function(p) p$years)); y <- y[is.finite(y)]; if (length(y)) range(y) else c(NA_integer_, NA_integer_) },
        years_set = sort(unique(unlist(lapply(ps, `[[`, "years_set")))), seasons = sort(unique(unlist(lapply(ps, `[[`, "seasons")))),
        rows = sum(vapply(ps, function(p) as.numeric(p$rows), 0)), pixels = sum(vapply(ps, function(p) as.numeric(p$pixels), 0)),
-       n_one_side = sum(vapply(ps, function(p) as.numeric(p$n_one_side %||% 0), 0)))                             # v20.59
+       n_one_side = sum(vapply(ps, function(p) as.numeric(p$n_one_side %||% 0), 0)),                             # v20.59
+       n_unbalanced = if (any(vapply(ps, function(p) !is.null(p$n_unbalanced), TRUE))) sum(vapply(ps, function(p) as.numeric(p$n_unbalanced %||% 0), 0)) else NULL)   # 4 Oct
 }
 ooc_load_R <- function(outcome, d, plan, engines) {
   panel_dedup_note_R()
@@ -584,8 +596,14 @@ ooc_load_R <- function(outcome, d, plan, engines) {
                   agg_c = rbindlist(lapply(pf, `[[`, "agg_c")), pix_c = rbindlist(lapply(pf, `[[`, "pix_c")), mode = d$control_selection)
     dec <- control_selection_decide_R(facts, outcome, d); ctx$ctrl_sel <- record_control_selection_R(dec$tab, dec$chosen, outcome, d)
   }
+  ctx$bal_cells <- NULL                                                                     # 4 Oct: BALANCED_PANEL -- the cells of the WHOLE sample first
+  if (isTRUE(d$use_balanced_panel)) ctx$bal_cells <- unique(rbindlist(ooc_map("balcells", ctx, plan$K)))
   # ---- phase B: the design columns, the final sample and its facts
   pb <- ooc_map("sample", ctx, plan$K)
+  bpl <- Filter(Negate(is.null), lapply(pb, `[[`, "bal_out"))                                               # 4 Oct: BALANCED_PANEL, summed over the partitions
+  if (length(bpl)) balanced_panel_say_R(list(rule = bpl[[1]]$rule, pixels_unbalanced = sum(vapply(bpl, function(v) as.numeric(v$pixels_unbalanced), 0)),
+                                             pixels_total = sum(vapply(bpl, function(v) as.numeric(v$pixels_total), 0)), rows_left_out = sum(vapply(bpl, function(v) as.numeric(v$rows_left_out), 0)),
+                                             pixels_kept = sum(vapply(bpl, function(v) as.numeric(v$pixels_kept), 0))), outcome)
   n_tr <- sum(vapply(pb, function(p) as.numeric(p$n_transition), 0))
   if (isTRUE(d$exclude_transition_year)) info(sprintf("EXCLUDE_TRANSITION_YEAR: %s rows of each series' first treated year left out", format(n_tr, big.mark = ",")))
   pv <- Filter(Negate(is.null), lapply(pb, `[[`, "post_vs_panel"))                                   # v20.59: DESIGN vs PANEL, summed over the partitions

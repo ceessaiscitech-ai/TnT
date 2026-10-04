@@ -206,6 +206,26 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
 `control_selection_decide_R` / `record_control_selection_R`, `select_controls_R` (in `load_panel_R`), `reward_outofcore.R`
 `ooc_task_presel`, `ctx$ctrl_sel`; `reward_paths.R` defaults.
 
+## Your request of 4 Oct (later) — drop the pixels missing a variable in any year or season (a balanced panel), or keep them
+
+- **New option, at panel level and in every model, in Python and R:** `USE_BALANCED_PANEL` (switch, `False` by default) and
+  `BALANCED_PANEL = "drop" | "keep"`. With `"drop"`, per variable, a pixel without a value in ANY year-season of the model's sample leaves
+  that model's sample whole, so the estimate runs on a balanced panel; the results folder is tagged `_balanced`. With `"keep"` the pixels
+  stay and the log counts them. With the switch off nothing changes, so every earlier result stands as it was.
+- **Which year-seasons count:** those of the pixel's own sub-watershed, for that variable, after the years, seasons, rings, outcome screen,
+  gap-filled rows and the other sample rules. A pixel is never dropped for a period the design already excludes.
+- **Panel level:** P00 (`P00_Settings`) and R_P00 (settings chunk) carry the default every model inherits. Step 6 of P00 and the end of R_P00
+  write `panel_balance_by_variable.csv` (R: `panel_balance_by_variable_R.csv`): per variable, the pixels complete in every year-season,
+  the pixels incomplete and their rows. The panel file keeps every row, as your earlier rule requires.
+- **Model level:** every model notebook (45 Python + MS01, 45 R in RStudio and Jupyter) has the two settings in SECTION B beside
+  `SAME_PIXELS`. DESIGN IN EFFECT shows them, the sample integrity confirms a balanced sample when `"drop"` is in force, and the
+  configuration file and both orchestrators accept them.
+- **Out of core** (Python and R): the parent gathers the year-seasons of the WHOLE sample first, then every pixel partition keeps or drops
+  its pixels against them. A partition alone may lack a year-season, so this keeps the answer equal to the in-memory one.
+- Engine: Python `_common.balanced_panel_rule`, `_pixels_unbalanced`, `balance_cells_of`, `_ooc_models` (two passes);
+  `_prep_common.panel_balance_report`. R `reward_design.R` `balanced_panel_R`, `balance_cells_R`, `pixels_unbalanced_R`;
+  `reward_outofcore.R` task `balcells`; `reward_prep.R` `panel_balance_report_R`.
+
 ## Your rule of 4 Oct (later) — the parent directory is set in the FIRST cell of the main panel-preparation notebook, in Python and in R; no separate path module
 
 - **Python, `01_Panel_Preparation/P00_RUN_ALL_Panel_Preparation.ipynb`:** its first cell is now `PARENT_DIR = r"D:\LKT\RWD_Artal\data"`.

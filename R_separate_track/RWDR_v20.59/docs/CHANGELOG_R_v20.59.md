@@ -3,6 +3,27 @@
 This bundle is the R pipeline only (`RWDR_v20.59/`). The Python module is delivered apart (`DIDVALIDATION_v20.59.zip`); the two no longer
 share a zip. Everything below is in `RWDR_v20.59/lib/` and is proved by `tests/test_3oct_additions.R` (27 checks) and `tests/run_all_tests.R`.
 
+## 0a. 4 Oct: BALANCED_PANEL — drop the pixels missing a variable in any year-season, or keep them
+
+- `USE_BALANCED_PANEL <- FALSE` and `BALANCED_PANEL <- "drop"` (`"keep"`) in `lib/reward_paths.R`, R_P00's settings chunk and every model
+  notebook (Rmd and Jupyter). `"drop"`: per variable, a pixel without a value in any year-season of its sub-watershed's sample leaves the
+  model's sample (tag `_balanced`); `"keep"`: kept and counted. Off by default: nothing changes until you switch it on.
+- `balanced_panel_R` runs after `same_pixels_R` in `load_panel_R` and in the out-of-core sample task; the out-of-core path first gathers the
+  whole sample's year-seasons (task `balcells`), then every partition applies them. The sample integrity confirms the balance.
+- R_P00 writes `panel_balance_by_variable_R.csv` (`panel_balance_report_R`): per variable, the complete and incomplete pixels and their rows.
+  The panel file keeps every row.
+
+## 0. 4 Oct: the parent directory in R_P00's first chunk
+
+- `rstudio/R_P00_Prepare_Panel.Rmd` and `jupyter/R_P00_Prepare_Panel.ipynb` start with `PARENT_DIR <- "D:/LKT/RWDR/data"`, set before the
+  library is sourced. It is the parent directory of the whole processing: the exports are read under it and everything is written to
+  `PARENT_DIR/output`. Nothing else in R_P00 changed.
+- `lib/reward_paths.R` takes `ROOT` from it and remembers it in `reward_parent_dir.txt` (the bundle's R folder), so every model notebook
+  reads the panel R_P00 built. Order: `PARENT_DIR` > a test's `REWARD_R_ROOT` (only with `REWARD_TEST_RUN`) > the remembered folder >
+  `DEFAULT_ROOT`. A stale `REWARD_R_ROOT` left by a test no longer overrides your folder.
+- Checked: the library sourced with `PARENT_DIR` set, without it (the remembered folder), under a test's folder and with a stale
+  `REWARD_R_ROOT`; R_P00 run with only the first chunk's path changed; `tests/run_all_tests.R quick` and `tests/selftest.R` (VALIDATION_R).
+
 ## 1. Your R_P00 run: hours without a line after the duplicate step — what it was, what changed
 
 Your log ended at `[OK] 30,875,154 rows shared a (sub-watershed, pixel, year, season) with another file -> 15,437,454 kept ...` and then
