@@ -214,7 +214,8 @@ Where: Python `_common.select_controls`, `control_selection_aggregates` / `contr
   stay and the log counts them. With the switch off nothing changes, so every earlier result stands as it was.
 - **Which year-seasons count:** those of the pixel's own sub-watershed, for that variable, after the years, seasons, rings, outcome screen,
   gap-filled rows and the other sample rules. A pixel is never dropped for a period the design already excludes.
-- **Panel level:** P00 (`P00_Settings`) and R_P00 (settings chunk) carry the default every model inherits. Step 6 of P00 and the end of R_P00
+- **Panel level:** P00 (`P00_Settings`) and R_P00 (settings chunk) carry the panel-level value (in Python it is saved with the scenario, and a
+  model whose own setting is `None` inherits it). Step 6 of P00 and the end of R_P00
   write `panel_balance_by_variable.csv` (R: `panel_balance_by_variable_R.csv`): per variable, the pixels complete in every year-season,
   the pixels incomplete and their rows. The panel file keeps every row, as your earlier rule requires.
 - **Model level:** every model notebook (45 Python + MS01, 45 R in RStudio and Jupyter) has the two settings in SECTION B beside

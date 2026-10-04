@@ -87,7 +87,7 @@ CONTROL_SELECT_ON <- "trend"      #   what "closest" means: "trend" = the demean
 USE_SAME_PIXELS   <- FALSE        # FALSE = a pixel may contribute to one side only (the v20.58 sample) | TRUE = the treated and control groups are the SAME
 SAME_PIXELS       <- "pre_post"   #   pixels across the panel: "pre_post" = every pixel observed in pre AND post, else it leaves (tag _pixPP) | "all" = in
                                   #   every year-season of the sample (a balanced pixel set; tag _pixAll). The sample-integrity line confirms it at every run
-USE_BALANCED_PANEL <- FALSE      # 4 Oct (your request): the DEFAULT of every model -- FALSE = every pixel is kept where values are missing (an unbalanced panel, as before) |
+USE_BALANCED_PANEL <- FALSE      # 4 Oct (your request): R_P00's own reports -- FALSE = every pixel is kept where values are missing (an unbalanced panel, as before) |
 BALANCED_PANEL    <- "drop"       #   TRUE = applied: "drop" = per variable, a pixel missing the value in ANY year-season of the sample leaves this
                                   #   model's sample (a balanced panel; tag _balanced) | "keep" = kept and counted. The panel file keeps every row;
                                   #   panel_balance_by_variable_R.csv shows per variable which pixels miss a year-season

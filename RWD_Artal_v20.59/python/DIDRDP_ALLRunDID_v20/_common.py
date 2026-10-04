@@ -1345,7 +1345,7 @@ def balanced_panel_rule(out, in_grp, outcome=None):
     mm = m & fin
     if not mm.any(): return m, {"rule": rule, "pixels_left_out": 0, "rows_left_out": 0, "pixels_kept": 0, "pixels_unbalanced": 0}
     st, c = _balance_keys(out, mm)
-    cells = _BALANCE_CELLS if _BALANCE_CELLS is not None else balance_cells_of(out, m, o)
+    cells = _BALANCE_CELLS if (_OOC_WORKER and _BALANCE_CELLS is not None) else balance_cells_of(out, m, o)   # in memory: always this frame's own cells
     need = {int(k): len(v) for k, v in cells.items()}
     pid = out["pixel_id"].values
     g = pd.DataFrame({"p": pid[mm], "s": st, "c": c}).groupby(["p", "s"])["c"].nunique().reset_index()
@@ -2382,7 +2382,7 @@ def sample_integrity(frame, control_zones=None, label=None, verbose=True):
         add("the same pixels in pre and post" if _spx == "pre_post" else "the same pixels in every year-season", _one == 0,
             f"{_one} pixel(s) observed " + ("on one side only" if _spx == "pre_post" else "in some year-seasons only"), True)
     if ACTIVE.get("use_balanced_panel") and opt("balanced_panel") == "drop" and "pixel_id" in d.columns:   # 4 Oct: your rule, confirmed on the sample
-        _ub = _pixels_unbalanced(d, CURRENT_OUTCOME, _BALANCE_CELLS)
+        _ub = _pixels_unbalanced(d, CURRENT_OUTCOME, _BALANCE_CELLS if _OOC_WORKER else None)
         add("a balanced panel (every pixel in every year-season)", _ub == 0, f"{_ub} pixel(s) miss the variable in some year-season", True)
     cz = tuple(control_zones) if control_zones is not None else tuple(ACTIVE["control_zones"])
     rg = sorted(int(x) for x in pd.unique(pd.to_numeric(d["buff_km"], errors="coerce").dropna())) if "buff_km" in d.columns else []

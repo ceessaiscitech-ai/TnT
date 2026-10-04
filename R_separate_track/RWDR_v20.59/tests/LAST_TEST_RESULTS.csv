@@ -131,6 +131,9 @@ E,"cluster_block  CLUSTER = 'block' (v20.59): ~1 km blocks as the clusters (many
 E,"pix_pp         USE_SAME_PIXELS <- TRUE, 'pre_post' (v20.59): every pixel of the sample is observed in pre and post, the folder tagged _pixPP",PASS,0 pixel(s) on one side only
 E,"pix_switch_off USE_SAME_PIXELS <- FALSE with SAME_PIXELS <- 'all' (1 Oct): NOT applied -- the same rows as the same fixed-2022 design without the rule (cluster_block), more rows than pix_all, no _pix tag",PASS,4768 rows vs 4768 (cluster_block) and 3520 (pix_all) | ctrl3-5_treat2022_all_covAll4_yr2016-2025
 E,"pix_all        SAME_PIXELS = 'all' (v20.59): every pixel of the sample in every year-season (a balanced pixel set), the folder tagged _pixAll",PASS,0 pixel(s) short | ctrl3-5_treat2022_all_pixAll_covAll4_yr2016-2025
+E,"bal_drop       USE_BALANCED_PANEL <- TRUE, 'drop' (4 Oct): every pixel of the sample has the variable in every year-season of its sub-watershed (a balanced panel), the folder tagged _balanced",PASS,0 pixel(s) short; 3520 rows (the same design without the rule: 4768; that sample has 32 pixel(s) short) | ctrl3-5_treat2022_all_ba
+E,"bal_keep       BALANCED_PANEL <- 'keep' (4 Oct): every pixel stays -- the same rows as the same fixed-2022 design without the rule, no _balanced tag",PASS,4768 rows | ctrl3-5_treat2022_all_covAll4_yr2016-2025
+E,"bal_off        USE_BALANCED_PANEL <- FALSE with 'drop' (4 Oct): NOT applied -- the same rows as without the rule, no _balanced tag",PASS,4768 rows | ctrl3-5_treat2022_all_covAll4_yr2016-2025
 E,"donut1         DONUT_RINGS <- 1L (spec 1): no control row of ring 1, rings 2-5 stay, the folder tagged _donut1",PASS,"rings 2,3,4,5 | ctrl1-5_treat2022_all_donut1_covAll4_yr2016-2025"
 E,"ctrl_rmse      CONTROL_SELECT_ON <- 'rmse' (spec 1): the 2 of 5 rings with the smallest pre-period RMSE gap of the evidence table, the folder tagged _ctrlPre2rR",PASS,"rings 1,3 | evidence says 1,3 | ctrl1-5_treat2022_all_ctrlPre2rR_covAll4_yr2016-2025"
 E,"ndvi_base      BASELINE_NDVI_MIN <- 0.30 (spec 1): every pixel of the sample has a pre-period mean NDVI above 0.30 (recomputed from the panel), fewer pixels than base, tagged _ndviPre0.3",PASS,"91 pixels (base 180), min pre mean 0.3015 | ctrl3-5_treat2022_all_ndviPre0.3_covAll4_yr2016-2025"
@@ -153,7 +156,7 @@ E,design_vs_panel DESIGN vs PANEL: the fund timing differs from the panel's post
 E,design_vs_panel DESIGN vs PANEL: fixed 2022 = the exports' flag on every row (0 differ),PASS,0 of 4768
 E,"screen_evidence the outcome screen wrote its evidence (OUTCOME_SCREEN_NDVI.csv: rows, pixels, mean, SD, min, max per year-season)",PASS,""
 F,"POISON: every model's estimate, SE and p identical with the excluded rows at +5 (no other location, overlap, repeat, ring, year or season leaks)",PASS,45 model results identical
-F,POISON (every number): every cell of every file written identical in the clean and the poisoned run,PASS,9684 numbers in 242 files identical
+F,POISON (every number): every cell of every file written identical in the clean and the poisoned run,PASS,9774 numbers in 242 files identical
 F,M01,PASS,effect 0.0484 | SE 0.000576 | p 4.5e-09 | clean == poison: TRUE
 F,M02,PASS,effect 0.0498 | SE 0.00101 | p 1.85e-05 | clean == poison: TRUE
 F,M03,PASS,effect 0.0485 | SE 0.000952 | p 5.49e-08 | clean == poison: TRUE
@@ -223,6 +226,7 @@ H,the outcome identities row group by row group == all rows at once,PASS,4 ident
 H,"R_P00 block by block on R batches, every block in 3 pixel groups == in memory: the panel row for row (schema too) and every report",PASS,"9,812 rows x 45 columns"
 H,R_P00 block by block on Dask == in memory: the panel row for row (schema too) and every report,PASS,"9,812 rows x 45 columns"
 H,R_P00 block by block on Apache Spark == in memory: the panel row for row (schema too) and every report,PASS,"9,812 rows x 45 columns"
+H,"BALANCED_PANEL 'drop' (4 Oct) on a panel with planted holes: out of core (5 pixel partitions) == in memory, fewer observations than without the rule, the folder tagged _balanced",PASS,"124 numbers, largest difference 6.0e-14 | n_obs 1638 with the rule, 2797 without | ctrl1-3_treatFund_seasonal_balanced_covAll4_yr2"
 I,"panel_variation_R (the hang): the rewritten step gives the old numbers (finite, mean, m2, min, max per outcome x year-season)",PASS,255 cells
 I,resolve_duplicates (DEDUP_FILL_FROM_DUPLICATES = FALSE): the rewritten step keeps the same rows with the same values and the same counts,PASS,"42000 rows kept, 15120 removed, 0 filled, 20944 not used"
 I,resolve_duplicates (DEDUP_FILL_FROM_DUPLICATES = TRUE): the rewritten step keeps the same rows with the same values and the same counts,PASS,"42000 rows kept, 15120 removed, 20944 filled, 0 not used"
@@ -247,6 +251,6 @@ I,"discover_exports: an earlier run's output folder (did_panel_full.parquet + it
 I,"is_pipeline_product_R by name: did_panel_full.parquet, shard_2016_Yearly_part2.parquet, part_2021_Rabi.parquet, part_12.csv -> products; CSV_2021_Rabi_tile3.csv -> an export",PASS,""
 I,"pool_cap_R: 60 worker processes at most on Windows, every core elsewhere",PASS,""
 I,FORCE_REBUILD exists and is FALSE by default,PASS,""
-I,"build_panel.R on a folder holding an earlier run's output: the discovery line counts the products, the panel is built and the precision report written",PASS,"[OK]      2 export files under /tmp/RtmpgfpBca/reward_3oct/exports (1 .csv, 1 .parquet) -- 1 file name(s) carry no Year/Season: read from the columns inside -- 4 file(s) are this pipeline's own products from an earlier run (a did_panel_full.parquet, its shards, parts or partitions, or the folder hol"
+I,"build_panel.R on a folder holding an earlier run's output: the discovery line counts the products, the panel is built and the precision report written",PASS,"[OK]      2 export files under /tmp/RtmpqE7m15/reward_3oct/exports (1 .csv, 1 .parquet) -- 1 file name(s) carry no Year/Season: read from the columns inside -- 4 file(s) are this pipeline's own products from an earlier run (a did_panel_full.parquet, its shards, parts or partitions, or the folder hol"
 I,"build_panel.R a second time: the valid panel is KEPT (no rebuild), the precision report printed again",PASS,""
 I,the progress lines: every step of the build is said before it starts (...) and when it ends (N s),PASS,"20 start lines, 17 end lines"

@@ -75,8 +75,9 @@ the same set. `select_optimal_control_rings(df, outcome_var, treat_ring=0, candi
 **`BALANCED_PANEL` in detail (4 Oct).** The year-seasons a pixel must have are those of its own sub-watershed's sample, for that variable,
 after the years, seasons, rings, outcome screen, gap-filled rows and every rule above. So a pixel is never dropped for a year your settings
 already leave out, or for a season its sub-watershed never has. The panel file itself keeps every row: the rule decides what each model
-estimates on, so another variable or another model can still use the pixel. P00's value is the default every model inherits; a model's own
-`USE_BALANCED_PANEL` / `BALANCED_PANEL` win for that model. P00 (and R_P00) write `panel_balance_by_variable.csv` (R: `_R.csv`) with, per variable,
+estimates on, so another variable or another model can still use the pixel. Each model notebook sets its own `USE_BALANCED_PANEL` /
+`BALANCED_PANEL` (`False` / `"drop"` as shipped). In Python, set them to `None` in a model to inherit P00's saved value instead; in R the
+model notebook's value is used, and R_P00's value drives R_P00's own reports. P00 (and R_P00) write `panel_balance_by_variable.csv` (R: `_R.csv`) with, per variable,
 the pixels complete in every year-season, the pixels incomplete and their rows, so you can see what `"drop"` would remove before you choose.
 One sparse year-season can remove most pixels under `"drop"`; the outcome screen (or `USE_COVERAGE_THRESHOLD`) removes such a year-season
 first. Every run says how many pixels left, and the sample integrity confirms the balance. Out of core the whole sample's year-seasons are

@@ -58,7 +58,9 @@ D:\LKT\RWDR\
 
 ## B. Your data
 1. Exports under one folder (any sub-folders). **4 Oct:** set it as `PARENT_DIR` in the FIRST chunk of `R_P00_Prepare_Panel` (default
-   `D:/LKT/RWDR/data`); it is the parent directory of the whole processing (output = `PARENT_DIR/output`) and the model notebooks follow it. Fill each sub-watershed's implementation year in `RWDR_v20.59\data\sites\sites.csv` (the project's own
+   `D:/LKT/RWDR/data`); it is the parent directory of the whole processing (output = `PARENT_DIR/output`) and the model notebooks follow it.
+   **Balanced panel (4 Oct):** `USE_BALANCED_PANEL` / `BALANCED_PANEL` ("drop" | "keep") in every model notebook drop, per variable, the pixels
+   missing a value in any year-season of the sample (or keep them); R_P00 writes `panel_balance_by_variable_R.csv`. Fill each sub-watershed's implementation year in `RWDR_v20.59\data\sites\sites.csv` (the project's own
    `data` folder — shapefile, sites, BM means — not your exports folder).
 2. `rstudio\R_P00_Prepare_Panel.Rmd` → Run All — builds the panel ONCE (v20.57: it takes no design setting; nothing of the design is
    written into the panel). It also reads your fund workbook (`results\FUND\FUND_TIMING_AND_DOSE.md`).
